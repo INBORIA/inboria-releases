@@ -2691,6 +2691,179 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       }
     }
 
+    // Auto-fallback gpt-4o-mini → gpt-4o (Task #306 phase 2). Quand le mini
+    // produit une réponse qui présente un signal d'échec ("pas trouvé",
+    // absence de [mail#ID] alors que la question demandait un mail
+    // spécifique, réponse anormalement courte sur question longue), on
+    // retente automatiquement avec gpt-4o sur la même conversation et on
+    // renvoie la meilleure des deux. L'abonné ne voit que le résultat final.
+    let fallbackTriggered = false;
+    let fallbackReason: string | null = null;
+    if (chatModel === "gpt-4o-mini" && reply) {
+      const lcReply = reply.toLowerCase();
+      const NOT_FOUND_MARKERS = [
+        /\bje\s+n['e]ai\s+pas\s+trouv[ée]/,
+        /\bje\s+ne\s+trouve\s+pas/,
+        /\bje\s+n['e]ai\s+pas\s+d['e]/,
+        /\baucun\s+(mail|message|r[ée]sultat|[ée]l[ée]ment|contact|projet|dossier)/,
+        /\bpas\s+d['e]\s*(mail|message|r[ée]sultat|[ée]l[ée]ment)/,
+        /\brien\s+trouv[ée]/,
+        /\bi\s+(?:couldn['t]?|could not|did not|didn['t]?)\s+find/,
+        /\bno\s+(results?|emails?|messages?|matching)/,
+        /\bich\s+habe\s+(?:keine|nichts)\s+gefunden/,
+        /\bno\s+he\s+encontrado/,
+        /\bnon\s+ho\s+trovato/,
+        /\bik\s+heb\s+(?:geen|niets)\s+gevonden/,
+      ];
+      const looksLikeNotFound = NOT_FOUND_MARKERS.some((re) => re.test(lcReply));
+      const lcQ = (lastUserMsg || "").toLowerCase();
+      const MAIL_NOUN_RE =
+        /\b(mail|mails|message|messages|email|emails|courriel|courriels|courrier|courriers|correo|correos|correu|correus|posta|poste|nachricht|nachrichten|bericht|berichten|mensagem|mensagens|wiadomo[sś][ćc]i?|e[-\s]?mail|e[-\s]?mails|почт[аы]|письм[оа]|μ[ηή]νυμα|μηνύματα|メール|メッセージ|이메일|메시지|邮件|郵件|電郵|電子郵件|بريد|رسالة|رسائل|הודעה|הודעות|דוא[״"]?ל)\b/;
+      const ASK_VERB_RE =
+        /\b(quel|quels|quelle|quelles|trouve|cherche|liste|montre|donne|dernier|derni[èe]re|premier|premi[èe]re|prochain|combien|y\s+a[-\s]t[-\s]il|which|what|find|search|list|show|give|last|latest|first|next|how\s+many|are\s+there|is\s+there|welche?|welcher|finde|suche|zeige|liste|letzte|letzter|erste|erster|n[aä]chste|wie\s+viele|gibt\s+es|cu[aá]l|cu[aá]les|cu[aá]nta|cu[aá]ntas|cu[aá]nto|cu[aá]ntos|encuentra|busca|muestra|dame|[uú]ltimo|[uú]ltima|primer|primera|pr[oó]ximo|pr[oó]xima|hay|qual|quais|encontra|procura|mostra|d[áa]|[uú]ltimo|[uú]ltima|primeiro|primeira|pr[oó]ximo|pr[oó]xima|quanto|quantos|quanta|quantas|h[áa]|quale|quali|trova|cerca|mostra|dammi|ultimo|ultima|primo|prima|prossimo|prossima|quanti|quante|c['eè]|welk|welke|vind|zoek|toon|geef|laatste|eerste|volgende|hoeveel|zijn\s+er|is\s+er)\b/;
+      const askedAboutSpecificMail =
+        MAIL_NOUN_RE.test(lcQ) && ASK_VERB_RE.test(lcQ);
+      const missingMailIdCitation =
+        askedAboutSpecificMail && !/\[mail#\d+\]/.test(reply);
+      const tooShortOnLongQ =
+        lastUserMsg.length >= 40 && reply.replace(/\s+/g, "").length < 30;
+      if (looksLikeNotFound || missingMailIdCitation || tooShortOnLongQ) {
+        fallbackReason = looksLikeNotFound
+          ? "not_found_marker"
+          : missingMailIdCitation
+            ? "missing_mail_id"
+            : "too_short";
+        try {
+          req.log?.info?.(
+            { userId, reason: fallbackReason, miniReplyLen: reply.length },
+            "[inboria-chat] auto-fallback triggered → retrying with gpt-4o",
+          );
+          // CRITIQUE : on retire la dernière réponse assistant pure-texte
+          // que mini vient de produire et qui est déjà push dans `convo`.
+          // Sans ce strip, gpt-4o reçoit la mauvaise réponse comme contexte
+          // et "continue" au lieu de re-répondre à la question utilisateur.
+          // On garde les assistant messages qui ont des tool_calls (ils
+          // appartiennent à un cycle complet avec leurs tool results).
+          const fbBaseConvo = [...convo];
+          while (
+            fbBaseConvo.length > 0 &&
+            (fbBaseConvo[fbBaseConvo.length - 1] as any).role === "assistant" &&
+            !(fbBaseConvo[fbBaseConvo.length - 1] as any).tool_calls
+          ) {
+            fbBaseConvo.pop();
+          }
+          const fbCompletion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            max_completion_tokens: 900,
+            temperature: 0,
+            messages: fbBaseConvo,
+            tools: INBORIA_TOOLS,
+            tool_choice: "auto",
+          });
+          const fbMsg = fbCompletion.choices[0]?.message;
+          let fbReply = (fbMsg?.content || "").trim();
+          // Si gpt-4o veut encore appeler des tools, exécute une seule passe
+          // supplémentaire (cap strict — on ne refait pas tout le loop pour
+          // garder la latence sous contrôle).
+          const fbToolCalls = fbMsg?.tool_calls || [];
+          if (fbToolCalls.length > 0 && totalToolCalls < MAX_TOOL_CALLS_TOTAL) {
+            const fbConvo = [...fbBaseConvo];
+            fbConvo.push({
+              role: "assistant",
+              content: fbMsg?.content ?? null,
+              tool_calls: fbToolCalls.slice(0, 4),
+            } as any);
+            const fbCalls = fbToolCalls.slice(0, 4);
+            const fbResults = await Promise.all(
+              fbCalls.map(async (tc: any) => {
+                if (totalToolCalls >= MAX_TOOL_CALLS_TOTAL) {
+                  return {
+                    tool_call_id: tc.id,
+                    content: JSON.stringify({ error: "Quota outils atteint." }),
+                  };
+                }
+                totalToolCalls++;
+                let parsed: any = {};
+                try {
+                  parsed = JSON.parse(tc.function?.arguments || "{}");
+                } catch {
+                  return {
+                    tool_call_id: tc.id,
+                    content: JSON.stringify({ error: "JSON invalide." }),
+                  };
+                }
+                const out = await runInboriaTool(
+                  String(tc.function?.name || ""),
+                  parsed,
+                  toolCtx,
+                );
+                return { tool_call_id: tc.id, content: out };
+              }),
+            );
+            for (const r of fbResults) {
+              fbConvo.push({
+                role: "tool",
+                tool_call_id: r.tool_call_id,
+                content: r.content,
+              } as any);
+            }
+            const fbFinal = await openai.chat.completions.create({
+              model: "gpt-4o",
+              max_completion_tokens: 900,
+              temperature: 0,
+              messages: fbConvo,
+            });
+            fbReply = (fbFinal.choices[0]?.message?.content || "").trim();
+          }
+          // Choix de la meilleure réponse :
+          //   - si la question demandait un mail et fbReply cite [mail#ID]
+          //     mais pas reply → fbReply gagne
+          //   - sinon, si fbReply est nettement plus long ET ne contient pas
+          //     de marqueur "pas trouvé" → fbReply gagne
+          //   - sinon on garde reply (pas de régression)
+          if (fbReply.length > 0) {
+            const fbHasMailId = /\[mail#\d+\]/.test(fbReply);
+            const replyHasMailId = /\[mail#\d+\]/.test(reply);
+            const fbLcReply = fbReply.toLowerCase();
+            const fbStillNotFound = NOT_FOUND_MARKERS.some((re) =>
+              re.test(fbLcReply),
+            );
+            const fbWinsByMailId =
+              askedAboutSpecificMail && fbHasMailId && !replyHasMailId;
+            const fbWinsByLength =
+              !fbStillNotFound && fbReply.length > reply.length * 1.5;
+            const fbWinsByNotFoundFix = looksLikeNotFound && !fbStillNotFound;
+            if (fbWinsByMailId || fbWinsByLength || fbWinsByNotFoundFix) {
+              req.log?.info?.(
+                {
+                  userId,
+                  reason: fallbackReason,
+                  miniLen: reply.length,
+                  fbLen: fbReply.length,
+                  miniHasMailId: replyHasMailId,
+                  fbHasMailId,
+                },
+                "[inboria-chat] fallback wins, using gpt-4o reply",
+              );
+              reply = fbReply;
+              fallbackTriggered = true;
+            } else {
+              req.log?.info?.(
+                { userId, reason: fallbackReason },
+                "[inboria-chat] fallback ran but mini reply kept",
+              );
+            }
+          }
+        } catch (fbErr: any) {
+          req.log?.warn?.(
+            { err: fbErr?.message, userId },
+            "[inboria-chat] fallback gpt-4o failed, keeping mini reply",
+          );
+        }
+      }
+    }
+    void fallbackTriggered; // logged via structured logs above
+
     if (adminTeamCtx) {
       // Build per-impacted-member breakdown from the result sets that
       // carry user_id (inbox + assigned-to-me, both selected with user_id
