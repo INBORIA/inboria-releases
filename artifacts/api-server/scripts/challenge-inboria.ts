@@ -495,7 +495,12 @@ const TESTS: T[] = [
     q: "Donne-moi un résumé en 5 lignes de l'activité actuelle de Richard.",
     expect: "Résumé court qui mentionne plusieurs projets.",
     pass: (r) => {
-      const matches = ["acme", "northwind", "globex", "innotech", "tyrell", "umbrella", "stark", "hooli", "oscorp", "soylent"].filter((c) => lower(r).includes(c));
+      const matches = [
+        "acme", "northwind", "globex", "innotech", "initech", "soylent",
+        "umbrella", "stark", "wayne", "tyrell", "hill valley", "dunder",
+        "cyberdyne", "pied piper", "hooli", "vandelay", "massive dynamic",
+        "paper street", "aperture", "oscorp",
+      ].filter((c) => lower(r).includes(c));
       return matches.length >= 2;
     },
   },

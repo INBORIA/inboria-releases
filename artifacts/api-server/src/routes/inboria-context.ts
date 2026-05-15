@@ -2547,9 +2547,31 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     let totalToolCalls = 0;
     const MAX_ITERATIONS = 4;
     const MAX_TOOL_CALLS_TOTAL = 12;
+    // Routing modèle : gpt-4o-mini suffit pour 97/100 questions, mais sur les
+    // questions de synthèse/ranking ("résumé global", "le mail le plus urgent",
+    // "tous mes clients", "le plus prioritaire/important") le mini oublie
+    // régulièrement des éléments ou perd le format [mail#ID]. Sur ces patterns
+    // précis on bascule sur gpt-4o (~17× plus cher mais ~€0.005/req, soit
+    // <€1/mois/abonné même power user — voir analyse rentabilité).
+    const lcLastMsg = (lastUserMsg || "").toLowerCase();
+    const HARD_PATTERNS = [
+      /\br[ée]sum[eé]\b.*\b(global|tous|toutes|complet|g[ée]n[ée]ral|clients?|projets?|dossiers?|activit[eé]|situation|pile|portefeuille)\b/,
+      /\br[ée]sum[eé]\b[^.?!]{0,60}\b(de|du|des|d['e])\s+(?:l['ae]\s+)?(activit[eé]|situation|pile|portefeuille|travail|journ[ée]e|semaine|mois|m[ée]l|mail|courrier|inbox|bo[îi]te)\b/,
+      /\br[ée]sum[eé]\b[^.?!]{0,80}\b(richard|jj|jean|micha[eë]l|de\s+[A-ZÉÈ])/i,
+      /\b(tous|toutes)\s+mes\s+(clients?|projets?|dossiers?|relances?|t[âa]ches?)\b/,
+      /\ble\s+(mail|message|email|courriel|client|projet|dossier)\s+le\s+plus\s+(urgent|prioritaire|important|critique|ancien|r[ée]cent)\b/,
+      /\b(quel|quels|quelle|quelles)\s+(?:est|sont)\s+(?:le|la|les)\s+plus\s+(urgent|prioritaire|important|critique)\b/,
+      /\b(liste|donne[-\s]moi|montre[-\s]moi)\s+(?:tous|toutes|l['ae]nsemble)\b/,
+      /\b(synth[èe]se|overview|panorama|tour\s+d['e]horizon)\b/,
+    ];
+    const isHardQuestion = HARD_PATTERNS.some((re) => re.test(lcLastMsg));
+    const chatModel = isHardQuestion ? "gpt-4o" : "gpt-4o-mini";
+    if (isHardQuestion) {
+      req.log?.info?.({ userId, model: chatModel, msg: lcLastMsg.slice(0, 120) }, "[inboria-chat] routing to gpt-4o (hard question)");
+    }
     for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: chatModel,
         max_completion_tokens: 900,
         // temperature: 0 -> deterministic extraction (dates, montants, citations).
         // On 0.2 le modele "lissait" les dates du jour de la semaine en
@@ -2627,7 +2649,7 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       // answer (avoids returning an empty reply).
       if (iter === MAX_ITERATIONS - 1) {
         const finalCompletion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: chatModel,
           max_completion_tokens: 900,
           temperature: 0,
           messages: convo,
