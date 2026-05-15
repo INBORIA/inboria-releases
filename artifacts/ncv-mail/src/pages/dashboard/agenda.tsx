@@ -190,21 +190,35 @@ export default function Agenda() {
     if (typeof window === "undefined") return;
     if (replayTriggeredRef.current) return;
     if (isLoading) return;
-    const KEY = "agenda.replayTransactional.v2.done";
+    // KEY v3 : v2 a été marqué "done" par des 401 silencieux (header Bearer
+    // absent) → bump pour rejouer l'appel proprement.
+    const KEY = "agenda.replayTransactional.v3.done";
     if (window.sessionStorage.getItem(KEY) === "1") return;
     replayTriggeredRef.current = true;
-    fetch("/api/appointments/replay-transactional-confirms", {
-      method: "POST",
-      credentials: "include",
-    })
-      .then(async (r) => {
+    (async () => {
+      try {
+        const { supabase } = await import("@/lib/supabase");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (!token) {
+          replayTriggeredRef.current = false;
+          return null;
+        }
+        const r = await fetch("/api/appointments/replay-transactional-confirms", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!r.ok) {
           replayTriggeredRef.current = false;
           return null;
         }
         window.sessionStorage.setItem(KEY, "1");
-        return r.json();
-      })
+        return await r.json();
+      } catch {
+        replayTriggeredRef.current = false;
+        return null;
+      }
+    })()
       .then((data) => {
         if (!data) return;
         const before = Number(data.pendingBefore || 0);
