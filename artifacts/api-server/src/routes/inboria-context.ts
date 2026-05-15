@@ -2314,7 +2314,7 @@ REGLE ABSOLUE — DEVIS / PRIX / MONTANT / FACTURE / LIVRABLE / CONTRAT pour un 
    (5) repondre avec le montant / prix / contenu trouve + citation [mail#ID].
 INTERDIT absolu : (a) te limiter a search_emails("devis <client>") qui retourne souvent 0 car le nom du client n'est que dans l'email du contact externe, pas dans le corps ; (b) repondre "je n'ai pas trouve" apres list_emails_from_contact si le retour contient au moins un mail avec "Devis"/"Facture"/"Re: Devis" dans le subject — dans ce cas tu DOIS read_email avant de conclure. La cle, c'est le contact_email visible dans la memoire des projets + read_email systematique sur les subjects pertinents.
 
-REGLE ABSOLUE — SCAN LISTE PROJETS AVANT DE NIER. Quand l'utilisateur pose une question sur un type de dossier ("y a-t-il un appel d'offres / litige / migration / RDV / livraison / contrat / facture impayee... en cours ?"), tu DOIS d'abord scanner integralement la section "Projets actifs..." de ta memoire (TOUTES les lignes, pas seulement les premieres). Si une description contient le mot-cle ("appel d'offres", "litige", "migration", "facture", "deadline", "date limite", "AO", etc.), tu DOIS citer ce projet AVEC sa date/contact/details visibles, JAMAIS dire "il n'y a pas". Exemple : pour "appel d'offres deadline proche" → cherche "appel d'offres" / "AO" dans toutes les descriptions de projets et reponds avec nom + date + contact.
+REGLE ABSOLUE — SCAN LISTE PROJETS AVANT DE NIER. Quand l'utilisateur pose une question sur un type de dossier ("y a-t-il un appel d'offres / litige / migration / RDV / livraison / contrat / facture impayee... en cours ?") OU une recherche generique ("liste/cherche/trouve/montre les mails a propos de [mot-cle]", "quels mails parlent de [sujet]"), tu DOIS d'abord scanner integralement la section "Projets actifs..." de ta memoire (TOUTES les lignes, pas seulement les premieres) ET faire un rapprochement SEMANTIQUE, pas seulement litteral. Si une description contient le mot-cle OU un synonyme/concept proche ("appel d'offres", "litige", "migration", "facture", "deadline", "AO", "anniversaire" ↔ "gala anniversaire / 25 ans / lancement", "evenement" ↔ "gala / salon / lancement", "voyage" ↔ "deplacement / mission", "formation" ↔ "training / atelier", etc.), tu DOIS citer ce projet AVEC sa ref RM-XXX + nom + contact + details visibles, JAMAIS dire "je n'ai pas trouve". Exemple : pour "liste les mails a propos de l'anniversaire" → tu repere RM-020 "Gala anniversaire Oscorp / 25 ans" et tu reponds en le citant explicitement.
 
 REGLE ABSOLUE — STATUT / CONTACT / DEADLINE D'UN PROJET / DOSSIER (admin team & questions transverses). Quand l'utilisateur demande "ou en est le projet/dossier/migration/chantier [Nom]", "statut [Nom]", "qu'est-ce qui se passe sur [Nom]", "ou en est [client] chez [coequipier]", "qui est le contact pour [salon/projet/AO/dossier]", "deadline / date limite de [AO/appel d'offres/projet]", "quand est le [salon/RDV/livraison]" — tu DOIS, AVANT de dire "je n'ai pas trouve", appeler EN PARALLELE :
    (a) search_emails(query: "<Nom du projet OU client OU mot-cle metier comme 'ERP', 'migration', 'devis'>", daysBack: 365, limit: 20),
@@ -2563,6 +2563,15 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       /\b(quel|quels|quelle|quelles)\s+(?:est|sont)\s+(?:le|la|les)\s+plus\s+(urgent|prioritaire|important|critique)\b/,
       /\b(liste|donne[-\s]moi|montre[-\s]moi)\s+(?:tous|toutes|l['ae]nsemble)\b/,
       /\b(synth[èe]se|overview|panorama|tour\s+d['e]horizon)\b/,
+      // Recherches "liste/cherche/trouve/montre les mails à propos de X" :
+      // le mini répond souvent "pas trouvé" sans scanner la liste des projets
+      // actifs en mémoire (ex: "anniversaire" devrait matcher RM-020 "Gala
+      // anniversaire Oscorp"). gpt-4o fait le rapprochement sémantique.
+      /\b(liste|cherche|trouve|montre)(?:[-\s]moi)?\s+(?:les?\s+)?(mails?|messages?|emails?|courriels?|courriers?)\b.{0,40}(?:[àa]\s+propos|\bsur\b|\bconcernant\b|qui\s+parlent?|au\s+sujet|\brelatifs?\b|\bli[ée]s?\b)/,
+      // "Quel est le dernier/premier mail" en format puces : le mini oublie
+      // souvent [mail#ID] quand il structure la réponse en bullets markdown.
+      // gpt-4o respecte la règle de citation systématique.
+      /\b(quel|quels|quelle|quelles)\s+(?:est|sont)\s+(?:le|la|les)\s+(dernier|derni[èe]re|premier|premi[èe]re|prochain|prochaine)\s+(mail|message|email|courriel)\b/,
     ];
     const isHardQuestion = HARD_PATTERNS.some((re) => re.test(lcLastMsg));
     const chatModel = isHardQuestion ? "gpt-4o" : "gpt-4o-mini";
