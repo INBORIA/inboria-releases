@@ -136,7 +136,17 @@ function detectLangCode(text: string): string | null {
   const wordCount = (text.match(/\S+/g) || []).length;
   const frThreshold = wordCount < 8 ? 2 : 4;
   const frHits = countMatches(frWords);
-  if (frElisionHit || frHits >= frThreshold) return "fr";
+  if (frElisionHit) return "fr";
+
+  // Signaux ES forts (ponctuation/morphologie uniques à l'espagnol) — placés
+  // AVANT le match FR par mots, car la liste FR contient des tokens ambigus
+  // (le/la/es/que/un/des) extrêmement fréquents en espagnol qui produisaient
+  // des faux positifs sur les réponses ES de prose. ¿/¡/-ción sont des
+  // signaux 100% spécifiques à l'espagnol → 1 occurrence suffit.
+  if (script(/[¿¡]/)) return "es";
+  if (/\b\w{3,}ción\b/i.test(text) || /\b\w{3,}ciones\b/i.test(text)) return "es";
+
+  if (frHits >= frThreshold) return "fr";
 
   // Scripts non-latins — détection sans ambiguïté
   if (script(/[\u3040-\u309f\u30a0-\u30ff]/)) return "ja";
@@ -149,15 +159,8 @@ function detectLangCode(text: string): string | null {
   if (script(/[\u0900-\u097f]/)) return "hi";
   if (script(/[\u1780-\u17ff]/)) return "km";
 
-  // Signaux ES forts (ponctuation/morphologie uniques à l'espagnol) — détectent
-  // les RÉPONSES de prose (pas seulement les questions). Évite le faux négatif
-  // "Cindy es miembro de la organización..." qui ne matchait que "está" (1) avec
-  // l'ancienne liste orientée questions.
-  if (script(/[¿¡]/)) return "es";
-  // Suffixe -ción très fréquent en prose ES (organización, invitación, situación,
-  // información, comunicación, presentación, reunión via -ión...). N'existe pas
-  // en FR (-tion) ni IT (-zione) ni PT (-ção). 1 occurrence suffit.
-  if (/\b\w{3,}ción\b/i.test(text) || /\b\w{3,}ciones\b/i.test(text)) return "es";
+  // (Les signaux ES forts ¿/¡/-ción ont été déplacés AVANT le check FR
+  // par mots — voir ci-dessus L144+. Évite faux positif FR sur prose ES.)
 
   // Langues latines : ≥2 matches discriminants pour limiter faux positifs.
   if (countMatches(["was", "kannst", "über", "ich", "bitte", "haben", "sind", "warum", "möchten", "können", "deutsch", "freundlichen", "grüßen", "ist", "ein", "eine", "einen", "einer", "sie", "ihr", "ihre", "ihren", "auf", "schreibe", "schreiben", "erinnerung", "mitglied", "weitere", "informationen", "benötigen", "lassen", "wissen", "und", "der", "die", "das", "den", "dem", "mit", "von", "für", "nicht", "auch", "mehr"]) >= 2) return "de";
