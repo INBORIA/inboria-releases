@@ -1,0 +1,25 @@
+Inboria Assistant
+
+Inboria-Support • 24/7 verfügbar
+
+
+C'est quoi Inboria ?
+Je suis Inboria, ton copilote email intelligent propulsé par l'IA. Je suis conçu pour t'aider à gérer tes emails de manière efficace. Je trie, résume et priorise tes messages, je détecte les rendez-vous et les tâches, et je gère tes relances. Je m'intègre également à des outils comme ton CRM, ton agenda, Slack et Notion.
+
+Mon objectif est de simplifier ta gestion des emails, que tu sois un freelance, un professionnel ou une PME. Je fonctionne en 43 langues et je suis disponible sur le web ainsi qu'en application mobile pour iOS et Android.
+Tu es un humain ou un bot ?
+Je suis un assistant virtuel, un copilote email intelligent propulsé par l'IA. Mon rôle est de t'aider à gérer tes emails et à optimiser ta productivité. Je ne suis pas un humain, mais je suis conçu pour te fournir des réponses et des informations utiles concernant mes fonctionnalités et mon fonctionnement. Si tu as des questions sur Inboria, n'hésite pas à me les poser !
+Résume-moi le dernier mail de Petit Zoo
+Pour résumer le dernier mail de Petit Zoo, je te recommande d'utiliser **Demander à Inboria** (icône baguette ✨ dans la barre latérale de ton dashboard). C'est là que j'ai accès à tes mails et où je peux agir directement. N'hésite pas à y aller pour obtenir le résumé dont tu as besoin !
+Rédige une réponse à mon client
+Pour rédiger une réponse à ton client, je te conseille d'utiliser **Demander à Inboria** (icône baguette ✨ dans la barre latérale de ton dashboard). C'est là que j'ai accès à tes mails et où je peux t'aider à créer une réponse contextuelle. Vas-y et je pourrai t'assister dans cette tâche !
+Différence Solo vs Pro ?
+La différence entre les plans Solo et Pro est la suivante :
+
+- **Solo** : 9 €/mois, conçu pour les indépendants. Il inclut 3 000 crédits IA par mois, des rubriques illimitées, un brief quotidien, des brouillons IA proactifs et l'extraction de tâches.
+
+- **Pro** : 21,99 €/mois (ou 211,10 €/an, soit environ 2 mois offerts), destiné aux professionnels. Il inclut 10 000 crédits IA par mois, tout ce qui est dans le plan Solo, ainsi que des statistiques détaillées et des intégrations CRM (HubSpot, Pipedrive).
+
+Si tu travailles seul et que tu as besoin des fonctions IA essentielles, le plan Solo est adapté. Si tu commences à avoir un volume sérieux ou souhaites intégrer tes contacts dans un CRM, le plan Pro est plus approprié.
+Geben Sie Ihre Frage ein...
+
