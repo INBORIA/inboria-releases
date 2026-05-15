@@ -124,10 +124,10 @@ Gmail, Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus,
 Gestion de votre plan et paiement.
 
 ### Plans disponibles :
-- **Essai** : Gratuit, 100 emails IA inclus. Parfait pour tester.
-- **Starter** : 9€/mois, 500 emails/mois, 1 boîte email.
-- **Pro** : 19€/mois, 2000 emails/mois, 3 boîtes email. (Recommandé)
-- **Business** : 39€/mois par siège, emails illimités, boîtes illimitées, boîtes partagées, gestion d'équipe.
+- **Essai** : Gratuit, 100 crédits IA offerts (usage unique), 3 rubriques personnalisées, brouillons IA. Parfait pour découvrir Inboria.
+- **Solo** : 9 €/mois, 3 000 crédits IA / mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction automatique des tâches. Pour les indépendants. Dépassement : 0,002 €/crédit.
+- **Pro** : 21,99 €/mois (ou 211,10 €/an, soit ~2 mois offerts), 10 000 crédits IA / mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction des tâches, statistiques détaillées. Idéal pour les professionnels. Dépassement : 0,001 €/crédit.
+- **Business** : 21,99 €/siège/mois (ou 211,10 €/an/siège), 10 000 crédits IA / siège / mois, tout du plan Pro, minimum 3 sièges jusqu'à 50, boîtes partagées entre collègues, assignation de tâches, API dédiée. Pour les équipes. Dépassement : 0,001 €/crédit.
 
 ### Fonctionnalités :
 - Voir votre plan actuel et utilisation (crédits IA utilisés / total).
@@ -351,7 +351,7 @@ Un Pack Métier est un ensemble de catégories prédéfinies adaptées à votre 
 Chaque plan inclut un nombre mensuel de crédits IA. Un crédit est consommé chaque fois que l'IA traite un email (classement, résumé, brouillon, extraction de tâche). Vous pouvez voir votre consommation dans la barre latérale (jauge en bas). Une fois les crédits épuisés, vous devez passer à un plan supérieur pour continuer.
 
 ### Puis-je connecter plusieurs boîtes email ?
-Oui, selon votre plan : Starter = 1 boîte, Pro = 3 boîtes, Business = illimité. Ajoutez vos connexions dans Paramètres.
+Oui, selon votre plan : Solo = 1 boîte, Pro = 3 boîtes, Business = illimité. Ajoutez vos connexions dans Paramètres.
 
 ### Comment assigner un email à un collègue ?
 Plan Business uniquement : ouvrez l'email et cliquez sur le bouton "Assigner". Choisissez le membre de l'équipe dans la liste.
@@ -483,10 +483,10 @@ Gmail, Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus,
 Plan and payment management.
 
 ### Available plans:
-- **Trial**: Free, 100 AI credits included. Perfect for testing.
-- **Starter**: €9/month, 500 emails/month, 1 mailbox.
-- **Pro**: €19/month, 2000 emails/month, 3 mailboxes. (Recommended)
-- **Business**: €39/month per seat, unlimited emails, unlimited mailboxes, shared mailboxes, team management.
+- **Trial**: Free, 100 AI credits (one-time), 3 custom categories, AI drafts. Perfect to discover Inboria.
+- **Solo**: €9/month, 3,000 AI credits/month, unlimited categories, daily brief, proactive AI drafts, automatic task extraction. For freelancers. Overage: €0.002/credit.
+- **Pro**: €21.99/month (or €211.10/year, ~2 months free), 10,000 AI credits/month, unlimited categories, daily brief, proactive AI drafts, task extraction, detailed analytics. Ideal for professionals. Overage: €0.001/credit.
+- **Business**: €21.99/seat/month (or €211.10/year/seat), 10,000 AI credits/seat/month, everything in Pro, minimum 3 seats up to 50, shared mailboxes, task assignment, dedicated API. For teams. Overage: €0.001/credit.
 
 ### Features:
 - View your current plan and usage (AI credits used / total).
@@ -710,7 +710,7 @@ An Industry Pack is a set of predefined categories tailored to your industry. Fo
 Each plan includes a monthly amount of AI credits. One credit is consumed every time the AI processes an email (sorting, summary, draft, task extraction). You can see your usage in the sidebar (gauge at the bottom). Once your credits are used up, you need to upgrade to a higher plan to continue.
 
 ### Can I connect multiple email accounts?
-Yes, depending on your plan: Starter = 1 mailbox, Pro = 3 mailboxes, Business = unlimited. Add connections in Settings.
+Yes, depending on your plan: Solo = 1 mailbox, Pro = 3 mailboxes, Business = unlimited. Add connections in Settings.
 
 ### How do I assign an email to a colleague?
 Business plan only: open the email and click the "Assign" button. Choose the team member from the list.
@@ -1751,7 +1751,7 @@ La agenda muestra sus citas. La IA detecta automáticamente las citas mencionada
 
 export function getSystemPrompt(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg" | "nb" | "ca" | "ga" | "ur" | "hi" | "km" | string): string {
   const prompts: Record<string, string> = {
-    fr: `Tu es l'assistant de support de Inboria, un outil de gestion d'emails intelligent propulsé par l'IA pour les PME. Tu réponds aux questions des utilisateurs sur les fonctionnalités de l'application de manière claire, concise et amicale. Tu réponds TOUJOURS en français. Tu es poli et professionnel. Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@inboria.com. Ne parle jamais de sujets non liés à Inboria. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
+    fr: `Tu es Inboria — pas un assistant tiers, pas un porte-parole : TU ES Inboria elle-même, l'application de gestion d'emails intelligente propulsée par l'IA pour les PME. Tu parles donc TOUJOURS à la première personne ("je", "moi", "mon"), JAMAIS à la 3e personne ("Inboria fait…", "l'application propose…"). Exemples : « Je trie tes emails par priorité », « Mon plan Pro coûte 21,99 €/mois », « Je peux te générer un brouillon ». Tu réponds aux questions des utilisateurs sur tes fonctionnalités, tes plans tarifaires et ton fonctionnement de manière claire, concise et amicale. Tu réponds TOUJOURS en français, tutoiement par défaut. Tu es polie et professionnelle. Tu PEUX et tu DOIS parler librement de tes plans et de ta tarification (Essai gratuit, Solo 9 €/mois, Pro 21,99 €/mois, Business 21,99 €/siège/mois — détails dans la base de connaissances ci-dessous). Si tu ne connais vraiment pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@inboria.com. Ne parle jamais de sujets non liés à Inboria. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
     en: `You are Inboria's support assistant, an AI-powered intelligent email management tool for SMEs. You answer user questions about the application's features in a clear, concise, and friendly manner. You ALWAYS respond in English. You are polite and professional. If you don't know the answer, say so honestly and suggest contacting support by email at support@inboria.com. Never discuss topics unrelated to Inboria. Keep your answers short and helpful (max 3-4 paragraphs).`,
     nl: `Je bent de support-assistent van Inboria, een AI-aangedreven intelligent e-mailbeheertool voor KMO's. Je beantwoordt vragen van gebruikers over de functies van de applicatie op een duidelijke, beknopte en vriendelijke manier. Je antwoordt ALTIJD in het Nederlands. Je bent beleefd en professioneel. Als je het antwoord niet weet, zeg dat dan eerlijk en stel voor om contact op te nemen met de support via e-mail op support@inboria.com. Bespreek nooit onderwerpen die niet gerelateerd zijn aan Inboria. Houd je antwoorden kort en nuttig (max 3-4 paragrafen).`,
     de: `Du bist der Support-Assistent von Inboria, einem KI-gestützten intelligenten E-Mail-Verwaltungstool für KMU. Du beantwortest Benutzerfragen zu den Funktionen der Anwendung klar, prägnant und freundlich. Du antwortest IMMER auf Deutsch. Du bist höflich und professionell. Wenn du die Antwort nicht kennst, sage das ehrlich und schlage vor, den Support per E-Mail unter support@inboria.com zu kontaktieren. Sprich niemals über Themen, die nichts mit Inboria zu tun haben. Halte deine Antworten kurz und hilfreich (max. 3-4 Absätze).`,
