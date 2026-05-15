@@ -91,25 +91,54 @@ function detectLangSteer(text: string): string | null {
 function detectLangCode(text: string): string | null {
   if (!text || text.trim().length < 2) return null;
   const t = text.toLowerCase();
-  const has = (...words: string[]) => words.some((w) => new RegExp(`\\b${w}\\b`, "i").test(t));
+  const escapeRe = (w: string) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const countMatches = (words: string[]) =>
+    words.filter((w) => new RegExp(`\\b${escapeRe(w)}\\b`, "i").test(t)).length;
   const script = (re: RegExp) => re.test(text);
-  // FR fort (élisions + mots-pivots) — priorité haute pour éviter faux positifs
-  const frStrong = [
-    "qu'", "n'", "c'", "j'", "d'", "l'", "m'", "t'", "s'",
-    "est-ce", "qu'est", "c'est", "n'est", "j'ai", "n'ai",
-    "quel", "quelle", "quels", "quelles", "comment", "pourquoi",
-    "voici", "voilà", "voila", "merci", "bonjour", "salut",
+
+  // Élisions FR — caractéristiques uniques au français (l'/qu'/n'/c'/j'/d'/m'/t'/s'
+  // suivis d'une lettre). N'EXISTENT dans aucune autre langue de la liste,
+  // donc 1 seule élision suffit pour classer FR avec haute confiance.
+  // C'est ce check qui élimine le faux positif "Que sais-tu de l'entreprise Acme ?"
+  // → que matche ES, mais "l'entreprise" matche élision FR → return "fr".
+  const frElisionRe = /\b(qu'|n'|c'|j'|d'|l'|m'|t'|s')[a-zàâäéèêëïîôöùûüÿç]/i;
+  const frElisionHit = frElisionRe.test(text);
+
+  // Mots forts FR (sans élision, requièrent ≥3 matches pour éviter ambiguïtés
+  // avec EN/ES/PT qui partagent quelques tokens courts).
+  const frWords = [
+    "est-ce", "sais", "sais-tu", "es-tu", "as-tu", "vois-tu",
+    "entreprise", "quel", "quelle", "quels", "quelles", "comment",
+    "pourquoi", "voici", "voilà", "voila", "merci", "bonjour", "salut",
     "êtes", "etes", "été", "ete", "très", "tres", "déjà", "deja",
-    "français", "francais", "où", "ça", "ca",
-    "le", "la", "les", "des", "une", "un", "ce", "cette", "ces",
-    "mes", "tes", "ses", "nos", "vos", "mon", "ton", "son",
-    "dans", "avec", "pour", "sans", "sous", "sur", "vers", "chez",
-    "mais", "donc", "ainsi", "alors", "puis", "depuis",
-    "tout", "tous", "toutes", "rien", "jamais", "toujours",
-    "boîte", "boite", "mail", "mails", "courriel", "envoyé", "envoye",
-    "recu", "reçu", "écrit", "ecrit", "lis", "liste", "trouver",
+    "français", "francais", "où", "ça",
+    "ce", "cette", "ces", "mes", "tes", "ses", "nos", "vos",
+    "mon", "ton", "son", "dans", "avec", "pour", "sans", "sous",
+    "sur", "vers", "chez", "mais", "donc", "ainsi", "alors", "puis",
+    "depuis", "tout", "tous", "toutes", "rien", "jamais", "toujours",
+    "boîte", "boite", "courriel", "envoyé", "envoye",
+    "reçu", "écrit", "ecrit", "trouve", "trouver",
+    "que", "qui", "quoi", "vous", "nous", "votre", "notre",
+    "le", "la", "les", "du", "des", "une", "un", "et", "est",
+    "mail", "dernier", "dernière", "premier", "première",
+    "donne", "donnez", "dis", "raconte", "moi", "toi", "lui",
+    "leur", "numéro", "numero", "année", "jour", "matin", "soir",
+    "cordialement", "salutations", "bien",
+    "je", "dois", "doit", "ai", "encore", "répondre", "répondu",
+    "envoyer", "écrire", "lire", "faire", "aller", "venir", "voir",
+    "savoir", "pouvoir", "vouloir", "devoir", "prendre", "mettre",
+    "priorités", "priorite", "priorité", "semaine", "aujourd'hui", "hier", "demain",
   ];
-  if (frStrong.filter((w) => new RegExp(`(^|[\\s'"])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[\\s'".,!?;:]|$)`, "i").test(t)).length >= 2) return "fr";
+  // Seuil adaptatif : phrases courtes (< 8 mots) → 2 hits, phrases longues → 4.
+  // Ça permet d'attraper "Cordialement, Jean" ou "A qui je dois répondre ?"
+  // sans déclencher de faux positifs sur les phrases longues ES/EN qui
+  // contiennent quelques articles courts (la/un/de).
+  const wordCount = (text.match(/\S+/g) || []).length;
+  const frThreshold = wordCount < 8 ? 2 : 4;
+  const frHits = countMatches(frWords);
+  if (frElisionHit || frHits >= frThreshold) return "fr";
+
+  // Scripts non-latins — détection sans ambiguïté
   if (script(/[\u3040-\u309f\u30a0-\u30ff]/)) return "ja";
   if (script(/[\u4e00-\u9fff]/)) return "zh";
   if (script(/[\uac00-\ud7af]/)) return "ko";
@@ -119,15 +148,20 @@ function detectLangCode(text: string): string | null {
   if (script(/[\u0e00-\u0e7f]/)) return "th";
   if (script(/[\u0900-\u097f]/)) return "hi";
   if (script(/[\u1780-\u17ff]/)) return "km";
-  if (has("was", "kannst", "du", "über", "ich", "bitte", "haben", "sind", "wer", "wie", "wo", "wann", "warum")) return "de";
-  if (has("wat", "kun", "je", "vertellen", "kunt", "alstublieft", "waarom", "wie", "waar", "wanneer")) return "nl";
-  if (has("que", "puedes", "decirme", "sobre", "por", "favor", "gracias", "donde", "cuando", "como", "esta", "está", "empresa", "involucrada", "proyecto")) return "es";
-  if (has("cosa", "puoi", "dirmi", "sopra", "grazie", "perche", "dove", "quando", "come")) return "it";
-  if (has("o", "que", "podes", "dizer", "obrigado", "obrigada", "onde", "quando", "como")) return "pt";
-  if (has("co", "mozesz", "powiedziec", "prosze", "dziekuje", "gdzie", "kiedy", "jak")) return "pl";
-  if (has("ce", "poti", "spune", "despre", "multumesc", "unde", "cand", "cum")) return "ro";
-  if (script(/[ğıİĞ]/) || has("hakkinda", "hakkında", "lütfen", "tesekkurler", "teşekkürler", "merhaba", "nedir", "nasıl", "nerede")) return "tr";
-  if (has("what", "can", "you", "tell", "about", "the", "is", "are", "please", "thanks", "where", "when", "how", "why", "who")) return "en";
+
+  // Langues latines : ≥2 matches discriminants pour limiter faux positifs.
+  if (countMatches(["was", "kannst", "über", "ich", "bitte", "haben", "sind", "warum", "möchten", "können", "deutsch", "freundlichen", "grüßen", "ist", "ein", "eine", "einen", "einer", "sie", "ihr", "ihre", "ihren", "auf", "schreibe", "schreiben", "erinnerung", "mitglied", "weitere", "informationen", "benötigen", "lassen", "wissen", "und", "der", "die", "das", "den", "dem", "mit", "von", "für", "nicht", "auch", "mehr"]) >= 2) return "de";
+  if (countMatches(["wat", "kun", "vertellen", "kunt", "alstublieft", "waarom", "waar", "wanneer", "hartelijke", "groet", "een", "het", "ik", "jij", "uw", "vriendelijke", "groeten"]) >= 2) return "nl";
+  if (countMatches(["puedes", "decirme", "sobre", "favor", "gracias", "dónde", "cuándo", "cómo", "está", "están", "empresa", "involucrada", "proyecto", "actualmente", "necesita", "información", "específica", "hágamelo", "saber", "saludos"]) >= 2) return "es";
+  if (countMatches(["cosa", "puoi", "dirmi", "grazie", "perché", "perche", "dove", "quando", "come", "azienda", "informazioni", "cordiali", "saluti"]) >= 2) return "it";
+  if (countMatches(["podes", "dizer", "obrigado", "obrigada", "onde", "quando", "como", "empresa", "informações", "cumprimentos"]) >= 2) return "pt";
+  if (countMatches(["możesz", "powiedzieć", "proszę", "dziękuję", "gdzie", "kiedy", "jak", "firma", "pozdrowienia"]) >= 2) return "pl";
+  if (countMatches(["poți", "spune", "despre", "mulțumesc", "unde", "când", "cum", "companie", "salutări"]) >= 2) return "ro";
+  if (script(/[ğıİĞşŞ]/) && countMatches(["hakkında", "lütfen", "teşekkürler", "merhaba", "nedir", "nasıl", "nerede", "şirket", "saygılarımla"]) >= 1) return "tr";
+
+  // EN — fallback latin. Au moins 2 mots discriminants car "is/are/the/you"
+  // peuvent apparaître dans des fragments d'autres langues.
+  if (countMatches(["what", "can", "tell", "about", "please", "thanks", "where", "when", "how", "why", "who", "would", "could", "should", "regards", "sincerely", "company", "vat", "number", "information", "reply", "email", "english", "last", "the", "and", "this", "that", "have", "has", "your", "from", "with", "for", "to", "in", "on", "of", "is", "are", "was", "were", "do", "does", "did"]) >= 2) return "en";
   return null;
 }
 
