@@ -162,17 +162,34 @@ export default function Agenda() {
     }
   }, []);
 
+  const replayTriggeredRef = useRef(false);
+
+  const rangeStart = useMemo(() => {
+    if (viewMode === "month") return startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
+    if (viewMode === "week") return startOfWeek(currentDate, { weekStartsOn: 1 });
+    return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  }, [currentDate, viewMode]);
+
+  const rangeEnd = useMemo(() => {
+    if (viewMode === "month") return endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 });
+    if (viewMode === "week") return endOfWeek(currentDate, { weekStartsOn: 1 });
+    return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+  }, [currentDate, viewMode]);
+
+  const { data: rawAppointments = [], isLoading } = useListAppointments({
+    from: rangeStart.toISOString(),
+    to: rangeEnd.toISOString(),
+  });
+
   // Auto-rejoue la détection des confirmations transactionnelles (cas
   // prestataire qui confirme via mail noreply@ hors-thread, ex: Le Petit Zoo).
-  // Une seule fois par session pour éviter le spam — l'endpoint est idempotent
-  // côté serveur de toute façon. Déclenché APRÈS le 1er chargement réussi des
-  // RDV (preuve que la session est prête, sinon 401 silencieux).
-  const replayTriggeredRef = useRef(false);
+  // Une seule fois par session — l'endpoint est idempotent côté serveur.
+  // Déclenché APRÈS le 1er chargement réussi des RDV (preuve que la session
+  // est prête, sinon 401 silencieux).
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (replayTriggeredRef.current) return;
-    if (isLoading) return; // attend le 1er chargement RDV (=> session OK)
-    // KEY versionnée v2 : invalide les anciens flags posés par le bug 401.
+    if (isLoading) return;
     const KEY = "agenda.replayTransactional.v2.done";
     if (window.sessionStorage.getItem(KEY) === "1") return;
     replayTriggeredRef.current = true;
@@ -182,7 +199,6 @@ export default function Agenda() {
     })
       .then(async (r) => {
         if (!r.ok) {
-          // N'écrit PAS le flag → on retentera au prochain mount.
           replayTriggeredRef.current = false;
           return null;
         }
@@ -211,22 +227,6 @@ export default function Agenda() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const rangeStart = useMemo(() => {
-    if (viewMode === "month") return startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
-    if (viewMode === "week") return startOfWeek(currentDate, { weekStartsOn: 1 });
-    return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-  }, [currentDate, viewMode]);
-
-  const rangeEnd = useMemo(() => {
-    if (viewMode === "month") return endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 });
-    if (viewMode === "week") return endOfWeek(currentDate, { weekStartsOn: 1 });
-    return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
-  }, [currentDate, viewMode]);
-
-  const { data: rawAppointments = [], isLoading } = useListAppointments({
-    from: rangeStart.toISOString(),
-    to: rangeEnd.toISOString(),
-  });
   const suggestionsRange = useMemo(() => {
     const now = new Date();
     const start = new Date(now.getFullYear() - 1, 0, 1).toISOString();
