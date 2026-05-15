@@ -210,6 +210,23 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
+
+  // Sync mail ouvert -> sessionStorage pour que le chat Inboria puisse
+  // referencer "ce mail" meme quand l'URL n'a pas ?emailId= (cas panel
+  // ouvert depuis une page hors /dashboard, ex. agenda).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id = Number(email?.id);
+    if (Number.isFinite(id) && id > 0) {
+      try { window.sessionStorage.setItem("inboria.currentEmailId", String(id)); } catch { /* no-op */ }
+    }
+    return () => {
+      try {
+        const cur = window.sessionStorage.getItem("inboria.currentEmailId");
+        if (cur && Number(cur) === id) window.sessionStorage.removeItem("inboria.currentEmailId");
+      } catch { /* no-op */ }
+    };
+  }, [email?.id]);
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
   const [replyTo, setReplyTo] = useState("");

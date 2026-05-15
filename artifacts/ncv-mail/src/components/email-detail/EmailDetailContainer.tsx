@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -56,26 +55,6 @@ export function EmailDetailContainer({
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  // Sync mail ouvert -> sessionStorage pour que le chat Inboria puisse
-  // referencer "ce mail" meme quand l'URL n'a pas de ?emailId= (cas
-  // EmailDetail panel ouvert depuis une page hors /dashboard, ex. agenda).
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (emailId && Number.isFinite(Number(emailId)) && Number(emailId) > 0) {
-      try {
-        window.sessionStorage.setItem("inboria.currentEmailId", String(emailId));
-      } catch { /* no-op */ }
-    }
-    return () => {
-      try {
-        const cur = window.sessionStorage.getItem("inboria.currentEmailId");
-        if (cur && Number(cur) === Number(emailId)) {
-          window.sessionStorage.removeItem("inboria.currentEmailId");
-        }
-      } catch { /* no-op */ }
-    };
-  }, [emailId]);
 
   const { data: email, isLoading, isError } = useQuery<any>({
     queryKey: ["email-detail", emailId],
