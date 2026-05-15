@@ -1516,6 +1516,17 @@ export function InboriaChatButton() {
       const body: Record<string, unknown> = {
         messages: nextMessages.slice(-20),
       };
+      try {
+        const url = new URL(window.location.href);
+        const eid = url.searchParams.get("emailId");
+        const eidNum = eid ? Number(eid) : NaN;
+        if (Number.isFinite(eidNum) && eidNum > 0) {
+          body.currentEmailId = eidNum;
+        }
+        body.currentRoute = url.pathname || "";
+      } catch {
+        // best-effort, no-op
+      }
       const res = await fetch(`${baseUrl}/api/inboria/chat`, {
         method: "POST",
         headers: {

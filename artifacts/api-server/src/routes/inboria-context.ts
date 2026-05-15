@@ -386,6 +386,19 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }
 
     const rawMessages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+    // Contexte UI : mail actuellement ouvert + route courante. Permet a Inboria
+    // de comprendre "ce mail / cet email / ca / resume-moi ca" sans deviner.
+    // currentEmailId est valide cote backend (RLS via scopeFilter), donc un
+    // ID malicieux ne peut pas leak un mail d'un autre tenant.
+    const rawCurrentEmailId = Number(req.body?.currentEmailId);
+    const currentEmailIdInput =
+      Number.isFinite(rawCurrentEmailId) && rawCurrentEmailId > 0
+        ? Math.trunc(rawCurrentEmailId)
+        : null;
+    const currentRouteInput =
+      typeof req.body?.currentRoute === "string"
+        ? String(req.body.currentRoute).slice(0, 200)
+        : "";
     // Strip past assistant hallucinations about appointment conflicts so the
     // model can't propagate them across turns. The model sometimes invents
     // "vous avez déjà un rendez-vous le X à H" — once it appears in history,
@@ -1062,6 +1075,46 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     };
 
     const memoryLines: string[] = [];
+
+    // Contexte UI : mail actuellement ouvert a l'ecran (passe par le front
+    // via ?emailId=X). On le charge ici (scope strict tenant) et on l'injecte
+    // TOUT EN HAUT pour que le LLM comprenne "ce mail / cet email / ca".
+    if (currentEmailIdInput) {
+      try {
+        const { data: openedRow } = await supabaseAdmin
+          .from("emails")
+          .select("id, sender, subject, summary, received_at, opened_at, is_read")
+          .eq("id", currentEmailIdInput)
+          .or(emailScopeFilter)
+          .maybeSingle();
+        if (openedRow) {
+          const row = openedRow as {
+            id: number;
+            sender: string | null;
+            subject: string | null;
+            summary: string | null;
+            received_at: string | null;
+          };
+          const when = row.received_at ? fmtDate(row.received_at) : "(date inconnue)";
+          const sender = row.sender || "(expediteur inconnu)";
+          const subj = row.subject || "(sans sujet)";
+          const sum = row.summary ? ` — ${String(row.summary).slice(0, 200)}` : "";
+          memoryLines.push(
+            `MAIL ACTUELLEMENT OUVERT A L'ECRAN : [mail#${row.id}] ${when} de ${sender} — sujet "${subj}"${sum}.`,
+          );
+          memoryLines.push(
+            `Quand l'utilisateur dit "ce mail", "cet email", "ca", "resume-moi ca", "reponds a ca", "ce message", il parle de [mail#${row.id}]. Utilise read_email(${row.id}) ou read_thread(${row.id}) pour le detail complet AVANT de repondre.`,
+          );
+          memoryLines.push("");
+        }
+      } catch (err) {
+        req.log?.warn?.({ err: String(err), emailId: currentEmailIdInput }, "[inboria-context] could not load currentEmailId (best-effort skip)");
+      }
+    }
+    if (currentRouteInput) {
+      memoryLines.push(`Page actuellement affichee dans l'app : ${currentRouteInput}.`);
+      memoryLines.push("");
+    }
 
     // Identité de l'utilisateur — TOUT EN HAUT pour que le LLM associe
     // immediatement "tu / vous / je" a une personne reelle et puisse
