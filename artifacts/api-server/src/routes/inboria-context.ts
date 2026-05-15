@@ -1084,7 +1084,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       try {
         const { data: openedRow, error: openedErr } = await supabaseAdmin
           .from("emails")
-          .select("id, sender, subject, summary, created_at, opened_at, is_read")
+          .select("id, sender, subject, summary, created_at")
           .eq("id", currentEmailIdInput)
           .or(emailScopeFilter)
           .maybeSingle();
