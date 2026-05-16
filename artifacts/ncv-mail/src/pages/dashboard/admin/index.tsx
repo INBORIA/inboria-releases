@@ -11,6 +11,8 @@ import {
   Database,
   Sparkles,
   CreditCard,
+  Send,
+  Cloud,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
@@ -20,13 +22,16 @@ import AdminEmailBrain from "./email-brain";
 import AdminInboria from "./inboria";
 import AdminSupabase from "./supabase";
 import AdminPaddle from "./paddle";
+import AdminBrevo from "./brevo";
+import AdminOpenAI from "./openai";
+import AdminReplit from "./replit";
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
 }
 
 // Top-level: provider/scope
-type TopTab = "inboria" | "supabase" | "paddle";
+type TopTab = "inboria" | "supabase" | "paddle" | "brevo" | "openai" | "replit";
 // Sub-tab inside "inboria"
 type InboriaSubTab = "waitlist" | "abonnes" | "email-brain" | "chat";
 
@@ -36,6 +41,11 @@ interface ParsedHash {
 }
 
 const DEFAULT_SUB: InboriaSubTab = "waitlist";
+const TOP_TABS: TopTab[] = ["inboria", "supabase", "paddle", "brevo", "openai", "replit"];
+
+function isTopTab(v: string): v is TopTab {
+  return (TOP_TABS as string[]).includes(v);
+}
 
 function parseHash(): ParsedHash {
   if (typeof window === "undefined") return { top: "inboria", sub: DEFAULT_SUB };
@@ -43,30 +53,29 @@ function parseHash(): ParsedHash {
   if (!raw) return { top: "inboria", sub: DEFAULT_SUB };
 
   // Backward-compat: legacy flat hashes
-  if (raw === "supabase") return { top: "supabase", sub: DEFAULT_SUB };
-  if (raw === "paddle") return { top: "paddle", sub: DEFAULT_SUB };
   if (raw === "subscribers" || raw === "abonnes")
     return { top: "inboria", sub: "abonnes" };
   if (raw === "waitlist") return { top: "inboria", sub: "waitlist" };
   if (raw === "email-brain") return { top: "inboria", sub: "email-brain" };
   if (raw === "inboria") return { top: "inboria", sub: "chat" };
+  if (isTopTab(raw)) return { top: raw, sub: DEFAULT_SUB };
 
-  // New nested format: "inboria/<sub>" or "supabase" or "paddle"
+  // New nested format: "inboria/<sub>" or "<top>"
   const [top, sub] = raw.split("/");
-  if (top === "supabase") return { top: "supabase", sub: DEFAULT_SUB };
-  if (top === "paddle") return { top: "paddle", sub: DEFAULT_SUB };
-  if (top === "inboria") {
-    if (sub === "abonnes" || sub === "email-brain" || sub === "chat" || sub === "waitlist")
-      return { top: "inboria", sub };
-    return { top: "inboria", sub: DEFAULT_SUB };
+  if (top && isTopTab(top)) {
+    if (top === "inboria") {
+      if (sub === "abonnes" || sub === "email-brain" || sub === "chat" || sub === "waitlist")
+        return { top: "inboria", sub };
+      return { top: "inboria", sub: DEFAULT_SUB };
+    }
+    return { top, sub: DEFAULT_SUB };
   }
   return { top: "inboria", sub: DEFAULT_SUB };
 }
 
 function hashFor(top: TopTab, sub: InboriaSubTab): string {
-  if (top === "supabase") return "#supabase";
-  if (top === "paddle") return "#paddle";
-  return `#inboria/${sub}`;
+  if (top === "inboria") return `#inboria/${sub}`;
+  return `#${top}`;
 }
 
 export default function AdminIndex() {
@@ -92,12 +101,7 @@ export default function AdminIndex() {
   }
 
   function handleTopChange(value: string) {
-    const next: TopTab =
-      value === "supabase"
-        ? "supabase"
-        : value === "paddle"
-          ? "paddle"
-          : "inboria";
+    const next: TopTab = isTopTab(value) ? value : "inboria";
     setTopTab(next);
     updateHash(next, subTab);
   }
@@ -135,7 +139,7 @@ export default function AdminIndex() {
 
         <Tabs value={topTab} onValueChange={handleTopChange} className="w-full">
           <TabsList
-            className="bg-[#0d1117] border border-[#1f2937]"
+            className="bg-[#0d1117] border border-[#1f2937] flex flex-wrap h-auto"
             data-testid="tabs-admin"
           >
             <TabsTrigger value="inboria" data-testid="tab-inboria">
@@ -149,6 +153,18 @@ export default function AdminIndex() {
             <TabsTrigger value="paddle" data-testid="tab-paddle">
               <CreditCard className="h-3.5 w-3.5 mr-1.5" />
               Paddle
+            </TabsTrigger>
+            <TabsTrigger value="brevo" data-testid="tab-brevo">
+              <Send className="h-3.5 w-3.5 mr-1.5" />
+              Brevo
+            </TabsTrigger>
+            <TabsTrigger value="openai" data-testid="tab-openai">
+              <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+              OpenAI
+            </TabsTrigger>
+            <TabsTrigger value="replit" data-testid="tab-replit">
+              <Cloud className="h-3.5 w-3.5 mr-1.5" />
+              Replit
             </TabsTrigger>
           </TabsList>
 
@@ -201,6 +217,18 @@ export default function AdminIndex() {
 
           <TabsContent value="paddle" className="mt-4">
             <AdminPaddle />
+          </TabsContent>
+
+          <TabsContent value="brevo" className="mt-4">
+            <AdminBrevo />
+          </TabsContent>
+
+          <TabsContent value="openai" className="mt-4">
+            <AdminOpenAI />
+          </TabsContent>
+
+          <TabsContent value="replit" className="mt-4">
+            <AdminReplit />
           </TabsContent>
         </Tabs>
       </div>

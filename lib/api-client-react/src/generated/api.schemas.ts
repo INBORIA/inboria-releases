@@ -1427,6 +1427,90 @@ export interface AdminPaddleMetrics {
   degradedReason?: string | null;
 }
 
+/**
+ * @nullable
+ */
+export type AdminBrevoMetricsLast30 = {
+  requests: number;
+  delivered: number;
+  hardBounces: number;
+  softBounces: number;
+  complaints: number;
+  blocked: number;
+  /** Percentage delivered/requests, 1 decimal. */
+  deliveryRate: number;
+} | null;
+
+export interface AdminBrevoMetrics {
+  /** True if BREVO_API_KEY is set. */
+  configured: boolean;
+  smtpConfigured: boolean;
+  /** @nullable */
+  accountEmail?: string | null;
+  /** @nullable */
+  planType?: string | null;
+  /** @nullable */
+  emailCredits?: number | null;
+  /** @nullable */
+  smsCredits?: number | null;
+  /** @nullable */
+  last30?: AdminBrevoMetricsLast30;
+  /** @nullable */
+  errorMessage?: string | null;
+}
+
+/**
+ * @nullable
+ */
+export type AdminOpenAIMetricsLast30 = {
+  totalRequests: number;
+  byModel: {
+    model: string;
+    count: number;
+    avgLatencyMs: number;
+    avgResponseLen: number;
+    estimatedCostUsd: number;
+  }[];
+  fallbackCount: number;
+  fallbackRate: number;
+  reformulationCount: number;
+  reformulationRate: number;
+  totalEstimatedCostUsd: number;
+} | null;
+
+export interface AdminOpenAIMetrics {
+  configured: boolean;
+  modelsReachable: boolean;
+  /** @nullable */
+  errorMessage?: string | null;
+  /** List of model names for which we have local pricing data. */
+  pricingCoverage: string[];
+  /** @nullable */
+  last30?: AdminOpenAIMetricsLast30;
+}
+
+export type AdminReplitMetricsSecretsStatusItem = {
+  name: string;
+  configured: boolean;
+  critical: boolean;
+};
+
+export interface AdminReplitMetrics {
+  nodeVersion: string;
+  uptimeSeconds: number;
+  memoryUsedMb: number;
+  memoryRssMb: number;
+  isDeployment: boolean;
+  domains: string[];
+  /** @nullable */
+  replId?: string | null;
+  /** @nullable */
+  replSlug?: string | null;
+  /** @nullable */
+  replOwner?: string | null;
+  secretsStatus: AdminReplitMetricsSecretsStatusItem[];
+}
+
 export interface InboriaExpertSuggestion {
   userId: string;
   fullName: string;

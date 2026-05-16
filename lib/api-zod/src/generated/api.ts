@@ -3705,6 +3705,85 @@ export const AdminPaddleMetricsResponse = zod.object({
 });
 
 /**
+ * @summary Brevo transactional email metrics - admin only
+ */
+export const AdminBrevoMetricsResponse = zod.object({
+  configured: zod.boolean().describe("True if BREVO_API_KEY is set."),
+  smtpConfigured: zod.boolean(),
+  accountEmail: zod.string().nullish(),
+  planType: zod.string().nullish(),
+  emailCredits: zod.number().nullish(),
+  smsCredits: zod.number().nullish(),
+  last30: zod
+    .object({
+      requests: zod.number(),
+      delivered: zod.number(),
+      hardBounces: zod.number(),
+      softBounces: zod.number(),
+      complaints: zod.number(),
+      blocked: zod.number(),
+      deliveryRate: zod
+        .number()
+        .describe("Percentage delivered\/requests, 1 decimal."),
+    })
+    .nullish(),
+  errorMessage: zod.string().nullish(),
+});
+
+/**
+ * @summary OpenAI key health + local usage aggregates - admin only
+ */
+export const AdminOpenAIMetricsResponse = zod.object({
+  configured: zod.boolean(),
+  modelsReachable: zod.boolean(),
+  errorMessage: zod.string().nullish(),
+  pricingCoverage: zod
+    .array(zod.string())
+    .describe("List of model names for which we have local pricing data."),
+  last30: zod
+    .object({
+      totalRequests: zod.number(),
+      byModel: zod.array(
+        zod.object({
+          model: zod.string(),
+          count: zod.number(),
+          avgLatencyMs: zod.number(),
+          avgResponseLen: zod.number(),
+          estimatedCostUsd: zod.number(),
+        }),
+      ),
+      fallbackCount: zod.number(),
+      fallbackRate: zod.number(),
+      reformulationCount: zod.number(),
+      reformulationRate: zod.number(),
+      totalEstimatedCostUsd: zod.number(),
+    })
+    .nullish(),
+});
+
+/**
+ * @summary Replit deployment / runtime / secrets snapshot - admin only
+ */
+export const AdminReplitMetricsResponse = zod.object({
+  nodeVersion: zod.string(),
+  uptimeSeconds: zod.number(),
+  memoryUsedMb: zod.number(),
+  memoryRssMb: zod.number(),
+  isDeployment: zod.boolean(),
+  domains: zod.array(zod.string()),
+  replId: zod.string().nullish(),
+  replSlug: zod.string().nullish(),
+  replOwner: zod.string().nullish(),
+  secretsStatus: zod.array(
+    zod.object({
+      name: zod.string(),
+      configured: zod.boolean(),
+      critical: zod.boolean(),
+    }),
+  ),
+});
+
+/**
  * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
  */
 export const GetInboriaExpertSuggestionQueryParams = zod.object({

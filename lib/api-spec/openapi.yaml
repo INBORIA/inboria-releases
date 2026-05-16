@@ -3150,6 +3150,57 @@ paths:
         "403":
           description: Admin access required
 
+  /admin/brevo/metrics:
+    get:
+      operationId: adminBrevoMetrics
+      tags: [admin]
+      summary: Brevo transactional email metrics - admin only
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Brevo metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminBrevoMetrics"
+        "403":
+          description: Admin access required
+
+  /admin/openai/metrics:
+    get:
+      operationId: adminOpenAIMetrics
+      tags: [admin]
+      summary: OpenAI key health + local usage aggregates - admin only
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: OpenAI metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminOpenAIMetrics"
+        "403":
+          description: Admin access required
+
+  /admin/replit/metrics:
+    get:
+      operationId: adminReplitMetrics
+      tags: [admin]
+      summary: Replit deployment / runtime / secrets snapshot - admin only
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Replit metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReplitMetrics"
+        "403":
+          description: Admin access required
+
   /inboria/expert-suggestion:
     get:
       operationId: getInboriaExpertSuggestion
@@ -6006,6 +6057,103 @@ components:
         degradedReason:
           type: ["string", "null"]
           description: Concatenated error messages explaining degraded state.
+
+    AdminBrevoMetrics:
+      type: object
+      required: [configured, smtpConfigured]
+      properties:
+        configured:
+          type: boolean
+          description: True if BREVO_API_KEY is set.
+        smtpConfigured:
+          type: boolean
+        accountEmail:
+          type: ["string", "null"]
+        planType:
+          type: ["string", "null"]
+        emailCredits:
+          type: ["number", "null"]
+        smsCredits:
+          type: ["number", "null"]
+        last30:
+          type: ["object", "null"]
+          required: [requests, delivered, hardBounces, softBounces, complaints, blocked, deliveryRate]
+          properties:
+            requests: { type: integer }
+            delivered: { type: integer }
+            hardBounces: { type: integer }
+            softBounces: { type: integer }
+            complaints: { type: integer }
+            blocked: { type: integer }
+            deliveryRate:
+              type: number
+              description: Percentage delivered/requests, 1 decimal.
+        errorMessage:
+          type: ["string", "null"]
+
+    AdminOpenAIMetrics:
+      type: object
+      required: [configured, modelsReachable, pricingCoverage]
+      properties:
+        configured:
+          type: boolean
+        modelsReachable:
+          type: boolean
+        errorMessage:
+          type: ["string", "null"]
+        pricingCoverage:
+          type: array
+          items: { type: string }
+          description: List of model names for which we have local pricing data.
+        last30:
+          type: ["object", "null"]
+          required: [totalRequests, byModel, fallbackCount, fallbackRate, reformulationCount, reformulationRate, totalEstimatedCostUsd]
+          properties:
+            totalRequests: { type: integer }
+            byModel:
+              type: array
+              items:
+                type: object
+                required: [model, count, avgLatencyMs, avgResponseLen, estimatedCostUsd]
+                properties:
+                  model: { type: string }
+                  count: { type: integer }
+                  avgLatencyMs: { type: integer }
+                  avgResponseLen: { type: integer }
+                  estimatedCostUsd: { type: number }
+            fallbackCount: { type: integer }
+            fallbackRate: { type: number }
+            reformulationCount: { type: integer }
+            reformulationRate: { type: number }
+            totalEstimatedCostUsd: { type: number }
+
+    AdminReplitMetrics:
+      type: object
+      required: [nodeVersion, uptimeSeconds, memoryUsedMb, memoryRssMb, isDeployment, domains, secretsStatus]
+      properties:
+        nodeVersion: { type: string }
+        uptimeSeconds: { type: integer }
+        memoryUsedMb: { type: number }
+        memoryRssMb: { type: number }
+        isDeployment: { type: boolean }
+        domains:
+          type: array
+          items: { type: string }
+        replId:
+          type: ["string", "null"]
+        replSlug:
+          type: ["string", "null"]
+        replOwner:
+          type: ["string", "null"]
+        secretsStatus:
+          type: array
+          items:
+            type: object
+            required: [name, configured, critical]
+            properties:
+              name: { type: string }
+              configured: { type: boolean }
+              critical: { type: boolean }
 
     InboriaExpertSuggestion:
       type: object

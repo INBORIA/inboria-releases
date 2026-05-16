@@ -1053,4 +1053,365 @@ router.get(
   },
 );
 
+// ============================================================================
+// Brevo metrics (transactional email service)
+// ============================================================================
+router.get(
+  "/admin/brevo/metrics",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    const apiKey = process.env["BREVO_API_KEY"];
+    const smtpConfigured = !!process.env["BREVO_SMTP_PASSWORD"];
+    const configured = !!apiKey;
+
+    if (!configured) {
+      audit("brevo_metrics_viewed", { adminId: req.userId, configured: false });
+      res.json({
+        configured: false,
+        smtpConfigured,
+        accountEmail: null,
+        planType: null,
+        emailCredits: null,
+        smsCredits: null,
+        last30: null,
+        errorMessage: "BREVO_API_KEY non configurée",
+      });
+      return;
+    }
+
+    const headers = { "api-key": apiKey, accept: "application/json" };
+    let accountEmail: string | null = null;
+    let planType: string | null = null;
+    let emailCredits: number | null = null;
+    let smsCredits: number | null = null;
+    let errorMessage: string | null = null;
+
+    try {
+      const accRes = await fetch("https://api.brevo.com/v3/account", { headers });
+      if (!accRes.ok) {
+        errorMessage = `Brevo /account → HTTP ${accRes.status}`;
+      } else {
+        const acc = (await accRes.json()) as {
+          email?: string;
+          plan?: Array<{ type?: string; credits?: number; creditsType?: string }>;
+        };
+        accountEmail = acc.email ?? null;
+        if (Array.isArray(acc.plan)) {
+          const emailPlan = acc.plan.find((p) => p.creditsType === "sendLimit");
+          const smsPlan = acc.plan.find((p) => p.creditsType === "sms");
+          planType = emailPlan?.type ?? acc.plan[0]?.type ?? null;
+          emailCredits = emailPlan?.credits ?? null;
+          smsCredits = smsPlan?.credits ?? null;
+        }
+      }
+    } catch (err) {
+      errorMessage = err instanceof Error ? err.message : String(err);
+      logger.warn({ err: errorMessage }, "[admin/brevo/metrics] account fetch failed");
+    }
+
+    let last30: {
+      requests: number;
+      delivered: number;
+      hardBounces: number;
+      softBounces: number;
+      complaints: number;
+      blocked: number;
+      deliveryRate: number;
+    } | null = null;
+
+    try {
+      const statsRes = await fetch(
+        "https://api.brevo.com/v3/smtp/statistics/aggregatedReport?days=30",
+        { headers },
+      );
+      if (statsRes.ok) {
+        const s = (await statsRes.json()) as {
+          requests?: number;
+          delivered?: number;
+          hardBounces?: number;
+          softBounces?: number;
+          complaints?: number;
+          blocked?: number;
+        };
+        const requests = s.requests ?? 0;
+        const delivered = s.delivered ?? 0;
+        last30 = {
+          requests,
+          delivered,
+          hardBounces: s.hardBounces ?? 0,
+          softBounces: s.softBounces ?? 0,
+          complaints: s.complaints ?? 0,
+          blocked: s.blocked ?? 0,
+          deliveryRate:
+            requests === 0 ? 0 : Math.round((delivered / requests) * 1000) / 10,
+        };
+      } else if (!errorMessage) {
+        errorMessage = `Brevo stats → HTTP ${statsRes.status}`;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      logger.warn({ err: msg }, "[admin/brevo/metrics] stats fetch failed");
+      if (!errorMessage) errorMessage = msg;
+    }
+
+    audit("brevo_metrics_viewed", {
+      adminId: req.userId,
+      hasError: !!errorMessage,
+    });
+
+    res.json({
+      configured: true,
+      smtpConfigured,
+      accountEmail,
+      planType,
+      emailCredits,
+      smsCredits,
+      last30,
+      errorMessage,
+    });
+  },
+);
+
+// ============================================================================
+// OpenAI metrics (key health + usage aggregated from inboria_chat_logs)
+// ============================================================================
+// Note : l'API OpenAI ne permet pas de récupérer le coût/usage facturation
+// avec une clé sk- standard (endpoints /v1/dashboard/billing/* nécessitent
+// une clé sk-admin-). On agrège donc nos logs locaux + ping /v1/models pour
+// vérifier que la clé fonctionne.
+const OPENAI_COST_PER_1K_TOKENS_USD: Record<string, { in: number; out: number }> = {
+  "gpt-4o-mini": { in: 0.00015, out: 0.0006 },
+  "gpt-4o": { in: 0.0025, out: 0.01 },
+  "gpt-4.1-mini": { in: 0.0004, out: 0.0016 },
+  "gpt-4.1": { in: 0.002, out: 0.008 },
+  "text-embedding-3-small": { in: 0.00002, out: 0 },
+};
+
+router.get(
+  "/admin/openai/metrics",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    const apiKey = process.env["OPENAI_API_KEY"];
+    const configured = !!apiKey;
+
+    let modelsReachable = false;
+    let errorMessage: string | null = null;
+    if (configured) {
+      try {
+        const openai = new OpenAI({ apiKey });
+        const list = await openai.models.list();
+        modelsReachable = Array.isArray(list.data) && list.data.length > 0;
+      } catch (err) {
+        errorMessage = err instanceof Error ? err.message : String(err);
+        logger.warn({ err: errorMessage }, "[admin/openai/metrics] models.list failed");
+      }
+    } else {
+      errorMessage = "OPENAI_API_KEY non configurée";
+    }
+
+    // Agrégat 30j depuis inboria_chat_logs (best-effort, no-op si table absente)
+    const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+    let last30: {
+      totalRequests: number;
+      byModel: Array<{
+        model: string;
+        count: number;
+        avgLatencyMs: number;
+        avgResponseLen: number;
+        estimatedCostUsd: number;
+      }>;
+      fallbackCount: number;
+      fallbackRate: number;
+      reformulationCount: number;
+      reformulationRate: number;
+      totalEstimatedCostUsd: number;
+    } | null = null;
+
+    const { data: rows, error: logsErr } = await supabaseAdmin
+      .from("inboria_chat_logs")
+      .select("model_used, latency_ms, response_length, question_length, fallback_triggered, was_reformulated")
+      .gte("created_at", since)
+      .limit(50000);
+
+    if (logsErr) {
+      logger.warn(
+        { err: logsErr.message },
+        "[admin/openai/metrics] chat_logs query failed (table may be missing)",
+      );
+    } else if (rows && rows.length > 0) {
+      type Row = {
+        model_used: string | null;
+        latency_ms: number | null;
+        response_length: number | null;
+        question_length: number | null;
+        fallback_triggered: boolean | null;
+        was_reformulated: boolean | null;
+      };
+      const all = rows as Row[];
+      const total = all.length;
+      const fallbackCount = all.filter((r) => r.fallback_triggered).length;
+      const reformulationCount = all.filter((r) => r.was_reformulated).length;
+
+      const groups = new Map<string, Row[]>();
+      for (const r of all) {
+        const m = r.model_used || "unknown";
+        const arr = groups.get(m) ?? [];
+        arr.push(r);
+        groups.set(m, arr);
+      }
+
+      let totalCost = 0;
+      const byModel = Array.from(groups.entries())
+        .map(([model, group]) => {
+          const count = group.length;
+          const avgLat =
+            count === 0
+              ? 0
+              : Math.round(
+                  group.reduce((s, r) => s + (r.latency_ms || 0), 0) / count,
+                );
+          const avgResp =
+            count === 0
+              ? 0
+              : Math.round(
+                  group.reduce((s, r) => s + (r.response_length || 0), 0) / count,
+                );
+          const avgQuestion =
+            count === 0
+              ? 0
+              : group.reduce((s, r) => s + (r.question_length || 0), 0) / count;
+          // Estimation grossière : ~1 token / 4 chars en moyenne (FR/EN)
+          const pricing = OPENAI_COST_PER_1K_TOKENS_USD[model];
+          let cost = 0;
+          if (pricing) {
+            const inTokens = (avgQuestion / 4) * count;
+            const outTokens = (avgResp / 4) * count;
+            cost =
+              Math.round(
+                ((inTokens / 1000) * pricing.in +
+                  (outTokens / 1000) * pricing.out) *
+                  10000,
+              ) / 10000;
+          }
+          totalCost += cost;
+          return {
+            model,
+            count,
+            avgLatencyMs: avgLat,
+            avgResponseLen: avgResp,
+            estimatedCostUsd: cost,
+          };
+        })
+        .sort((a, b) => b.count - a.count);
+
+      last30 = {
+        totalRequests: total,
+        byModel,
+        fallbackCount,
+        fallbackRate: total === 0 ? 0 : Math.round((fallbackCount / total) * 1000) / 10,
+        reformulationCount,
+        reformulationRate:
+          total === 0 ? 0 : Math.round((reformulationCount / total) * 1000) / 10,
+        totalEstimatedCostUsd: Math.round(totalCost * 10000) / 10000,
+      };
+    } else {
+      last30 = {
+        totalRequests: 0,
+        byModel: [],
+        fallbackCount: 0,
+        fallbackRate: 0,
+        reformulationCount: 0,
+        reformulationRate: 0,
+        totalEstimatedCostUsd: 0,
+      };
+    }
+
+    audit("openai_metrics_viewed", {
+      adminId: req.userId,
+      configured,
+      modelsReachable,
+    });
+
+    res.json({
+      configured,
+      modelsReachable,
+      errorMessage,
+      pricingCoverage: Object.keys(OPENAI_COST_PER_1K_TOKENS_USD),
+      last30,
+    });
+  },
+);
+
+// ============================================================================
+// Replit metrics (env / deployment / runtime)
+// ============================================================================
+const CRITICAL_SECRETS = [
+  "SUPABASE_SECRET_KEY",
+  "VITE_SUPABASE_PUBLISHABLE_KEY",
+  "OPENAI_API_KEY",
+  "PADDLE_API_KEY",
+  "PADDLE_WEBHOOK_SECRET",
+  "BREVO_API_KEY",
+  "SESSION_SECRET",
+] as const;
+const OPTIONAL_SECRETS = [
+  "MICROSOFT_CLIENT_ID",
+  "MICROSOFT_CLIENT_SECRET",
+  "HUBSPOT_CLIENT_ID",
+  "HUBSPOT_CLIENT_SECRET",
+  "NOTION_CLIENT_ID",
+  "NOTION_CLIENT_SECRET",
+  "SLACK_CLIENT_ID",
+  "SLACK_CLIENT_SECRET",
+  "PIPEDRIVE_CLIENT_ID",
+  "PIPEDRIVE_CLIENT_SECRET",
+  "SALESFORCE_CLIENT_ID",
+  "SALESFORCE_CLIENT_SECRET",
+  "BREVO_SMTP_PASSWORD",
+  "PADDLE_CLIENT_TOKEN",
+] as const;
+
+router.get(
+  "/admin/replit/metrics",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    const mem = process.memoryUsage();
+    const domains = (process.env["REPLIT_DOMAINS"] || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const secretsStatus = [
+      ...CRITICAL_SECRETS.map((name) => ({
+        name,
+        configured: !!process.env[name],
+        critical: true,
+      })),
+      ...OPTIONAL_SECRETS.map((name) => ({
+        name,
+        configured: !!process.env[name],
+        critical: false,
+      })),
+    ];
+
+    audit("replit_metrics_viewed", { adminId: req.userId });
+
+    res.json({
+      nodeVersion: process.version,
+      uptimeSeconds: Math.round(process.uptime()),
+      memoryUsedMb: Math.round((mem.heapUsed / 1024 / 1024) * 10) / 10,
+      memoryRssMb: Math.round((mem.rss / 1024 / 1024) * 10) / 10,
+      isDeployment: !!process.env["REPLIT_DEPLOYMENT"],
+      domains,
+      replId: process.env["REPL_ID"] || null,
+      replSlug: process.env["REPL_SLUG"] || null,
+      replOwner: process.env["REPL_OWNER"] || null,
+      secretsStatus,
+    });
+  },
+);
+
 export default router;

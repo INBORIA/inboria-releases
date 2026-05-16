@@ -22,12 +22,15 @@ import type {
   AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
+  AdminBrevoMetrics,
   AdminCancelSubscriptionBody,
   AdminCancelSubscriptionResult,
   AdminConnection,
   AdminListUsersParams,
   AdminListWaitlistParams,
+  AdminOpenAIMetrics,
   AdminPaddleMetrics,
+  AdminReplitMetrics,
   AdminUserList,
   AdminWaitlistList,
   ApplyPackBody,
@@ -11664,6 +11667,231 @@ export function useAdminPaddleMetrics<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getAdminPaddleMetricsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Brevo transactional email metrics - admin only
+ */
+export const getAdminBrevoMetricsUrl = () => {
+  return `/api/admin/brevo/metrics`;
+};
+
+export const adminBrevoMetrics = async (
+  options?: RequestInit,
+): Promise<AdminBrevoMetrics> => {
+  return customFetch<AdminBrevoMetrics>(getAdminBrevoMetricsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminBrevoMetricsQueryKey = () => {
+  return [`/api/admin/brevo/metrics`] as const;
+};
+
+export const getAdminBrevoMetricsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminBrevoMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminBrevoMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminBrevoMetricsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminBrevoMetrics>>
+  > = ({ signal }) => adminBrevoMetrics({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminBrevoMetrics>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminBrevoMetricsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminBrevoMetrics>>
+>;
+export type AdminBrevoMetricsQueryError = ErrorType<void>;
+
+/**
+ * @summary Brevo transactional email metrics - admin only
+ */
+
+export function useAdminBrevoMetrics<
+  TData = Awaited<ReturnType<typeof adminBrevoMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminBrevoMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminBrevoMetricsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary OpenAI key health + local usage aggregates - admin only
+ */
+export const getAdminOpenAIMetricsUrl = () => {
+  return `/api/admin/openai/metrics`;
+};
+
+export const adminOpenAIMetrics = async (
+  options?: RequestInit,
+): Promise<AdminOpenAIMetrics> => {
+  return customFetch<AdminOpenAIMetrics>(getAdminOpenAIMetricsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminOpenAIMetricsQueryKey = () => {
+  return [`/api/admin/openai/metrics`] as const;
+};
+
+export const getAdminOpenAIMetricsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminOpenAIMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminOpenAIMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminOpenAIMetricsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminOpenAIMetrics>>
+  > = ({ signal }) => adminOpenAIMetrics({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminOpenAIMetrics>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminOpenAIMetricsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminOpenAIMetrics>>
+>;
+export type AdminOpenAIMetricsQueryError = ErrorType<void>;
+
+/**
+ * @summary OpenAI key health + local usage aggregates - admin only
+ */
+
+export function useAdminOpenAIMetrics<
+  TData = Awaited<ReturnType<typeof adminOpenAIMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminOpenAIMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminOpenAIMetricsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Replit deployment / runtime / secrets snapshot - admin only
+ */
+export const getAdminReplitMetricsUrl = () => {
+  return `/api/admin/replit/metrics`;
+};
+
+export const adminReplitMetrics = async (
+  options?: RequestInit,
+): Promise<AdminReplitMetrics> => {
+  return customFetch<AdminReplitMetrics>(getAdminReplitMetricsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminReplitMetricsQueryKey = () => {
+  return [`/api/admin/replit/metrics`] as const;
+};
+
+export const getAdminReplitMetricsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminReplitMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminReplitMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminReplitMetricsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminReplitMetrics>>
+  > = ({ signal }) => adminReplitMetrics({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminReplitMetrics>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminReplitMetricsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminReplitMetrics>>
+>;
+export type AdminReplitMetricsQueryError = ErrorType<void>;
+
+/**
+ * @summary Replit deployment / runtime / secrets snapshot - admin only
+ */
+
+export function useAdminReplitMetrics<
+  TData = Awaited<ReturnType<typeof adminReplitMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminReplitMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminReplitMetricsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
