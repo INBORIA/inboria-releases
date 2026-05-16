@@ -29,7 +29,7 @@ import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -102,6 +102,11 @@ export default function Taches() {
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; taskId: string } | null>(null);
+  // Position finale du menu après mesure (auto-flip vers le haut si dépasse,
+  // borne 8px de marge). Tant que la mesure n'est pas faite, le menu est
+  // rendu en opacity-0 pour éviter le flash position basse → haute.
+  // Convention partagée — cf. replit.md "menu contextuel auto-flip".
+  const [menuPlacement, setMenuPlacement] = useState<{ top: number; left: number; maxHeight: number } | null>(null);
   const [showComments, setShowComments] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const taskSelectionMode = selectedTaskIds.size > 0;
@@ -288,6 +293,38 @@ export default function Taches() {
       toast({ variant: "destructive", title: t("common.error") });
     }
   };
+
+  // Auto-flip / clamp du menu contextuel : mesure réelle de la hauteur du
+  // menu après render, puis flip vers le haut si overflow bas, et clamp
+  // horizontal pour rester dans la fenêtre (marge 8px).
+  useLayoutEffect(() => {
+    if (!contextMenu) {
+      setMenuPlacement(null);
+      return;
+    }
+    const el = contextMenuRef.current;
+    if (!el) return;
+    const margin = 8;
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    const rect = el.getBoundingClientRect();
+    const desiredH = rect.height;
+    const desiredW = rect.width;
+    // Vertical : tente d'ouvrir vers le bas ; sinon flip vers le haut.
+    let top = contextMenu.y;
+    let maxHeight = vh - top - margin;
+    if (desiredH > maxHeight && contextMenu.y > vh / 2) {
+      // flip up : ancre le menu au-dessus du curseur
+      const above = contextMenu.y - margin;
+      top = Math.max(margin, contextMenu.y - desiredH);
+      maxHeight = Math.min(above, vh - margin * 2);
+    } else {
+      maxHeight = Math.max(120, maxHeight);
+    }
+    // Horizontal : clamp pour rester visible.
+    const left = Math.min(contextMenu.x, vw - desiredW - margin);
+    setMenuPlacement({ top, left: Math.max(margin, left), maxHeight });
+  }, [contextMenu]);
 
   // Sous-menu hover ouvert (réassigner). Une seule clé à la fois.
   const [hoverMenu, setHoverMenu] = useState<{ taskId: string; kind: "assign" | "more" } | null>(null);
@@ -1005,8 +1042,24 @@ export default function Taches() {
           <div
             ref={contextMenuRef}
             data-context-menu
-            className="fixed z-[9999] min-w-[220px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-            style={{ top: Math.min(contextMenu.y, window.innerHeight - 260), left: Math.min(contextMenu.x, window.innerWidth - 240) }}
+            className="fixed z-[9999] min-w-[220px] max-w-[280px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-100"
+            style={
+              menuPlacement
+                ? {
+                    top: menuPlacement.top,
+                    left: menuPlacement.left,
+                    maxHeight: menuPlacement.maxHeight,
+                    opacity: 1,
+                  }
+                : {
+                    // Pré-mesure : on rend hors-vue en opacity 0 pour éviter
+                    // le flash position incorrecte.
+                    top: contextMenu.y,
+                    left: contextMenu.x,
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }
+            }
           >
             <div className="px-3 py-2 border-b border-[#1f2937]">
               <span className="text-[10px] text-[#6b7280] uppercase tracking-wider font-medium">
@@ -1016,7 +1069,7 @@ export default function Taches() {
                 }
               </span>
             </div>
-            <div className="py-1 max-h-[70vh] overflow-y-auto">
+            <div className="py-1 overflow-y-auto flex-1">
               {/* Mono — actions email-liées + actions task. Multi — actions
                   bulk uniquement. Parité Réception/Reportés. */}
               {!multi && ctxTask ? (
