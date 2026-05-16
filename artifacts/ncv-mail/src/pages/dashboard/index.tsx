@@ -5687,13 +5687,13 @@ export default function Dashboard() {
             <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
               {filterImportance === "important"
                 ? t("inbox.importance.important", "Importants")
-                : t("inbox.importance.all", "Tous")}
+                : t("inbox.importance.allLong", "Tous les filtres")}
             </span>
             <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
               {filterPriority === "urgent" ? t("inbox.priorities.urgent")
                 : filterPriority === "moyen" ? t("inbox.priorities.medium")
                 : filterPriority === "faible" ? t("inbox.priorities.low")
-                : t("inbox.priorities.all", "Toutes")}
+                : t("inbox.priorities.allLong", "Toutes les priorités")}
             </span>
 
             {/* Étape 5 — bouton Catégories : déplacé à droite des pastilles
