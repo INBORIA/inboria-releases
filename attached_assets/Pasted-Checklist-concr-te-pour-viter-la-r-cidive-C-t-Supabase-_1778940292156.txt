@@ -1,0 +1,66 @@
+Checklist concrète pour éviter la récidive
+Côté Supabase (à faire dans le dashboard, ~10 min)
+1. Vérifier le compute size actuel
+
+Dashboard Supabase → Settings → Compute and Disk → regarde "Compute size"
+Si tu es sur Nano ou Micro → c'est ton problème principal
+Recommandation : passer à Small (50$/mois en plus mais ~10× plus d'IO budget). Pour un SaaS B2B en prod avec des workers permanents, Nano est sous-dimensionné.
+2. Activer les alertes Disk IO
+
+Dashboard → Reports → Database → onglet "Disk I/O"
+Vérifie la courbe des 30 derniers jours : si tu touches souvent la ligne rouge → confirme le besoin d'upgrade
+Settings → Notifications → active "Disk IO budget warnings" par email
+3. Faire un VACUUM sur les grosses tables
+
+Dashboard → SQL Editor → lance :
+VACUUM ANALYZE emails;
+VACUUM ANALYZE email_chunks;
+VACUUM ANALYZE appointments;
+VACUUM ANALYZE inboria_chat_logs;
+
+À refaire tous les 1-2 mois (ou activer autovacuum agressif)
+4. Vérifier la taille des tables
+
+SELECT schemaname, relname, pg_size_pretty(pg_total_relation_size(relid)) AS size, n_live_tup AS rows
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 20;
+
+Si une table fait > 5 GB et croît vite → besoin d'archivage/purge.
+
+Côté Inboria (à faire dans le code, ~30 min - 2h)
+5. Audit des workers (le suspect n°1 du surcoût I/O)
+
+Je peux investiguer si tu veux : combien de workers tournent, leur fréquence de polling, leurs requêtes. Souvent on trouve un worker qui poll toutes les 5s au lieu de 60s → divise l'IO par 12 sans effort.
+
+6. Garde-fou auto-clean token (déjà proposé)
+~15 lignes dans lib/supabase.ts → la prochaine fois que Supabase tombe, tes users ne restent pas bloqués avec un token corrompu.
+
+7. Page de status publique (optionnel)
+Une simple page status.inboria.app qui ping /auth/v1/health et /api/healthz toutes les 30s → si tes users voient "incident en cours" ils ne pensent pas que c'est leur navigateur.
+
+Côté communication / process (à faire 1 fois)
+8. Backups automatiques
+
+Dashboard → Database → Backups → vérifier que c'est activé (sur Pro c'est inclus, 7 jours de PITR)
+Faire 1 fois un dump manuel pour avoir une copie locale de sécurité
+9. Plan B documenté
+Avoir 5 lignes de procédure écrite "que faire si Supabase tombe encore" :
+
+Comment vérifier (le curl POST /auth/v1/token que je t'ai fait)
+Comment communiquer aux users (template mail prêt)
+Qui contacter (support Supabase Pro + ticket d'urgence)
+📊 Réponse au support Supabase quand ils reviendront
+Quand ils te répondent, demande-leur explicitement :
+
+What was the root cause of the GoTrue migration crash loop?
+Was this incident triggered by my project hitting Disk IO budget limits?
+Should I upgrade compute size from [ton size actuel] to prevent recurrence?
+Is there an SLA credit available for this 2h+ downtime? (cf. Pro plan SLA)
+Is there a known fix or workaround on Supabase's side to prevent the GoTrue migration table desync at restart?
+Le point 4 (SLA credit) : sur le plan Pro, Supabase a un SLA 99.9% uptime. 2h10 de downtime = tu dépasses largement le budget mensuel autorisé (43 min/mois pour 99.9%). Tu as droit à un crédit. Demande-le, ils le donnent rarement spontanément.
+
+🎯 Mon ordre de priorité si j'étais toi
+Maintenant : envoyer le ticket support si pas déjà fait + demander SLA credit
+Cette semaine : vérifier compute size + upgrader si Nano/Micro + VACUUM
+Quand tu as 30 min : je code le garde-fou auto-clean token
+Quand tu as 1-2h : audit des workers, on cherche les gros consommateurs IO
