@@ -1,0 +1,149 @@
+
+We've updated our Terms of Service
+
+·
+Learn more
+
+Supabase
+NCV Management
+Pro
+
+NCV Mail
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+Ctrl K
+
+Help
+
+Advisor Center
+
+SQL Editor
+
+AI Assistant
+
+
+Settings
+Configuration
+General
+Compute and Disk
+Infrastructure
+Integrations
+API Keys
+JWT Keys
+Log Drains
+Add-ons
+Integrations
+Data API
+Vault
+Beta
+Billing
+Subscription
+Usage
+Compute and Disk
+Configure the compute and disk settings for your project.
+
+Compute size
+Hardware resources allocated to your Postgres database
+
+Documentation
+
+Nano
+Up to 0.5 GB memory
+Shared CPU
+
+Micro
+$0.01344
+/ hour
+1 GB memory
+2-core ARM CPU
+
+Small
+$0.0206
+/ hour
+2 GB memory
+2-core ARM CPU
+
+Medium
+$0.0822
+/ hour
+4 GB memory
+2-core ARM CPU
+
+Large
+$0.1517
+/ hour
+8 GB memory
+2-core ARM CPU
+
+XL
+$0.2877
+/ hour
+16 GB memory
+4-core ARM CPU
+
+2XL
+$0.562
+/ hour
+32 GB memory
+8-core ARM CPU
+
+4XL
+$1.32
+/ hour
+64 GB memory
+16-core ARM CPU
+
+8XL
+$2.562
+/ hour
+128 GB memory
+32-core ARM CPU
+
+12XL
+$3.836
+/ hour
+192 GB memory
+48-core ARM CPU
+
+16XL
+$5.12
+/ hour
+256 GB memory
+64-core ARM CPU
+
+>16XL
+Contact Us
+Custom memory
+Custom CPU
+
+Show fewer sizes
+Spend cap limits disk size to 8 GB
+You can resize your disk up to 8 GB with spend cap enabled. To expand beyond 8 GB or configure IOPS, throughput, and storage type, disable your spend cap.
+
+Disable spend cap
+Disk Size
+8
+Your plan includes up to 8 GB of gp3 storage.
+Documentation
+1.17
+GB used of
+8
+GB
+Autoscaling
+Database
+WAL
+System
+Available space
+Note: Disk Size refers to the total space your project occupies on disk, including the database itself (currently 0.24 GB), additional files like the write-ahead log (currently 0.14 GB), and other system resources (currently 0.79 GB). Data can take 5 minutes to refresh.
+
+
+Advanced disk settings
+Specify additional settings for your disk, including autoscaling configuration, IOPS, throughput, and disk type.
