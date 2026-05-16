@@ -99,7 +99,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
     ...(planFilter !== ALL_PLANS ? { plan: planFilter } : {}),
   };
 
-  const { data, isLoading, refetch } = useAdminListUsers(params);
+  const { data, isLoading, isFetching, refetch } = useAdminListUsers(params);
   const cancelMutation = useAdminCancelUserSubscription();
   const reactivateMutation = useAdminReactivateUser();
   const deleteMutation = useAdminDeleteUser();
@@ -231,8 +231,24 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
               {t("admin.subscribersSubtitle", { count: total })}
             </p>
           </div>
-          <Button variant="outline" onClick={() => refetch()} disabled={isLoading}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("admin.refresh")}
+          <Button
+            variant="outline"
+            onClick={async () => {
+              const res = await refetch();
+              const n = res.data?.users?.length ?? 0;
+              toast({ title: `Liste actualisée — ${n} compte${n > 1 ? "s" : ""}.` });
+            }}
+            disabled={isFetching}
+            data-testid="button-refresh-users"
+          >
+            {isFetching ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Actualisation…
+              </>
+            ) : (
+              "Rafraîchir"
+            )}
           </Button>
         </div>
 
