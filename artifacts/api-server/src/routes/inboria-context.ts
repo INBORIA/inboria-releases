@@ -562,7 +562,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             .limit(8),
       supabaseAdmin
         .from("profiles")
-        .select("full_name, ai_lang, email, timezone")
+        .select("full_name, ai_language, email, timezone")
         .eq("id", userId)
         .maybeSingle(),
       memberMailboxIds.length > 0
@@ -3111,12 +3111,18 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       // (mails, signatures) contenait des termes hispaniques sans que rien
       // ne corrige.
       const detectedLang = detectLangCode(lastUserTextForLang);
-      const profileLang = (profileRes.data as any)?.ai_lang;
-      const expectedLang =
-        detectedLang ||
-        (typeof profileLang === "string" && STRICT_LANG_RETRY_PROMPTS[profileLang]
-          ? profileLang
-          : null);
+      // Fallback : préférence langue du profil (ai_language, défaut "fr"
+      // au niveau produit — cf. routes/profile.ts, assignments.ts,
+      // bootstrap.ts qui font tous `ai_language || "fr"`). Quand
+      // ai_language n'est pas dans la table STRICT_LANG_RETRY_PROMPTS
+      // (langue exotique sans prompt strict défini), on retombe en
+      // dernier ressort sur "fr" qui est la langue par défaut du produit.
+      const rawProfileLang = (profileRes.data as any)?.ai_language;
+      const profileLang =
+        typeof rawProfileLang === "string" && STRICT_LANG_RETRY_PROMPTS[rawProfileLang]
+          ? rawProfileLang
+          : "fr";
+      const expectedLang = detectedLang || profileLang;
       const actualLang = detectLangCode(reply);
       if (
         expectedLang &&
