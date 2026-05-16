@@ -38,7 +38,7 @@ interface TierInfo {
 }
 
 const TIERS: TierInfo[] = [
-  { id: "nano", label: "Nano", ram: "0.5 GB", cpu: "Partagé", pricePerMonth: 10, maxRecommendedUsers: 20 },
+  { id: "nano", label: "Nano", ram: "0.5 GB", cpu: "Partagé", pricePerMonth: 0, maxRecommendedUsers: 20 },
   { id: "micro", label: "Micro", ram: "1 GB", cpu: "2-core ARM", pricePerMonth: 10, maxRecommendedUsers: 60 },
   { id: "small", label: "Small", ram: "2 GB", cpu: "2-core ARM", pricePerMonth: 15, maxRecommendedUsers: 150 },
   { id: "medium", label: "Medium", ram: "4 GB", cpu: "2-core ARM", pricePerMonth: 60, maxRecommendedUsers: 350 },
@@ -323,7 +323,7 @@ export default function AdminSupabase() {
                       <td className="py-2 px-2 text-[#b8c5d6]">{t.ram}</td>
                       <td className="py-2 px-2 text-[#b8c5d6]">{t.cpu}</td>
                       <td className="py-2 px-2 text-right text-[#b8c5d6] tabular-nums">
-                        {t.pricePerMonth}$/mois
+                        {t.pricePerMonth === 0 ? "inclus" : `${t.pricePerMonth}$/mois`}
                       </td>
                       <td className="py-2 px-2 text-right text-white tabular-nums">
                         ~{25 + (t.id === "nano" ? 0 : t.pricePerMonth)}$/mois
