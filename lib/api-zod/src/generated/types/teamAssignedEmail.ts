@@ -11,6 +11,8 @@ export interface TeamAssignedEmail {
   subject: string;
   sender: string;
   senderEmail?: string;
+  /** Statut brut de l'email (non_lu / read / open / done / snoozed…) — utilisé côté front pour piloter le rendu lu/non-lu et le menu Marquer comme lu/non lu. */
+  status?: string;
   priority?: string;
   createdAt: Date;
   /** @nullable */

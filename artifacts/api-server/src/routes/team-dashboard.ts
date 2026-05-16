@@ -267,6 +267,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       id: number;
       subject: string | null;
       sender: string | null;
+      status: string | null;
       priority: string | null;
       created_at: string;
       assigned_to: string;
@@ -278,6 +279,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       subject: string;
       sender: string;
       senderEmail: string;
+      status: string;
       priority: string;
       createdAt: string;
       sharedMailboxId: string | null;
@@ -335,7 +337,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
     const { data: rawRows, error } = await supabaseAdmin
       .from("emails")
       .select(
-        "id, subject, sender, priority, created_at, assigned_to, shared_mailbox_id",
+        "id, subject, sender, status, priority, created_at, assigned_to, shared_mailbox_id",
       )
       .or(scopeOr)
       .in("assigned_to", memberUserIds)
@@ -382,6 +384,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
         subject: r.subject || "",
         sender: s.name,
         senderEmail: s.email,
+        status: r.status || "",
         priority: r.priority || "faible",
         createdAt: r.created_at,
         sharedMailboxId: r.shared_mailbox_id,

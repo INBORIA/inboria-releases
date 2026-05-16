@@ -2770,6 +2770,12 @@ export const GetTeamAssignmentsResponse = zod.object({
           subject: zod.string(),
           sender: zod.string(),
           senderEmail: zod.string().optional(),
+          status: zod
+            .string()
+            .optional()
+            .describe(
+              "Statut brut de l'email (non_lu \/ read \/ open \/ done \/ snoozed…) — utilisé côté front pour piloter le rendu lu\/non-lu et le menu Marquer comme lu\/non lu.",
+            ),
           priority: zod.string().optional(),
           createdAt: zod.coerce.date(),
           sharedMailboxId: zod.string().nullish(),
