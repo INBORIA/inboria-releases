@@ -11,19 +11,29 @@ import {
   useDeleteTask,
   useCreateTask,
   getListTasksQueryKey,
+  getListEmailsQueryKey,
+  getListFoldersQueryKey,
   useSendEmail,
   useGenerateDraft,
   useGetProfile,
   useGetMyOrganisation,
   useGetOrganisationMembers,
+  useUpdateEmail,
+  useDeleteEmail,
+  useSnoozeEmail,
+  useAssignEmailsToFolder,
+  useGetCategoryCounts,
+  useListFolders,
 } from "@workspace/api-client-react";
+import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import {
-  Calendar, Mail, Trash2, Sparkles, Download,
+  Calendar, Mail, Mail as MailIcon, MailOpen, Trash2, Sparkles, Download,
   Reply, Send, Wand2, Loader2, Plus, RotateCcw, CheckCircle2,
   Check, X, ChevronRight, CheckSquare, Square,
   Forward, UserPlus, Copy, Type as TypeIcon, ExternalLink,
+  Clock, Archive, Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -293,6 +303,144 @@ export default function Taches() {
       toast({ variant: "destructive", title: t("common.error") });
     }
   };
+
+  // ─── Actions sur le mail lié à la tâche (parité 1:1 hover Réception) ───
+  // Toutes ces actions s'appliquent au mail derrière la tâche (task.emailId).
+  // Pour Snooze/Archive/Catégorie/Move/Block — on agit sur le mail source.
+  // Pour Delete — on supprime la TÂCHE, pas le mail (voir hover bar plus bas).
+  const updateEmailMut = useUpdateEmail();
+  const deleteEmailMut = useDeleteEmail();
+  const snoozeEmailMut = useSnoozeEmail();
+  const assignToFolderMut = useAssignEmailsToFolder();
+  const { data: categoryCounts } = useGetCategoryCounts();
+  const { data: userFolders } = useListFolders();
+  const createTaskMut2 = useCreateTask();
+
+  const invalidateEmailLists = () => {
+    queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+  };
+
+  const handleEmailToggleRead = (emailId: number, isUnread: boolean) => {
+    updateEmailMut.mutate(
+      { id: emailId, data: { status: isUnread ? "read" : "non_lu" } as any },
+      { onSuccess: () => { invalidateEmailLists(); toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") }); } },
+    );
+  };
+
+  const handleEmailSnooze = (emailId: number, hours: number, label: string) => {
+    let date: Date;
+    if (hours === 24) { date = new Date(); date.setDate(date.getDate() + 1); date.setHours(9,0,0,0); }
+    else if (hours === 168) { date = new Date(); const day = date.getDay(); const diff = (8 - day) % 7 || 7; date.setDate(date.getDate() + diff); date.setHours(9,0,0,0); }
+    else { date = new Date(Date.now() + hours * 3600 * 1000); }
+    snoozeEmailMut.mutate(
+      { id: emailId, data: { snoozeUntil: date.toISOString() } as any },
+      { onSuccess: () => { invalidateEmailLists(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); }, onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }) },
+    );
+  };
+
+  const handleEmailArchive = (emailId: number) => {
+    updateEmailMut.mutate(
+      { id: emailId, data: { status: "archived" } as any },
+      { onSuccess: () => { invalidateEmailLists(); toast({ title: t("inbox.archived", "Archivé") }); } },
+    );
+  };
+
+  const handleEmailSetCategory = (emailId: number, categoryId: string, name: string) => {
+    updateEmailMut.mutate(
+      { id: emailId, data: { categoryId } as any },
+      { onSuccess: () => { invalidateEmailLists(); toast({ title: t("inbox.categorized", "Catégorisé"), description: name }); } },
+    );
+  };
+
+  const handleEmailMove = async (emailId: number, folderId: string, folderName: string) => {
+    try {
+      await assignToFolderMut.mutateAsync({ data: { folderId, emailIds: [emailId] } as any });
+      toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
+      queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
+      invalidateEmailLists();
+    } catch {
+      toast({ variant: "destructive", title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }) });
+    }
+  };
+
+  const handleEmailCopySender = async (task: any) => {
+    const addr = (extractEmailAddress(task?.emailSenderEmail || task?.emailSender || "") || task?.emailSenderEmail || task?.emailSender || "").trim();
+    if (!addr) { toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" }); return; }
+    try { await navigator.clipboard.writeText(addr); toast({ title: t("inbox.copied", "Copié"), description: addr }); }
+    catch { toast({ variant: "destructive", title: t("common.error") }); }
+  };
+
+  const handleEmailCopySubject = async (task: any) => {
+    const subj = (task?.emailSubject || "").trim();
+    if (!subj) { toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" }); return; }
+    try { await navigator.clipboard.writeText(subj); toast({ title: t("inbox.copied", "Copié"), description: subj }); }
+    catch { toast({ variant: "destructive", title: t("common.error") }); }
+  };
+
+  const handleEmailDownloadEml = async (emailId: number) => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+      const res = await fetch(`${baseUrl}/api/emails/${emailId}/export.eml`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, `email_${emailId}.eml`);
+      toast({ title: t("inbox.exportDownloaded", "Téléchargé") });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: t("inbox.exportError", "Échec du téléchargement"), description: e?.message });
+    }
+  };
+
+  const handleEmailPrint = (task: any) => {
+    const w = window.open("", "_blank", "width=800,height=900");
+    if (!w) { toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") }); return; }
+    const safeBody = (task?.emailBody || task?.emailSummary || "").toString();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(task?.emailSubject || "").replace(/[<>]/g, "")}</title>
+      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+      </head><body>
+      <h1>${(task?.emailSubject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+      <div class="meta"><b>${(task?.emailSender || "").replace(/[<>]/g, "")}</b></div>
+      <div>${safeBody}</div>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+  };
+
+  const handleEmailCreateTaskFromTask = (task: any) => {
+    if (!task?.emailId) return;
+    const title = (task.emailSubject || "Tâche").slice(0, 200);
+    createTaskMut2.mutate(
+      { data: { title, emailId: task.emailId } as any },
+      {
+        onSuccess: () => { invalidate(); toast({ title: t("inbox.taskCreated", "Tâche créée"), description: title }); },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      },
+    );
+  };
+
+  // Builder du callback HoverActions pour une tâche donnée. Toutes les
+  // actions email-liées agissent sur task.emailId ; onDelete supprime
+  // la TÂCHE (pas le mail) car on est sur la page Tâches.
+  const buildTaskHoverCb = (task: any): HoverActionsCb => ({
+    onOpen: () => { setEmailDetailTask(task); setShowComments(false); },
+    onReply: () => openReplyForTask(task),
+    onForward: () => openForwardForTask(task),
+    onCreateTask: () => handleEmailCreateTaskFromTask(task),
+    onToggleRead: () => task.emailId && handleEmailToggleRead(task.emailId, !task.emailIsRead),
+    onSnooze: (hours, label) => task.emailId && handleEmailSnooze(task.emailId, hours, label),
+    onArchive: () => task.emailId && handleEmailArchive(task.emailId),
+    onSetCategory: (categoryId, name) => task.emailId && handleEmailSetCategory(task.emailId, categoryId, name),
+    onMove: (folderId, name) => task.emailId && handleEmailMove(task.emailId, folderId, name),
+    onCopySender: () => handleEmailCopySender(task),
+    onCopySubject: () => handleEmailCopySubject(task),
+    onDownloadEml: () => task.emailId && handleEmailDownloadEml(task.emailId),
+    onPrint: () => handleEmailPrint(task),
+    onBlockSender: () => { /* TODO Tâches : raccord backend bloquer expéditeur */ },
+    onDelete: () => handleDeleteTask(task.id),
+  });
 
   // Auto-flip / clamp du menu contextuel : mesure réelle de la hauteur du
   // menu après render, puis flip vers le haut si overflow bas, et clamp
@@ -710,12 +858,16 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Actions au survol — parité Réception/Reportés
-                          (icônes nues + tooltip natif). Adapté aux tâches :
-                          Done/Todo, Voir mail (si lié), Répondre, Transférer,
-                          Réassigner (avec sous-menu membres), Plus (copier
-                          titre / sujet / aller au mail), Supprimer. */}
-                      <div className="hidden group-hover:flex items-center gap-0 shrink-0 relative" onClick={(e) => e.stopPropagation()}>
+                      {/* Actions au survol — parité 1:1 avec Réception via le
+                          composant partagé <HoverActions>. On préfixe avec 2
+                          boutons task-spécifiques (Done/Todo + Réassigner)
+                          puis on délègue à HoverActions toutes les actions
+                          email (Voir/Reply/Forward/CreateTask/ToggleRead/
+                          Snooze/Archive/Catégorie/Move/Copier/Download/Print/
+                          Block/Delete) — Delete y supprime la TÂCHE (cf.
+                          buildTaskHoverCb). Si la tâche n'a pas de mail lié,
+                          on garde une mini-bar minimale. */}
+                      <div className="hidden group-hover:flex items-center gap-0 shrink-0 relative" onClick={(e) => e.stopPropagation()} onContextMenu={(e) => e.stopPropagation()}>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleDone(task.id, isDone); }}
                           className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
@@ -723,31 +875,6 @@ export default function Taches() {
                         >
                           {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                         </button>
-                        {task.emailSubject && (
-                          <>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setEmailDetailTask(task); setShowComments(false); }}
-                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-                              title={t("tasks.viewEmail")}
-                            >
-                              <Mail className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); openReplyForTask(task); }}
-                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-                              title={t("inbox.reply", "Répondre")}
-                            >
-                              <Reply className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); openForwardForTask(task); }}
-                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-                              title={t("inbox.forward", "Transférer")}
-                            >
-                              <Forward className="w-3.5 h-3.5" />
-                            </button>
-                          </>
-                        )}
                         {orgMembersList.length > 1 && (
                           <div className="relative">
                             <button
@@ -788,63 +915,23 @@ export default function Taches() {
                             )}
                           </div>
                         )}
-                        <div className="relative">
+                        {task.emailId ? (
+                          <HoverActions
+                            isUnread={task.emailIsRead === false}
+                            categoryCounts={categoryCounts as any[] | undefined}
+                            userFolders={userFolders as any[] | undefined}
+                            cb={buildTaskHoverCb(task)}
+                            showBlockSender={true}
+                          />
+                        ) : (
                           <button
-                            onClick={(e) => { e.stopPropagation(); setHoverMenu(hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "more" ? null : { taskId: task.id, kind: "more" }); }}
-                            className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-                            title={t("inbox.moreActions", "Plus d'actions")}
+                            onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
+                            className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
+                            title={t("common.delete")}
                           >
-                            <span className="inline-flex items-center justify-center w-3.5 h-3.5 leading-none text-[14px] font-semibold tracking-tighter">⋯</span>
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
-                          {hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "more" && (
-                            <div
-                              className="absolute right-0 top-full mt-1 z-[100] min-w-[220px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <button
-                                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
-                                onClick={(e) => { e.stopPropagation(); copyToClipboard(task.title || "", t("tasks.titleCopied", "Titre copié")); setHoverMenu(null); }}
-                              >
-                                <TypeIcon className="w-3.5 h-3.5" />
-                                {t("tasks.copyTitle", "Copier le titre")}
-                              </button>
-                              {task.emailSubject && (
-                                <button
-                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
-                                  onClick={(e) => { e.stopPropagation(); copyToClipboard(task.emailSubject || "", t("inbox.copiedSubject", "Sujet copié")); setHoverMenu(null); }}
-                                >
-                                  <Copy className="w-3.5 h-3.5" />
-                                  {t("inbox.copySubject", "Copier le sujet")}
-                                </button>
-                              )}
-                              {task.emailSenderEmail && (
-                                <button
-                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
-                                  onClick={(e) => { e.stopPropagation(); copyToClipboard(task.emailSenderEmail || "", t("inbox.copiedSenderEmail", "Adresse copiée")); setHoverMenu(null); }}
-                                >
-                                  <Copy className="w-3.5 h-3.5" />
-                                  {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
-                                </button>
-                              )}
-                              {task.emailId && (
-                                <button
-                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
-                                  onClick={(e) => { e.stopPropagation(); window.location.href = `${import.meta.env.BASE_URL}dashboard?openEmail=${task.emailId}`; }}
-                                >
-                                  <ExternalLink className="w-3.5 h-3.5" />
-                                  {t("tasks.openInInbox", "Ouvrir dans la Réception")}
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                          className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
-                          title={t("common.delete")}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        )}
                       </div>
                     </div>
                   );
@@ -1169,6 +1256,58 @@ export default function Taches() {
                       <ExternalLink className="w-3.5 h-3.5" />
                       {t("tasks.openInInbox", "Ouvrir dans la Réception")}
                     </button>
+                  )}
+                  {/* Actions sur le mail lié — parité Réception/Reportés.
+                      Affichées uniquement si la tâche a un emailId. */}
+                  {ctxTask.emailId && (
+                    <>
+                      <div className="border-t border-[#1f2937] my-1" />
+                      <div className="px-3 pt-2 pb-1 text-[10px] uppercase tracking-wider text-[#6b7280] font-medium">
+                        {t("tasks.linkedEmailActions", "Sur le mail lié")}
+                      </div>
+                      <button
+                        onClick={() => { handleEmailToggleRead(ctxTask.emailId, ctxTask.emailIsRead !== false); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        {ctxTask.emailIsRead === false ? <MailOpen className="w-3.5 h-3.5" /> : <MailIcon className="w-3.5 h-3.5" />}
+                        {ctxTask.emailIsRead === false ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
+                      </button>
+                      <button
+                        onClick={() => { handleEmailSnooze(ctxTask.emailId, 3, t("inbox.snooze3h", "Dans 3h")); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        {t("inbox.snooze", "Reporter")} (3h)
+                      </button>
+                      <button
+                        onClick={() => { handleEmailSnooze(ctxTask.emailId, 24, t("inbox.snoozeTomorrow", "Demain matin")); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        {t("inbox.snoozeTomorrow", "Demain matin")}
+                      </button>
+                      <button
+                        onClick={() => { handleEmailArchive(ctxTask.emailId); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Archive className="w-3.5 h-3.5" />
+                        {t("inbox.archive", "Archiver")}
+                      </button>
+                      <button
+                        onClick={() => { handleEmailDownloadEml(ctxTask.emailId); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        {t("inbox.downloadEml", "Télécharger .eml")}
+                      </button>
+                      <button
+                        onClick={() => { handleEmailPrint(ctxTask); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        {t("inbox.print", "Imprimer")}
+                      </button>
+                    </>
                   )}
                 </>
               ) : (
