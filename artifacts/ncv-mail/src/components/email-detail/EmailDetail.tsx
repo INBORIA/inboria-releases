@@ -656,33 +656,6 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   variant="outline"
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                  title={t("inbox.print", "Imprimer")}
-                  onClick={() => {
-                    const w = window.open("", "_blank", "width=800,height=900");
-                    if (!w) {
-                      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
-                      return;
-                    }
-                    const safeBody = (email.body || email.summary || "").toString();
-                    const escape = (s: string) => String(s || "").replace(/[<>]/g, "");
-                    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escape(email.subject || "")}</title>
-                      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
-                      </head><body>
-                      <h1>${escape(email.subject || "(sans sujet)")}</h1>
-                      <div class="meta"><b>${escape(email.sender || "")}</b> &lt;${escape(email.senderEmail || "")}&gt;<br/>${new Date(email.createdAt).toLocaleString()}</div>
-                      <div>${safeBody}</div>
-                      </body></html>`);
-                    w.document.close();
-                    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
-                  }}
-                >
-                  <Printer className="w-3 h-3" />
-                  {t("inbox.print", "Imprimer")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   disabled={forwardIntroLoading}
                   onClick={async () => {
                     const defConn = forwardConnectionId || resolveDefaultConnectionId();
@@ -722,6 +695,33 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 >
                   {forwardIntroLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {forwardIntroLoading ? t("inbox.generating") : t("inbox.aiForward")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+                  title={t("inbox.print", "Imprimer")}
+                  onClick={() => {
+                    const w = window.open("", "_blank", "width=800,height=900");
+                    if (!w) {
+                      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
+                      return;
+                    }
+                    const safeBody = (email.body || email.summary || "").toString();
+                    const escape = (s: string) => String(s || "").replace(/[<>]/g, "");
+                    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escape(email.subject || "")}</title>
+                      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+                      </head><body>
+                      <h1>${escape(email.subject || "(sans sujet)")}</h1>
+                      <div class="meta"><b>${escape(email.sender || "")}</b> &lt;${escape(email.senderEmail || "")}&gt;<br/>${new Date(email.createdAt).toLocaleString()}</div>
+                      <div>${safeBody}</div>
+                      </body></html>`);
+                    w.document.close();
+                    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+                  }}
+                >
+                  <Printer className="w-3 h-3" />
+                  {t("inbox.print", "Imprimer")}
                 </Button>
                 <SnoozeButton
                   emailId={email.id}
