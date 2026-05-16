@@ -4,7 +4,7 @@ import React from "react";
 import { Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { useGetProfile } from "@workspace/api-client-react";
+import { useGetProfile, getGetProfileQueryKey } from "@workspace/api-client-react";
 
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,7 +21,9 @@ function HeaderProfileButton() {
   const colors = useColors();
   const router = useRouter();
   const { session } = useAuth();
-  const { data: profile } = useGetProfile({ query: { enabled: !!session } });
+  const { data: profile } = useGetProfile({
+    query: { enabled: !!session, queryKey: getGetProfileQueryKey() },
+  });
   const name = profile?.fullName || session?.user?.email || "";
   const initials = name
     .split(/\s+/)
