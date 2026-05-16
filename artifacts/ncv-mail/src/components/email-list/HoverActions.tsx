@@ -37,6 +37,10 @@ export type HoverActionsCb = {
   onPrint: () => void;
   onBlockSender: () => void;
   onDelete: () => void;
+  // Reportés uniquement — réveille l'email (sort de l'état snoozed) et
+  // le renvoie en Réception immédiatement. Optionnel : seul Reportés
+  // (showUnsnooze=true) affiche le bouton.
+  onUnsnooze?: () => void;
 };
 
 // Barre d'actions au survol — extrait du composant inline historique de
@@ -49,12 +53,14 @@ export function HoverActions({
   userFolders,
   cb,
   showBlockSender = true,
+  showUnsnooze = false,
 }: {
   isUnread: boolean;
   categoryCounts: any[] | undefined;
   userFolders: any[] | undefined;
   cb: HoverActionsCb;
   showBlockSender?: boolean;
+  showUnsnooze?: boolean;
 }) {
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move" | "more">(null);
@@ -82,6 +88,17 @@ export function HoverActions({
 
   return (
     <div ref={wrapRef} className="hidden group-hover:flex items-center gap-0 shrink-0 relative" onMouseDown={stopMD} onClick={stop}>
+      {showUnsnooze && cb.onUnsnooze && (
+        <button
+          className="p-1 rounded hover:bg-primary/[0.12] text-primary/80 hover:text-primary"
+          title={t("wave1.snoozeWake", "Réveiller maintenant")}
+          onMouseDown={stopMD}
+          onClick={click(cb.onUnsnooze)}
+          data-testid="hover-unsnooze"
+        >
+          <Bell className="w-3.5 h-3.5" />
+        </button>
+      )}
       <button className={btn} title={t("inbox.openEmail")} onMouseDown={stopMD} onClick={click(cb.onOpen)}><ChevronRight className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD} onClick={click(cb.onReply)}><Reply className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD} onClick={click(cb.onForward)}><Forward className="w-3.5 h-3.5" /></button>

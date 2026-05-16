@@ -25,6 +25,7 @@ import MesDossiers from "@/pages/dashboard/dossiers";
 import Indesirables from "@/pages/dashboard/indesirables";
 import Corbeille from "@/pages/dashboard/corbeille";
 import Envoyes from "@/pages/dashboard/envoyes";
+import Reportes from "@/pages/dashboard/reportes";
 import Suivi from "@/pages/dashboard/suivi";
 import Programmes from "@/pages/dashboard/programmes";
 import BilanQuotidien from "@/pages/dashboard/bilan";
@@ -246,10 +247,12 @@ function Router() {
       <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
       <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/programmes" component={() => <ProtectedRoute component={Programmes} />} />
-      {/* task #293 — /dashboard/reportes monte désormais Dashboard pour
-          afficher le panneau Reportés inline dans la barre d'onglets de la
-          Réception. La page Reportes autonome reste exportée pour compat. */}
-      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Dashboard} />} />
+      {/* /dashboard/reportes — page autonome refactorisée façon Envoyés
+          (52px Superhuman + HoverActions + clic droit + sélection multiple
+          + colonne « Réveille le » + bouton « Réveiller maintenant » au
+          survol). Remplace l'ancienne version qui montait Dashboard
+          (task #293) pour afficher SnoozedPanel inline. */}
+      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Reportes} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/dossiers" component={() => <ProtectedRoute component={MesDossiers} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
