@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
@@ -90,6 +91,10 @@ export default function Taches() {
 
   const [filter, setFilter] = useState<string>("all");
   const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">("mine");
+  // Recherche locale alimentée par MailPageHeader (parité Reportés/Envoyés —
+  // le bandeau gère l'input ; la liste filtre côté front sur titre + sujet
+  // d'email rattaché + nom de l'assigné).
+  const [headerSearch, setHeaderSearch] = useState("");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -337,13 +342,25 @@ export default function Taches() {
     if (scope === "team" && filter === "ai") setFilter("all");
   }, [scope, filter]);
 
-  const filteredTasks = filter === "ai"
+  const filteredByPill = filter === "ai"
     ? taskList.filter((t: any) => t.source === "ai")
     : filter === "todo"
     ? taskList.filter((t: any) => t.status !== "done")
     : filter === "done"
     ? taskList.filter((t: any) => t.status === "done")
     : taskList;
+
+  // Recherche : titre + sujet email rattaché + expéditeur. Casse-insensible.
+  const filteredTasks = (() => {
+    const q = headerSearch.trim().toLowerCase();
+    if (!q) return filteredByPill;
+    return filteredByPill.filter((tk: any) => {
+      const title = String(tk.title ?? "").toLowerCase();
+      const subj = String(tk.emailSubject ?? "").toLowerCase();
+      const sender = String(tk.emailSender ?? tk.emailSenderEmail ?? "").toLowerCase();
+      return title.includes(q) || subj.includes(q) || sender.includes(q);
+    });
+  })();
 
   const filters = [
     { key: "all", label: t("tasks.all"), count: taskList.length },
@@ -356,17 +373,41 @@ export default function Taches() {
 
   return (
     <DashboardLayout>
+      {!detailOpen && (
+        <MailPageHeader
+          currentTab="taches"
+          searchValue={headerSearch}
+          onSearchChange={setHeaderSearch}
+        />
+      )}
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-6xl">
         {!detailOpen && <BackToInboxButton />}
         {!detailOpen && (
         <>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-          <div>
-            <h1 className="text-[16px] font-semibold text-foreground tracking-tight">
-              {t("tasks.title")}
-            </h1>
+        {/* Onglets Mes tâches / Équipe + actions à droite (Nouvelle tâche /
+            Export CSV). Le bandeau sticky MailPageHeader au-dessus apporte
+            recherche + tabs boîtes mail (parité Reportés/Envoyés) ; ici on
+            garde les actions task-spécifiques séparées. */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-3 border-b border-[#1f2937]">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {([
+              { key: "mine", label: t("tasks.myTasks", "Mes tâches") },
+              { key: "team", label: t("tasks.teamTasks", "Tâches assignées à l'équipe") },
+            ] as const).map((s) => (
+              <button
+                key={s.key}
+                onClick={() => setScope(s.key)}
+                className={`text-[12px] px-3 py-2 transition-all border-b -mb-px ${
+                  scope === s.key
+                    ? "border-white text-white font-medium"
+                    : "border-transparent text-[#8b95a7] hover:text-white"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pb-2">
             <Button
               size="sm"
               onClick={() => setShowAddTask(true)}
@@ -392,25 +433,6 @@ export default function Taches() {
               {t("tasks.export")}
             </Button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 mb-3 flex-wrap border-b border-[#1f2937]">
-          {([
-            { key: "mine", label: t("tasks.myTasks", "Mes tâches") },
-            { key: "team", label: t("tasks.teamTasks", "Tâches assignées à l'équipe") },
-          ] as const).map((s) => (
-            <button
-              key={s.key}
-              onClick={() => setScope(s.key)}
-              className={`text-[12px] px-3 py-2 transition-all border-b -mb-px ${
-                scope === s.key
-                  ? "border-white text-white font-medium"
-                  : "border-transparent text-[#8b95a7] hover:text-white"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
         </div>
 
         <div className="flex items-center gap-1.5 mb-3">
