@@ -3828,6 +3828,28 @@ export const AdminProfitabilitySnapshotResponse = zod.object({
       marginPct: zod.number().nullish(),
     }),
   ),
+  dataSource: zod.object({
+    revenue: zod.enum(["paddle_live", "estimated"]),
+    paddleFees: zod.enum(["paddle_live", "estimated"]),
+    openai: zod.enum(["estimated_from_logs", "openai_usage_api"]),
+    supabase: zod.enum(["env_constant", "supabase_billing_api"]),
+    replit: zod.enum(["env_constant"]),
+    brevo: zod.enum(["env_constant", "brevo_api"]),
+  }),
+  paddle: zod.object({
+    transactionCount: zod.number(),
+    unallocatedRevenueEur: zod.number(),
+    unallocatedCount: zod.number(),
+    unknownCurrencies: zod.array(zod.string()),
+    currencyBreakdown: zod.record(
+      zod.string(),
+      zod.object({
+        revenueEur: zod.number(),
+        txCount: zod.number(),
+      }),
+    ),
+    fallbackReason: zod.string().nullish(),
+  }),
   meta: zod.object({
     fxUsdToEur: zod.number(),
     generatedAt: zod.coerce.date(),

@@ -1566,6 +1566,79 @@ export type AdminProfitabilitySnapshotByPlanItem = {
   marginPct?: number | null;
 };
 
+export type AdminProfitabilitySnapshotDataSourceRevenue =
+  (typeof AdminProfitabilitySnapshotDataSourceRevenue)[keyof typeof AdminProfitabilitySnapshotDataSourceRevenue];
+
+export const AdminProfitabilitySnapshotDataSourceRevenue = {
+  paddle_live: "paddle_live",
+  estimated: "estimated",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSourcePaddleFees =
+  (typeof AdminProfitabilitySnapshotDataSourcePaddleFees)[keyof typeof AdminProfitabilitySnapshotDataSourcePaddleFees];
+
+export const AdminProfitabilitySnapshotDataSourcePaddleFees = {
+  paddle_live: "paddle_live",
+  estimated: "estimated",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSourceOpenai =
+  (typeof AdminProfitabilitySnapshotDataSourceOpenai)[keyof typeof AdminProfitabilitySnapshotDataSourceOpenai];
+
+export const AdminProfitabilitySnapshotDataSourceOpenai = {
+  estimated_from_logs: "estimated_from_logs",
+  openai_usage_api: "openai_usage_api",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSourceSupabase =
+  (typeof AdminProfitabilitySnapshotDataSourceSupabase)[keyof typeof AdminProfitabilitySnapshotDataSourceSupabase];
+
+export const AdminProfitabilitySnapshotDataSourceSupabase = {
+  env_constant: "env_constant",
+  supabase_billing_api: "supabase_billing_api",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSourceReplit =
+  (typeof AdminProfitabilitySnapshotDataSourceReplit)[keyof typeof AdminProfitabilitySnapshotDataSourceReplit];
+
+export const AdminProfitabilitySnapshotDataSourceReplit = {
+  env_constant: "env_constant",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSourceBrevo =
+  (typeof AdminProfitabilitySnapshotDataSourceBrevo)[keyof typeof AdminProfitabilitySnapshotDataSourceBrevo];
+
+export const AdminProfitabilitySnapshotDataSourceBrevo = {
+  env_constant: "env_constant",
+  brevo_api: "brevo_api",
+} as const;
+
+export type AdminProfitabilitySnapshotDataSource = {
+  revenue: AdminProfitabilitySnapshotDataSourceRevenue;
+  paddleFees: AdminProfitabilitySnapshotDataSourcePaddleFees;
+  openai: AdminProfitabilitySnapshotDataSourceOpenai;
+  supabase: AdminProfitabilitySnapshotDataSourceSupabase;
+  replit: AdminProfitabilitySnapshotDataSourceReplit;
+  brevo: AdminProfitabilitySnapshotDataSourceBrevo;
+};
+
+export type AdminProfitabilitySnapshotPaddleCurrencyBreakdown = {
+  [key: string]: {
+    revenueEur: number;
+    txCount: number;
+  };
+};
+
+export type AdminProfitabilitySnapshotPaddle = {
+  transactionCount: number;
+  unallocatedRevenueEur: number;
+  unallocatedCount: number;
+  unknownCurrencies: string[];
+  currencyBreakdown: AdminProfitabilitySnapshotPaddleCurrencyBreakdown;
+  /** @nullable */
+  fallbackReason?: string | null;
+};
+
 export type AdminProfitabilitySnapshotMeta = {
   fxUsdToEur: number;
   generatedAt: string;
@@ -1582,6 +1655,8 @@ export interface AdminProfitabilitySnapshot {
   users: AdminProfitabilitySnapshotUsers;
   perUser: AdminProfitabilitySnapshotPerUser;
   byPlan: AdminProfitabilitySnapshotByPlanItem[];
+  dataSource: AdminProfitabilitySnapshotDataSource;
+  paddle: AdminProfitabilitySnapshotPaddle;
   meta: AdminProfitabilitySnapshotMeta;
   degraded: boolean;
   /** @nullable */

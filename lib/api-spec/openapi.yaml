@@ -6174,7 +6174,7 @@ components:
 
     AdminProfitabilitySnapshot:
       type: object
-      required: [currency, revenue, costs, margin, users, perUser, byPlan, meta, degraded]
+      required: [currency, revenue, costs, margin, users, perUser, byPlan, dataSource, paddle, meta, degraded]
       properties:
         currency: { type: string, example: EUR }
         revenue:
@@ -6232,6 +6232,48 @@ components:
               marginEur: { type: number }
               marginPct:
                 type: ["number", "null"]
+        dataSource:
+          type: object
+          required: [revenue, paddleFees, openai, supabase, replit, brevo]
+          properties:
+            revenue:
+              type: string
+              enum: [paddle_live, estimated]
+            paddleFees:
+              type: string
+              enum: [paddle_live, estimated]
+            openai:
+              type: string
+              enum: [estimated_from_logs, openai_usage_api]
+            supabase:
+              type: string
+              enum: [env_constant, supabase_billing_api]
+            replit:
+              type: string
+              enum: [env_constant]
+            brevo:
+              type: string
+              enum: [env_constant, brevo_api]
+        paddle:
+          type: object
+          required: [transactionCount, unallocatedRevenueEur, unallocatedCount, unknownCurrencies, currencyBreakdown]
+          properties:
+            transactionCount: { type: integer }
+            unallocatedRevenueEur: { type: number }
+            unallocatedCount: { type: integer }
+            unknownCurrencies:
+              type: array
+              items: { type: string }
+            currencyBreakdown:
+              type: object
+              additionalProperties:
+                type: object
+                required: [revenueEur, txCount]
+                properties:
+                  revenueEur: { type: number }
+                  txCount: { type: integer }
+            fallbackReason:
+              type: ["string", "null"]
         meta:
           type: object
           required: [fxUsdToEur, generatedAt, openaiCostUsdRaw, periodDays, paddleFeeAssumption]

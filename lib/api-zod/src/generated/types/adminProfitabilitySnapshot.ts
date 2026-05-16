@@ -7,8 +7,10 @@
  */
 import type { AdminProfitabilitySnapshotByPlanItem } from "./adminProfitabilitySnapshotByPlanItem";
 import type { AdminProfitabilitySnapshotCosts } from "./adminProfitabilitySnapshotCosts";
+import type { AdminProfitabilitySnapshotDataSource } from "./adminProfitabilitySnapshotDataSource";
 import type { AdminProfitabilitySnapshotMargin } from "./adminProfitabilitySnapshotMargin";
 import type { AdminProfitabilitySnapshotMeta } from "./adminProfitabilitySnapshotMeta";
+import type { AdminProfitabilitySnapshotPaddle } from "./adminProfitabilitySnapshotPaddle";
 import type { AdminProfitabilitySnapshotPerUser } from "./adminProfitabilitySnapshotPerUser";
 import type { AdminProfitabilitySnapshotRevenue } from "./adminProfitabilitySnapshotRevenue";
 import type { AdminProfitabilitySnapshotUsers } from "./adminProfitabilitySnapshotUsers";
@@ -21,6 +23,8 @@ export interface AdminProfitabilitySnapshot {
   users: AdminProfitabilitySnapshotUsers;
   perUser: AdminProfitabilitySnapshotPerUser;
   byPlan: AdminProfitabilitySnapshotByPlanItem[];
+  dataSource: AdminProfitabilitySnapshotDataSource;
+  paddle: AdminProfitabilitySnapshotPaddle;
   meta: AdminProfitabilitySnapshotMeta;
   degraded: boolean;
   /** @nullable */

@@ -10,7 +10,27 @@ import {
   Users,
   BarChart3,
   Wallet,
+  CheckCircle2,
+  CircleDashed,
+  Receipt,
 } from "lucide-react";
+
+function SourceBadge({ source }: { source: "live" | "estimated" }) {
+  if (source === "live") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+        <CheckCircle2 className="h-2.5 w-2.5" />
+        Réel
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
+      <CircleDashed className="h-2.5 w-2.5" />
+      Estimé
+    </span>
+  );
+}
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
@@ -79,15 +99,37 @@ export default function AdminRentabilite() {
     );
   }
 
-  const { revenue, costs, margin, users, perUser, byPlan, meta, degraded, degradedReason } = data;
+  const {
+    revenue,
+    costs,
+    margin,
+    users,
+    perUser,
+    byPlan,
+    meta,
+    degraded,
+    degradedReason,
+    dataSource,
+    paddle,
+  } = data;
+  const revenueLive = dataSource.revenue === "paddle_live";
 
-  const costRows = [
-    { key: "supabase", label: "Supabase", val: costs.supabaseEur, color: "bg-emerald-500" },
-    { key: "openai", label: "OpenAI", val: costs.openaiEur, color: "bg-sky-500" },
-    { key: "paddle", label: "Frais Paddle", val: costs.paddleFeesEur, color: "bg-violet-500" },
-    { key: "replit", label: "Replit", val: costs.replitEur, color: "bg-amber-500" },
-    { key: "brevo", label: "Brevo", val: costs.brevoEur, color: "bg-rose-500" },
-  ].sort((a, b) => b.val - a.val);
+  type CostRow = {
+    key: string;
+    label: string;
+    val: number;
+    color: string;
+    source: "live" | "estimated";
+  };
+  const paddleFeeSource: "live" | "estimated" = revenueLive ? "live" : "estimated";
+  const costRows: CostRow[] = [
+    { key: "supabase", label: "Supabase", val: costs.supabaseEur, color: "bg-emerald-500", source: "estimated" },
+    { key: "openai", label: "OpenAI", val: costs.openaiEur, color: "bg-sky-500", source: "estimated" },
+    { key: "paddle", label: "Frais Paddle", val: costs.paddleFeesEur, color: "bg-violet-500", source: paddleFeeSource },
+    { key: "replit", label: "Replit", val: costs.replitEur, color: "bg-amber-500", source: "estimated" },
+    { key: "brevo", label: "Brevo", val: costs.brevoEur, color: "bg-rose-500", source: "estimated" },
+  ];
+  costRows.sort((a, b) => b.val - a.val);
 
   const totalCost = costs.totalEur || 0.01;
   const isProfit = margin.grossEur >= 0;
@@ -105,6 +147,47 @@ export default function AdminRentabilite() {
                 </div>
                 <div className="text-xs text-red-200/80">
                   {degradedReason ?? "Une ou plusieurs sources n'ont pas répondu."}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bandeau source de données */}
+      {!revenueLive && paddle.fallbackReason && (
+        <Card className="bg-amber-500/10 border-amber-500/30">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
+              <div className="space-y-1 flex-1">
+                <div className="font-semibold text-white">
+                  Recettes en mode estimé (Paddle indisponible)
+                </div>
+                <div className="text-xs text-amber-200/80">
+                  Les revenus affichés sont calculés depuis les abonnés en base
+                  (nb × prix), pas depuis les transactions réelles facturées.
+                  Raison : <code className="text-[11px]">{paddle.fallbackReason}</code>.
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {revenueLive && paddle.unallocatedCount > 0 && (
+        <Card className="bg-amber-500/10 border-amber-500/30">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
+              <div className="space-y-1 flex-1">
+                <div className="font-semibold text-white">
+                  {paddle.unallocatedCount} transaction(s) non rattachée(s) à un plan
+                  ({fmtEur(paddle.unallocatedRevenueEur)})
+                </div>
+                <div className="text-xs text-amber-200/80">
+                  Le price_id de ces transactions ne correspond ni à{" "}
+                  <code>PADDLE_PRICE_SOLO</code>, ni à <code>PADDLE_PRICE_PRO</code>,
+                  ni à <code>PADDLE_PRICE_BUSINESS</code>. Vérifie le mapping en env.
                 </div>
               </div>
             </div>
@@ -152,7 +235,9 @@ export default function AdminRentabilite() {
           </div>
           <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
             <div className="rounded bg-emerald-500/10 border border-emerald-500/20 px-3 py-2">
-              <div className="text-[10px] uppercase text-emerald-300/70">Revenus</div>
+              <div className="text-[10px] uppercase text-emerald-300/70 flex items-center justify-center gap-1.5">
+                Revenus <SourceBadge source={revenueLive ? "live" : "estimated"} />
+              </div>
               <div className="text-lg font-bold text-emerald-400 tabular-nums">
                 {fmtEur0(revenue.mrrEur)}
               </div>
@@ -240,7 +325,9 @@ export default function AdminRentabilite() {
               return (
                 <div key={c.key}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-[#b8c5d6]">{c.label}</span>
+                    <span className="text-[#b8c5d6] flex items-center gap-2">
+                      {c.label} <SourceBadge source={c.source} />
+                    </span>
                     <span className="tabular-nums text-[#b8c5d6]">
                       {fmtEur(c.val)}{" "}
                       <span className="text-[11px] text-[#6b7280]">({pct}%)</span>
@@ -363,6 +450,84 @@ export default function AdminRentabilite() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Détail Paddle live (si dispo) */}
+      {revenueLive && (
+        <Card className="bg-[#0d1117] border-[#1f2937]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white text-base">
+              <Receipt className="h-4 w-4 text-primary" />
+              Transactions Paddle (30 derniers jours)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              <div className="rounded bg-[#161b22] border border-[#1f2937] px-3 py-2">
+                <div className="text-[10px] uppercase text-[#8b95a7]">
+                  Transactions encaissées
+                </div>
+                <div className="text-xl font-bold text-white tabular-nums">
+                  {paddle.transactionCount}
+                </div>
+              </div>
+              <div className="rounded bg-[#161b22] border border-[#1f2937] px-3 py-2">
+                <div className="text-[10px] uppercase text-[#8b95a7]">
+                  Brut HT
+                </div>
+                <div className="text-xl font-bold text-emerald-400 tabular-nums">
+                  {fmtEur(revenue.mrrEur)}
+                </div>
+              </div>
+              <div className="rounded bg-[#161b22] border border-[#1f2937] px-3 py-2">
+                <div className="text-[10px] uppercase text-[#8b95a7]">
+                  Net encaissé (après frais)
+                </div>
+                <div className="text-xl font-bold text-emerald-300 tabular-nums">
+                  {fmtEur(revenue.netRevenueEur)}
+                </div>
+              </div>
+            </div>
+            {Object.keys(paddle.currencyBreakdown).length > 0 && (
+              <div className="space-y-2">
+                <div className="text-xs uppercase text-[#8b95a7] tracking-wide">
+                  Ventilation par devise (convertie en EUR via FX constantes)
+                </div>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#1f2937] text-[#8b95a7] text-xs uppercase">
+                      <th className="text-left py-2 px-2 font-medium">Devise</th>
+                      <th className="text-right py-2 px-2 font-medium">Transactions</th>
+                      <th className="text-right py-2 px-2 font-medium">Montant (EUR)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(paddle.currencyBreakdown)
+                      .sort(([, a], [, b]) => b.revenueEur - a.revenueEur)
+                      .map(([ccy, b]) => (
+                        <tr key={ccy} className="border-b border-[#1f2937]/50">
+                          <td className="py-1.5 px-2 text-white font-mono text-xs">{ccy}</td>
+                          <td className="py-1.5 px-2 text-right text-[#b8c5d6] tabular-nums">
+                            {b.txCount}
+                          </td>
+                          <td className="py-1.5 px-2 text-right text-emerald-400 tabular-nums">
+                            {fmtEur(b.revenueEur)}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {paddle.unknownCurrencies.length > 0 && (
+              <div className="mt-3 text-xs text-amber-300/80">
+                Devises ignorées (pas de FX configuré) :{" "}
+                {paddle.unknownCurrencies.join(", ")}. Ajouter via env (ex :
+                <code className="mx-1">GBP_TO_EUR_FX=1.17</code>).
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Pistes d'action */}
       <Card className="bg-[#0d1117] border-[#1f2937]">

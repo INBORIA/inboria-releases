@@ -1434,8 +1434,166 @@ const REPLIT_MONTHLY_COST_EUR =
   Number(process.env["REPLIT_MONTHLY_COST_EUR"]) || 20;
 const BREVO_MONTHLY_COST_EUR =
   Number(process.env["BREVO_MONTHLY_COST_EUR"]) || 0;
+// Fallback formula si Paddle API indisponible (biller-of-record)
 const PADDLE_FEE_PCT = 0.05;
 const PADDLE_FEE_FIXED_EUR = 0.5;
+
+// Table FX pour convertir les transactions Paddle non-EUR. Modifiable
+// via env si besoin de réindexer rapidement (ex. USD_TO_EUR_FX=0.93).
+const FX_TO_EUR: Record<string, number> = {
+  EUR: 1,
+  USD: USD_TO_EUR,
+  GBP: Number(process.env["GBP_TO_EUR_FX"]) || 1.17,
+  CAD: Number(process.env["CAD_TO_EUR_FX"]) || 0.67,
+  AUD: Number(process.env["AUD_TO_EUR_FX"]) || 0.61,
+  CHF: Number(process.env["CHF_TO_EUR_FX"]) || 1.04,
+};
+
+// Map price_id Paddle → plan interne. Si non-configuré, la transaction
+// est comptée dans "unallocated" (visible côté UI pour debug).
+function getPriceIdToPlanMap(): Record<string, "solo" | "pro" | "business"> {
+  const map: Record<string, "solo" | "pro" | "business"> = {};
+  const solo = process.env["PADDLE_PRICE_SOLO"];
+  const pro = process.env["PADDLE_PRICE_PRO"];
+  const business = process.env["PADDLE_PRICE_BUSINESS"];
+  if (solo) map[solo] = "solo";
+  if (pro) map[pro] = "pro";
+  if (business) map[business] = "business";
+  return map;
+}
+
+interface PaddleP30dResult {
+  ok: boolean;
+  reason?: string;
+  // Brut HT facturé (avant frais Paddle)
+  grossRevenueEur: number;
+  // Frais Paddle (commission + frais fixes par transaction) en EUR
+  paddleFeesEur: number;
+  // Net encaissé = grossRevenue - fees - tax (taxe reversée par Paddle)
+  netRevenueEur: number;
+  transactionCount: number;
+  unallocatedRevenueEur: number;
+  unallocatedCount: number;
+  byPlan: Record<
+    "solo" | "pro" | "business",
+    { revenueEur: number; feesEur: number; txCount: number }
+  >;
+  currencyBreakdown: Record<string, { revenueEur: number; txCount: number }>;
+  unknownCurrencies: string[];
+}
+
+async function fetchPaddleP30d(sinceISO: string): Promise<PaddleP30dResult> {
+  const empty = (): PaddleP30dResult["byPlan"] => ({
+    solo: { revenueEur: 0, feesEur: 0, txCount: 0 },
+    pro: { revenueEur: 0, feesEur: 0, txCount: 0 },
+    business: { revenueEur: 0, feesEur: 0, txCount: 0 },
+  });
+  const result: PaddleP30dResult = {
+    ok: false,
+    grossRevenueEur: 0,
+    paddleFeesEur: 0,
+    netRevenueEur: 0,
+    transactionCount: 0,
+    unallocatedRevenueEur: 0,
+    unallocatedCount: 0,
+    byPlan: empty(),
+    currencyBreakdown: {},
+    unknownCurrencies: [],
+  };
+  if (!process.env["PADDLE_API_KEY"]) {
+    result.reason = "PADDLE_API_KEY not configured";
+    return result;
+  }
+  try {
+    const paddle = getPaddleClient();
+    const priceMap = getPriceIdToPlanMap();
+    const unknownCcy = new Set<string>();
+    // Le SDK Paddle expose un async iterable paginé. On cap à 5000
+    // transactions pour éviter un timeout extrême.
+    const MAX_TX = 5000;
+    let count = 0;
+    // billedAt filter pour limiter le scan côté Paddle
+    const iter = paddle.transactions.list({
+      status: ["paid", "completed"],
+      "billedAt[GTE]": sinceISO,
+      perPage: 100,
+    });
+    for await (const tx of iter as AsyncIterable<{
+      id: string;
+      currencyCode: string;
+      details: { totals?: { subtotal?: string; fee?: string | null; total?: string } } | null;
+      items: Array<{ price?: { id?: string } | null }>;
+    }>) {
+      if (count++ >= MAX_TX) break;
+      const ccy = (tx.currencyCode || "EUR").toUpperCase();
+      const fx = FX_TO_EUR[ccy];
+      if (!fx) {
+        unknownCcy.add(ccy);
+        continue;
+      }
+      const totals = tx.details?.totals;
+      if (!totals) continue;
+      // Paddle renvoie tous les montants en minor units (cents) en string
+      const subtotalMinor = Number(totals.subtotal ?? "0");
+      const feeMinor = Number(totals.fee ?? "0");
+      const subtotalEur = (subtotalMinor / 100) * fx;
+      const feeEur = (feeMinor / 100) * fx;
+
+      result.grossRevenueEur += subtotalEur;
+      result.paddleFeesEur += feeEur;
+      result.transactionCount += 1;
+
+      const ccyBucket = (result.currencyBreakdown[ccy] = result.currencyBreakdown[ccy] ?? {
+        revenueEur: 0,
+        txCount: 0,
+      });
+      ccyBucket.revenueEur += subtotalEur;
+      ccyBucket.txCount += 1;
+
+      // Identifier le plan : premier item dont price_id matche notre map
+      let matched: "solo" | "pro" | "business" | null = null;
+      for (const item of tx.items) {
+        const pid = item.price?.id;
+        if (pid && priceMap[pid]) {
+          matched = priceMap[pid];
+          break;
+        }
+      }
+      if (matched) {
+        result.byPlan[matched].revenueEur += subtotalEur;
+        result.byPlan[matched].feesEur += feeEur;
+        result.byPlan[matched].txCount += 1;
+      } else {
+        result.unallocatedRevenueEur += subtotalEur;
+        result.unallocatedCount += 1;
+      }
+    }
+    result.unknownCurrencies = Array.from(unknownCcy);
+    result.netRevenueEur = result.grossRevenueEur - result.paddleFeesEur;
+    // Arrondis 2 décimales
+    const round2 = (n: number) => Math.round(n * 100) / 100;
+    result.grossRevenueEur = round2(result.grossRevenueEur);
+    result.paddleFeesEur = round2(result.paddleFeesEur);
+    result.netRevenueEur = round2(result.netRevenueEur);
+    result.unallocatedRevenueEur = round2(result.unallocatedRevenueEur);
+    for (const k of Object.keys(result.byPlan) as Array<keyof typeof result.byPlan>) {
+      result.byPlan[k].revenueEur = round2(result.byPlan[k].revenueEur);
+      result.byPlan[k].feesEur = round2(result.byPlan[k].feesEur);
+    }
+    for (const k of Object.keys(result.currencyBreakdown)) {
+      result.currencyBreakdown[k]!.revenueEur = round2(
+        result.currencyBreakdown[k]!.revenueEur,
+      );
+    }
+    result.ok = true;
+    return result;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.warn({ err: msg }, "[admin/profitability] paddle live fetch failed");
+    result.reason = msg;
+    return result;
+  }
+}
 
 router.get(
   "/admin/profitability/snapshot",
@@ -1469,29 +1627,45 @@ router.get(
       const totalUsers =
         countsByPlan.essai + payingCount;
 
-      const mrrEur =
+      // ---- Recettes : source de vérité = Paddle transactions 30j ----
+      const sinceISO = new Date(
+        Date.now() - 30 * 24 * 3600 * 1000,
+      ).toISOString();
+      const paddleLive = await fetchPaddleP30d(sinceISO);
+
+      // Estimation fallback (cohérente avec /paddle/metrics ancien)
+      const estimatedRevenueEur =
         Math.round(
           planIds.reduce(
             (s, id) => s + countsByPlan[id] * PLAN_MONTHLY_PRICE_EUR[id],
             0,
           ) * 100,
         ) / 100;
-
-      const paddleFeesEur =
+      const estimatedPaddleFeesEur =
         Math.round(
-          (mrrEur * PADDLE_FEE_PCT + PADDLE_FEE_FIXED_EUR * payingCount) * 100,
+          (estimatedRevenueEur * PADDLE_FEE_PCT +
+            PADDLE_FEE_FIXED_EUR * payingCount) *
+            100,
         ) / 100;
 
+      const revenueSource: "paddle_live" | "estimated" = paddleLive.ok
+        ? "paddle_live"
+        : "estimated";
+      const mrrEur = paddleLive.ok
+        ? paddleLive.grossRevenueEur
+        : estimatedRevenueEur;
+      const paddleFeesEur = paddleLive.ok
+        ? paddleLive.paddleFeesEur
+        : estimatedPaddleFeesEur;
       const netRevenueEur = Math.round((mrrEur - paddleFeesEur) * 100) / 100;
 
-      // 2. Coût OpenAI 30j (agrégat best-effort)
-      const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+      // 2. Coût OpenAI 30j (agrégat best-effort à partir de nos logs)
       let openaiCostUsdRaw = 0;
       let openaiSourceCount = 0;
       const { data: logs, error: logsErr } = await supabaseAdmin
         .from("inboria_chat_logs")
         .select("model_used, response_length, question_length")
-        .gte("created_at", since)
+        .gte("created_at", sinceISO)
         .limit(50000);
       if (!logsErr && Array.isArray(logs)) {
         openaiSourceCount = logs.length;
@@ -1563,20 +1737,33 @@ router.get(
       const byPlan = planIds.map((id) => {
         const count = countsByPlan[id];
         const priceEur = PLAN_MONTHLY_PRICE_EUR[id];
-        const revenueEur = Math.round(count * priceEur * 100) / 100;
+        // Revenu par plan : si Paddle live, on prend le réel par plan ;
+        // sinon estimation count × prix
+        let revenueEur: number;
+        let planPaddleFeesEur = 0;
+        if (paddleLive.ok && id !== "essai") {
+          const bucket = paddleLive.byPlan[id];
+          revenueEur = bucket.revenueEur;
+          planPaddleFeesEur = bucket.feesEur;
+        } else {
+          revenueEur = Math.round(count * priceEur * 100) / 100;
+          if (id !== "essai") {
+            planPaddleFeesEur =
+              Math.round(count * paddleFeePerPayingUserEur * 100) / 100;
+          }
+        }
         const allocCostEur =
           Math.round(
             (count *
-              (fixedCostPerUserEur +
-                variableCostPerUserEur +
-                (id === "essai" ? 0 : paddleFeePerPayingUserEur))) *
+              (fixedCostPerUserEur + variableCostPerUserEur) +
+              planPaddleFeesEur) *
               100,
           ) / 100;
         const margin = Math.round((revenueEur - allocCostEur) * 100) / 100;
         const marginPct =
-          priceEur === 0
+          revenueEur === 0
             ? null
-            : Math.round((((priceEur - allocCostEur / Math.max(count, 1)) / priceEur)) * 1000) / 10;
+            : Math.round((margin / revenueEur) * 1000) / 10;
         return {
           id,
           label: PLAN_LABEL[id],
@@ -1629,12 +1816,30 @@ router.get(
           avgMarginEur: avgMarginPerUserEur,
         },
         byPlan,
+        dataSource: {
+          revenue: revenueSource,
+          paddleFees: revenueSource,
+          openai: "estimated_from_logs" as const,
+          supabase: "env_constant" as const,
+          replit: "env_constant" as const,
+          brevo: "env_constant" as const,
+        },
+        paddle: {
+          transactionCount: paddleLive.transactionCount,
+          unallocatedRevenueEur: paddleLive.unallocatedRevenueEur,
+          unallocatedCount: paddleLive.unallocatedCount,
+          unknownCurrencies: paddleLive.unknownCurrencies,
+          currencyBreakdown: paddleLive.currencyBreakdown,
+          fallbackReason: paddleLive.ok ? null : (paddleLive.reason ?? "unknown"),
+        },
         meta: {
           fxUsdToEur: USD_TO_EUR,
           generatedAt: new Date().toISOString(),
           openaiCostUsdRaw: Math.round(openaiCostUsdRaw * 10000) / 10000,
           periodDays: 30,
-          paddleFeeAssumption: `${PADDLE_FEE_PCT * 100}% + ${PADDLE_FEE_FIXED_EUR}€/abonné payant`,
+          paddleFeeAssumption: paddleLive.ok
+            ? "Frais réels agrégés depuis Paddle transactions API"
+            : `Estimation ${PADDLE_FEE_PCT * 100}% + ${PADDLE_FEE_FIXED_EUR}€/abonné payant (fallback)`,
         },
         degraded,
         degradedReason: degraded ? planCountErrors.join("; ") : null,
