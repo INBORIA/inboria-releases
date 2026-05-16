@@ -23,6 +23,7 @@ import {
   Calendar, Mail, Trash2, Sparkles, Download,
   Reply, Send, Wand2, Loader2, Plus, RotateCcw, CheckCircle2,
   Check, X, ChevronRight, CheckSquare, Square,
+  Forward, UserPlus, Copy, Type as TypeIcon, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -233,6 +234,74 @@ export default function Taches() {
     Array.from(selectedTaskIds).forEach((id) => handleDeleteTask(id));
     setSelectedTaskIds(new Set());
   };
+
+  // ─── Actions au survol / clic droit ─────────────────────────────────────
+  // Wrappers task-spécifiques utilisés par la barre hover et le menu
+  // contextuel pour parité fonctionnelle avec Réception/Reportés.
+  const openReplyForTask = (task: any) => {
+    if (!task?.emailSubject) {
+      toast({ title: t("tasks.noLinkedEmail", "Cette tâche n'est liée à aucun email.") });
+      return;
+    }
+    setEmailDetailTask(task);
+    setReplyTo(extractEmailAddress(task.emailSenderEmail) || extractEmailAddress(task.emailSender) || "");
+    setReplySubject(task.emailSubject?.startsWith("Re:") ? task.emailSubject : `Re: ${task.emailSubject}`);
+    const sig = signatureForConnection(task.emailConnectionId);
+    setReplyText(sig ? `\n\n${sig}` : "");
+    setReplyAttachments([]);
+    setReplyOpen(true);
+  };
+
+  const openForwardForTask = (task: any) => {
+    if (!task?.emailSubject) {
+      toast({ title: t("tasks.noLinkedEmail", "Cette tâche n'est liée à aucun email.") });
+      return;
+    }
+    setEmailDetailTask(task);
+    setReplyTo("");
+    setReplySubject(task.emailSubject?.startsWith("Fwd:") ? task.emailSubject : `Fwd: ${task.emailSubject}`);
+    const sig = signatureForConnection(task.emailConnectionId);
+    setReplyText(sig ? `\n\n${sig}` : "");
+    setReplyAttachments([]);
+    setReplyOpen(true);
+  };
+
+  const handleReassignTask = (taskId: string, userId: string | null) => {
+    updateTask.mutate(
+      { id: taskId as any, data: { assignedToUserId: userId } as any },
+      {
+        onSuccess: () => {
+          invalidate();
+          toast({ title: t("tasks.reassigned", "Tâche réassignée") });
+        },
+        onError: () =>
+          toast({ variant: "destructive", title: t("common.error") }),
+      },
+    );
+  };
+
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: label });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error") });
+    }
+  };
+
+  // Sous-menu hover ouvert (réassigner). Une seule clé à la fois.
+  const [hoverMenu, setHoverMenu] = useState<{ taskId: string; kind: "assign" | "more" } | null>(null);
+  useEffect(() => {
+    if (!hoverMenu) return;
+    const onClick = () => setHoverMenu(null);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setHoverMenu(null); };
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [hoverMenu]);
 
   const sendEmailMut = useSendEmail();
   const generateDraftMut = useGenerateDraft();
@@ -578,9 +647,12 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Méta + actions */}
+                      {/* Méta + actions — masquées au hover.
+                          L'assigné n'est affiché qu'en mode Équipe (en mode
+                          "Mes tâches" toutes les tâches sont à l'utilisateur
+                          courant donc le nom est redondant). */}
                       <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
-                        {assignedMember && (
+                        {scope === "team" && assignedMember && (
                           <span className="text-[10px] text-[#8b95a7] truncate max-w-[100px]" title={assignedMember.fullName || assignedMember.email}>
                             {assignedMember.fullName || assignedMember.email}
                           </span>
@@ -599,27 +671,137 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Actions au survol — icônes nues, tooltip natif sur l'icône. */}
-                      <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
+                      {/* Actions au survol — parité Réception/Reportés
+                          (icônes nues + tooltip natif). Adapté aux tâches :
+                          Done/Todo, Voir mail (si lié), Répondre, Transférer,
+                          Réassigner (avec sous-menu membres), Plus (copier
+                          titre / sujet / aller au mail), Supprimer. */}
+                      <div className="hidden group-hover:flex items-center gap-0 shrink-0 relative" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleDone(task.id, isDone); }}
-                          className="p-1.5 rounded text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
+                          className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
                           title={isDone ? t("tasks.markTodo") : t("tasks.markDone")}
                         >
                           {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                         </button>
                         {task.emailSubject && (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setEmailDetailTask(task); setShowComments(false); }}
-                            className="p-1.5 rounded text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
-                            title={t("tasks.viewEmail")}
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setEmailDetailTask(task); setShowComments(false); }}
+                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+                              title={t("tasks.viewEmail")}
+                            >
+                              <Mail className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); openReplyForTask(task); }}
+                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+                              title={t("inbox.reply", "Répondre")}
+                            >
+                              <Reply className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); openForwardForTask(task); }}
+                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+                              title={t("inbox.forward", "Transférer")}
+                            >
+                              <Forward className="w-3.5 h-3.5" />
+                            </button>
+                          </>
                         )}
+                        {orgMembersList.length > 1 && (
+                          <div className="relative">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setHoverMenu(hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "assign" ? null : { taskId: task.id, kind: "assign" }); }}
+                              className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+                              title={t("tasks.reassign", "Réassigner")}
+                            >
+                              <UserPlus className="w-3.5 h-3.5" />
+                            </button>
+                            {hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "assign" && (
+                              <div
+                                className="absolute right-0 top-full mt-1 z-[100] min-w-[200px] max-h-[260px] overflow-y-auto rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <button
+                                  className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                  onClick={(e) => { e.stopPropagation(); handleReassignTask(task.id, null); setHoverMenu(null); }}
+                                >
+                                  <X className="w-3 h-3 shrink-0" />
+                                  {t("tasks.unassign", "Désassigner")}
+                                </button>
+                                <div className="border-t border-[#1f2937] my-1" />
+                                {orgMembersList.map((m: any) => (
+                                  <button
+                                    key={m.userId}
+                                    className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                    onClick={(e) => { e.stopPropagation(); handleReassignTask(task.id, m.userId); setHoverMenu(null); }}
+                                  >
+                                    <span className="w-4 h-4 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                                      <span className="text-primary text-[9px] font-semibold">
+                                        {(m.fullName || m.email || "?").trim().charAt(0).toUpperCase()}
+                                      </span>
+                                    </span>
+                                    <span className="truncate">{m.fullName || m.email}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <div className="relative">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setHoverMenu(hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "more" ? null : { taskId: task.id, kind: "more" }); }}
+                            className="p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+                            title={t("inbox.moreActions", "Plus d'actions")}
+                          >
+                            <span className="inline-flex items-center justify-center w-3.5 h-3.5 leading-none text-[14px] font-semibold tracking-tighter">⋯</span>
+                          </button>
+                          {hoverMenu && hoverMenu.taskId === task.id && hoverMenu.kind === "more" && (
+                            <div
+                              className="absolute right-0 top-full mt-1 z-[100] min-w-[220px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                onClick={(e) => { e.stopPropagation(); copyToClipboard(task.title || "", t("tasks.titleCopied", "Titre copié")); setHoverMenu(null); }}
+                              >
+                                <TypeIcon className="w-3.5 h-3.5" />
+                                {t("tasks.copyTitle", "Copier le titre")}
+                              </button>
+                              {task.emailSubject && (
+                                <button
+                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                  onClick={(e) => { e.stopPropagation(); copyToClipboard(task.emailSubject || "", t("inbox.copiedSubject", "Sujet copié")); setHoverMenu(null); }}
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                  {t("inbox.copySubject", "Copier le sujet")}
+                                </button>
+                              )}
+                              {task.emailSenderEmail && (
+                                <button
+                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                  onClick={(e) => { e.stopPropagation(); copyToClipboard(task.emailSenderEmail || "", t("inbox.copiedSenderEmail", "Adresse copiée")); setHoverMenu(null); }}
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                  {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
+                                </button>
+                              )}
+                              {task.emailId && (
+                                <button
+                                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                                  onClick={(e) => { e.stopPropagation(); window.location.href = `${import.meta.env.BASE_URL}dashboard?openEmail=${task.emailId}`; }}
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                  {t("tasks.openInInbox", "Ouvrir dans la Réception")}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                          className="p-1.5 rounded text-[#8b95a7] hover:bg-white/[0.08] hover:text-white"
+                          className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
                           title={t("common.delete")}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -832,33 +1014,117 @@ export default function Taches() {
                 }
               </span>
             </div>
-            <div className="py-1">
-              {!multi && hasEmail && (
-                <button
-                  onClick={() => { setEmailDetailTask(ctxTask); setShowComments(false); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Mail className="w-3.5 h-3.5" />
-                  {t("tasks.viewEmail")}
-                </button>
-              )}
-              {multi ? (
+            <div className="py-1 max-h-[70vh] overflow-y-auto">
+              {/* Mono — actions email-liées + actions task. Multi — actions
+                  bulk uniquement. Parité Réception/Reportés. */}
+              {!multi && ctxTask ? (
+                <>
+                  {hasEmail && (
+                    <>
+                      <button
+                        onClick={() => { setEmailDetailTask(ctxTask); setShowComments(false); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Mail className="w-3.5 h-3.5" />
+                        {t("tasks.viewEmail")}
+                      </button>
+                      <button
+                        onClick={() => { openReplyForTask(ctxTask); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Reply className="w-3.5 h-3.5" />
+                        {t("inbox.reply", "Répondre")}
+                      </button>
+                      <button
+                        onClick={() => { openForwardForTask(ctxTask); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <Forward className="w-3.5 h-3.5" />
+                        {t("inbox.forward", "Transférer")}
+                      </button>
+                      <div className="border-t border-[#1f2937] my-1" />
+                    </>
+                  )}
+                  <button
+                    onClick={() => { handleToggleDone(ctxTask.id, !!isDone); setContextMenu(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                  >
+                    {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                    {isDone ? t("tasks.markTodo") : t("tasks.markDone")}
+                  </button>
+                  {orgMembersList.length > 1 && (
+                    <>
+                      <div className="px-3 pt-2 pb-1 text-[10px] uppercase tracking-wider text-[#6b7280] font-medium">
+                        {t("tasks.reassign", "Réassigner")}
+                      </div>
+                      <button
+                        onClick={() => { handleReassignTask(ctxTask.id, null); setContextMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                      >
+                        <X className="w-3 h-3" />
+                        {t("tasks.unassign", "Désassigner")}
+                      </button>
+                      {orgMembersList.slice(0, 6).map((m: any) => (
+                        <button
+                          key={m.userId}
+                          onClick={() => { handleReassignTask(ctxTask.id, m.userId); setContextMenu(null); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                        >
+                          <span className="w-4 h-4 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                            <span className="text-primary text-[9px] font-semibold">
+                              {(m.fullName || m.email || "?").trim().charAt(0).toUpperCase()}
+                            </span>
+                          </span>
+                          <span className="truncate">{m.fullName || m.email}</span>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                  <div className="border-t border-[#1f2937] my-1" />
+                  <button
+                    onClick={() => { copyToClipboard(ctxTask.title || "", t("tasks.titleCopied", "Titre copié")); setContextMenu(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                  >
+                    <TypeIcon className="w-3.5 h-3.5" />
+                    {t("tasks.copyTitle", "Copier le titre")}
+                  </button>
+                  {ctxTask.emailSubject && (
+                    <button
+                      onClick={() => { copyToClipboard(ctxTask.emailSubject || "", t("inbox.copiedSubject", "Sujet copié")); setContextMenu(null); }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      {t("inbox.copySubject", "Copier le sujet")}
+                    </button>
+                  )}
+                  {ctxTask.emailSenderEmail && (
+                    <button
+                      onClick={() => { copyToClipboard(ctxTask.emailSenderEmail || "", t("inbox.copiedSenderEmail", "Adresse copiée")); setContextMenu(null); }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
+                    </button>
+                  )}
+                  {ctxTask.emailId && (
+                    <button
+                      onClick={() => { window.location.href = `${import.meta.env.BASE_URL}dashboard?openEmail=${ctxTask.emailId}`; }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      {t("tasks.openInInbox", "Ouvrir dans la Réception")}
+                    </button>
+                  )}
+                </>
+              ) : (
                 <button
                   onClick={() => { handleBulkMarkDone(); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {t("tasks.markDone")} ({selectedTaskIds.size})
                 </button>
-              ) : ctxTask ? (
-                <button
-                  onClick={() => { handleToggleDone(ctxTask.id, !!isDone); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                  {isDone ? t("tasks.markTodo") : t("tasks.markDone")}
-                </button>
-              ) : null}
+              )}
               <div className="border-t border-[#1f2937] my-1" />
               <button
                 onClick={() => {
@@ -866,7 +1132,7 @@ export default function Taches() {
                   else if (ctxTask) handleDeleteTask(ctxTask.id);
                   setContextMenu(null);
                 }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors text-left"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 {t("common.delete")}
