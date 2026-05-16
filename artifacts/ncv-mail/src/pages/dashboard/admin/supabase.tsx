@@ -294,6 +294,9 @@ export default function AdminSupabase() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="text-xs text-[#8b95a7] mb-2">
+            💡 Clique sur une ligne pour la définir comme tier actuel (synchro avec ton vrai compute Supabase).
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -314,9 +317,13 @@ export default function AdminSupabase() {
                   return (
                     <tr
                       key={t.id}
+                      onClick={() => handleTierChange(t.id)}
+                      data-testid={`tier-row-${t.id}`}
                       className={
-                        "border-b border-[#1f2937]/50 " +
-                        (isCurrent ? "bg-primary/[0.06]" : "hover:bg-white/[0.02]")
+                        "border-b border-[#1f2937]/50 cursor-pointer transition-colors " +
+                        (isCurrent
+                          ? "bg-primary/[0.10] hover:bg-primary/[0.14]"
+                          : "hover:bg-white/[0.04]")
                       }
                     >
                       <td className="py-2 px-2 text-white font-medium">{t.label}</td>
