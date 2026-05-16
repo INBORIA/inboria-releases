@@ -1414,4 +1414,236 @@ router.get(
   },
 );
 
+// ============================================================================
+// Profitability snapshot (P&L agrégé live)
+// ============================================================================
+// Pas d'historique persistant pour l'instant — snapshot calculé à la volée.
+// Sources :
+//   - Revenus : profiles × PLAN_MONTHLY_PRICE_EUR (cohérent avec /paddle/metrics)
+//   - Coût OpenAI : agrégat inboria_chat_logs sur 30j (USD → EUR via FX
+//     constante hardcodée — accept que c'est approximatif, mais éclate
+//     correctement la marge par plan)
+//   - Coûts fixes Supabase/Replit/Brevo : constantes env (modifiables sans
+//     redeploy)
+//   - Frais Paddle : ~5% MRR + 0.50€ × abonnés payants (formule officielle
+//     paddle.com/pricing — biller of record)
+const USD_TO_EUR = Number(process.env["USD_TO_EUR_FX"]) || 0.92;
+const SUPABASE_MONTHLY_COST_EUR =
+  Number(process.env["SUPABASE_MONTHLY_COST_EUR"]) || 25;
+const REPLIT_MONTHLY_COST_EUR =
+  Number(process.env["REPLIT_MONTHLY_COST_EUR"]) || 20;
+const BREVO_MONTHLY_COST_EUR =
+  Number(process.env["BREVO_MONTHLY_COST_EUR"]) || 0;
+const PADDLE_FEE_PCT = 0.05;
+const PADDLE_FEE_FIXED_EUR = 0.5;
+
+router.get(
+  "/admin/profitability/snapshot",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    try {
+      // 1. Comptes par plan (réutilise la logique /paddle/metrics)
+      const planIds = ["essai", "solo", "pro", "business"] as const;
+      const countsByPlan: Record<(typeof planIds)[number], number> = {
+        essai: 0,
+        solo: 0,
+        pro: 0,
+        business: 0,
+      };
+      const planCountErrors: string[] = [];
+      for (const planId of planIds) {
+        const { count, error } = await supabaseAdmin
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("plan", planId);
+        if (error) {
+          planCountErrors.push(`${planId}: ${error.message}`);
+          continue;
+        }
+        countsByPlan[planId] = count ?? 0;
+      }
+
+      const payingCount =
+        countsByPlan.solo + countsByPlan.pro + countsByPlan.business;
+      const totalUsers =
+        countsByPlan.essai + payingCount;
+
+      const mrrEur =
+        Math.round(
+          planIds.reduce(
+            (s, id) => s + countsByPlan[id] * PLAN_MONTHLY_PRICE_EUR[id],
+            0,
+          ) * 100,
+        ) / 100;
+
+      const paddleFeesEur =
+        Math.round(
+          (mrrEur * PADDLE_FEE_PCT + PADDLE_FEE_FIXED_EUR * payingCount) * 100,
+        ) / 100;
+
+      const netRevenueEur = Math.round((mrrEur - paddleFeesEur) * 100) / 100;
+
+      // 2. Coût OpenAI 30j (agrégat best-effort)
+      const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+      let openaiCostUsdRaw = 0;
+      let openaiSourceCount = 0;
+      const { data: logs, error: logsErr } = await supabaseAdmin
+        .from("inboria_chat_logs")
+        .select("model_used, response_length, question_length")
+        .gte("created_at", since)
+        .limit(50000);
+      if (!logsErr && Array.isArray(logs)) {
+        openaiSourceCount = logs.length;
+        type Row = {
+          model_used: string | null;
+          response_length: number | null;
+          question_length: number | null;
+        };
+        for (const row of logs as Row[]) {
+          const model = row.model_used || "unknown";
+          const pricing = OPENAI_COST_PER_1K_TOKENS_USD[model];
+          if (!pricing) continue;
+          const inTokens = (row.question_length || 0) / 4;
+          const outTokens = (row.response_length || 0) / 4;
+          openaiCostUsdRaw +=
+            (inTokens / 1000) * pricing.in + (outTokens / 1000) * pricing.out;
+        }
+      } else if (logsErr) {
+        logger.warn(
+          { err: logsErr.message },
+          "[admin/profitability] chat_logs query failed",
+        );
+      }
+      const openaiCostEur =
+        Math.round(openaiCostUsdRaw * USD_TO_EUR * 100) / 100;
+
+      // 3. Coûts fixes
+      const supabaseEur = SUPABASE_MONTHLY_COST_EUR;
+      const replitEur = REPLIT_MONTHLY_COST_EUR;
+      const brevoEur = BREVO_MONTHLY_COST_EUR;
+
+      const totalCostEur =
+        Math.round(
+          (supabaseEur + openaiCostEur + brevoEur + replitEur + paddleFeesEur) *
+            100,
+        ) / 100;
+
+      // 4. Marges
+      const grossMarginEur = Math.round((mrrEur - totalCostEur) * 100) / 100;
+      const grossMarginPct =
+        mrrEur === 0 ? 0 : Math.round((grossMarginEur / mrrEur) * 1000) / 10;
+
+      // 5. Par-utilisateur (en € absolus)
+      const arpuEur =
+        payingCount === 0 ? 0 : Math.round((mrrEur / payingCount) * 100) / 100;
+      const avgCostPerUserEur =
+        totalUsers === 0
+          ? 0
+          : Math.round((totalCostEur / totalUsers) * 100) / 100;
+      const avgMarginPerUserEur =
+        totalUsers === 0
+          ? 0
+          : Math.round((grossMarginEur / totalUsers) * 100) / 100;
+
+      // 6. Allocation des coûts par plan : variables (OpenAI + frais Paddle)
+      //    attribués proportionnellement à l'usage, fixes (Supabase/Replit/
+      //    Brevo) attribués au prorata du nombre d'utilisateurs.
+      //    Hypothèse simplificatrice : essai consomme autant d'OpenAI qu'un
+      //    payant (souvent vrai, voire plus). Pour Paddle on n'attribue pas
+      //    aux essai (pas de transaction).
+      const fixedCostEur = supabaseEur + replitEur + brevoEur;
+      const variableCostPerUserEur =
+        totalUsers === 0 ? 0 : openaiCostEur / totalUsers;
+      const fixedCostPerUserEur =
+        totalUsers === 0 ? 0 : fixedCostEur / totalUsers;
+      const paddleFeePerPayingUserEur =
+        payingCount === 0 ? 0 : paddleFeesEur / payingCount;
+
+      const byPlan = planIds.map((id) => {
+        const count = countsByPlan[id];
+        const priceEur = PLAN_MONTHLY_PRICE_EUR[id];
+        const revenueEur = Math.round(count * priceEur * 100) / 100;
+        const allocCostEur =
+          Math.round(
+            (count *
+              (fixedCostPerUserEur +
+                variableCostPerUserEur +
+                (id === "essai" ? 0 : paddleFeePerPayingUserEur))) *
+              100,
+          ) / 100;
+        const margin = Math.round((revenueEur - allocCostEur) * 100) / 100;
+        const marginPct =
+          priceEur === 0
+            ? null
+            : Math.round((((priceEur - allocCostEur / Math.max(count, 1)) / priceEur)) * 1000) / 10;
+        return {
+          id,
+          label: PLAN_LABEL[id],
+          count,
+          monthlyPriceEur: priceEur,
+          revenueEur,
+          allocatedCostEur: allocCostEur,
+          marginEur: margin,
+          marginPct,
+        };
+      });
+
+      const degraded = planCountErrors.length > 0;
+      audit("profitability_viewed", {
+        adminId: req.userId,
+        mrrEur,
+        totalCostEur,
+        grossMarginEur,
+        degraded,
+      });
+
+      res.json({
+        currency: "EUR",
+        revenue: {
+          mrrEur,
+          paddleFeesEstimateEur: paddleFeesEur,
+          netRevenueEur,
+        },
+        costs: {
+          supabaseEur,
+          openaiEur: openaiCostEur,
+          openaiSourceCount,
+          brevoEur,
+          replitEur,
+          paddleFeesEur,
+          totalEur: totalCostEur,
+        },
+        margin: {
+          grossEur: grossMarginEur,
+          grossPct: grossMarginPct,
+        },
+        users: {
+          trial: countsByPlan.essai,
+          paying: payingCount,
+          total: totalUsers,
+        },
+        perUser: {
+          arpuEur,
+          avgCostEur: avgCostPerUserEur,
+          avgMarginEur: avgMarginPerUserEur,
+        },
+        byPlan,
+        meta: {
+          fxUsdToEur: USD_TO_EUR,
+          generatedAt: new Date().toISOString(),
+          openaiCostUsdRaw: Math.round(openaiCostUsdRaw * 10000) / 10000,
+          periodDays: 30,
+          paddleFeeAssumption: `${PADDLE_FEE_PCT * 100}% + ${PADDLE_FEE_FIXED_EUR}€/abonné payant`,
+        },
+        degraded,
+        degradedReason: degraded ? planCountErrors.join("; ") : null,
+      });
+    } catch (err) {
+      logger.error({ err }, "[admin/profitability] failed");
+      res.status(500).json({ error: "Profitability snapshot failed" });
+    }
+  },
+);
+
 export default router;

@@ -3784,6 +3784,62 @@ export const AdminReplitMetricsResponse = zod.object({
 });
 
 /**
+ * @summary Live P&L snapshot - revenue, costs, margin, by plan
+ */
+export const AdminProfitabilitySnapshotResponse = zod.object({
+  currency: zod.string(),
+  revenue: zod.object({
+    mrrEur: zod.number(),
+    paddleFeesEstimateEur: zod.number(),
+    netRevenueEur: zod.number(),
+  }),
+  costs: zod.object({
+    supabaseEur: zod.number(),
+    openaiEur: zod.number(),
+    openaiSourceCount: zod.number(),
+    brevoEur: zod.number(),
+    replitEur: zod.number(),
+    paddleFeesEur: zod.number(),
+    totalEur: zod.number(),
+  }),
+  margin: zod.object({
+    grossEur: zod.number(),
+    grossPct: zod.number(),
+  }),
+  users: zod.object({
+    trial: zod.number(),
+    paying: zod.number(),
+    total: zod.number(),
+  }),
+  perUser: zod.object({
+    arpuEur: zod.number(),
+    avgCostEur: zod.number(),
+    avgMarginEur: zod.number(),
+  }),
+  byPlan: zod.array(
+    zod.object({
+      id: zod.enum(["essai", "solo", "pro", "business"]),
+      label: zod.string(),
+      count: zod.number(),
+      monthlyPriceEur: zod.number(),
+      revenueEur: zod.number(),
+      allocatedCostEur: zod.number(),
+      marginEur: zod.number(),
+      marginPct: zod.number().nullish(),
+    }),
+  ),
+  meta: zod.object({
+    fxUsdToEur: zod.number(),
+    generatedAt: zod.coerce.date(),
+    openaiCostUsdRaw: zod.number(),
+    periodDays: zod.number(),
+    paddleFeeAssumption: zod.string(),
+  }),
+  degraded: zod.boolean(),
+  degradedReason: zod.string().nullish(),
+});
+
+/**
  * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
  */
 export const GetInboriaExpertSuggestionQueryParams = zod.object({

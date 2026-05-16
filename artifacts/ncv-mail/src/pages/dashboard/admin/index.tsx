@@ -13,6 +13,7 @@ import {
   CreditCard,
   Send,
   Cloud,
+  TrendingUp,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
@@ -25,13 +26,21 @@ import AdminPaddle from "./paddle";
 import AdminBrevo from "./brevo";
 import AdminOpenAI from "./openai";
 import AdminReplit from "./replit";
+import AdminRentabilite from "./rentabilite";
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
 }
 
 // Top-level: provider/scope
-type TopTab = "inboria" | "supabase" | "paddle" | "brevo" | "openai" | "replit";
+type TopTab =
+  | "inboria"
+  | "supabase"
+  | "paddle"
+  | "brevo"
+  | "openai"
+  | "replit"
+  | "rentabilite";
 // Sub-tab inside "inboria"
 type InboriaSubTab = "waitlist" | "abonnes" | "email-brain" | "chat";
 
@@ -41,7 +50,15 @@ interface ParsedHash {
 }
 
 const DEFAULT_SUB: InboriaSubTab = "waitlist";
-const TOP_TABS: TopTab[] = ["inboria", "supabase", "paddle", "brevo", "openai", "replit"];
+const TOP_TABS: TopTab[] = [
+  "inboria",
+  "supabase",
+  "paddle",
+  "brevo",
+  "openai",
+  "replit",
+  "rentabilite",
+];
 
 function isTopTab(v: string): v is TopTab {
   return (TOP_TABS as string[]).includes(v);
@@ -166,6 +183,10 @@ export default function AdminIndex() {
               <Cloud className="h-3.5 w-3.5 mr-1.5" />
               Replit
             </TabsTrigger>
+            <TabsTrigger value="rentabilite" data-testid="tab-rentabilite">
+              <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+              Rentabilité
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="inboria" className="mt-4">
@@ -229,6 +250,10 @@ export default function AdminIndex() {
 
           <TabsContent value="replit" className="mt-4">
             <AdminReplit />
+          </TabsContent>
+
+          <TabsContent value="rentabilite" className="mt-4">
+            <AdminRentabilite />
           </TabsContent>
         </Tabs>
       </div>

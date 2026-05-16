@@ -1511,6 +1511,83 @@ export interface AdminReplitMetrics {
   secretsStatus: AdminReplitMetricsSecretsStatusItem[];
 }
 
+export type AdminProfitabilitySnapshotRevenue = {
+  mrrEur: number;
+  paddleFeesEstimateEur: number;
+  netRevenueEur: number;
+};
+
+export type AdminProfitabilitySnapshotCosts = {
+  supabaseEur: number;
+  openaiEur: number;
+  openaiSourceCount: number;
+  brevoEur: number;
+  replitEur: number;
+  paddleFeesEur: number;
+  totalEur: number;
+};
+
+export type AdminProfitabilitySnapshotMargin = {
+  grossEur: number;
+  grossPct: number;
+};
+
+export type AdminProfitabilitySnapshotUsers = {
+  trial: number;
+  paying: number;
+  total: number;
+};
+
+export type AdminProfitabilitySnapshotPerUser = {
+  arpuEur: number;
+  avgCostEur: number;
+  avgMarginEur: number;
+};
+
+export type AdminProfitabilitySnapshotByPlanItemId =
+  (typeof AdminProfitabilitySnapshotByPlanItemId)[keyof typeof AdminProfitabilitySnapshotByPlanItemId];
+
+export const AdminProfitabilitySnapshotByPlanItemId = {
+  essai: "essai",
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export type AdminProfitabilitySnapshotByPlanItem = {
+  id: AdminProfitabilitySnapshotByPlanItemId;
+  label: string;
+  count: number;
+  monthlyPriceEur: number;
+  revenueEur: number;
+  allocatedCostEur: number;
+  marginEur: number;
+  /** @nullable */
+  marginPct?: number | null;
+};
+
+export type AdminProfitabilitySnapshotMeta = {
+  fxUsdToEur: number;
+  generatedAt: string;
+  openaiCostUsdRaw: number;
+  periodDays: number;
+  paddleFeeAssumption: string;
+};
+
+export interface AdminProfitabilitySnapshot {
+  currency: string;
+  revenue: AdminProfitabilitySnapshotRevenue;
+  costs: AdminProfitabilitySnapshotCosts;
+  margin: AdminProfitabilitySnapshotMargin;
+  users: AdminProfitabilitySnapshotUsers;
+  perUser: AdminProfitabilitySnapshotPerUser;
+  byPlan: AdminProfitabilitySnapshotByPlanItem[];
+  meta: AdminProfitabilitySnapshotMeta;
+  degraded: boolean;
+  /** @nullable */
+  degradedReason?: string | null;
+}
+
 export interface InboriaExpertSuggestion {
   userId: string;
   fullName: string;

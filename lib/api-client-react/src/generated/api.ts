@@ -30,6 +30,7 @@ import type {
   AdminListWaitlistParams,
   AdminOpenAIMetrics,
   AdminPaddleMetrics,
+  AdminProfitabilitySnapshot,
   AdminReplitMetrics,
   AdminUserList,
   AdminWaitlistList,
@@ -11892,6 +11893,85 @@ export function useAdminReplitMetrics<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getAdminReplitMetricsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Live P&L snapshot - revenue, costs, margin, by plan
+ */
+export const getAdminProfitabilitySnapshotUrl = () => {
+  return `/api/admin/profitability/snapshot`;
+};
+
+export const adminProfitabilitySnapshot = async (
+  options?: RequestInit,
+): Promise<AdminProfitabilitySnapshot> => {
+  return customFetch<AdminProfitabilitySnapshot>(
+    getAdminProfitabilitySnapshotUrl(),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getAdminProfitabilitySnapshotQueryKey = () => {
+  return [`/api/admin/profitability/snapshot`] as const;
+};
+
+export const getAdminProfitabilitySnapshotQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminProfitabilitySnapshot>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminProfitabilitySnapshot>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminProfitabilitySnapshotQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminProfitabilitySnapshot>>
+  > = ({ signal }) => adminProfitabilitySnapshot({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminProfitabilitySnapshot>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminProfitabilitySnapshotQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminProfitabilitySnapshot>>
+>;
+export type AdminProfitabilitySnapshotQueryError = ErrorType<void>;
+
+/**
+ * @summary Live P&L snapshot - revenue, costs, margin, by plan
+ */
+
+export function useAdminProfitabilitySnapshot<
+  TData = Awaited<ReturnType<typeof adminProfitabilitySnapshot>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminProfitabilitySnapshot>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminProfitabilitySnapshotQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

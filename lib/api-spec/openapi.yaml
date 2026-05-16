@@ -3201,6 +3201,23 @@ paths:
         "403":
           description: Admin access required
 
+  /admin/profitability/snapshot:
+    get:
+      operationId: adminProfitabilitySnapshot
+      tags: [admin]
+      summary: Live P&L snapshot - revenue, costs, margin, by plan
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Profitability snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProfitabilitySnapshot"
+        "403":
+          description: Admin access required
+
   /inboria/expert-suggestion:
     get:
       operationId: getInboriaExpertSuggestion
@@ -6154,6 +6171,79 @@ components:
               name: { type: string }
               configured: { type: boolean }
               critical: { type: boolean }
+
+    AdminProfitabilitySnapshot:
+      type: object
+      required: [currency, revenue, costs, margin, users, perUser, byPlan, meta, degraded]
+      properties:
+        currency: { type: string, example: EUR }
+        revenue:
+          type: object
+          required: [mrrEur, paddleFeesEstimateEur, netRevenueEur]
+          properties:
+            mrrEur: { type: number }
+            paddleFeesEstimateEur: { type: number }
+            netRevenueEur: { type: number }
+        costs:
+          type: object
+          required: [supabaseEur, openaiEur, openaiSourceCount, brevoEur, replitEur, paddleFeesEur, totalEur]
+          properties:
+            supabaseEur: { type: number }
+            openaiEur: { type: number }
+            openaiSourceCount: { type: integer }
+            brevoEur: { type: number }
+            replitEur: { type: number }
+            paddleFeesEur: { type: number }
+            totalEur: { type: number }
+        margin:
+          type: object
+          required: [grossEur, grossPct]
+          properties:
+            grossEur: { type: number }
+            grossPct: { type: number }
+        users:
+          type: object
+          required: [trial, paying, total]
+          properties:
+            trial: { type: integer }
+            paying: { type: integer }
+            total: { type: integer }
+        perUser:
+          type: object
+          required: [arpuEur, avgCostEur, avgMarginEur]
+          properties:
+            arpuEur: { type: number }
+            avgCostEur: { type: number }
+            avgMarginEur: { type: number }
+        byPlan:
+          type: array
+          items:
+            type: object
+            required: [id, label, count, monthlyPriceEur, revenueEur, allocatedCostEur, marginEur]
+            properties:
+              id:
+                type: string
+                enum: [essai, solo, pro, business]
+              label: { type: string }
+              count: { type: integer }
+              monthlyPriceEur: { type: number }
+              revenueEur: { type: number }
+              allocatedCostEur: { type: number }
+              marginEur: { type: number }
+              marginPct:
+                type: ["number", "null"]
+        meta:
+          type: object
+          required: [fxUsdToEur, generatedAt, openaiCostUsdRaw, periodDays, paddleFeeAssumption]
+          properties:
+            fxUsdToEur: { type: number }
+            generatedAt: { type: string, format: date-time }
+            openaiCostUsdRaw: { type: number }
+            periodDays: { type: integer }
+            paddleFeeAssumption: { type: string }
+        degraded: { type: boolean }
+        degradedReason:
+          type: ["string", "null"]
 
     InboriaExpertSuggestion:
       type: object
