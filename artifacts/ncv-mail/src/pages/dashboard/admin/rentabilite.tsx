@@ -361,12 +361,12 @@ export default function AdminRentabilite() {
         </CardContent>
       </Card>
 
-      {/* Rentabilité par plan */}
+      {/* Résultat par plan */}
       <Card className="bg-[#0d1117] border-[#1f2937]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white text-base">
             <BarChart3 className="h-4 w-4 text-primary" />
-            Rentabilité par plan
+            Résultat par plan
           </CardTitle>
         </CardHeader>
         <CardContent>
