@@ -48,11 +48,23 @@ const TIERS: TierInfo[] = [
 
 const TIER_STORAGE_KEY = "inboria.admin.supabaseTier";
 
-function recommendTier(activeUsers: number): TierInfo {
+// Plancher de fiabilité prod : dès qu'il y a au moins 1 client payant,
+// Nano est trop fragile (Disk IO partagé, incidents reboot constatés).
+// On force Small minimum pour SLA acceptable.
+const MIN_PROD_TIER: ComputeTier = "small";
+
+function recommendTier(activeUsers: number, hasPayingCustomers: boolean): TierInfo {
+  let chosen: TierInfo = TIERS[TIERS.length - 1];
   for (const tier of TIERS) {
-    if (activeUsers <= tier.maxRecommendedUsers) return tier;
+    if (activeUsers <= tier.maxRecommendedUsers) {
+      chosen = tier;
+      break;
+    }
   }
-  return TIERS[TIERS.length - 1];
+  if (hasPayingCustomers && tierRank(chosen.id) < tierRank(MIN_PROD_TIER)) {
+    return TIERS.find((t) => t.id === MIN_PROD_TIER)!;
+  }
+  return chosen;
 }
 
 function tierRank(id: ComputeTier): number {
@@ -104,7 +116,7 @@ export default function AdminSupabase() {
   const activeUsers = paying + trial; // base de calcul charge réelle
 
   const currentTierInfo = TIERS.find((t) => t.id === currentTier)!;
-  const recommendedTier = recommendTier(activeUsers);
+  const recommendedTier = recommendTier(activeUsers, paying > 0);
   const needsUpgrade = tierRank(recommendedTier.id) > tierRank(currentTier);
   const upgradeCost = recommendedTier.pricePerMonth - currentTierInfo.pricePerMonth;
   const usagePct = Math.min(
