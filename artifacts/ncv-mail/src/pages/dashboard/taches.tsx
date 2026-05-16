@@ -657,7 +657,9 @@ export default function Taches() {
                             {assignedMember.fullName || assignedMember.email}
                           </span>
                         )}
-                        <PriorityGlyph level={task.emailPriority} />
+                        {/* Barres de priorité retirées : reprises depuis le
+                            mail source, elles apparaissaient sur toute tâche
+                            issue d'un mail et créaient du bruit visuel. */}
                         {task.dueDate && (
                           <span className={`text-[11px] tabular-nums whitespace-nowrap inline-flex items-center gap-1 ${isOverdue ? "text-[#e0a8a8]" : "text-[#8b95a7]"}`}>
                             <Calendar className="w-2.5 h-2.5" />
