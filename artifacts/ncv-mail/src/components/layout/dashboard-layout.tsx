@@ -257,13 +257,13 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
             <div className="my-1 h-px bg-border" />
             {isOrgMember ? (
               <Link
-                href="/dashboard/parametres"
+                href="/dashboard/parametres/mon-compte"
                 onClick={() => setOpen(false)}
                 className="flex items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                data-testid="user-menu-settings"
+                data-testid="user-menu-my-account"
               >
                 <Settings className="h-4 w-4 mr-2" />
-                {t("sidebar.settings")}
+                {t("settings.hub.myAccount", "Mon compte")}
               </Link>
             ) : (
               <>
