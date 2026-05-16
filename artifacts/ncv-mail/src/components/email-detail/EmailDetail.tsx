@@ -34,6 +34,7 @@ import { AttachmentList } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import { TemplateSuggestionBar } from "@/components/templates/template-suggestion-bar";
 import { SaveAsTemplateButton } from "@/components/templates/save-as-template-button";
+import { TemplatePickerButton } from "@/components/templates/template-picker-button";
 import SnoozeButton from "@/components/wave1/SnoozeButton";
 import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
 
@@ -1192,7 +1193,18 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 <div className="flex items-center gap-2 justify-between">
-                  <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
+                  <div className="flex items-center gap-2">
+                    <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
+                    <TemplatePickerButton
+                      emailSender={email.sender || null}
+                      emailSubject={email.subject || null}
+                      onInsert={(body, subject) => {
+                        const html = plainTextToHtml(body);
+                        setReplyText((prev) => (prev?.trim() ? `${html}<br><br>${prev}` : html));
+                        if (subject && !replySubject) setReplySubject(subject);
+                      }}
+                    />
+                  </div>
                   <div className="flex items-center gap-2">
                     <SaveAsTemplateButton subject={replySubject} body={replyText} sourceEmailId={email.id} />
                     <Button
