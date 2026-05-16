@@ -5687,7 +5687,7 @@ export default function Dashboard() {
             <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
               {filterImportance === "important"
                 ? t("inbox.importance.important", "Importants")
-                : t("inbox.importance.allLong", "Tous les filtres")}
+                : t("inbox.importance.allLong", "Tous les mails")}
             </span>
             <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
               {filterPriority === "urgent" ? t("inbox.priorities.urgent")
