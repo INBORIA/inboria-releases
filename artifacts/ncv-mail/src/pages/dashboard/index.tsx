@@ -58,7 +58,7 @@ import {
   getListFoldersQueryKey,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, Integration } from "@workspace/api-client-react";
-import { getGetProfileQueryKey } from "@workspace/api-client-react";
+import { getGetProfileQueryKey, getGetTeamAssignmentsQueryKey } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
@@ -4038,6 +4038,18 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
     queryClient.refetchQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    // Vues team : Assignés (useGetTeamAssignments) + Partagées
+    // (useGetSharedMailboxEmails, key préfixée par l'URL). Sans ces deux
+    // invalidations, un Mark as read/unread / archive / snooze / catégorie
+    // sur ces vues ne rafraîchit pas la liste (le PATCH passe en 200 mais
+    // l'UI affiche l'ancien état → bug remonté par JJ sur Assignés).
+    queryClient.invalidateQueries({ queryKey: getGetTeamAssignmentsQueryKey() });
+    queryClient.invalidateQueries({
+      predicate: (q) => {
+        const k0 = q.queryKey?.[0];
+        return typeof k0 === "string" && k0.startsWith("/api/shared-mailboxes/") && k0.endsWith("/emails");
+      },
+    });
     // Refetch the open email detail too — otherwise stale detail data
     // overrides the freshly-fetched list values when displayed.
     queryClient.invalidateQueries({ queryKey: ["email-detail"] });
