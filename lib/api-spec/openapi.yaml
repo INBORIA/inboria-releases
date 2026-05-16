@@ -3133,6 +3133,23 @@ paths:
         "404":
           description: User not found
 
+  /admin/paddle/metrics:
+    get:
+      operationId: adminPaddleMetrics
+      tags: [admin]
+      summary: Paddle billing metrics (MRR, plan distribution, health) - admin only
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Paddle metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminPaddleMetrics"
+        "403":
+          description: Admin access required
+
   /inboria/expert-suggestion:
     get:
       operationId: getInboriaExpertSuggestion
@@ -5909,6 +5926,86 @@ components:
         revokedNow:
           type: boolean
           description: True if the user's plan was set to "expired" immediately.
+
+    AdminPaddleMetrics:
+      type: object
+      required:
+        - paddleConfigured
+        - webhookConfigured
+        - priceIdsConfigured
+        - currency
+        - plans
+        - mrrTotal
+        - arrTotal
+        - activeSubscribers
+        - trialUsers
+        - expiredUsers
+      properties:
+        paddleConfigured:
+          type: boolean
+          description: True if PADDLE_API_KEY is set.
+        webhookConfigured:
+          type: boolean
+          description: True if PADDLE_WEBHOOK_SECRET is set.
+        priceIdsConfigured:
+          type: object
+          required: [solo, pro, business]
+          properties:
+            solo: { type: boolean }
+            pro: { type: boolean }
+            business: { type: boolean }
+        currency:
+          type: string
+          example: EUR
+        plans:
+          type: array
+          items:
+            type: object
+            required: [id, label, count, monthlyPrice, mrrContribution]
+            properties:
+              id:
+                type: string
+                enum: [essai, solo, pro, business]
+              label:
+                type: string
+              count:
+                type: integer
+              monthlyPrice:
+                type: number
+                description: Monthly price in main currency unit (e.g. EUR).
+              mrrContribution:
+                type: number
+                description: count × monthlyPrice (in main currency unit).
+        mrrTotal:
+          type: number
+        arrTotal:
+          type: number
+        activeSubscribers:
+          type: integer
+          description: Sum of solo + pro + business.
+        trialUsers:
+          type: integer
+        expiredUsers:
+          type: integer
+        pastDueCount:
+          type: ["integer", "null"]
+          description: Number of subscriptions in past_due status (null if Paddle API unavailable; capped to PAST_DUE_CAP).
+        pastDueCountCapped:
+          type: boolean
+          description: True if pastDueCount hit the server-side cap (real count may be higher).
+        paddleApiError:
+          type: ["string", "null"]
+          description: Error message if Paddle SDK call failed (e.g. missing key).
+        lastWebhookAt:
+          type: ["string", "null"]
+          format: date-time
+          description: Timestamp of last received Paddle webhook (null if unknown / no audit table).
+        degraded:
+          type: boolean
+          description: True if at least one Supabase plan count failed — MRR/counts may under-report.
+        degradedReason:
+          type: ["string", "null"]
+          description: Concatenated error messages explaining degraded state.
 
     InboriaExpertSuggestion:
       type: object

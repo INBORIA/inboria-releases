@@ -890,4 +890,167 @@ router.get("/admin/inboria-stats", requireAuth, requireAdmin, async (req, res) =
   }
 });
 
+// ============================================================================
+// GET /admin/paddle/metrics
+// ----------------------------------------------------------------------------
+// Snapshot Paddle : MRR / ARR / répartition par plan / santé config.
+// MRR calculé depuis `profiles.plan` (source de vérité locale, pas d'appel
+// Paddle obligatoire) — Paddle est appelé en best-effort uniquement pour
+// `pastDueCount`. Prix mensuels par défaut éditables ci-dessous (à terme :
+// pull depuis Paddle API ou table de config admin).
+// ============================================================================
+const PLAN_MONTHLY_PRICE_EUR: Record<"essai" | "solo" | "pro" | "business", number> = {
+  essai: 0,
+  solo: 9,
+  pro: 29,
+  business: 79,
+};
+
+const PLAN_LABEL: Record<"essai" | "solo" | "pro" | "business", string> = {
+  essai: "Essai",
+  solo: "Solo",
+  pro: "Pro",
+  business: "Business",
+};
+
+router.get(
+  "/admin/paddle/metrics",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    try {
+      const paddleConfigured = !!process.env["PADDLE_API_KEY"];
+      const webhookConfigured = !!process.env["PADDLE_WEBHOOK_SECRET"];
+      const priceIdsConfigured = {
+        solo: !!process.env["PADDLE_PRICE_SOLO"],
+        pro: !!process.env["PADDLE_PRICE_PRO"],
+        business: !!process.env["PADDLE_PRICE_BUSINESS"],
+      };
+
+      // 1. Compte par plan depuis profiles (source de vérité locale)
+      const planIds = ["essai", "solo", "pro", "business"] as const;
+      const countsByPlan: Record<(typeof planIds)[number], number> = {
+        essai: 0,
+        solo: 0,
+        pro: 0,
+        business: 0,
+      };
+      const planCountErrors: string[] = [];
+
+      for (const planId of planIds) {
+        const { count, error } = await supabaseAdmin
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("plan", planId);
+        if (error) {
+          logger.warn(
+            { err: error.message, plan: planId },
+            "[admin/paddle/metrics] profiles count failed",
+          );
+          planCountErrors.push(`${planId}: ${error.message}`);
+          continue;
+        }
+        countsByPlan[planId] = count ?? 0;
+      }
+
+      const { count: expiredCount } = await supabaseAdmin
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .eq("plan", "expired");
+
+      const plans = planIds.map((id) => {
+        const count = countsByPlan[id];
+        const monthlyPrice = PLAN_MONTHLY_PRICE_EUR[id];
+        return {
+          id,
+          label: PLAN_LABEL[id],
+          count,
+          monthlyPrice,
+          mrrContribution: Math.round(count * monthlyPrice * 100) / 100,
+        };
+      });
+
+      const mrrTotal = Math.round(
+        plans.reduce((sum, p) => sum + p.mrrContribution, 0) * 100,
+      ) / 100;
+      const arrTotal = Math.round(mrrTotal * 12 * 100) / 100;
+      const activeSubscribers =
+        countsByPlan.solo + countsByPlan.pro + countsByPlan.business;
+      const trialUsers = countsByPlan.essai;
+      const expiredUsers = expiredCount ?? 0;
+
+      // 2. pastDueCount via Paddle SDK (best-effort, capped to PAST_DUE_CAP)
+      const PAST_DUE_CAP = 200;
+      let pastDueCount: number | null = null;
+      let pastDueCountCapped = false;
+      let paddleApiError: string | null = null;
+      if (paddleConfigured) {
+        try {
+          const paddle = getPaddleClient();
+          const subsCollection = paddle.subscriptions.list({
+            status: ["past_due"] as never,
+            perPage: PAST_DUE_CAP,
+          } as never);
+          // SDK renvoie un AsyncIterator paginé — on compte jusqu'au cap puis on
+          // s'arrête et on flag `pastDueCountCapped=true` pour transparence côté UI.
+          let n = 0;
+          const iter = (subsCollection as unknown as {
+            [Symbol.asyncIterator]: () => AsyncIterator<unknown>;
+          })[Symbol.asyncIterator]();
+          while (n <= PAST_DUE_CAP) {
+            const next = await iter.next();
+            if (next.done) break;
+            n++;
+            if (n > PAST_DUE_CAP) {
+              pastDueCountCapped = true;
+              break;
+            }
+          }
+          pastDueCount = Math.min(n, PAST_DUE_CAP);
+        } catch (err) {
+          paddleApiError = err instanceof Error ? err.message : String(err);
+          logger.warn(
+            { err: paddleApiError },
+            "[admin/paddle/metrics] paddle past_due query failed",
+          );
+        }
+      } else {
+        paddleApiError = "PADDLE_API_KEY non configurée";
+      }
+
+      const degraded = planCountErrors.length > 0;
+
+      audit("paddle_metrics_viewed", {
+        adminId: req.userId,
+        mrrTotal,
+        activeSubscribers,
+        pastDueCount,
+        degraded,
+      });
+
+      res.json({
+        paddleConfigured,
+        webhookConfigured,
+        priceIdsConfigured,
+        currency: "EUR",
+        plans,
+        mrrTotal,
+        arrTotal,
+        activeSubscribers,
+        trialUsers,
+        expiredUsers,
+        pastDueCount,
+        pastDueCountCapped,
+        paddleApiError,
+        lastWebhookAt: null,
+        degraded,
+        degradedReason: degraded ? planCountErrors.join("; ") : null,
+      });
+    } catch (err) {
+      logger.error({ err }, "[admin/paddle/metrics] failed");
+      res.status(500).json({ error: "Paddle metrics query failed" });
+    }
+  },
+);
+
 export default router;

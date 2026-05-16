@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Database,
   Sparkles,
+  CreditCard,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
@@ -18,13 +19,14 @@ import AdminAbonnes from "./abonnes";
 import AdminEmailBrain from "./email-brain";
 import AdminInboria from "./inboria";
 import AdminSupabase from "./supabase";
+import AdminPaddle from "./paddle";
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
 }
 
 // Top-level: provider/scope
-type TopTab = "inboria" | "supabase";
+type TopTab = "inboria" | "supabase" | "paddle";
 // Sub-tab inside "inboria"
 type InboriaSubTab = "waitlist" | "abonnes" | "email-brain" | "chat";
 
@@ -42,15 +44,17 @@ function parseHash(): ParsedHash {
 
   // Backward-compat: legacy flat hashes
   if (raw === "supabase") return { top: "supabase", sub: DEFAULT_SUB };
+  if (raw === "paddle") return { top: "paddle", sub: DEFAULT_SUB };
   if (raw === "subscribers" || raw === "abonnes")
     return { top: "inboria", sub: "abonnes" };
   if (raw === "waitlist") return { top: "inboria", sub: "waitlist" };
   if (raw === "email-brain") return { top: "inboria", sub: "email-brain" };
   if (raw === "inboria") return { top: "inboria", sub: "chat" };
 
-  // New nested format: "inboria/<sub>" or "supabase"
+  // New nested format: "inboria/<sub>" or "supabase" or "paddle"
   const [top, sub] = raw.split("/");
   if (top === "supabase") return { top: "supabase", sub: DEFAULT_SUB };
+  if (top === "paddle") return { top: "paddle", sub: DEFAULT_SUB };
   if (top === "inboria") {
     if (sub === "abonnes" || sub === "email-brain" || sub === "chat" || sub === "waitlist")
       return { top: "inboria", sub };
@@ -61,6 +65,7 @@ function parseHash(): ParsedHash {
 
 function hashFor(top: TopTab, sub: InboriaSubTab): string {
   if (top === "supabase") return "#supabase";
+  if (top === "paddle") return "#paddle";
   return `#inboria/${sub}`;
 }
 
@@ -87,7 +92,12 @@ export default function AdminIndex() {
   }
 
   function handleTopChange(value: string) {
-    const next: TopTab = value === "supabase" ? "supabase" : "inboria";
+    const next: TopTab =
+      value === "supabase"
+        ? "supabase"
+        : value === "paddle"
+          ? "paddle"
+          : "inboria";
     setTopTab(next);
     updateHash(next, subTab);
   }
@@ -136,6 +146,10 @@ export default function AdminIndex() {
               <Database className="h-3.5 w-3.5 mr-1.5" />
               Supabase
             </TabsTrigger>
+            <TabsTrigger value="paddle" data-testid="tab-paddle">
+              <CreditCard className="h-3.5 w-3.5 mr-1.5" />
+              Paddle
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="inboria" className="mt-4">
@@ -183,6 +197,10 @@ export default function AdminIndex() {
 
           <TabsContent value="supabase" className="mt-4">
             <AdminSupabase />
+          </TabsContent>
+
+          <TabsContent value="paddle" className="mt-4">
+            <AdminPaddle />
           </TabsContent>
         </Tabs>
       </div>

@@ -27,6 +27,7 @@ import type {
   AdminConnection,
   AdminListUsersParams,
   AdminListWaitlistParams,
+  AdminPaddleMetrics,
   AdminUserList,
   AdminWaitlistList,
   ApplyPackBody,
@@ -11595,6 +11596,81 @@ export const useAdminCancelUserSubscription = <
 > => {
   return useMutation(getAdminCancelUserSubscriptionMutationOptions(options));
 };
+
+/**
+ * @summary Paddle billing metrics (MRR, plan distribution, health) - admin only
+ */
+export const getAdminPaddleMetricsUrl = () => {
+  return `/api/admin/paddle/metrics`;
+};
+
+export const adminPaddleMetrics = async (
+  options?: RequestInit,
+): Promise<AdminPaddleMetrics> => {
+  return customFetch<AdminPaddleMetrics>(getAdminPaddleMetricsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminPaddleMetricsQueryKey = () => {
+  return [`/api/admin/paddle/metrics`] as const;
+};
+
+export const getAdminPaddleMetricsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminPaddleMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminPaddleMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminPaddleMetricsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminPaddleMetrics>>
+  > = ({ signal }) => adminPaddleMetrics({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminPaddleMetrics>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminPaddleMetricsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminPaddleMetrics>>
+>;
+export type AdminPaddleMetricsQueryError = ErrorType<void>;
+
+/**
+ * @summary Paddle billing metrics (MRR, plan distribution, health) - admin only
+ */
+
+export function useAdminPaddleMetrics<
+  TData = Awaited<ReturnType<typeof adminPaddleMetrics>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminPaddleMetrics>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminPaddleMetricsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox

@@ -1361,6 +1361,72 @@ export interface AdminCancelSubscriptionResult {
   revokedNow: boolean;
 }
 
+export type AdminPaddleMetricsPriceIdsConfigured = {
+  solo: boolean;
+  pro: boolean;
+  business: boolean;
+};
+
+export type AdminPaddleMetricsPlansItemId =
+  (typeof AdminPaddleMetricsPlansItemId)[keyof typeof AdminPaddleMetricsPlansItemId];
+
+export const AdminPaddleMetricsPlansItemId = {
+  essai: "essai",
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export type AdminPaddleMetricsPlansItem = {
+  id: AdminPaddleMetricsPlansItemId;
+  label: string;
+  count: number;
+  /** Monthly price in main currency unit (e.g. EUR). */
+  monthlyPrice: number;
+  /** count × monthlyPrice (in main currency unit). */
+  mrrContribution: number;
+};
+
+export interface AdminPaddleMetrics {
+  /** True if PADDLE_API_KEY is set. */
+  paddleConfigured: boolean;
+  /** True if PADDLE_WEBHOOK_SECRET is set. */
+  webhookConfigured: boolean;
+  priceIdsConfigured: AdminPaddleMetricsPriceIdsConfigured;
+  currency: string;
+  plans: AdminPaddleMetricsPlansItem[];
+  mrrTotal: number;
+  arrTotal: number;
+  /** Sum of solo + pro + business. */
+  activeSubscribers: number;
+  trialUsers: number;
+  expiredUsers: number;
+  /**
+   * Number of subscriptions in past_due status (null if Paddle API unavailable; capped to PAST_DUE_CAP).
+   * @nullable
+   */
+  pastDueCount?: number | null;
+  /** True if pastDueCount hit the server-side cap (real count may be higher). */
+  pastDueCountCapped?: boolean;
+  /**
+   * Error message if Paddle SDK call failed (e.g. missing key).
+   * @nullable
+   */
+  paddleApiError?: string | null;
+  /**
+   * Timestamp of last received Paddle webhook (null if unknown / no audit table).
+   * @nullable
+   */
+  lastWebhookAt?: string | null;
+  /** True if at least one Supabase plan count failed — MRR/counts may under-report. */
+  degraded?: boolean;
+  /**
+   * Concatenated error messages explaining degraded state.
+   * @nullable
+   */
+  degradedReason?: string | null;
+}
+
 export interface InboriaExpertSuggestion {
   userId: string;
   fullName: string;

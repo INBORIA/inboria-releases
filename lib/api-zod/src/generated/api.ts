@@ -3639,6 +3639,72 @@ export const AdminCancelUserSubscriptionResponse = zod.object({
 });
 
 /**
+ * @summary Paddle billing metrics (MRR, plan distribution, health) - admin only
+ */
+export const AdminPaddleMetricsResponse = zod.object({
+  paddleConfigured: zod.boolean().describe("True if PADDLE_API_KEY is set."),
+  webhookConfigured: zod
+    .boolean()
+    .describe("True if PADDLE_WEBHOOK_SECRET is set."),
+  priceIdsConfigured: zod.object({
+    solo: zod.boolean(),
+    pro: zod.boolean(),
+    business: zod.boolean(),
+  }),
+  currency: zod.string(),
+  plans: zod.array(
+    zod.object({
+      id: zod.enum(["essai", "solo", "pro", "business"]),
+      label: zod.string(),
+      count: zod.number(),
+      monthlyPrice: zod
+        .number()
+        .describe("Monthly price in main currency unit (e.g. EUR)."),
+      mrrContribution: zod
+        .number()
+        .describe("count × monthlyPrice (in main currency unit)."),
+    }),
+  ),
+  mrrTotal: zod.number(),
+  arrTotal: zod.number(),
+  activeSubscribers: zod.number().describe("Sum of solo + pro + business."),
+  trialUsers: zod.number(),
+  expiredUsers: zod.number(),
+  pastDueCount: zod
+    .number()
+    .nullish()
+    .describe(
+      "Number of subscriptions in past_due status (null if Paddle API unavailable; capped to PAST_DUE_CAP).",
+    ),
+  pastDueCountCapped: zod
+    .boolean()
+    .optional()
+    .describe(
+      "True if pastDueCount hit the server-side cap (real count may be higher).",
+    ),
+  paddleApiError: zod
+    .string()
+    .nullish()
+    .describe("Error message if Paddle SDK call failed (e.g. missing key)."),
+  lastWebhookAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "Timestamp of last received Paddle webhook (null if unknown \/ no audit table).",
+    ),
+  degraded: zod
+    .boolean()
+    .optional()
+    .describe(
+      "True if at least one Supabase plan count failed — MRR\/counts may under-report.",
+    ),
+  degradedReason: zod
+    .string()
+    .nullish()
+    .describe("Concatenated error messages explaining degraded state."),
+});
+
+/**
  * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
  */
 export const GetInboriaExpertSuggestionQueryParams = zod.object({
