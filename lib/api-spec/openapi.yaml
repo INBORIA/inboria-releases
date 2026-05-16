@@ -3133,6 +3133,66 @@ paths:
         "404":
           description: User not found
 
+  /admin/users/{userId}/reactivate:
+    post:
+      operationId: adminReactivateUser
+      tags: [admin]
+      summary: Reactivate an expired user (admin only)
+      description: |
+        Sets the user's plan back to the requested value (defaults to
+        `essai`) and resets quota counters. No Paddle call — for paid
+        subscriptions the user must resubscribe themselves.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminReactivateUserBody"
+      responses:
+        "200":
+          description: User reactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReactivateUserResult"
+        "403": { description: Admin access required }
+        "404": { description: User not found }
+
+  /admin/users/{userId}:
+    delete:
+      operationId: adminDeleteUser
+      tags: [admin]
+      summary: Hard-delete a user (admin only, irreversible)
+      description: |
+        Permanently deletes the auth user and cascades profile/data. Refuses
+        if the target is the calling admin (cannot_delete_self) or if the
+        user has an active Paddle subscription (active_paddle_subscription —
+        admin must revoke first).
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDeleteUserResult"
+        "400": { description: Cannot delete self }
+        "403": { description: Admin access required }
+        "409": { description: Active Paddle subscription }
+
   /admin/paddle/metrics:
     get:
       operationId: adminPaddleMetrics
@@ -5994,6 +6054,30 @@ components:
         revokedNow:
           type: boolean
           description: True if the user's plan was set to "expired" immediately.
+
+    AdminReactivateUserBody:
+      type: object
+      properties:
+        plan:
+          type: string
+          enum: [essai, solo, pro, business]
+          default: essai
+
+    AdminReactivateUserResult:
+      type: object
+      required: [ok, plan]
+      properties:
+        ok: { type: boolean }
+        plan:
+          type: string
+          enum: [essai, solo, pro, business]
+
+    AdminDeleteUserResult:
+      type: object
+      required: [ok, deleted]
+      properties:
+        ok: { type: boolean }
+        deleted: { type: boolean }
 
     AdminPaddleMetrics:
       type: object

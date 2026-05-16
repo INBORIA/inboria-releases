@@ -1361,6 +1361,40 @@ export interface AdminCancelSubscriptionResult {
   revokedNow: boolean;
 }
 
+export type AdminReactivateUserBodyPlan =
+  (typeof AdminReactivateUserBodyPlan)[keyof typeof AdminReactivateUserBodyPlan];
+
+export const AdminReactivateUserBodyPlan = {
+  essai: "essai",
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export interface AdminReactivateUserBody {
+  plan?: AdminReactivateUserBodyPlan;
+}
+
+export type AdminReactivateUserResultPlan =
+  (typeof AdminReactivateUserResultPlan)[keyof typeof AdminReactivateUserResultPlan];
+
+export const AdminReactivateUserResultPlan = {
+  essai: "essai",
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export interface AdminReactivateUserResult {
+  ok: boolean;
+  plan: AdminReactivateUserResultPlan;
+}
+
+export interface AdminDeleteUserResult {
+  ok: boolean;
+  deleted: boolean;
+}
+
 export type AdminPaddleMetricsPriceIdsConfigured = {
   solo: boolean;
   pro: boolean;

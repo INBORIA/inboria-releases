@@ -26,11 +26,14 @@ import type {
   AdminCancelSubscriptionBody,
   AdminCancelSubscriptionResult,
   AdminConnection,
+  AdminDeleteUserResult,
   AdminListUsersParams,
   AdminListWaitlistParams,
   AdminOpenAIMetrics,
   AdminPaddleMetrics,
   AdminProfitabilitySnapshot,
+  AdminReactivateUserBody,
+  AdminReactivateUserResult,
   AdminReplitMetrics,
   AdminUserList,
   AdminWaitlistList,
@@ -11599,6 +11602,189 @@ export const useAdminCancelUserSubscription = <
   TContext
 > => {
   return useMutation(getAdminCancelUserSubscriptionMutationOptions(options));
+};
+
+/**
+ * Sets the user's plan back to the requested value (defaults to
+`essai`) and resets quota counters. No Paddle call — for paid
+subscriptions the user must resubscribe themselves.
+
+ * @summary Reactivate an expired user (admin only)
+ */
+export const getAdminReactivateUserUrl = (userId: string) => {
+  return `/api/admin/users/${userId}/reactivate`;
+};
+
+export const adminReactivateUser = async (
+  userId: string,
+  adminReactivateUserBody?: AdminReactivateUserBody,
+  options?: RequestInit,
+): Promise<AdminReactivateUserResult> => {
+  return customFetch<AdminReactivateUserResult>(
+    getAdminReactivateUserUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(adminReactivateUserBody),
+    },
+  );
+};
+
+export const getAdminReactivateUserMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminReactivateUser>>,
+    TError,
+    { userId: string; data: BodyType<AdminReactivateUserBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminReactivateUser>>,
+  TError,
+  { userId: string; data: BodyType<AdminReactivateUserBody> },
+  TContext
+> => {
+  const mutationKey = ["adminReactivateUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminReactivateUser>>,
+    { userId: string; data: BodyType<AdminReactivateUserBody> }
+  > = (props) => {
+    const { userId, data } = props ?? {};
+
+    return adminReactivateUser(userId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminReactivateUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminReactivateUser>>
+>;
+export type AdminReactivateUserMutationBody = BodyType<AdminReactivateUserBody>;
+export type AdminReactivateUserMutationError = ErrorType<void>;
+
+/**
+ * @summary Reactivate an expired user (admin only)
+ */
+export const useAdminReactivateUser = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminReactivateUser>>,
+    TError,
+    { userId: string; data: BodyType<AdminReactivateUserBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminReactivateUser>>,
+  TError,
+  { userId: string; data: BodyType<AdminReactivateUserBody> },
+  TContext
+> => {
+  return useMutation(getAdminReactivateUserMutationOptions(options));
+};
+
+/**
+ * Permanently deletes the auth user and cascades profile/data. Refuses
+if the target is the calling admin (cannot_delete_self) or if the
+user has an active Paddle subscription (active_paddle_subscription —
+admin must revoke first).
+
+ * @summary Hard-delete a user (admin only, irreversible)
+ */
+export const getAdminDeleteUserUrl = (userId: string) => {
+  return `/api/admin/users/${userId}`;
+};
+
+export const adminDeleteUser = async (
+  userId: string,
+  options?: RequestInit,
+): Promise<AdminDeleteUserResult> => {
+  return customFetch<AdminDeleteUserResult>(getAdminDeleteUserUrl(userId), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getAdminDeleteUserMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteUser>>,
+    TError,
+    { userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  const mutationKey = ["adminDeleteUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteUser>>,
+    { userId: string }
+  > = (props) => {
+    const { userId } = props ?? {};
+
+    return adminDeleteUser(userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteUser>>
+>;
+
+export type AdminDeleteUserMutationError = ErrorType<void>;
+
+/**
+ * @summary Hard-delete a user (admin only, irreversible)
+ */
+export const useAdminDeleteUser = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteUser>>,
+    TError,
+    { userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  return useMutation(getAdminDeleteUserMutationOptions(options));
 };
 
 /**

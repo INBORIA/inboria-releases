@@ -2,6 +2,8 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import {
   useAdminListUsers,
   useAdminCancelUserSubscription,
+  useAdminReactivateUser,
+  useAdminDeleteUser,
   useGetProfile,
   getAdminListUsersQueryKey,
   type AdminUser,
@@ -39,6 +41,8 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
+  Trash2,
+  RotateCcw,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -60,7 +64,7 @@ interface ApiError {
 }
 
 const PAGE_SIZE = 50;
-const PLAN_OPTIONS = ["essai", "pro", "business", "expired"];
+const PLAN_OPTIONS = ["essai", "solo", "pro", "business", "expired"];
 const ALL_PLANS = "__all__";
 
 interface AdminAbonnesProps {
@@ -97,8 +101,52 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
 
   const { data, isLoading, refetch } = useAdminListUsers(params);
   const cancelMutation = useAdminCancelUserSubscription();
+  const reactivateMutation = useAdminReactivateUser();
+  const deleteMutation = useAdminDeleteUser();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [reactivateOpenFor, setReactivateOpenFor] = useState<string | null>(null);
+  const [deleteOpenFor, setDeleteOpenFor] = useState<string | null>(null);
+
+  async function handleReactivate(userId: string) {
+    setPendingId(userId);
+    try {
+      await reactivateMutation.mutateAsync({ userId, data: { plan: "essai" } });
+      toast({ title: "Compte réactivé en essai." });
+      queryClient.invalidateQueries({ queryKey: getAdminListUsersQueryKey() });
+      setReactivateOpenFor(null);
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast({
+        title: apiErr?.response?.data?.error || "Échec de la réactivation.",
+        variant: "destructive",
+      });
+    } finally {
+      setPendingId(null);
+    }
+  }
+
+  async function handleDelete(userId: string) {
+    setPendingId(userId);
+    try {
+      await deleteMutation.mutateAsync({ userId });
+      toast({ title: "Compte supprimé." });
+      queryClient.invalidateQueries({ queryKey: getAdminListUsersQueryKey() });
+      setDeleteOpenFor(null);
+    } catch (err) {
+      const apiErr = err as ApiError;
+      const errorMsg = apiErr?.response?.data?.error;
+      toast({
+        title:
+          errorMsg === "active_paddle_subscription"
+            ? "Impossible de supprimer : un abonnement Paddle est actif. Révoquez d'abord."
+            : errorMsg || "Échec de la suppression.",
+        variant: "destructive",
+      });
+    } finally {
+      setPendingId(null);
+    }
+  }
 
   const users: AdminUser[] = data?.users ?? [];
   const total = data?.total ?? 0;
@@ -321,12 +369,102 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
                           {new Date(u.createdAt).toLocaleDateString(i18n.language)}
                         </td>
                         <td className="px-4 py-2 text-right">
-                          {isExpired || isSelf ? (
+                          {isSelf ? (
                             <span className="text-[11px] text-[#b8c5d6]">
-                              {isSelf
-                                ? t("admin.youCannotCancelSelf")
-                                : t("admin.alreadyExpired")}
+                              {t("admin.youCannotCancelSelf")}
                             </span>
+                          ) : isExpired ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <AlertDialog
+                                open={reactivateOpenFor === u.id}
+                                onOpenChange={(open) =>
+                                  setReactivateOpenFor(open ? u.id : null)
+                                }
+                              >
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-300"
+                                    disabled={isPending}
+                                    data-testid={`button-reactivate-${u.id}`}
+                                  >
+                                    {isPending ? (
+                                      <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                                    ) : (
+                                      <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                                    )}
+                                    Réactiver
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Réactiver le compte de {u.email} ?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Le plan repassera à « essai » avec un quota frais et l'utilisateur retrouvera l'accès à l'application. Aucun appel Paddle n'est fait — pour réactiver un abonnement payant, l'utilisateur doit le souscrire à nouveau.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="gap-2">
+                                    <AlertDialogCancel>
+                                      Annuler
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleReactivate(u.id)}
+                                      className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                                    >
+                                      Réactiver en essai
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                              <AlertDialog
+                                open={deleteOpenFor === u.id}
+                                onOpenChange={(open) =>
+                                  setDeleteOpenFor(open ? u.id : null)
+                                }
+                              >
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300"
+                                    disabled={isPending}
+                                    data-testid={`button-delete-${u.id}`}
+                                  >
+                                    {isPending ? (
+                                      <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                                    ) : (
+                                      <Trash2 className="w-3.5 h-3.5 mr-1" />
+                                    )}
+                                    Supprimer
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center gap-2">
+                                      <AlertTriangle className="h-4 w-4 text-red-400" />
+                                      Supprimer définitivement {u.email} ?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Cette action est IRRÉVERSIBLE : le compte auth, le profil, l'historique de mails et toutes les données associées seront supprimés. À n'utiliser que pour des comptes de test ou un droit à l'effacement RGPD. Refus si un abonnement Paddle est actif.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="gap-2">
+                                    <AlertDialogCancel>
+                                      Annuler
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(u.id)}
+                                      className="bg-red-500 hover:bg-red-600 text-white"
+                                    >
+                                      Supprimer définitivement
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
                           ) : (
                             <AlertDialog
                               open={confirmOpenFor === u.id}

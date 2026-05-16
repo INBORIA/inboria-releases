@@ -539,6 +539,126 @@ router.post(
   },
 );
 
+// Réactive un compte expiré : repasse le plan local sans toucher Paddle.
+// Cas d'usage : utilisateur bêta dont l'accès avait été révoqué et qu'on
+// veut remettre dans la boucle, ou compte d'essai expiré. Pour un Paddle
+// payant qui voudrait revenir, il doit re-souscrire (pas de re-create
+// côté Paddle ici, on ne ressuscite pas un abonnement annulé).
+router.post(
+  "/admin/users/:userId/reactivate",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    try {
+      const userId = typeof req.params["userId"] === "string" ? req.params["userId"] : "";
+      if (!userId) {
+        res.status(400).json({ error: "Missing userId" });
+        return;
+      }
+      const body = (req.body ?? {}) as { plan?: unknown };
+      const requestedPlan =
+        typeof body.plan === "string" &&
+        ["essai", "solo", "pro", "business"].includes(body.plan)
+          ? body.plan
+          : "essai";
+      // Quotas par défaut alignés sur la grille produit (cf. paddle.ts)
+      const QUOTAS: Record<string, number> = {
+        essai: 100,
+        solo: 1000,
+        pro: 5000,
+        business: 30000,
+      };
+      const quota = QUOTAS[requestedPlan] ?? 100;
+      const { error: upErr } = await supabaseAdmin
+        .from("profiles")
+        .update({
+          plan: requestedPlan,
+          emails_used: 0,
+          ai_credits_used: 0,
+          emails_quota: quota,
+        })
+        .eq("id", userId);
+      if (upErr) {
+        logger.error({ err: upErr, userId }, "[admin] reactivate failed");
+        res.status(500).json({ error: "Failed to reactivate user" });
+        return;
+      }
+      audit("user_reactivated", {
+        adminId: req.userId ?? null,
+        targetUserId: userId,
+        plan: requestedPlan,
+      });
+      res.json({ ok: true, plan: requestedPlan });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      logger.error({ err: message }, "[admin] reactivate crashed");
+      res.status(500).json({ error: "Failed to reactivate user" });
+    }
+  },
+);
+
+// Suppression DÉFINITIVE d'un compte (auth + cascade FK profile/data).
+// Refuse explicitement si :
+//   - cible == admin connecté (anti-foot-gun)
+//   - cible a un abonnement Paddle actif (revoke first)
+// À réserver aux comptes de test ou demandes RGPD droit-à-l'oubli.
+router.delete(
+  "/admin/users/:userId",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    try {
+      const userId = typeof req.params["userId"] === "string" ? req.params["userId"] : "";
+      if (!userId) {
+        res.status(400).json({ error: "Missing userId" });
+        return;
+      }
+      if (userId === req.userId) {
+        res.status(400).json({ error: "cannot_delete_self" });
+        return;
+      }
+      const { data: profile, error: profileErr } = await supabaseAdmin
+        .from("profiles")
+        .select("stripe_subscription_id, plan")
+        .eq("id", userId)
+        .single();
+      if (profileErr || !profile) {
+        // Profile peut ne pas exister mais le auth user oui — on tente quand
+        // même la suppression auth ensuite. Mais si rien existe → 404.
+        if (profileErr?.code !== "PGRST116") {
+          logger.warn({ err: profileErr?.message, userId }, "[admin] delete: profile lookup");
+        }
+      }
+      if (profile?.stripe_subscription_id) {
+        // Garde-fou : si une référence d'abonnement Paddle existe encore,
+        // on refuse la suppression. L'admin doit d'abord révoquer via le
+        // bouton "Annuler l'abonnement" (qui détache la référence côté DB
+        // après cancel Paddle), puis re-tenter la suppression.
+        res.status(409).json({ error: "active_paddle_subscription" });
+        return;
+      }
+      const { error: delErr } = await supabaseAdmin.auth.admin.deleteUser(userId);
+      if (delErr) {
+        logger.error({ err: delErr.message, userId }, "[admin] auth delete failed");
+        res.status(500).json({ error: "Failed to delete user" });
+        return;
+      }
+      // Filet de sécurité : si la FK profiles → auth.users n'est pas ON DELETE
+      // CASCADE dans le schéma, on supprime explicitement.
+      await supabaseAdmin.from("profiles").delete().eq("id", userId);
+      audit("user_deleted", {
+        adminId: req.userId ?? null,
+        targetUserId: userId,
+      });
+      res.json({ ok: true, deleted: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      logger.error({ err: message }, "[admin] delete user crashed");
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  },
+);
+
 // Email Brain Phase 1 (#214) — backfill admin de l'indexation vectorielle
 // du corpus de mails. À hit une fois par tenant après l'application de la
 // migration 2026_05_03_email_chunks.sql.

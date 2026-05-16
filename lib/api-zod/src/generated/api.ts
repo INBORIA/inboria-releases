@@ -3639,6 +3639,47 @@ export const AdminCancelUserSubscriptionResponse = zod.object({
 });
 
 /**
+ * Sets the user's plan back to the requested value (defaults to
+`essai`) and resets quota counters. No Paddle call — for paid
+subscriptions the user must resubscribe themselves.
+
+ * @summary Reactivate an expired user (admin only)
+ */
+export const AdminReactivateUserParams = zod.object({
+  userId: zod.coerce.string(),
+});
+
+export const adminReactivateUserBodyPlanDefault = `essai`;
+
+export const AdminReactivateUserBody = zod.object({
+  plan: zod
+    .enum(["essai", "solo", "pro", "business"])
+    .default(adminReactivateUserBodyPlanDefault),
+});
+
+export const AdminReactivateUserResponse = zod.object({
+  ok: zod.boolean(),
+  plan: zod.enum(["essai", "solo", "pro", "business"]),
+});
+
+/**
+ * Permanently deletes the auth user and cascades profile/data. Refuses
+if the target is the calling admin (cannot_delete_self) or if the
+user has an active Paddle subscription (active_paddle_subscription —
+admin must revoke first).
+
+ * @summary Hard-delete a user (admin only, irreversible)
+ */
+export const AdminDeleteUserParams = zod.object({
+  userId: zod.coerce.string(),
+});
+
+export const AdminDeleteUserResponse = zod.object({
+  ok: zod.boolean(),
+  deleted: zod.boolean(),
+});
+
+/**
  * @summary Paddle billing metrics (MRR, plan distribution, health) - admin only
  */
 export const AdminPaddleMetricsResponse = zod.object({
