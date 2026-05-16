@@ -149,3 +149,9 @@ id = "Zy_PLAkBdSNmk2aVxKYMf"
 uri = "file://screenshots/inbox-superhuman-dark.jpg"
 type = "image"
 title = "Réception — dark indigo (livrée)"
+
+[[outputs]]
+id = "Zk7LtwJDFJ33sZRUvDkpc"
+uri = "file://attached_assets/inboria_logo_transparent_fix_v1_1775916067670.png"
+type = "image"
+title = "Inboria Logo V1 (actuel en prod)"
