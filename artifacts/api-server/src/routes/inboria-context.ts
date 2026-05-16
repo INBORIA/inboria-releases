@@ -3103,7 +3103,20 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     // requêtes (uniquement quand drift détecté).
     let languageDriftDetected = false;
     if (reply) {
-      const expectedLang = detectLangCode(lastUserTextForLang);
+      // Fallback : si la question est trop courte pour être détectée (ex.
+      // « Que propose Toro ? » → 1 seul match FR, sous le seuil), on retombe
+      // sur la préférence langue du profil (ai_lang). Sans ça, expectedLang
+      // restait null sur les questions courtes et la post-validation ne se
+      // déclenchait jamais → la réponse pouvait dériver en ES si le contexte
+      // (mails, signatures) contenait des termes hispaniques sans que rien
+      // ne corrige.
+      const detectedLang = detectLangCode(lastUserTextForLang);
+      const profileLang = (profileRes.data as any)?.ai_lang;
+      const expectedLang =
+        detectedLang ||
+        (typeof profileLang === "string" && STRICT_LANG_RETRY_PROMPTS[profileLang]
+          ? profileLang
+          : null);
       const actualLang = detectLangCode(reply);
       if (
         expectedLang &&
