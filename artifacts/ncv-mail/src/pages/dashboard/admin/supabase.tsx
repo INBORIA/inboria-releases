@@ -59,7 +59,7 @@ function tierRank(id: ComputeTier): number {
   return TIERS.findIndex((t) => t.id === id);
 }
 
-export default function AdminInfrastructure() {
+export default function AdminSupabase() {
   const { data: profileData, isLoading: profileLoading } = useGetProfile();
   const profile = (profileData ?? {}) as ProfileWithAdmin;
   const isAdmin = !!profile.isAdmin;

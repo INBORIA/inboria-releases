@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile } from "@workspace/api-client-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Mail, Users, ShieldCheck, Brain, MessageSquare, Server } from "lucide-react";
+import { Loader2, Mail, Users, ShieldCheck, Brain, MessageSquare, Database } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
@@ -9,20 +9,20 @@ import AdminWaitlist from "./waitlist";
 import AdminAbonnes from "./abonnes";
 import AdminEmailBrain from "./email-brain";
 import AdminInboria from "./inboria";
-import AdminInfrastructure from "./infrastructure";
+import AdminSupabase from "./supabase";
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
 }
 
-type AdminTab = "waitlist" | "subscribers" | "email-brain" | "inboria" | "infrastructure";
+type AdminTab = "waitlist" | "subscribers" | "email-brain" | "inboria" | "supabase";
 
 function readTabFromHash(): AdminTab {
   if (typeof window === "undefined") return "waitlist";
   if (window.location.hash === "#subscribers") return "subscribers";
   if (window.location.hash === "#email-brain") return "email-brain";
   if (window.location.hash === "#inboria") return "inboria";
-  if (window.location.hash === "#infrastructure") return "infrastructure";
+  if (window.location.hash === "#supabase") return "supabase";
   return "waitlist";
 }
 
@@ -48,8 +48,8 @@ export default function AdminIndex() {
           ? "email-brain"
           : value === "inboria"
             ? "inboria"
-            : value === "infrastructure"
-              ? "infrastructure"
+            : value === "supabase"
+              ? "supabase"
               : "waitlist";
     setTab(next);
     if (typeof window !== "undefined") {
@@ -96,9 +96,9 @@ export default function AdminIndex() {
               <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
               Chat Inboria
             </TabsTrigger>
-            <TabsTrigger value="infrastructure" data-testid="tab-infrastructure">
-              <Server className="h-3.5 w-3.5 mr-1.5" />
-              Infrastructure
+            <TabsTrigger value="supabase" data-testid="tab-supabase">
+              <Database className="h-3.5 w-3.5 mr-1.5" />
+              Supabase
             </TabsTrigger>
           </TabsList>
 
@@ -114,8 +114,8 @@ export default function AdminIndex() {
           <TabsContent value="inboria" className="mt-4">
             <AdminInboria />
           </TabsContent>
-          <TabsContent value="infrastructure" className="mt-4">
-            <AdminInfrastructure />
+          <TabsContent value="supabase" className="mt-4">
+            <AdminSupabase />
           </TabsContent>
         </Tabs>
       </div>
