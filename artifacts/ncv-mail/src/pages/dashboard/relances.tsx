@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { useToast } from "@/hooks/use-toast";
 import {
   useListFollowups,
@@ -13,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Sparkles, MailCheck, X, CheckCircle2, Clock, Loader2, Inbox, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 
 function daysSince(iso: string | null | undefined): number {
@@ -41,6 +42,7 @@ export default function Relances() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; rowId: string } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  const [menuPlacement, setMenuPlacement] = useState<{ top: number; left: number; maxHeight: number } | null>(null);
   const selectionMode = selectedIds.size > 0;
 
   const aiList = (aiSuggestions as any[]) || [];
@@ -55,6 +57,25 @@ export default function Relances() {
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
+  }, [contextMenu]);
+
+  // Auto-flip + clamp du menu contextuel (parité Réception/Reportés/Projets)
+  useLayoutEffect(() => {
+    if (!contextMenu) { setMenuPlacement(null); return; }
+    const el = contextMenuRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const margin = 8;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = contextMenu.x;
+    let top = contextMenu.y;
+    if (left + rect.width + margin > vw) left = Math.max(margin, vw - rect.width - margin);
+    if (top + rect.height + margin > vh) {
+      const flipped = contextMenu.y - rect.height;
+      top = flipped >= margin ? flipped : Math.max(margin, vh - rect.height - margin);
+    }
+    setMenuPlacement({ top, left, maxHeight: vh - 2 * margin });
   }, [contextMenu]);
 
   // Échap = vider sélection
@@ -266,6 +287,7 @@ export default function Relances() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="relances" />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-3">
         <BackToInboxButton />
         <div>
@@ -332,9 +354,9 @@ export default function Relances() {
                     data-followup-row
                     data-row-id={f.id}
                     title={`${recipient}\n— ${subject}${summary ? `\n${summary}` : ""}`}
-                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 select-none border-l-2 border-b border-[#1f2937] transition-colors cursor-pointer ${
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 select-none border-l-2 border-b border-border/40 transition-colors cursor-pointer ${
                       isSelected
-                        ? "border-l-white/40 bg-white/[0.05]"
+                        ? "border-l-primary bg-primary/[0.10]"
                         : "border-l-transparent hover:bg-white/[0.03]"
                     }`}
                     onClick={() => {
@@ -492,10 +514,12 @@ export default function Relances() {
           <div
             ref={contextMenuRef}
             data-context-menu
-            className="fixed z-[9999] min-w-[220px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+            className="fixed z-[9999] min-w-[220px] max-w-[280px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl overflow-y-auto animate-in fade-in zoom-in-95 duration-100"
             style={{
-              top: Math.min(contextMenu.y, window.innerHeight - 200),
-              left: Math.min(contextMenu.x, window.innerWidth - 240),
+              top: menuPlacement?.top ?? contextMenu.y,
+              left: menuPlacement?.left ?? contextMenu.x,
+              maxHeight: menuPlacement?.maxHeight ?? "calc(100vh - 16px)",
+              opacity: menuPlacement ? 1 : 0,
             }}
           >
             <div className="px-3 py-2 border-b border-[#1f2937]">
