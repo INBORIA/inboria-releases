@@ -5599,7 +5599,7 @@ export default function Dashboard() {
                     </DropdownMenuLabel>
                     <DropdownMenuRadioGroup value={filterImportance} onValueChange={(v) => setFilterImportance(v as "all" | "important")}>
                       <DropdownMenuRadioItem value="all" className="text-[12px]">{t("inbox.importance.all", "Tous les mails")}</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="important" className="text-[12px]">{t("inbox.importance.important", "Importants uniquement")}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="important" className="text-[12px]">{t("inbox.importance.important", "Importants")}</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
 
                     <DropdownMenuSeparator />

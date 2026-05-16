@@ -781,7 +781,7 @@ export function MailPageHeader({
                     {t("inbox.importance.all", "Tous les mails")}
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="important" className="text-[12px]">
-                    {t("inbox.importance.important", "Importants uniquement")}
+                    {t("inbox.importance.important", "Importants")}
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
 
