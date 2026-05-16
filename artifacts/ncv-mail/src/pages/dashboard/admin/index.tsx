@@ -156,7 +156,7 @@ export default function AdminIndex() {
 
         <Tabs value={topTab} onValueChange={handleTopChange} className="w-full">
           <TabsList
-            className="bg-[#0d1117] border border-[#1f2937] flex flex-wrap h-auto"
+            className="bg-[#0d1117] border border-[#1f2937] flex flex-wrap justify-start h-auto"
             data-testid="tabs-admin"
           >
             <TabsTrigger value="inboria" data-testid="tab-inboria">
