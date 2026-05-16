@@ -1106,16 +1106,27 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
-                <TemplateSuggestionBar
-                  emailId={email.id}
-                  enabled={replyOpen}
-                  emailSender={email.sender || null}
-                  emailSubject={email.subject || null}
-                  onInsert={(body, subject) => {
-                    setReplyText((prev) => (prev?.trim() ? `${body}\n\n${prev}` : body));
-                    if (subject && !replySubject) setReplySubject(subject);
-                  }}
-                />
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <TemplateSuggestionBar
+                    emailId={email.id}
+                    enabled={replyOpen}
+                    emailSender={email.sender || null}
+                    emailSubject={email.subject || null}
+                    onInsert={(body, subject) => {
+                      setReplyText((prev) => (prev?.trim() ? `${body}\n\n${prev}` : body));
+                      if (subject && !replySubject) setReplySubject(subject);
+                    }}
+                  />
+                  <TemplatePickerButton
+                    emailSender={email.sender || null}
+                    emailSubject={email.subject || null}
+                    onInsert={(body, subject) => {
+                      const html = plainTextToHtml(body);
+                      setReplyText((prev) => (prev?.trim() ? `${html}<br><br>${prev}` : html));
+                      if (subject && !replySubject) setReplySubject(subject);
+                    }}
+                  />
+                </div>
                 {connections && connections.length > 1 && (
                   <div>
                     <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
