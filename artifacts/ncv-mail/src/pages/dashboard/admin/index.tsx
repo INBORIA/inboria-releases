@@ -12,7 +12,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import AdminWaitlist from "./waitlist";
 import AdminAbonnes from "./abonnes";
@@ -66,7 +65,6 @@ function hashFor(top: TopTab, sub: InboriaSubTab): string {
 }
 
 export default function AdminIndex() {
-  const { t } = useTranslation();
   const { data: profileData, isLoading: profileLoading } = useGetProfile();
   const profile = (profileData ?? {}) as ProfileWithAdmin;
   const isAdmin = !!profile.isAdmin;
@@ -122,7 +120,7 @@ export default function AdminIndex() {
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
-          <h1 className="text-xl font-bold text-white">{t("sidebar.admin")}</h1>
+          <h1 className="text-xl font-bold text-white">Admin</h1>
         </div>
 
         <Tabs value={topTab} onValueChange={handleTopChange} className="w-full">
@@ -152,11 +150,11 @@ export default function AdminIndex() {
               >
                 <TabsTrigger value="waitlist" data-testid="subtab-waitlist">
                   <Mail className="h-3.5 w-3.5 mr-1.5" />
-                  {t("admin.waitlistTitle")}
+                  Liste d'attente
                 </TabsTrigger>
                 <TabsTrigger value="abonnes" data-testid="subtab-abonnes">
                   <Users className="h-3.5 w-3.5 mr-1.5" />
-                  {t("admin.subscribersTitle")}
+                  Abonnés
                 </TabsTrigger>
                 <TabsTrigger value="email-brain" data-testid="subtab-email-brain">
                   <Brain className="h-3.5 w-3.5 mr-1.5" />
