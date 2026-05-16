@@ -1,6 +1,9 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { extractEmailAddress } from "@/lib/utils";
 import {
   useListProjects,
   useCreateProject,
@@ -22,7 +25,12 @@ import {
   useGetProfile,
   useUpdateEmail,
   useDeleteEmail,
+  useSnoozeEmail,
+  useAssignEmailsToFolder,
+  useGetCategoryCounts,
+  useListFolders,
   getListEmailsQueryKey,
+  getListFoldersQueryKey,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -72,6 +80,14 @@ import {
   Sparkles,
   FolderMinus,
   Eye,
+  Paperclip,
+  MailOpen,
+  Archive,
+  Printer,
+  UserPlus,
+  Reply,
+  Forward,
+  Copy,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -79,7 +95,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { format } from "date-fns";
@@ -229,6 +245,7 @@ function ProjectDetailView({
   onBack: () => void;
 }) {
   const { t, i18n } = useTranslation();
+  const dateFnsLocale = (({fr,en:enUS,nl,de,es,it,pt,pl,ro,sv,da,fi,hu,cs,tr,ja,ko,vi,th,id,ms,el} as Record<string, any>)[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr) as any;
   const PROJECT_COLORS = getProjectColors(t);
   const STATUS_LABELS: Record<string, { label: string; class: string }> = getStatusLabels(t);
   const { data: project, isLoading } = useGetProject(projectId);
@@ -463,6 +480,255 @@ function ProjectDetailView({
     }
   };
 
+  // ─── Parité Réception/Reportés/Tâches : helpers email-niveau ────────────
+  const snoozeMut = useSnoozeEmail();
+  const assignToFolderMut = useAssignEmailsToFolder();
+  const { data: categoryCounts } = useGetCategoryCounts();
+  const { data: userFolders } = useListFolders();
+  const projectEmails: any[] = (project as any)?.emails || [];
+
+  const findEmail = (id: number) => projectEmails.find((e: any) => Number(e.id) === Number(id));
+
+  const copyToClipboardSafe = async (text: string): Promise<boolean> => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch { return false; }
+  };
+
+  const handleQuickReply = (id: number) => {
+    setSelectedEmailId(id);
+    setEmailContextMenu(null);
+    setSelectedEmailIds(new Set());
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
+  const handleQuickForward = (id: number) => {
+    setSelectedEmailId(id);
+    setEmailContextMenu(null);
+    setSelectedEmailIds(new Set());
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
+  const handleQuickCreateTask = (id: number) => {
+    const email = findEmail(id);
+    const title = (email?.subject || "Tâche").slice(0, 200);
+    createTaskMut.mutate(
+      { data: { title, emailId: id, projectId } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: t("inbox.taskCreated", "Tâche créée"), description: title });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      },
+    );
+  };
+
+  const handleToggleRead = (id: number) => {
+    const email = findEmail(id);
+    const isUnread = email?.status === "non_lu" || email?.isRead === false || (email as any)?.unread === true;
+    const newStatus = isUnread ? "read" : "non_lu";
+    updateEmailMut.mutate(
+      { id, data: { status: newStatus } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+      },
+    );
+  };
+
+  const handleQuickSnooze = (id: number, hours: number, label: string) => {
+    let date: Date;
+    if (hours === 24) {
+      date = new Date(); date.setDate(date.getDate() + 1); date.setHours(9, 0, 0, 0);
+    } else if (hours === 168) {
+      date = new Date(); const day = date.getDay(); const diff = (8 - day) % 7 || 7;
+      date.setDate(date.getDate() + diff); date.setHours(9, 0, 0, 0);
+    } else {
+      date = new Date(Date.now() + hours * 60 * 60 * 1000);
+    }
+    snoozeMut.mutate(
+      { id, data: { snoozeUntil: date.toISOString() } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+      },
+    );
+  };
+
+  const handleArchiveOne = (id: number) => {
+    updateEmailMut.mutate(
+      { id, data: { status: "archived" } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("inbox.archived", "Archivé") });
+        },
+      },
+    );
+  };
+
+  const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    updateEmailMut.mutate(
+      { id, data: { categoryId } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName });
+        },
+      },
+    );
+  };
+
+  const handleMoveToFolder = async (emailIds: number[], folderId: string, folderName: string) => {
+    try {
+      await assignToFolderMut.mutateAsync({ data: { folderId, emailIds } as any });
+      toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
+      queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+      queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+    } catch {
+      toast({ title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }), variant: "destructive" });
+    }
+  };
+
+  const handleCopySender = async (id: number) => {
+    const email = findEmail(id);
+    const addr = (extractEmailAddress(email?.sender || "") || email?.sender || "").trim();
+    if (!addr) { toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" }); return; }
+    const ok = await copyToClipboardSafe(addr);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: addr });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
+  };
+
+  const handleCopySubject = async (id: number) => {
+    const email = findEmail(id);
+    const subject = (email?.subject || "").trim();
+    if (!subject) { toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" }); return; }
+    const ok = await copyToClipboardSafe(subject);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: subject });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
+  };
+
+  const handleDownloadEml = async (id: number) => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+      const res = await fetch(`${baseUrl}/api/emails/${id}/export.eml`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, `email_${id}.eml`);
+      toast({ title: t("inbox.exportDownloaded", "Téléchargé") });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: t("inbox.exportError", "Échec du téléchargement"), description: e?.message });
+    }
+  };
+
+  const handlePrintEmail = (id: number) => {
+    const email = findEmail(id);
+    if (!email) return;
+    const w = window.open("", "_blank", "width=800,height=900");
+    if (!w) { toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") }); return; }
+    const safeBody = ((email as any).body || (email as any).summary || "").toString();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
+      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+      </head><body>
+      <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+      <div class="meta"><b>${(email.sender || "").replace(/[<>]/g, "")}</b><br/>${email.createdAt ? new Date(email.createdAt).toLocaleString() : ""}</div>
+      <div>${safeBody}</div>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+  };
+
+  const buildHoverCb = (email: any): HoverActionsCb => ({
+    onOpen: () => setSelectedEmailId(Number(email.id)),
+    onReply: () => handleQuickReply(Number(email.id)),
+    onForward: () => handleQuickForward(Number(email.id)),
+    onCreateTask: () => handleQuickCreateTask(Number(email.id)),
+    onToggleRead: () => handleToggleRead(Number(email.id)),
+    onSnooze: (hours, label) => handleQuickSnooze(Number(email.id), hours, label),
+    onArchive: () => handleArchiveOne(Number(email.id)),
+    onSetCategory: (categoryId, name) => handleQuickSetCategory(Number(email.id), categoryId, name),
+    onMove: (folderId, name) => handleMoveToFolder([Number(email.id)], folderId, name),
+    onCopySender: () => handleCopySender(Number(email.id)),
+    onCopySubject: () => handleCopySubject(Number(email.id)),
+    onDownloadEml: () => handleDownloadEml(Number(email.id)),
+    onPrint: () => handlePrintEmail(Number(email.id)),
+    onBlockSender: () => { /* TODO Projets : raccord backend bloquer expéditeur */ },
+    onDelete: () => handleDeleteEmail(Number(email.id)),
+  });
+
+  // ── Builder hover pour les tâches : actions email-liées via task.emailId,
+  //    onDelete supprime la TÂCHE (parité /dashboard/taches).
+  const buildTaskHoverCb = (task: any): HoverActionsCb => ({
+    onOpen: () => task.emailId && setSelectedEmailId(Number(task.emailId)),
+    onReply: () => task.emailId && handleQuickReply(Number(task.emailId)),
+    onForward: () => task.emailId && handleQuickForward(Number(task.emailId)),
+    onCreateTask: () => task.emailId && handleQuickCreateTask(Number(task.emailId)),
+    onToggleRead: () => task.emailId && handleToggleRead(Number(task.emailId)),
+    onSnooze: (hours, label) => task.emailId && handleQuickSnooze(Number(task.emailId), hours, label),
+    onArchive: () => task.emailId && handleArchiveOne(Number(task.emailId)),
+    onSetCategory: (categoryId, name) => task.emailId && handleQuickSetCategory(Number(task.emailId), categoryId, name),
+    onMove: (folderId, name) => task.emailId && handleMoveToFolder([Number(task.emailId)], folderId, name),
+    onCopySender: () => task.emailId && handleCopySender(Number(task.emailId)),
+    onCopySubject: () => task.emailId && handleCopySubject(Number(task.emailId)),
+    onDownloadEml: () => task.emailId && handleDownloadEml(Number(task.emailId)),
+    onPrint: () => task.emailId && handlePrintEmail(Number(task.emailId)),
+    onBlockSender: () => { /* TODO Projets : raccord backend bloquer expéditeur */ },
+    onDelete: () => handleDeleteTask(String(task.id)),
+  });
+
+  // Auto-flip / clamp du menu contextuel : mesure réelle après render.
+  const [menuPlacement, setMenuPlacement] = useState<{ top: number; left: number; maxHeight: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!emailContextMenu) { setMenuPlacement(null); return; }
+    const el = emailCtxRef.current;
+    if (!el) return;
+    const margin = 8;
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    const rect = el.getBoundingClientRect();
+    const desiredH = rect.height;
+    const desiredW = rect.width;
+    let top = emailContextMenu.y;
+    let maxHeight = vh - top - margin;
+    if (desiredH > maxHeight && emailContextMenu.y > vh / 2) {
+      top = Math.max(margin, emailContextMenu.y - desiredH);
+      maxHeight = Math.min(emailContextMenu.y - margin, vh - margin * 2);
+    } else {
+      maxHeight = Math.max(120, maxHeight);
+    }
+    const left = Math.min(emailContextMenu.x, vw - desiredW - margin);
+    setMenuPlacement({ top, left: Math.max(margin, left), maxHeight });
+  }, [emailContextMenu]);
+
   if (isLoading) {
     return (
       <DashboardLayout>
@@ -520,6 +786,7 @@ function ProjectDetailView({
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="projets" />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="flex items-center justify-between mb-3">
           <Button
@@ -610,11 +877,15 @@ function ProjectDetailView({
             <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-primary" /> {t("projects.emails")} ({project.emails.length})
             </h2>
-            <div className="space-y-1">
+            <div className="space-y-0">
               {project.emails.map((email: any) => {
                 const emailIdNum = Number(email.id);
                 const emailIdStr = String(email.id);
                 const isSelected = selectedEmailIds.has(emailIdStr);
+                const isUnread = email.status === "non_lu" || email.isRead === false || (email as any).unread === true;
+                const senderName = (email.sender || "").trim();
+                const firstLetter = senderName[0]?.toUpperCase() || "?";
+                const hasAttachment = (email as any).attachmentCount > 0 || (email as any).hasAttachments;
                 return (
                   <div
                     key={email.id}
@@ -625,7 +896,10 @@ function ProjectDetailView({
                       if (selectionMode) toggleEmailSelected(email.id);
                       else setSelectedEmailId(emailIdNum);
                     }}
-                    onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(emailIdStr); } }}
+                    onMouseDown={(e) => {
+                      if ((e.target as HTMLElement).closest('button,[role="button"],a,input,textarea,select')) return;
+                      if (e.button === 0) { e.preventDefault(); handleDragSelectStart(emailIdStr); }
+                    }}
                     onContextMenu={(e) => {
                       e.preventDefault();
                       if (selectedEmailIds.size === 0) {
@@ -635,30 +909,70 @@ function ProjectDetailView({
                       }
                       setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: emailIdNum, subject: email.subject || "" });
                     }}
-                    className={`group flex items-center gap-2.5 px-3 py-2 bg-card border rounded-lg w-full text-left transition-colors cursor-pointer select-none ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+                      isSelected
+                        ? "border-l-primary bg-primary/[0.10]"
+                        : "border-l-transparent hover:bg-white/[0.03]"
+                    }`}
                   >
+                    {/* Case à cocher */}
                     <div className="w-4 flex items-center justify-center shrink-0">
                       {(selectionMode || isSelected) ? (
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
                           onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(emailIdStr); }}
-                          className={`w-4 h-4 rounded border flex items-center justify-center cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
+                          className="w-4 h-4 rounded border flex items-center justify-center cursor-pointer transition-colors border-[#2a3441] hover:border-primary"
                           aria-label={t("common.select", "Sélectionner")}
                         >
                           {isSelected && <Check className="w-3 h-3 text-primary" />}
                         </button>
                       ) : (
-                        <span className="w-3 h-3" />
+                        <span
+                          className="w-3 h-3 cursor-pointer"
+                          onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
+                        />
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[12px] text-white truncate">{email.subject}</p>
-                      <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
+
+                    {/* Avatar — première lettre */}
+                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                      <span className="text-primary text-[11px] font-semibold">{firstLetter}</span>
                     </div>
-                    <span className="text-[10px] text-[#b8c5d6] shrink-0">
-                      {new Date(email.createdAt).toLocaleDateString(i18n.language)}
-                    </span>
+
+                    {/* Expéditeur — largeur fixe 140px */}
+                    <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                        {senderName || "Inconnu"}
+                      </span>
+                    </div>
+
+                    {/* Sujet + extrait */}
+                    <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                        {email.subject || "(sans sujet)"}
+                      </span>
+                      {(email as any).summary && (
+                        <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>— {(email as any).summary}</span>
+                      )}
+                    </div>
+
+                    {/* Indicateurs + date — masqués au survol */}
+                    <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                      {hasAttachment && <Paperclip className="w-3 h-3 text-[#8b95a7]" />}
+                      <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap">
+                        {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                      </span>
+                    </div>
+
+                    {/* Barre d'actions au survol — parité 1:1 avec Réception/Reportés */}
+                    <HoverActions
+                      isUnread={isUnread}
+                      categoryCounts={categoryCounts as any[] | undefined}
+                      userFolders={userFolders as any[] | undefined}
+                      cb={buildHoverCb(email)}
+                      showBlockSender={true}
+                    />
                   </div>
                 );
               })}
@@ -708,57 +1022,92 @@ function ProjectDetailView({
                 return (
                 <div
                   key={task.id}
-                  className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5 group"
+                  className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 select-none border-l-2 border-b border-border/40 border-l-transparent hover:bg-white/[0.03] transition-colors"
                 >
+                  {/* Checkbox done/todo */}
                   <button
                     onClick={() => handleToggleTask(String(task.id), task.done)}
                     className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
+                    title={task.done ? t("tasks.markAsTodo", "Marquer à faire") : t("tasks.markAsDone", "Marquer terminée")}
                   >
-                    {task.done && (
-                      <Check className="w-3 h-3 text-primary" />
-                    )}
+                    {task.done && <Check className="w-3 h-3 text-primary" />}
                   </button>
-                  <p
-                    className={`text-[12px] flex-1 ${task.done ? "line-through text-[#b8c5d6]" : "text-white"}`}
-                  >
-                    {task.title}
-                  </p>
-                  {task.emailSubject && (
-                    <span className="text-[10px] text-[#b8c5d6] truncate max-w-[140px]">
-                      {task.emailSubject}
+
+                  {/* Avatar — première lettre de l'expéditeur du mail lié (sinon initiale du titre) */}
+                  <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                    <span className="text-primary text-[11px] font-semibold">
+                      {((task.emailSender || task.title || "?").trim()[0] || "?").toUpperCase()}
                     </span>
+                  </div>
+
+                  {/* Titre tâche */}
+                  <div className="w-[180px] shrink-0 min-w-0">
+                    <p className={`text-[13px] truncate ${task.done ? "line-through text-[#7a8290]" : "text-white font-semibold"}`}>
+                      {task.title}
+                    </p>
+                  </div>
+
+                  {/* Sujet du mail lié (extrait) */}
+                  <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                    {task.emailSubject ? (
+                      <>
+                        <span className="text-[12px] text-[#b8c5d6] shrink-0">↳</span>
+                        <span className="text-[13px] truncate text-[#8b95a7]">
+                          {task.emailSubject}
+                        </span>
+                        {task.emailSender && (
+                          <span className="text-[12px] text-[#5a6270] truncate hidden md:inline">— {task.emailSender}</span>
+                        )}
+                      </>
+                    ) : null}
+                  </div>
+
+                  {/* Assignation — masquée au survol pour laisser place à HoverActions */}
+                  <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                    {members.length > 0 && (
+                      isCreator ? (
+                        <Select
+                          value={task.assignedToUserId || "none"}
+                          onValueChange={(val) => handleAssignTask(String(task.id), val === "none" ? null : val)}
+                        >
+                          <SelectTrigger className="w-[140px] h-7 bg-background border-border text-[11px] text-white">
+                            <SelectValue placeholder={t("projects.assignTo", "Assigner à…")} />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            <SelectItem value="none">{t("projects.unassigned", "Non assignée")}</SelectItem>
+                            {members.map((m: any) => (
+                              <SelectItem key={m.userId} value={m.userId}>
+                                {m.fullName || m.email}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : assigneeLabel ? (
+                        <span className="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">
+                          {assigneeLabel}
+                        </span>
+                      ) : null
+                    )}
+                  </div>
+
+                  {/* Barre d'actions au survol — parité 1:1 avec /taches (uniquement si tâche liée à un mail) */}
+                  {task.emailId ? (
+                    <HoverActions
+                      isUnread={!task.emailIsRead}
+                      categoryCounts={categoryCounts as any[] | undefined}
+                      userFolders={userFolders as any[] | undefined}
+                      cb={buildTaskHoverCb(task)}
+                      showBlockSender={true}
+                    />
+                  ) : (
+                    <button
+                      onClick={() => handleDeleteTask(String(task.id))}
+                      className="p-1.5 rounded-md text-[#b8c5d6]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                      title={t("common.delete")}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   )}
-                  {members.length > 0 && (
-                    isCreator ? (
-                      <Select
-                        value={task.assignedToUserId || "none"}
-                        onValueChange={(val) => handleAssignTask(String(task.id), val === "none" ? null : val)}
-                      >
-                        <SelectTrigger className="w-[140px] h-7 bg-background border-border text-[11px] text-white">
-                          <SelectValue placeholder={t("projects.assignTo", "Assigner à…")} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-card border-border">
-                          <SelectItem value="none">{t("projects.unassigned", "Non assignée")}</SelectItem>
-                          {members.map((m: any) => (
-                            <SelectItem key={m.userId} value={m.userId}>
-                              {m.fullName || m.email}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : assigneeLabel ? (
-                      <span className="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">
-                        {assigneeLabel}
-                      </span>
-                    ) : null
-                  )}
-                  <button
-                    onClick={() => handleDeleteTask(String(task.id))}
-                    className="p-1.5 rounded-md text-[#b8c5d6]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
-                    title={t("common.delete")}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
                 </div>
                 );
               })}
@@ -788,44 +1137,106 @@ function ProjectDetailView({
       {emailContextMenu && (
         <div
           ref={emailCtxRef}
-          className="fixed z-[9999] min-w-[220px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          data-context-menu
+          className="fixed z-[9999] min-w-[220px] max-w-[280px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-y-auto animate-in fade-in zoom-in-95 duration-100"
           style={{
-            top: Math.min(emailContextMenu.y, window.innerHeight - 200),
-            left: Math.min(emailContextMenu.x, window.innerWidth - 240),
+            top: menuPlacement?.top ?? emailContextMenu.y,
+            left: menuPlacement?.left ?? emailContextMenu.x,
+            maxHeight: menuPlacement ? menuPlacement.maxHeight : `calc(100vh - 16px)`,
+            opacity: menuPlacement ? 1 : 0,
           }}
         >
           <div className="px-3 py-2 border-b border-[#1f2937]">
-            <span className="text-[10px] text-[#6b7280] uppercase tracking-wider font-medium">
+            <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
               {emailContextMenu.subject.substring(0, 30)}{emailContextMenu.subject.length > 30 ? "…" : ""}
             </span>
           </div>
           <div className="py-1">
             <button
-              onClick={() => {
-                setSelectedEmailId(emailContextMenu.emailId);
-                setEmailContextMenu(null);
-              }}
+              onClick={() => { setSelectedEmailId(emailContextMenu.emailId); setEmailContextMenu(null); setSelectedEmailIds(new Set()); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
             >
               <Eye className="w-3.5 h-3.5 text-primary" />
               {t("projects.openEmail", "Ouvrir l'email")}
             </button>
             <button
-              onClick={() => {
-                handleDetachEmail(emailContextMenu.emailId);
-                setEmailContextMenu(null);
-              }}
+              onClick={() => { handleQuickReply(emailContextMenu.emailId); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Reply className="w-3.5 h-3.5" /> {t("inbox.reply", "Répondre")}
+            </button>
+            <button
+              onClick={() => { handleQuickForward(emailContextMenu.emailId); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Forward className="w-3.5 h-3.5" /> {t("inbox.forward", "Transférer")}
+            </button>
+            <button
+              onClick={() => { handleQuickCreateTask(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <CheckSquare className="w-3.5 h-3.5" /> {t("inbox.createTask", "Créer une tâche")}
+            </button>
+
+            <div className="border-t border-[#1f2937] my-1" />
+
+            <button
+              onClick={() => { handleToggleRead(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <MailOpen className="w-3.5 h-3.5" /> {t("inbox.markAsReadUnread", "Marquer lu / non lu")}
+            </button>
+            <button
+              onClick={() => { handleArchiveOne(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Archive className="w-3.5 h-3.5" /> {t("inbox.archive", "Archiver")}
+            </button>
+            <button
+              onClick={() => { handleQuickSnooze(emailContextMenu.emailId, 24, t("wave1.snoozeTomorrow", "Demain 9h")); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Clock className="w-3.5 h-3.5" /> {t("wave1.snoozeTomorrow", "Reporter à demain 9h")}
+            </button>
+
+            <div className="border-t border-[#1f2937] my-1" />
+
+            <button
+              onClick={() => { handleCopySender(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Copy className="w-3.5 h-3.5" /> {t("inbox.copySender", "Copier l'adresse")}
+            </button>
+            <button
+              onClick={() => { handleCopySubject(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Copy className="w-3.5 h-3.5" /> {t("inbox.copySubject", "Copier le sujet")}
+            </button>
+            <button
+              onClick={() => { handleDownloadEml(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" /> {t("inbox.exportEml", "Télécharger .eml")}
+            </button>
+            <button
+              onClick={() => { handlePrintEmail(emailContextMenu.emailId); setEmailContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Printer className="w-3.5 h-3.5" /> {t("inbox.print", "Imprimer")}
+            </button>
+
+            <div className="border-t border-[#1f2937] my-1" />
+
+            <button
+              onClick={() => { handleDetachEmail(emailContextMenu.emailId); setEmailContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
             >
               <FolderMinus className="w-3.5 h-3.5" />
               {t("projects.detachEmail", "Retirer du projet")}
             </button>
-            <div className="border-t border-[#1f2937] my-1" />
             <button
-              onClick={() => {
-                handleDeleteEmail(emailContextMenu.emailId);
-                setEmailContextMenu(null);
-              }}
+              onClick={() => { handleDeleteEmail(emailContextMenu.emailId); setEmailContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400 hover:bg-red-500/10 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -967,6 +1378,7 @@ export default function Projets() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="projets" />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
