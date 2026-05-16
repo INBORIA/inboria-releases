@@ -268,7 +268,7 @@ function useDebounce(value: string, delay: number) {
   return debounced;
 }
 
-type InboxMode = "personal" | "shared";
+type InboxMode = "personal" | "shared" | "assigned";
 
 export type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
 export type ComposeSendPayload = {
@@ -3127,14 +3127,27 @@ export default function Dashboard() {
   const [inboxMode, setInboxMode] = useState<InboxMode>(() => {
     if (typeof window === "undefined") return "personal";
     const params = new URLSearchParams(window.location.search);
-    return params.get("mode") === "shared" ? "shared" : "personal";
+    const m = params.get("mode");
+    if (m === "shared") return "shared";
+    if (m === "assigned") return "assigned";
+    return "personal";
   });
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (inboxMode !== "shared") return;
     const url = new URL(window.location.href);
-    if (url.searchParams.get("mode") === "shared") {
-      url.searchParams.delete("mode");
+    const current = url.searchParams.get("mode");
+    if (inboxMode === "personal") {
+      // Nettoie le paramètre quand on revient à la boîte perso : sinon un
+      // refresh ou un back/forward replongerait l'utilisateur dans
+      // Partagées/Assignés alors qu'il a explicitement cliqué Réception.
+      if (current === "shared" || current === "assigned") {
+        url.searchParams.delete("mode");
+        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      }
+      return;
+    }
+    if (current !== inboxMode) {
+      url.searchParams.set("mode", inboxMode);
       window.history.replaceState({}, "", url.pathname + url.search + url.hash);
     }
   }, [inboxMode]);
@@ -3144,6 +3157,21 @@ export default function Dashboard() {
   // « Statut »            : "all" | "open" | "done" | "sla_breach" | "snoozed"
   const [sharedClaimedBy, setSharedClaimedBy] = useState<string>("all");
   const [sharedStatus, setSharedStatus] = useState<"all" | "open" | "done" | "sla_breach" | "snoozed">("all");
+  // Vue Assignés — mêmes 2 dropdowns que Partagées (parité 1:1), mais
+  // appliqués au dataset `useGetTeamAssignments` (mails assignés à des
+  // membres de l'équipe). Filtres calculés côté client à partir de la
+  // payload — option (a) rapide, suffisante pour les volumes typiques.
+  // « Assigné à »   : "all" | "me" | userId  (pas de "unclaimed" : un mail
+  //                   assigné a toujours un assignataire — l'option "Non pris
+  //                   en charge" devient « N/A » et est cachée).
+  // « Statut »      : "all" | "open" | "done" | "sla_breach" | "snoozed"
+  const [assignedMember, setAssignedMember] = useState<string>("me");
+  const [assignedStatus, setAssignedStatus] = useState<"all" | "open" | "done" | "sla_breach" | "snoozed">("all");
+  const [assignedVisibleCount, setAssignedVisibleCount] = useState<number>(50);
+  // Reset pagination quand l'un des filtres change.
+  useEffect(() => {
+    setAssignedVisibleCount(50);
+  }, [assignedMember, assignedStatus, searchQuery]);
   const [filterCategory, setFilterCategory] = useState<string>("all");
   // Étape 5 — la section CATÉGORIES de la sidebar droite est repliable.
   // L'état est mémorisé en localStorage pour rester stable entre les visites.
@@ -3383,15 +3411,19 @@ export default function Dashboard() {
   const emails = accumulatedEmails;
   const hasMorePages = emailPage < totalPages;
 
-  // Lookup unifié : un email peut venir de la liste perso (`emails`) OU
-  // de la liste partagée (`sharedEmailsList`). Tous les handlers du clic
-  // droit / survol doivent passer par ce helper sinon ils échouent
-  // silencieusement sur la vue Partagées (id introuvable, lookup ⇒ undefined).
+  // Lookup unifié : un email peut venir de la liste perso (`emails`), de
+  // la liste partagée (`sharedEmailsList`) OU du dataset Assignés
+  // (`assignedEmailsFlatRef`, alimenté plus bas par useGetTeamAssignments).
+  // Tous les handlers du clic droit / survol doivent passer par ce helper
+  // sinon ils échouent silencieusement sur les vues team (id introuvable,
+  // lookup ⇒ undefined).
+  const assignedEmailsFlatRef = useRef<any[]>([]);
   const findEmailAnywhere = (id: number | string): any => {
     const numId = typeof id === "string" ? Number(id) : id;
     return (
       (emails as any[]).find((e: any) => e.id === id || Number(e.id) === numId) ||
       (sharedEmailsList as any[]).find((e: any) => e.id === id || Number(e.id) === numId) ||
+      assignedEmailsFlatRef.current.find((e: any) => e.id === id || Number(e.id) === numId) ||
       undefined
     );
   };
@@ -3453,6 +3485,19 @@ export default function Dashboard() {
     const me = members.find((m) => m.isCurrentUser);
     return me?.emails?.length ?? 0;
   })();
+  // Alimente le ref consulté par findEmailAnywhere() pour que les handlers
+  // clic droit / survol (Copy sender / Copy subject / Print / Block sender…)
+  // retrouvent un email même quand il vient exclusivement de la vue Assignés.
+  useEffect(() => {
+    const members = ((teamAssignmentsData as any)?.members || []) as Array<{ userId: string; isCurrentUser?: boolean; emails?: any[] }>;
+    const flat: any[] = [];
+    for (const m of members) {
+      for (const e of (m.emails || [])) {
+        flat.push({ ...e, _assignedToUserId: m.userId, _assignedIsMe: !!m.isCurrentUser });
+      }
+    }
+    assignedEmailsFlatRef.current = flat;
+  }, [teamAssignmentsData]);
 
   // Compteur tâches ouvertes (mes tâches non terminées) — alimente le badge
   // de l'onglet Tâches dans la barre de Réception (task #290).
@@ -5367,6 +5412,11 @@ export default function Dashboard() {
                   </SelectContent>
                 </Select>
               )}
+              {/* Vue Assignés : pas de sélecteur supplémentaire en header
+                  sticky — parité stricte avec Partagées (seul le sélecteur
+                  de BOÎTE apparaît ici en mode shared). Les 2 dropdowns
+                  Membre + Statut s'affichent dans la barre de la liste
+                  ci-dessous, identique à la zone shared. */}
               {/* Ligne 2 — Partagées + Assignés (équipe), avant la barre Filtres en dessous. */}
               {/* Ligne 2 — onglets équipe & productivité.
                   Tâches est TOUJOURS visible (existe même en solo).
@@ -5399,20 +5449,24 @@ export default function Dashboard() {
                 </button>
               )}
               {hasTeamForAssigned && (
-                <Link
-                  href="/dashboard/activite-equipe"
+                <button
+                  onClick={() => {
+                    setInboxMode("assigned");
+                    setCrmFilter(null);
+                  }}
                   className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    routeLocation === "/dashboard/activite-equipe"
+                    inboxMode === "assigned"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
+                  data-testid="tab-assigned"
                 >
                   <Activity className="w-3 h-3" />
                   {t("inbox.assignedShort", "Assignés")}
                   {assignedToMeCount > 0 && (
                     <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
                   )}
-                </Link>
+                </button>
               )}
               {/* Onglet Reportés — déplacé depuis la sidebar (task #293).
                   Toujours visible avec badge du nombre de mails reportés. */}
@@ -5674,6 +5728,156 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               {isSnoozedView ? (
                 <SnoozedPanel />
+              ) : inboxMode === "assigned" ? (
+                /* Vue Assignés — copie miroir 1:1 de la vue Partagées :
+                   - mêmes 2 dropdowns (Assigné à + Statut)
+                   - même <EmailRow> avec hover/clic droit complets
+                   - pagination « Voir plus » client (PAGE_SIZE par clic)
+                   Dataset : useGetTeamAssignments (membres + emails),
+                   filtres + SLA appliqués côté client.
+                   Si pas d'équipe (hasTeamForAssigned = false), on
+                   affiche un état vide minimal. */
+                (() => {
+                  if (!hasTeamForAssigned) {
+                    return (
+                      <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
+                        <Activity className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
+                        <h3 className="text-[13px] font-medium text-white">{t("inbox.assignedShort", "Assignés")}</h3>
+                        <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.assignedNoTeam", "Cette vue nécessite une équipe (2 membres ou plus).")}</p>
+                      </div>
+                    );
+                  }
+                  const members = ((teamAssignmentsData as any)?.members || []) as Array<{ userId: string; isCurrentUser?: boolean; emails?: any[] }>;
+                  // 1) Flatten + injection du userId d'assignation sur chaque
+                  // email (sera utilisé pour filtrer + pour le badge).
+                  const flat: any[] = [];
+                  for (const m of members) {
+                    for (const e of (m.emails || [])) {
+                      flat.push({ ...e, _assignedToUserId: m.userId, _assignedIsMe: !!m.isCurrentUser });
+                    }
+                  }
+                  // 2) Filtre membre
+                  const memberFiltered = flat.filter((e) => {
+                    if (assignedMember === "all") return true;
+                    if (assignedMember === "me") return !!e._assignedIsMe;
+                    return String(e._assignedToUserId) === String(assignedMember);
+                  });
+                  // 3) Filtre statut (parité 1:1 avec Partagées)
+                  const statusFiltered = memberFiltered.filter((e) => {
+                    if (assignedStatus === "all") return true;
+                    if (assignedStatus === "sla_breach") return slaBreachIds.has(Number(e.id));
+                    if (assignedStatus === "snoozed") return e.status === "snoozed";
+                    if (assignedStatus === "done") return e.status === "done" || e.status === "archived";
+                    if (assignedStatus === "open") return e.status !== "done" && e.status !== "archived" && e.status !== "snoozed";
+                    return true;
+                  });
+                  // 4) Recherche (parité Réception/Partagées)
+                  const q = (searchQuery || "").trim().toLowerCase();
+                  const searched = q
+                    ? statusFiltered.filter((e) => {
+                        const hay = `${e.subject || ""} ${e.sender || ""} ${e.senderEmail || ""} ${e.summary || ""}`.toLowerCase();
+                        return hay.includes(q);
+                      })
+                    : statusFiltered;
+                  // 5) Pagination client
+                  const visible = searched.slice(0, assignedVisibleCount);
+                  const hasMore = searched.length > visible.length;
+                  return (
+                    <>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <Select value={assignedMember} onValueChange={setAssignedMember}>
+                          <SelectTrigger className="w-[200px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]" data-testid="select-assigned-member">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            <SelectItem value="all">{t("inbox.assignedTo.all", "Toute l'équipe")}</SelectItem>
+                            <SelectItem value="me">{t("inbox.assignedTo.me", "Moi")}</SelectItem>
+                            {(orgMembers as any[] | undefined)?.filter((m: any) => m.status === "active" && m.userId && m.userId !== (profile as any)?.id).map((m: any) => (
+                              <SelectItem key={m.userId} value={m.userId}>
+                                {m.fullName || m.email || m.userId}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select value={assignedStatus} onValueChange={(v) => setAssignedStatus(v as any)}>
+                          <SelectTrigger className="w-[180px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]" data-testid="select-assigned-status">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            <SelectItem value="all">{t("inbox.sharedStatus.all", "Tous")}</SelectItem>
+                            <SelectItem value="open">{t("inbox.sharedStatus.open", "Non traités")}</SelectItem>
+                            <SelectItem value="done">{t("inbox.sharedStatus.done", "Traités")}</SelectItem>
+                            <SelectItem value="sla_breach">{t("inbox.sharedStatus.slaBreach", "SLA dépassé")}</SelectItem>
+                            <SelectItem value="snoozed">{t("inbox.sharedStatus.snoozed", "Reportés")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <span className="text-[11px] text-[#8b95a7] tabular-nums ml-1">
+                          {t("inbox.assignedPageCount", { count: searched.length, defaultValue: `${searched.length} email(s)` })}
+                        </span>
+                      </div>
+                      {searched.length === 0 ? (
+                        <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
+                          <Inbox className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
+                          <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
+                          <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.noEmailsDesc")}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          {visible.map((email: any) => {
+                            const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
+                            return (
+                              <EmailRow
+                                key={email.id}
+                                email={email}
+                                onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(Number(email.id)); } }}
+                                onArchive={handleArchive}
+                                onDelete={handleDelete}
+                                onCategoryClick={(name: string) => setFilterCategory(name)}
+                                isSelected={selectedIds.has(email.id)}
+                                onToggleSelect={toggleSelect}
+                                selectionMode={selectionMode}
+                                onContextMenu={handleContextMenu}
+                                onDragSelectStart={handleDragSelectStart}
+                                mailboxBadge={badge}
+                                showMailboxBadge={false}
+                                isSlaBreach={slaBreachIds.has(Number(email.id))}
+                                hoverCategories={categoryCounts}
+                                hoverFolders={userFolders}
+                                hoverCb={{
+                                  onOpen: () => { setSelectedEmailId(Number(email.id)); setSelectedIds(new Set()); },
+                                  onReply: () => handleQuickReply(email.id),
+                                  onForward: () => handleQuickForward(email.id),
+                                  onCreateTask: () => handleQuickCreateTask(email.id),
+                                  onToggleRead: () => handleToggleRead(email.id),
+                                  onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
+                                  onArchive: () => handleArchive(email.id),
+                                  onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
+                                  onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                                  onCopySender: () => handleCopySender(email.id),
+                                  onCopySubject: () => handleCopySubject(email.id),
+                                  onDownloadEml: () => handleDownloadEml(email.id),
+                                  onPrint: () => handlePrintEmail(email.id),
+                                  onBlockSender: () => handleBlockSender(email.id),
+                                  onDelete: () => handleDelete(email.id),
+                                }}
+                              />
+                            );
+                          })}
+                          {hasMore && (
+                            <div className="flex items-center justify-center py-4">
+                              <button
+                                onClick={() => setAssignedVisibleCount((v) => v + 50)}
+                                className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40"
+                              >
+                                {t("inbox.loadMore", "Voir plus")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()
               ) : inboxMode === "shared" ? (
                 <>
                   {/* Vue Partagées « type Missive » — 2 sélecteurs serveur :
