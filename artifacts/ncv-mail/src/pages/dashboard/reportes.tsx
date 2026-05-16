@@ -84,7 +84,15 @@ export default function Reportes() {
   const [page, setPage] = useState(1);
   const [accumulated, setAccumulated] = useState<any[]>([]);
 
-  const { data: emailsData, isLoading, isFetching } = useListEmails({ status: "snoozed" as any, limit: 50, page } as any, { query: { placeholderData: (prev: any) => prev } as any });
+  // IMPORTANT : le backend (artifacts/api-server/src/routes/emails.ts L250-279)
+  // filtre les reportés via le query param `?snoozed=1` (pas `?status=snoozed`,
+  // qui matcherait littéralement la colonne `status` qui ne contient jamais
+  // "snoozed" — un mail reporté reste `non_lu`/`read`/etc. avec juste
+  // `snoozed_until` rempli). Sans `snoozed=1`, la route applique en plus son
+  // filtre par défaut « snoozed_until IS NULL OR <= now » qui exclut justement
+  // tous les reportés. On passe donc snoozed=1 (cast any car hors typing
+  // OpenAPI généré).
+  const { data: emailsData, isLoading, isFetching } = useListEmails({ snoozed: "1", limit: 50, page } as any, { query: { placeholderData: (prev: any) => prev } as any });
   const paged = emailsData as PaginatedEmails | undefined;
   const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
 
