@@ -74,15 +74,19 @@ export default function Parametres() {
       descFallback: "HubSpot, Pipedrive, Salesforce, Odoo",
       testId: "hub-card-crm",
     },
-    {
-      href: "/dashboard/parametres/developpeurs",
-      icon: Code2,
-      titleKey: "settings.hub.developers",
-      titleFallback: "Pour développeurs",
-      descKey: "settings.hub.developersDesc",
-      descFallback: "API, Webhooks, SLA",
-      testId: "hub-card-developers",
-    },
+    ...(isOrgAdmin
+      ? [
+          {
+            href: "/dashboard/parametres/developpeurs",
+            icon: Code2,
+            titleKey: "settings.hub.developers",
+            titleFallback: "Pour développeurs",
+            descKey: "settings.hub.developersDesc",
+            descFallback: "API, Webhooks, SLA",
+            testId: "hub-card-developers",
+          },
+        ]
+      : []),
   ];
 
   return (

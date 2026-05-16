@@ -262,11 +262,11 @@ function Router() {
       <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />
       <Route path="/dashboard/contacts" component={() => <ProtectedRoute component={Contacts} />} />
       <Route path="/dashboard/contacts/:email" component={() => <ProtectedRoute component={Contacts} />} />
-      <Route path="/dashboard/parametres" component={() => <AdminOnlyRoute component={Parametres} />} />
+      <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
       <Route path="/dashboard/parametres/mon-compte" component={() => <ProtectedRoute component={ParametresMonCompte} />} />
       <Route path="/dashboard/parametres/calendriers" component={() => <ProtectedRoute component={ParametresCalendriers} />} />
-      <Route path="/dashboard/parametres/vie-privee" component={() => <AdminOnlyRoute component={ParametresViePrivee} />} />
-      <Route path="/dashboard/parametres/crm" component={() => <AdminOnlyRoute component={ParametresCrm} />} />
+      <Route path="/dashboard/parametres/vie-privee" component={() => <ProtectedRoute component={ParametresViePrivee} />} />
+      <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
       <Route path="/dashboard/parametres/developpeurs" component={() => <AdminOnlyRoute component={ParametresDeveloppeurs} />} />
       <Route path="/dashboard/parametres/templates" component={() => <AdminOnlyRoute component={Templates} />} />
       <Route path="/dashboard/parametres/regles" component={() => <AdminOnlyRoute component={Regles} />} />
