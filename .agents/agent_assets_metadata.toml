@@ -6,6 +6,24 @@ uri = "file://artifacts/ncv-mail-mobile/assets/images/icon.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "AO17zvtvXXx23JNxUqPnc"
+uri = "file://attached_assets/generated_images/inboria_pwa_v1_purple_I.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "qNxXQ-FZ0uv6AJ13sdB06"
+uri = "file://attached_assets/generated_images/inboria_pwa_v2_envelope.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "3ZzKUS66UEQCTEkJ8wFc-"
+uri = "file://attached_assets/generated_images/inboria_pwa_v3_indigo_emerald.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "T1RHy0MwJctRmBHsjtlgG"
 uri = "file://NCV_Mail_Descriptif.md"
