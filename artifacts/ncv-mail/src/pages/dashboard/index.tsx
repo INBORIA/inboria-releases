@@ -94,6 +94,7 @@ import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from 
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
+import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
@@ -3031,6 +3032,7 @@ export default function Dashboard() {
     }
   }, [smartSort]);
   const [readingPaneEnabled] = useReadingPaneEnabled();
+  const [mailHeaderCollapsed] = useMailHeaderCollapsed();
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
@@ -5263,8 +5265,8 @@ export default function Dashboard() {
             chrome de l'inbox au-dessus de sa liste filtree, ce qui rendait
             la page indistinguable de la reception et inutilisable comme vue
             dediee — cf. retour utilisateur du 1 mai 2026. */}
-        {!assigneeFilter && (
-        <div className="sticky top-[var(--app-top,4rem)] z-[5] bg-background pt-4 pb-2.5 border-b border-border transition-[top] duration-200 ease-out">
+        {!assigneeFilter && !mailHeaderCollapsed && (
+        <div className="sticky top-16 z-[5] bg-background pt-4 pb-2.5 border-b border-border">
           {/* Étape 1 refonte Superhuman — header compact :
               titre Réception + compteur, recherche fine avec hint ⌘K,
               Actualiser en icône, Composer en bouton indigo discret.

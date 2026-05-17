@@ -31,6 +31,8 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -54,6 +56,7 @@ import { SupportChatWidget } from "@/components/SupportChatWidget";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { InboriaChatButton } from "@/components/inboria-chat/InboriaChatButton";
+import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 
 export function DashboardLayout({ children, rightSidebar }: { children: React.ReactNode; rightSidebar?: React.ReactNode }) {
   const { t } = useTranslation();
@@ -106,61 +109,16 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   }, [sidebarCollapsed]);
   const effectiveSidebarW = sidebarCollapsed ? SIDEBAR_COLLAPSED_W : sidebarWidth;
 
-  // ─── Top header auto-hide on scroll ─────────────────────────────────────
-  // Pattern Gmail/Notion : on scroll down past 80px, le header h-16 glisse
-  // vers le haut (translateY -100%). Au moindre scroll vers le haut il
-  // réapparaît. Le bandeau mail (MailPageHeader, sticky) consomme la CSS
-  // var --app-top pour se coller en haut quand le header est masqué.
-  const [topHeaderHidden, setTopHeaderHidden] = useState(false);
-  useEffect(() => {
-    // Les pages mail ont des conteneurs internes h-[calc(100vh-Xrem)] avec
-    // scroll local (window.scrollY reste à 0). On écoute donc le scroll en
-    // mode capture sur document : scroll events ne bullent pas mais sont
-    // capturables. On trackd la position scroll par cible (Map<EventTarget,
-    // lastY>) pour gérer toutes les zones (sidebar, liste mails, panneau).
-    const lastByTarget = new WeakMap<EventTarget, number>();
-    let ticking = false;
-    const HIDE_DELTA = 6;
-    const SHOW_DELTA = 4;
-    const THRESHOLD = 80;
-    const onScroll = (e: Event) => {
-      const target = e.target;
-      if (!target) return;
-      // Récupère le scrollTop selon la cible (élément ou document)
-      let y = 0;
-      if (target === document) {
-        y = window.scrollY;
-      } else if ((target as HTMLElement).scrollTop !== undefined) {
-        y = (target as HTMLElement).scrollTop;
-      } else {
-        return;
-      }
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const lastY = lastByTarget.get(target) ?? 0;
-        const dy = y - lastY;
-        if (y < THRESHOLD) {
-          setTopHeaderHidden(false);
-        } else if (dy > HIDE_DELTA) {
-          setTopHeaderHidden(true);
-        } else if (dy < -SHOW_DELTA) {
-          setTopHeaderHidden(false);
-        }
-        lastByTarget.set(target, y);
-        ticking = false;
-      });
-    };
-    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
-    return () => document.removeEventListener("scroll", onScroll, { capture: true } as any);
-  }, []);
+  // ─── Toggle visible (chevron) de la grosse barre mail ───────────────────
+  // Pattern Outlook : un chevron persistant dans la bande noire du haut
+  // plie/déplie la barre mail (recherche + Actualiser + Nouvel email +
+  // onglets + filtres). État persisté en localStorage. La bande noire
+  // h-16 reste TOUJOURS visible (pas d'auto-hide au scroll).
+  const [mailHeaderCollapsed, toggleMailHeader] = useMailHeaderCollapsed();
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.documentElement.style.setProperty(
-      "--app-top",
-      topHeaderHidden ? "0px" : "64px",
-    );
-  }, [topHeaderHidden]);
+    document.documentElement.style.setProperty("--app-top", "64px");
+  }, []);
   const dragStateRef = useRef<{ startX: number; startW: number } | null>(null);
   const handleSidebarDragStart = (e: React.MouseEvent) => {
     if (sidebarCollapsed) return;
@@ -519,8 +477,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         )}
       >
         <div
-          className="sticky z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 transition-[top] duration-200 ease-out"
-          style={{ top: topHeaderHidden ? "-64px" : "0px" }}
+          className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4"
           data-testid="app-top-header"
         >
           <div className="lg:hidden flex items-center">
@@ -543,6 +500,16 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           <div className="flex items-center gap-2">
             <InboriaChatButton />
             <AutopilotIndicator />
+            <button
+              type="button"
+              onClick={toggleMailHeader}
+              className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
+              title={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
+              aria-label={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
+              data-testid="mail-header-toggle"
+            >
+              {mailHeaderCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
             <div className={cn("flex items-center gap-2", rightSidebar && "md:hidden")}>
               <NotificationBell />
               <button

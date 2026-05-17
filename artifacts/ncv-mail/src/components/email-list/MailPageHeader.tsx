@@ -54,6 +54,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
+import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PanelRight, PanelRightClose } from "lucide-react";
 import {
   Select,
@@ -137,20 +138,9 @@ export function MailPageHeader({
   // ─── Volet de lecture (3e colonne) — toggle global persisté ──────────────
   const [readingPaneEnabled, toggleReadingPane] = useReadingPaneEnabled();
 
-  // ─── Header collapse (cache Bloc B + Bloc C) ──────────────────────────────
-  const LS_HEADER_COLLAPSED = "inboria.mailHeader.collapsed";
-  const [headerCollapsed, setHeaderCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(LS_HEADER_COLLAPSED) === "1";
-  });
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        LS_HEADER_COLLAPSED,
-        headerCollapsed ? "1" : "0",
-      );
-    }
-  }, [headerCollapsed]);
+  // ─── Header collapse — synchronisé avec le chevron de la bande du haut ───
+  // (cf. DashboardLayout) via le hook partagé `useMailHeaderCollapsed`.
+  const [headerCollapsed, toggleHeaderCollapsed] = useMailHeaderCollapsed();
 
   // ─── Recherche ────────────────────────────────────────────────────────────
   const [internalSearch, setInternalSearch] = useState(searchValue ?? "");
@@ -493,10 +483,13 @@ export function MailPageHeader({
 
   const isInbox = currentTab === "inbox";
 
+  if (headerCollapsed) {
+    return null;
+  }
+
   return (
     <div
-      className="sticky z-[5] bg-background pt-4 pb-2.5 border-b border-border transition-[top] duration-200 ease-out"
-      style={{ top: "var(--app-top, 64px)" }}
+      className="sticky top-16 z-[5] bg-background pt-4 pb-2.5 border-b border-border"
     >
       {/* Bloc A — recherche + Actualiser + Nouvel email */}
       <div className="flex items-center gap-2 mb-2.5 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
@@ -596,7 +589,7 @@ export function MailPageHeader({
 
         <button
           type="button"
-          onClick={() => setHeaderCollapsed((v) => !v)}
+          onClick={toggleHeaderCollapsed}
           className="inline-flex items-center justify-center h-9 w-9 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-[#1f2630] shrink-0"
           title={
             headerCollapsed
