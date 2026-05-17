@@ -61,25 +61,25 @@ export default defineConfig({
         categories: ["productivity", "business"],
         icons: [
           {
-            src: "logo-icon-192.png",
+            src: "logo-icon-192.png?v=9",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "logo-icon-512.png",
+            src: "logo-icon-512.png?v=9",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "logo-maskable-192.png",
+            src: "logo-maskable-192.png?v=9",
             sizes: "192x192",
             type: "image/png",
             purpose: "maskable",
           },
           {
-            src: "logo-maskable-512.png",
+            src: "logo-maskable-512.png?v=9",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
