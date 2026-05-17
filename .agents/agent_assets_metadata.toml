@@ -24,6 +24,18 @@ uri = "file://attached_assets/generated_images/inboria_pwa_v3_indigo_emerald.png
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "I585jqKNgC0ahEVuOmWXP"
+uri = "file://attached_assets/generated_images/inboria_v3_final_squircle.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "v6N1kf8SuNRLvfRmIG0vb"
+uri = "file://attached_assets/generated_images/inboria_v3_final_maskable.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "T1RHy0MwJctRmBHsjtlgG"
 uri = "file://NCV_Mail_Descriptif.md"
