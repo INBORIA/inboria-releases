@@ -5288,6 +5288,9 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent
                 aria-describedby={undefined}
+                onPointerDownOutside={(e) => e.preventDefault()}
+                onInteractOutside={(e) => e.preventDefault()}
+                onEscapeKeyDown={(e) => e.preventDefault()}
                 className={
                   isComposeFullscreen
                     ? "bg-card border-border w-screen max-w-none h-screen sm:rounded-none p-0 flex flex-col"
