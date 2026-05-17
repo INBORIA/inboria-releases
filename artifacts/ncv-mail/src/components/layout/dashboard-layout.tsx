@@ -29,6 +29,8 @@ import {
   Users,
   Sun,
   Moon,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -70,6 +72,65 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const userMenuWrapRef = useRef<HTMLDivElement>(null);
+
+  // ─── Sidebar resizable + collapsible ───────────────────────────────────
+  const SIDEBAR_DEFAULT = 200;
+  const SIDEBAR_MIN = 160;
+  const SIDEBAR_MAX = 380;
+  const SIDEBAR_COLLAPSED_W = 56;
+  const LS_SIDEBAR_W = "inboria.sidebar.width";
+  const LS_SIDEBAR_COLLAPSED = "inboria.sidebar.collapsed";
+  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return SIDEBAR_DEFAULT;
+    const raw = window.localStorage.getItem(LS_SIDEBAR_W);
+    const n = raw ? parseInt(raw, 10) : SIDEBAR_DEFAULT;
+    if (Number.isNaN(n)) return SIDEBAR_DEFAULT;
+    return Math.max(SIDEBAR_MIN, Math.min(SIDEBAR_MAX, n));
+  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(LS_SIDEBAR_COLLAPSED) === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(LS_SIDEBAR_W, String(sidebarWidth));
+    }
+  }, [sidebarWidth]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        LS_SIDEBAR_COLLAPSED,
+        sidebarCollapsed ? "1" : "0",
+      );
+    }
+  }, [sidebarCollapsed]);
+  const effectiveSidebarW = sidebarCollapsed ? SIDEBAR_COLLAPSED_W : sidebarWidth;
+  const dragStateRef = useRef<{ startX: number; startW: number } | null>(null);
+  const handleSidebarDragStart = (e: React.MouseEvent) => {
+    if (sidebarCollapsed) return;
+    e.preventDefault();
+    dragStateRef.current = { startX: e.clientX, startW: sidebarWidth };
+    const onMove = (ev: MouseEvent) => {
+      if (!dragStateRef.current) return;
+      const delta = ev.clientX - dragStateRef.current.startX;
+      const next = Math.max(
+        SIDEBAR_MIN,
+        Math.min(SIDEBAR_MAX, dragStateRef.current.startW + delta),
+      );
+      setSidebarWidth(next);
+    };
+    const onUp = () => {
+      dragStateRef.current = null;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
   useEffect(() => {
     if (!open) return;
     const onDocClick = (e: MouseEvent) => {
@@ -177,16 +238,28 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     setLocation("/login");
   };
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => (
     <div className="flex h-full flex-col">
-      <div className="flex h-28 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={appLogo} alt="Inboria" className="h-24 w-auto object-contain" />
+      <div
+        className={cn(
+          "flex shrink-0 flex-col items-center justify-center border-b border-[#1f2937]",
+          collapsed ? "h-16 px-1" : "h-28 px-4",
+        )}
+      >
+        <img
+          src={appLogo}
+          alt="Inboria"
+          className={cn(
+            "object-contain",
+            collapsed ? "h-10 w-auto" : "h-24 w-auto",
+          )}
+        />
       </div>
-      
-      <nav className="flex-1 px-2 py-2.5 space-y-0.5">
+
+      <nav className={cn("flex-1 py-2.5 space-y-0.5", collapsed ? "px-1.5" : "px-2")}>
         {navigation.map((item) => {
           const isActive = location === item.href;
-          return (
+          const linkEl = (
             <Link
               key={item.href}
               href={item.href}
@@ -194,13 +267,18 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
                 isActive
                   ? "bg-[#1e3a5f] text-primary"
                   : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]",
-                "group flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[13px] font-medium transition-colors"
+                "group flex items-center rounded-md text-[13px] font-medium transition-colors",
+                collapsed
+                  ? "h-8 w-8 mx-auto justify-center"
+                  : "gap-x-2.5 px-2.5 py-[7px]",
               )}
+              title={collapsed ? item.name : undefined}
+              aria-label={collapsed ? item.name : undefined}
               onClick={() => {
                 setMobileMenuOpen(false);
                 if (location === item.href) {
                   window.dispatchEvent(
-                    new CustomEvent("sidebar-nav-reset", { detail: { href: item.href } })
+                    new CustomEvent("sidebar-nav-reset", { detail: { href: item.href } }),
                   );
                 }
               }}
@@ -208,16 +286,42 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               <item.icon
                 className={cn(
                   isActive ? "text-primary" : "text-[#b8c5d6] group-hover:text-white",
-                  "h-4 w-4 shrink-0 transition-colors"
+                  "h-4 w-4 shrink-0 transition-colors",
                 )}
                 aria-hidden="true"
               />
-              <span className="flex-1 truncate">{item.name}</span>
+              {!collapsed && <span className="flex-1 truncate">{item.name}</span>}
             </Link>
           );
+          return linkEl;
         })}
       </nav>
 
+      {/* Bouton collapse / expand — visible uniquement sur desktop (lg+) */}
+      <div className="hidden lg:flex shrink-0 border-t border-[#1f2937] p-2 justify-center">
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed((v) => !v)}
+          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
+          title={
+            sidebarCollapsed
+              ? t("sidebar.expand", "Agrandir le menu")
+              : t("sidebar.collapse", "Réduire le menu")
+          }
+          aria-label={
+            sidebarCollapsed
+              ? t("sidebar.expand", "Agrandir le menu")
+              : t("sidebar.collapse", "Réduire le menu")
+          }
+          data-testid="sidebar-toggle-collapse"
+        >
+          {sidebarCollapsed ? (
+            <PanelLeftOpen className="h-4 w-4" />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" />
+          )}
+        </button>
+      </div>
     </div>
   );
 
@@ -304,10 +408,27 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[200px] lg:flex-col">
-        <div className="flex grow flex-col overflow-y-auto bg-sidebar border-r border-[#1f2937]">
-          <SidebarContent />
+    <div
+      className="min-h-screen bg-background flex"
+      style={{ ["--sb-w" as any]: `${effectiveSidebarW}px` }}
+    >
+      <div
+        className="hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col z-40 transition-[width] duration-150"
+        style={{ width: `var(--sb-w)` }}
+      >
+        <div className="relative flex grow flex-col overflow-y-auto bg-sidebar border-r border-[#1f2937]">
+          <SidebarContent collapsed={sidebarCollapsed} />
+          {/* Drag handle — uniquement quand non collapsed */}
+          {!sidebarCollapsed && (
+            <div
+              onMouseDown={handleSidebarDragStart}
+              role="separator"
+              aria-orientation="vertical"
+              aria-label={t("sidebar.resize", "Redimensionner le menu")}
+              className="absolute top-0 right-0 h-full w-1 cursor-col-resize hover:bg-primary/40 transition-colors z-50"
+              data-testid="sidebar-resize-handle"
+            />
+          )}
         </div>
       </div>
 
@@ -335,7 +456,12 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         </aside>
       )}
 
-      <div className={cn("lg:pl-[200px] flex flex-col flex-1 min-w-0", rightSidebar && "md:pr-[260px]")}>
+      <div
+        className={cn(
+          "flex flex-col flex-1 min-w-0 lg:pl-[var(--sb-w)] transition-[padding] duration-150",
+          rightSidebar && "md:pr-[260px]",
+        )}
+      >
         <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
           <div className="lg:hidden flex items-center">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

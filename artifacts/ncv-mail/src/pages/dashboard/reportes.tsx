@@ -510,7 +510,7 @@ export default function Reportes() {
   if (selectedEmailId) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <SnoozedEmailDetailView
             emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
@@ -528,7 +528,7 @@ export default function Reportes() {
         searchValue={headerSearch}
         onSearchChange={setHeaderSearch}
       />
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+      <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">
           <div>

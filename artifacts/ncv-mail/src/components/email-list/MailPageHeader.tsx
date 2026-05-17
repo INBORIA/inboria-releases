@@ -12,6 +12,8 @@ import {
   CheckSquare,
   ChevronDown,
   ChevronRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
   Cloud,
   Database,
   FolderKanban,
@@ -129,6 +131,21 @@ export function MailPageHeader({
   const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
+
+  // ─── Header collapse (cache Bloc B + Bloc C) ──────────────────────────────
+  const LS_HEADER_COLLAPSED = "inboria.mailHeader.collapsed";
+  const [headerCollapsed, setHeaderCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(LS_HEADER_COLLAPSED) === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        LS_HEADER_COLLAPSED,
+        headerCollapsed ? "1" : "0",
+      );
+    }
+  }, [headerCollapsed]);
 
   // ─── Recherche ────────────────────────────────────────────────────────────
   const [internalSearch, setInternalSearch] = useState(searchValue ?? "");
@@ -474,7 +491,7 @@ export function MailPageHeader({
   return (
     <div className="sticky top-16 z-[5] bg-background pt-4 pb-2.5 border-b border-border">
       {/* Bloc A — recherche + Actualiser + Nouvel email */}
-      <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-2 mb-2.5 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="flex-1 relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b95a7]" />
           <Input
@@ -544,10 +561,36 @@ export function MailPageHeader({
             )}
           </DialogContent>
         </Dialog>
+
+        <button
+          type="button"
+          onClick={() => setHeaderCollapsed((v) => !v)}
+          className="inline-flex items-center justify-center h-9 w-9 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-[#1f2630] shrink-0"
+          title={
+            headerCollapsed
+              ? t("inbox.headerExpand", "Afficher onglets et filtres")
+              : t("inbox.headerCollapse", "Masquer onglets et filtres")
+          }
+          aria-label={
+            headerCollapsed
+              ? t("inbox.headerExpand", "Afficher onglets et filtres")
+              : t("inbox.headerCollapse", "Masquer onglets et filtres")
+          }
+          aria-expanded={!headerCollapsed}
+          data-testid="mail-header-toggle-collapse"
+        >
+          {headerCollapsed ? (
+            <ChevronsUpDown className="w-3.5 h-3.5" />
+          ) : (
+            <ChevronsDownUp className="w-3.5 h-3.5" />
+          )}
+        </button>
       </div>
 
+      {!headerCollapsed && (
+      <>
       {/* Bloc B — onglets boîtes & équipe */}
-      <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
+      <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
         {isInbox ? (
           <button className={cls(true)} type="button">
             <Inbox className="w-3 h-3" />
@@ -745,7 +788,7 @@ export function MailPageHeader({
 
       {/* Bloc C — Filtres / Catégories */}
       <div
-        className="flex flex-wrap items-center gap-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8"
+        className="flex flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8"
         data-testid="row-filters-unified"
       >
         {(() => {
@@ -940,6 +983,8 @@ export function MailPageHeader({
           </button>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 }

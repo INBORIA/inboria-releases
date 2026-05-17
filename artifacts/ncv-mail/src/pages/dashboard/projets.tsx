@@ -732,7 +732,7 @@ function ProjectDetailView({
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <Skeleton className="h-6 w-48 bg-white/5 mb-3" />
           <Skeleton className="h-48 w-full bg-white/5" />
         </div>
@@ -743,7 +743,7 @@ function ProjectDetailView({
   if (!project) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <Button
             variant="ghost"
             size="sm"
@@ -767,7 +767,7 @@ function ProjectDetailView({
   if (selectedEmailId) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <EmailDetailContainer
             emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
@@ -787,7 +787,7 @@ function ProjectDetailView({
   return (
     <DashboardLayout>
       <MailPageHeader currentTab="projets" />
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+      <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="flex items-center justify-between mb-3">
           <Button
             variant="ghost"
@@ -1379,7 +1379,7 @@ export default function Projets() {
   return (
     <DashboardLayout>
       <MailPageHeader currentTab="projets" />
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+      <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>

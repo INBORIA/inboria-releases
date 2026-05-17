@@ -553,7 +553,7 @@ export default function Relances() {
   if (selectedEmailId) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <RelanceEmailDetailView
             emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
@@ -567,7 +567,7 @@ export default function Relances() {
   return (
     <DashboardLayout>
       <MailPageHeader currentTab="relances" />
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-3">
+      <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-3">
         <BackToInboxButton />
         <div>
           <h1 className="text-[20px] font-semibold text-foreground flex items-center gap-2">

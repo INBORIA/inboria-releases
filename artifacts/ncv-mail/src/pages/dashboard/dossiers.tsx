@@ -469,7 +469,7 @@ export default function MesDossiers() {
   if (selectedEmailId) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <Button
             variant="ghost"
             size="sm"
@@ -498,7 +498,7 @@ export default function MesDossiers() {
     const emails = folderEmailsData?.emails || [];
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center gap-3 mb-4">
             <Button
               variant="ghost"
@@ -731,7 +731,7 @@ export default function MesDossiers() {
         searchValue={headerSearch}
         onSearchChange={setHeaderSearch}
       />
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
+      <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">
           <div>

@@ -5239,7 +5239,7 @@ export default function Dashboard() {
     <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN || categoriesCollapsed ? undefined : categoriesPanel}>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
         {assigneePageTitle && (
-          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+          <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
             <BackToInboxButton />
             <div className="mt-1">
               <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
@@ -5266,7 +5266,7 @@ export default function Dashboard() {
               titre Réception + compteur, recherche fine avec hint ⌘K,
               Actualiser en icône, Composer en bouton indigo discret.
               Aucune fonction retirée. */}
-          <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-2.5 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div className="flex-1 relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b95a7]" />
               <Input
@@ -5345,7 +5345,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
               <button
                 onClick={() => {
                   setInboxMode("personal");
@@ -5604,7 +5604,7 @@ export default function Dashboard() {
               bouton déroulant. Aucune fonction retirée.
               Les filtres actifs sont rappelés sous forme de pastilles à droite
               avec un bouton X pour les retirer individuellement. */}
-          <div className="flex flex-wrap items-center gap-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8" data-testid="row-filters-unified">
+          <div className="flex flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8" data-testid="row-filters-unified">
             {(() => {
               const activeCount =
                 (filterPriority !== "all" ? 1 : 0) +
@@ -5769,7 +5769,7 @@ export default function Dashboard() {
         )}
 
         <div className="flex-1 overflow-auto">
-          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
+          <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
             <div className="flex-1 min-w-0">
               {isSnoozedView ? (
                 <SnoozedPanel />

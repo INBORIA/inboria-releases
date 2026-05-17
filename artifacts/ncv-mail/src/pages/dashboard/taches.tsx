@@ -634,7 +634,7 @@ export default function Taches() {
           onSearchChange={setHeaderSearch}
         />
       )}
-      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-6xl">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-[1600px]">
         {!detailOpen && <BackToInboxButton />}
         {!detailOpen && (
         <>
