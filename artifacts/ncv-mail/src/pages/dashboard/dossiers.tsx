@@ -80,6 +80,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
+import { formatMailDate } from "@/lib/format-mail-date";
 import { useToast } from "@/hooks/use-toast";
 
 type DraftFolder = {
@@ -590,7 +591,7 @@ export default function MesDossiers() {
                         <Paperclip className="w-3 h-3 text-[#8b95a7]" />
                       )}
                       <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
-                        {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+                        {formatMailDate(email.createdAt, dateFnsLocale)}
                       </span>
                     </div>
 

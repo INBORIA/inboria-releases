@@ -62,6 +62,7 @@ import { getGetProfileQueryKey, getGetTeamAssignmentsQueryKey } from "@workspace
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
+import { formatMailDate, matchesDateFilter, matchesReadFilter, type DateFilterValue, type ReadFilterValue } from "@/lib/format-mail-date";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
@@ -223,7 +224,7 @@ function EmailRow({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryC
           </span>
         )}
         <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
-          {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+          {formatMailDate(email.createdAt, dateFnsLocale)}
         </span>
       </div>
 
@@ -2957,6 +2958,24 @@ export default function Dashboard() {
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo" | null>(null);
+  // Filtre Date (Outlook-style) : Tous / Aujourd'hui / Hier / 7j / 30j / Mois
+  const [filterDate, setFilterDate] = useState<DateFilterValue>(() => {
+    if (typeof window === "undefined") return "all";
+    const saved = window.localStorage.getItem("inbox.filterDate") as DateFilterValue | null;
+    return (saved && ["all","today","yesterday","last7","last30","thisMonth"].includes(saved)) ? saved : "all";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") window.localStorage.setItem("inbox.filterDate", filterDate);
+  }, [filterDate]);
+  // Filtre Lu / Non lus
+  const [filterRead, setFilterRead] = useState<ReadFilterValue>(() => {
+    if (typeof window === "undefined") return "all";
+    const saved = window.localStorage.getItem("inbox.filterRead") as ReadFilterValue | null;
+    return (saved && ["all","unread","read"].includes(saved)) ? saved : "all";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") window.localStorage.setItem("inbox.filterRead", filterRead);
+  }, [filterRead]);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [crmPanelOpen, setCrmPanelOpen] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
@@ -3910,6 +3929,8 @@ export default function Dashboard() {
     ?.slice()
     .filter((e: any) => {
       if (filterImportance === "important" && !isEmailImportant(e)) return false;
+      if (!matchesDateFilter(e.createdAt, filterDate)) return false;
+      if (!matchesReadFilter(!!(e.isRead ?? e.read), filterRead)) return false;
       if (assigneeFilter) {
         const meId = (profile as any)?.id;
         if (assigneeFilter === "any") {
@@ -5733,6 +5754,86 @@ export default function Dashboard() {
                 : filterPriority === "faible" ? t("inbox.priorities.low")
                 : t("inbox.priorities.allLong", "Toutes les priorités")}
             </span>
+
+            {/* Filtre Date — Outlook style */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  data-testid="filter-date-trigger"
+                  className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
+                    filterDate !== "all"
+                      ? "bg-primary/15 text-primary border-primary/20"
+                      : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <CalendarDays className="w-3 h-3" />
+                  {filterDate === "today" ? t("inbox.date.today", "Aujourd'hui")
+                    : filterDate === "yesterday" ? t("inbox.date.yesterday", "Hier")
+                    : filterDate === "last7" ? t("inbox.date.last7", "7 derniers jours")
+                    : filterDate === "last30" ? t("inbox.date.last30", "30 derniers jours")
+                    : filterDate === "thisMonth" ? t("inbox.date.thisMonth", "Ce mois-ci")
+                    : t("inbox.date.all", "Toutes les dates")}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-[180px]">
+                {([
+                  ["all", t("inbox.date.all", "Toutes les dates")],
+                  ["today", t("inbox.date.today", "Aujourd'hui")],
+                  ["yesterday", t("inbox.date.yesterday", "Hier")],
+                  ["last7", t("inbox.date.last7", "7 derniers jours")],
+                  ["last30", t("inbox.date.last30", "30 derniers jours")],
+                  ["thisMonth", t("inbox.date.thisMonth", "Ce mois-ci")],
+                ] as [DateFilterValue, string][]).map(([v, label]) => (
+                  <DropdownMenuItem
+                    key={v}
+                    onClick={() => setFilterDate(v)}
+                    data-testid={`filter-date-${v}`}
+                    className={filterDate === v ? "text-primary" : ""}
+                  >
+                    {filterDate === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
+                    {label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Filtre Lu / Non lus */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  data-testid="filter-read-trigger"
+                  className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
+                    filterRead !== "all"
+                      ? "bg-primary/15 text-primary border-primary/20"
+                      : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
+                  }`}
+                >
+                  {filterRead === "unread" ? <Mail className="w-3 h-3" /> : <MailOpen className="w-3 h-3" />}
+                  {filterRead === "unread" ? t("inbox.read.unread", "Non lus")
+                    : filterRead === "read" ? t("inbox.read.read", "Lus")
+                    : t("inbox.read.all", "Tous")}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-[160px]">
+                {([
+                  ["all", t("inbox.read.all", "Tous")],
+                  ["unread", t("inbox.read.unread", "Non lus")],
+                  ["read", t("inbox.read.read", "Lus")],
+                ] as [ReadFilterValue, string][]).map(([v, label]) => (
+                  <DropdownMenuItem
+                    key={v}
+                    onClick={() => setFilterRead(v)}
+                    data-testid={`filter-read-${v}`}
+                    className={filterRead === v ? "text-primary" : ""}
+                  >
+                    {filterRead === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
+                    {label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Étape 5 — bouton Catégories : déplacé à droite des pastilles
                 de filtres choisis pour regrouper toutes les commandes d'affichage. */}

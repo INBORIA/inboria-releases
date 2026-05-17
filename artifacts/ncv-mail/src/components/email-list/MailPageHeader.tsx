@@ -55,6 +55,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
+import { CalendarDays, Check, Mail, MailOpen } from "lucide-react";
+import type { DateFilterValue, ReadFilterValue } from "@/lib/format-mail-date";
 import { PanelRight, PanelRightClose } from "lucide-react";
 import {
   Select,
@@ -441,6 +443,8 @@ export function MailPageHeader({
   // ─── Filtres ──────────────────────────────────────────────────────────────
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterImportance, setFilterImportance] = useState<"all" | "important">("all");
+  const [filterDate, setFilterDate] = useState<DateFilterValue>("all");
+  const [filterRead, setFilterRead] = useState<ReadFilterValue>("all");
   const [crmFilter, setCrmFilter] = useState<CrmFilter>(null);
   const [categoriesCollapsed, setCategoriesCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -959,6 +963,76 @@ export function MailPageHeader({
                 ? t("inbox.priorities.low")
                 : t("inbox.priorities.all", "Toutes")}
         </span>
+
+        {/* Filtre Date — Outlook style (état local, wire-up futur) */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              data-testid="mailheader-filter-date"
+              className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
+                filterDate !== "all"
+                  ? "bg-primary/15 text-primary border-primary/20"
+                  : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
+              }`}
+            >
+              <CalendarDays className="w-3 h-3" />
+              {filterDate === "today" ? t("inbox.date.today", "Aujourd'hui")
+                : filterDate === "yesterday" ? t("inbox.date.yesterday", "Hier")
+                : filterDate === "last7" ? t("inbox.date.last7", "7 derniers jours")
+                : filterDate === "last30" ? t("inbox.date.last30", "30 derniers jours")
+                : filterDate === "thisMonth" ? t("inbox.date.thisMonth", "Ce mois-ci")
+                : t("inbox.date.all", "Toutes les dates")}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[180px]">
+            {([
+              ["all", t("inbox.date.all", "Toutes les dates")],
+              ["today", t("inbox.date.today", "Aujourd'hui")],
+              ["yesterday", t("inbox.date.yesterday", "Hier")],
+              ["last7", t("inbox.date.last7", "7 derniers jours")],
+              ["last30", t("inbox.date.last30", "30 derniers jours")],
+              ["thisMonth", t("inbox.date.thisMonth", "Ce mois-ci")],
+            ] as [DateFilterValue, string][]).map(([v, label]) => (
+              <DropdownMenuItem key={v} onClick={() => setFilterDate(v)} className={filterDate === v ? "text-primary" : ""}>
+                {filterDate === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Filtre Lu / Non lus (état local, wire-up futur) */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              data-testid="mailheader-filter-read"
+              className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
+                filterRead !== "all"
+                  ? "bg-primary/15 text-primary border-primary/20"
+                  : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
+              }`}
+            >
+              {filterRead === "unread" ? <Mail className="w-3 h-3" /> : <MailOpen className="w-3 h-3" />}
+              {filterRead === "unread" ? t("inbox.read.unread", "Non lus")
+                : filterRead === "read" ? t("inbox.read.read", "Lus")
+                : t("inbox.read.all", "Tous")}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[160px]">
+            {([
+              ["all", t("inbox.read.all", "Tous")],
+              ["unread", t("inbox.read.unread", "Non lus")],
+              ["read", t("inbox.read.read", "Lus")],
+            ] as [ReadFilterValue, string][]).map(([v, label]) => (
+              <DropdownMenuItem key={v} onClick={() => setFilterRead(v)} className={filterRead === v ? "text-primary" : ""}>
+                {filterRead === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <button
           type="button"

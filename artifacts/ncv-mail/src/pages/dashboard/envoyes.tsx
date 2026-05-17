@@ -34,6 +34,7 @@ import type { UploadedFile } from "@/components/FileAttachInput";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
+import { formatMailDate } from "@/lib/format-mail-date";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
@@ -641,7 +642,7 @@ export default function Envoyes() {
                         <Paperclip className="w-3 h-3 text-[#8b95a7]" />
                       )}
                       <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
-                        {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                        {email.createdAt ? formatMailDate(email.createdAt, dateFnsLocale) : ""}
                       </span>
                     </div>
 
