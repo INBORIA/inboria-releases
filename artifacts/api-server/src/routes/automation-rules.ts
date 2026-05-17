@@ -68,7 +68,7 @@ async function resolveActionReferences(
   }
   const labels: Record<number, string> = {};
   let projects: Array<{ id: string; name: string }> | null = null;
-  let teammates: Array<{ uid: string; fullName: string }> | null = null;
+  let teammates: Array<{ uid: string; fullName: string; email: string }> | null = null;
 
   for (let i = 0; i < candidate.actions.length; i++) {
     const a = candidate.actions[i];
@@ -119,27 +119,46 @@ async function resolveActionReferences(
           .select("user_id, profiles!inner(full_name)")
           .eq("organisation_id", String(orgId))
           .eq("status", "active");
-        teammates = (members || []).map((m: any) => {
+        const base = (members || []).map((m: any) => {
           const prof = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
           return { uid: String(m.user_id), fullName: String(prof?.full_name || "") };
         });
+        teammates = await Promise.all(
+          base.map(async (m) => {
+            try {
+              const { data: u } = await supabaseAdmin.auth.admin.getUserById(m.uid);
+              return { ...m, email: String(u?.user?.email || "").toLowerCase() };
+            } catch {
+              return { ...m, email: "" };
+            }
+          }),
+        );
       }
       const raw = a.userId.trim();
       const needle = raw.toLowerCase();
-      const match =
-        teammates.find((t) => t.fullName.toLowerCase() === needle) ||
-        teammates.find((t) => t.fullName.toLowerCase().includes(needle)) ||
-        teammates.find((t) => needle.includes(t.fullName.toLowerCase()) && t.fullName.length > 2);
+      const isEmailLike = needle.includes("@");
+      const emailLocal = isEmailLike ? needle.split("@")[0] : "";
+      const match = isEmailLike
+        ? teammates.find((t) => t.email === needle) ||
+          teammates.find((t) => t.email && t.email.split("@")[0] === emailLocal)
+        : teammates.find((t) => t.fullName.toLowerCase() === needle) ||
+          teammates.find((t) => t.email && t.email.split("@")[0] === needle) ||
+          teammates.find((t) => t.fullName.toLowerCase().includes(needle)) ||
+          teammates.find((t) => needle.includes(t.fullName.toLowerCase()) && t.fullName.length > 2);
       if (!match) {
         return {
           ok: false,
-          error: `Coéquipier « ${raw} » introuvable dans votre organisation. Vérifiez l'orthographe du nom complet (membres : ${
-            teammates.length === 0 ? "aucun" : teammates.map((t) => `« ${t.fullName || "(sans nom)"} »`).join(", ")
+          error: `Coéquipier « ${raw} » introuvable dans votre organisation. Vérifiez l'orthographe du nom complet ou de l'email (membres : ${
+            teammates.length === 0
+              ? "aucun"
+              : teammates
+                  .map((t) => `« ${t.fullName || "(sans nom)"}${t.email ? ` <${t.email}>` : ""} »`)
+                  .join(", ")
           }).`,
         };
       }
       a.userId = match.uid;
-      labels[i] = match.fullName || "Coéquipier";
+      labels[i] = match.fullName || match.email || "Coéquipier";
     }
   }
   return { ok: true, rule: candidate, labels };
