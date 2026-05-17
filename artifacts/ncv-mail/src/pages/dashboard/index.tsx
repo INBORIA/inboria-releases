@@ -3930,7 +3930,11 @@ export default function Dashboard() {
     .filter((e: any) => {
       if (filterImportance === "important" && !isEmailImportant(e)) return false;
       if (!matchesDateFilter(e.createdAt, filterDate)) return false;
-      if (!matchesReadFilter(!!(e.isRead ?? e.read), filterRead)) return false;
+      if (filterRead !== "all") {
+        const isUnread = e.status === "non_lu" || e.isRead === false || e.unread === true;
+        if (filterRead === "unread" && !isUnread) return false;
+        if (filterRead === "read" && isUnread) return false;
+      }
       if (assigneeFilter) {
         const meId = (profile as any)?.id;
         if (assigneeFilter === "any") {
