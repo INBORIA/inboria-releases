@@ -113,16 +113,32 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   // var --app-top pour se coller en haut quand le header est masqué.
   const [topHeaderHidden, setTopHeaderHidden] = useState(false);
   useEffect(() => {
-    let lastY = typeof window !== "undefined" ? window.scrollY : 0;
+    // Les pages mail ont des conteneurs internes h-[calc(100vh-Xrem)] avec
+    // scroll local (window.scrollY reste à 0). On écoute donc le scroll en
+    // mode capture sur document : scroll events ne bullent pas mais sont
+    // capturables. On trackd la position scroll par cible (Map<EventTarget,
+    // lastY>) pour gérer toutes les zones (sidebar, liste mails, panneau).
+    const lastByTarget = new WeakMap<EventTarget, number>();
     let ticking = false;
     const HIDE_DELTA = 6;
     const SHOW_DELTA = 4;
     const THRESHOLD = 80;
-    const onScroll = () => {
+    const onScroll = (e: Event) => {
+      const target = e.target;
+      if (!target) return;
+      // Récupère le scrollTop selon la cible (élément ou document)
+      let y = 0;
+      if (target === document) {
+        y = window.scrollY;
+      } else if ((target as HTMLElement).scrollTop !== undefined) {
+        y = (target as HTMLElement).scrollTop;
+      } else {
+        return;
+      }
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const y = window.scrollY;
+        const lastY = lastByTarget.get(target) ?? 0;
         const dy = y - lastY;
         if (y < THRESHOLD) {
           setTopHeaderHidden(false);
@@ -131,12 +147,12 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         } else if (dy < -SHOW_DELTA) {
           setTopHeaderHidden(false);
         }
-        lastY = y;
+        lastByTarget.set(target, y);
         ticking = false;
       });
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true } as any);
   }, []);
   useEffect(() => {
     if (typeof document === "undefined") return;
