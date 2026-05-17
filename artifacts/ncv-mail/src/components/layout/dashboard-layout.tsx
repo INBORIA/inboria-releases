@@ -105,6 +105,46 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     }
   }, [sidebarCollapsed]);
   const effectiveSidebarW = sidebarCollapsed ? SIDEBAR_COLLAPSED_W : sidebarWidth;
+
+  // ─── Top header auto-hide on scroll ─────────────────────────────────────
+  // Pattern Gmail/Notion : on scroll down past 80px, le header h-16 glisse
+  // vers le haut (translateY -100%). Au moindre scroll vers le haut il
+  // réapparaît. Le bandeau mail (MailPageHeader, sticky) consomme la CSS
+  // var --app-top pour se coller en haut quand le header est masqué.
+  const [topHeaderHidden, setTopHeaderHidden] = useState(false);
+  useEffect(() => {
+    let lastY = typeof window !== "undefined" ? window.scrollY : 0;
+    let ticking = false;
+    const HIDE_DELTA = 6;
+    const SHOW_DELTA = 4;
+    const THRESHOLD = 80;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const dy = y - lastY;
+        if (y < THRESHOLD) {
+          setTopHeaderHidden(false);
+        } else if (dy > HIDE_DELTA) {
+          setTopHeaderHidden(true);
+        } else if (dy < -SHOW_DELTA) {
+          setTopHeaderHidden(false);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.style.setProperty(
+      "--app-top",
+      topHeaderHidden ? "0px" : "64px",
+    );
+  }, [topHeaderHidden]);
   const dragStateRef = useRef<{ startX: number; startW: number } | null>(null);
   const handleSidebarDragStart = (e: React.MouseEvent) => {
     if (sidebarCollapsed) return;
@@ -462,7 +502,11 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           rightSidebar && "md:pr-[260px]",
         )}
       >
-        <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
+        <div
+          className="sticky z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 transition-[top] duration-200 ease-out"
+          style={{ top: topHeaderHidden ? "-64px" : "0px" }}
+          data-testid="app-top-header"
+        >
           <div className="lg:hidden flex items-center">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>

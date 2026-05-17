@@ -1,5 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
@@ -117,6 +119,7 @@ export default function MesDossiers() {
   const [folderToDelete, setFolderToDelete] = useState<UserFolder | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
   const [headerSearch, setHeaderSearch] = useState("");
 
   const { data: folders, isLoading } = useListFolders();
@@ -466,7 +469,7 @@ export default function MesDossiers() {
   };
 
   // Vue détail email (sélectionné dans un dossier)
-  if (selectedEmailId) {
+  if (selectedEmailId && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
@@ -719,6 +722,24 @@ export default function MesDossiers() {
           </div>
         )}
         {renderEditor()}
+        <MailReadingPane
+          open={readingPaneEnabled && !!selectedEmailId}
+          onClose={() => setSelectedEmailId(null)}
+        >
+          {selectedEmailId ? (
+            <div className="px-3 py-3">
+              <EmailDetailContainer
+                emailId={selectedEmailId}
+                onBack={() => setSelectedEmailId(null)}
+                onAfterMutation={() => {
+                  if (selectedFolderId) {
+                    qc.invalidateQueries({ queryKey: getListFolderEmailsQueryKey(selectedFolderId) });
+                  }
+                }}
+              />
+            </div>
+          ) : null}
+        </MailReadingPane>
       </DashboardLayout>
     );
   }

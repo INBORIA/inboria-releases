@@ -1,5 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { AttachmentList } from "@/components/AttachmentList";
 import {
@@ -81,6 +83,7 @@ export default function Reportes() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
   const [page, setPage] = useState(1);
   const [accumulated, setAccumulated] = useState<any[]>([]);
 
@@ -507,7 +510,7 @@ export default function Reportes() {
     );
   };
 
-  if (selectedEmailId) {
+  if (selectedEmailId && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
@@ -804,6 +807,20 @@ export default function Reportes() {
           </div>
         </div>
       )}
+      <MailReadingPane
+        open={readingPaneEnabled && !!selectedEmailId}
+        onClose={() => setSelectedEmailId(null)}
+      >
+        {selectedEmailId ? (
+          <div className="px-3 py-3">
+            <SnoozedEmailDetailView
+              emailId={selectedEmailId}
+              onBack={() => setSelectedEmailId(null)}
+              projects={projects || []}
+            />
+          </div>
+        ) : null}
+      </MailReadingPane>
     </DashboardLayout>
   );
 }

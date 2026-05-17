@@ -1,5 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
@@ -79,6 +81,7 @@ export default function Archives() {
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
@@ -423,7 +426,7 @@ export default function Archives() {
   });
 
   // ─── Vue Détail email ─────────────────────────────────────────────────
-  if (selectedEmailId) {
+  if (selectedEmailId && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
@@ -728,6 +731,34 @@ export default function Archives() {
             </div>
           </div>
         )}
+        <MailReadingPane
+          open={readingPaneEnabled && !!selectedEmailId}
+          onClose={() => setSelectedEmailId(null)}
+        >
+          {selectedEmailId ? (
+            <div className="px-3 py-3">
+              <div className="mb-3 flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRestore(selectedEmailId)}
+                  className="h-8 px-3 text-white hover:text-white hover:bg-white/[0.08] text-[12px] gap-1.5"
+                  data-testid="button-restore-from-archive-pane"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  {t("archives.restore", "Restaurer dans la boîte")}
+                </Button>
+              </div>
+              <EmailDetailContainer
+                emailId={selectedEmailId}
+                onBack={() => setSelectedEmailId(null)}
+                onAfterArchive={() => setSelectedEmailId(null)}
+                onAfterDelete={() => setSelectedEmailId(null)}
+                onAfterMutation={invalidateAll}
+              />
+            </div>
+          ) : null}
+        </MailReadingPane>
       </DashboardLayout>
     );
   }

@@ -1,5 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
@@ -252,6 +254,7 @@ function ProjectDetailView({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const createTaskMut = useCreateTask();
@@ -764,7 +767,7 @@ function ProjectDetailView({
   ).length;
   const doneTasks = (project.tasks || []).filter((t: any) => t.done).length;
 
-  if (selectedEmailId) {
+  if (selectedEmailId && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
@@ -1245,6 +1248,26 @@ function ProjectDetailView({
           </div>
         </div>
       )}
+      <MailReadingPane
+        open={readingPaneEnabled && !!selectedEmailId}
+        onClose={() => setSelectedEmailId(null)}
+      >
+        {selectedEmailId ? (
+          <div className="px-3 py-3">
+            <EmailDetailContainer
+              emailId={selectedEmailId}
+              onBack={() => setSelectedEmailId(null)}
+              onAfterArchive={() => setSelectedEmailId(null)}
+              onAfterDelete={() => setSelectedEmailId(null)}
+              onAfterMutation={() => {
+                queryClient.invalidateQueries({
+                  queryKey: getGetProjectQueryKey(projectId),
+                });
+              }}
+            />
+          </div>
+        ) : null}
+      </MailReadingPane>
     </DashboardLayout>
   );
 }

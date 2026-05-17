@@ -92,6 +92,8 @@ import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
 import { Eye } from "lucide-react";
 import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from "@/lib/mailbox-resolver";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
@@ -3028,6 +3030,7 @@ export default function Dashboard() {
       window.localStorage.setItem("inbox.smartSort", smartSort ? "1" : "0");
     }
   }, [smartSort]);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
@@ -4890,7 +4893,7 @@ export default function Dashboard() {
     </div>
   );
 
-  if (selectedEmail) {
+  if (selectedEmail && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="w-full px-4 sm:px-6 lg:px-10 py-5 flex flex-col md:flex-row gap-5">
@@ -6220,6 +6223,38 @@ export default function Dashboard() {
           (SupportChatWidget) est rendu globalement par DashboardLayout
           et offre déjà la même entrée d'aide. */}
       {renderContextMenu()}
+      <MailReadingPane
+        open={readingPaneEnabled && !!selectedEmail}
+        onClose={() => setSelectedEmailId(null)}
+      >
+        {selectedEmail ? (
+          <div className="px-3 py-3">
+            <EmailDetail
+              email={selectedEmail}
+              onBack={() => setSelectedEmailId(null)}
+              onMarkRead={handleMarkAsRead}
+              onArchive={handleArchive}
+              onDelete={handleDelete}
+              onUpdatePriority={handleUpdatePriority}
+              onUpdateCategory={handleUpdateCategory}
+              onUpdateProject={handleUpdateProject}
+              onSendReply={handleSendReply}
+              isSending={sendEmailMut.isPending}
+              onGenerateDraft={handleGenerateDraft}
+              isDrafting={generateDraftMut.isPending}
+              categories={categoryCounts || []}
+              projects={projects || []}
+              currentUserId={(profile as any)?.id}
+              orgMembers={(orgMembers as any[]) || []}
+              onAssign={handleAssign}
+              onUnassign={handleUnassign}
+              onCreateTask={handleCreateTask}
+              connections={composeConnections}
+              sharedMailboxes={sharedMailboxes}
+            />
+          </div>
+        ) : null}
+      </MailReadingPane>
     </DashboardLayout>
   );
 }

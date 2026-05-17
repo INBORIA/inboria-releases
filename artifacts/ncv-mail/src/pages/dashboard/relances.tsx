@@ -1,6 +1,8 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { MailReadingPane } from "@/components/email-list/MailReadingPane";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { useToast } from "@/hooks/use-toast";
@@ -98,6 +100,7 @@ export default function Relances() {
 
   // Vue détail inline (parité Envoyés).
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [readingPaneEnabled] = useReadingPaneEnabled();
 
   // Sélection multiple — clés = followup ids
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -550,7 +553,7 @@ export default function Relances() {
   });
 
   // ─── Vue détail inline ──────────────────────────────────────────────────
-  if (selectedEmailId) {
+  if (selectedEmailId && !readingPaneEnabled) {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
@@ -917,6 +920,20 @@ export default function Relances() {
           </div>
         );
       })()}
+      <MailReadingPane
+        open={readingPaneEnabled && !!selectedEmailId}
+        onClose={() => setSelectedEmailId(null)}
+      >
+        {selectedEmailId ? (
+          <div className="px-3 py-3">
+            <RelanceEmailDetailView
+              emailId={selectedEmailId}
+              onBack={() => setSelectedEmailId(null)}
+              projects={(projects as any[]) || []}
+            />
+          </div>
+        ) : null}
+      </MailReadingPane>
     </DashboardLayout>
   );
 }

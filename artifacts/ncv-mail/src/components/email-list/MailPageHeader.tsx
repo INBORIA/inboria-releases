@@ -53,6 +53,8 @@ import type {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
+import { PanelRight, PanelRightClose } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -131,6 +133,9 @@ export function MailPageHeader({
   const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
+
+  // ─── Volet de lecture (3e colonne) — toggle global persisté ──────────────
+  const [readingPaneEnabled, toggleReadingPane] = useReadingPaneEnabled();
 
   // ─── Header collapse (cache Bloc B + Bloc C) ──────────────────────────────
   const LS_HEADER_COLLAPSED = "inboria.mailHeader.collapsed";
@@ -489,7 +494,10 @@ export function MailPageHeader({
   const isInbox = currentTab === "inbox";
 
   return (
-    <div className="sticky top-16 z-[5] bg-background pt-4 pb-2.5 border-b border-border">
+    <div
+      className="sticky z-[5] bg-background pt-4 pb-2.5 border-b border-border transition-[top] duration-200 ease-out"
+      style={{ top: "var(--app-top, 64px)" }}
+    >
       {/* Bloc A — recherche + Actualiser + Nouvel email */}
       <div className="flex items-center gap-2 mb-2.5 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="flex-1 relative">
@@ -561,6 +569,30 @@ export function MailPageHeader({
             )}
           </DialogContent>
         </Dialog>
+
+        <button
+          type="button"
+          onClick={() => toggleReadingPane()}
+          className={`inline-flex items-center justify-center h-9 w-9 rounded-md border border-[#1f2630] shrink-0 ${readingPaneEnabled ? "text-primary bg-primary/10 border-primary/30" : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"}`}
+          title={
+            readingPaneEnabled
+              ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
+              : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
+          }
+          aria-label={
+            readingPaneEnabled
+              ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
+              : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
+          }
+          aria-pressed={readingPaneEnabled}
+          data-testid="mail-header-toggle-reading-pane"
+        >
+          {readingPaneEnabled ? (
+            <PanelRightClose className="w-3.5 h-3.5" />
+          ) : (
+            <PanelRight className="w-3.5 h-3.5" />
+          )}
+        </button>
 
         <button
           type="button"
