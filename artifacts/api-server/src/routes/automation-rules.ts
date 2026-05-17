@@ -529,11 +529,68 @@ export async function runMatchingRules(ctx: ExecuteRulesContext): Promise<Execut
                   })
                   .then(() => undefined, () => undefined);
                 break;
-              case "transfer":
-                // transfer is stored as audit only; actual sending should be done
-                // via /emails/send endpoint. For now we record intent.
-                payload.deferred = true;
+              case "transfer": {
+                // Auto-transfert via la connexion mail de l'utilisateur
+                // (Gmail / Outlook). Garde-fou anti-boucle : si le mail
+                // entrant contient déjà notre marqueur Inboria, on skip
+                // (sinon une règle « transfer to X » se ré-exécute en
+                // boucle si X re-transfère ou bounce vers nous).
+                const INBORIA_FWD_MARKER = "[Inboria-Auto-Forward]";
+                if ((email.body || "").includes(INBORIA_FWD_MARKER)) {
+                  payload.skipped = "loop_guard";
+                  applied = false;
+                  break;
+                }
+                try {
+                  const { sendEmailFromUser } = await import("../services/outbound-email");
+                  // sanitize rule name (anti body-injection — strip newlines)
+                  const safeRuleName = String(rule.name || "")
+                    .replace(/[\r\n]+/g, " ")
+                    .slice(0, 120);
+                  const fwdSubjectBase = email.subject || "(sans sujet)";
+                  const fwdSubject = /^fwd?:/i.test(fwdSubjectBase)
+                    ? fwdSubjectBase
+                    : `Fwd: ${fwdSubjectBase}`;
+                  const plainBody = (email.body || "")
+                    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+                    .replace(/<\/(p|div|br|li|tr|h[1-6])>/gi, "\n")
+                    .replace(/<br\s*\/?>/gi, "\n")
+                    .replace(/<[^>]+>/g, " ")
+                    .replace(/[ \t]+\n/g, "\n")
+                    .replace(/\n[ \t]+/g, "\n")
+                    .replace(/\n{3,}/g, "\n\n")
+                    .trim()
+                    .slice(0, 50_000);
+                  const forwardedBody =
+                    `${INBORIA_FWD_MARKER}\n` +
+                    `[Transféré automatiquement par Inboria — règle « ${safeRuleName} »]\n\n` +
+                    `---------- Message d'origine ----------\n` +
+                    `De : ${email.sender || "(inconnu)"}\n` +
+                    `Sujet : ${fwdSubjectBase}\n\n` +
+                    plainBody;
+                  const sent = await sendEmailFromUser(userId, action.to, fwdSubject, forwardedBody);
+                  payload.sent = !!sent.ok;
+                  if (!sent.ok) {
+                    payload.sendError = sent.error || "unknown";
+                    applied = false;
+                    logger.warn(
+                      { ruleId: rule.id, emailId, to: action.to, err: sent.error },
+                      "[rules] transfer send failed",
+                    );
+                  } else {
+                    payload.outboundEmailId = sent.emailId ?? null;
+                  }
+                } catch (e: any) {
+                  payload.sendError = e?.message || "exception";
+                  applied = false;
+                  logger.warn(
+                    { ruleId: rule.id, emailId, err: e?.message },
+                    "[rules] transfer exception",
+                  );
+                }
                 break;
+              }
             }
           } catch (e: any) {
             logger.warn({ err: e?.message, ruleId: rule.id, actionType: action.type }, "[rules] action failed");
