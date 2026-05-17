@@ -102,7 +102,7 @@ import { HoverActions, type HoverActionsCb } from "@/components/email-list/Hover
 // (Composant HoverActions extrait dans @/components/email-list/HoverActions
 // — réutilisé tel quel par Envoyés pour parité 1:1.)
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
+function EmailRow({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -129,6 +129,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           : "border-l-transparent hover:bg-white/[0.03]"
       }`}
       onClick={onClick}
+      onMouseEnter={() => onPrefetch?.(email.id)}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
       onMouseDown={(e) => {
         // Ne pas démarrer le drag-select quand on clique sur un bouton
@@ -3839,6 +3840,31 @@ export default function Dashboard() {
     return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
   }, [getRowIdFromPoint, selectRange]);
 
+  // Préchargement du détail au survol — quand l'utilisateur passe la
+  // souris sur une ligne, on lance la requête en arrière-plan. Le temps
+  // qu'il clique (typiquement >100ms), la réponse est déjà en cache et
+  // le mail s'ouvre instantanément (style Outlook/Superhuman).
+  const prefetchedRef = useRef<Set<number>>(new Set());
+  const handlePrefetchEmail = useCallback((id: number) => {
+    if (prefetchedRef.current.has(id)) return;
+    prefetchedRef.current.add(id);
+    queryClient.prefetchQuery({
+      queryKey: ["email-detail", id],
+      queryFn: async () => {
+        const { supabase } = await import("@/lib/supabase");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (!token) return null;
+        const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resp.ok) return null;
+        return resp.json();
+      },
+      staleTime: 30_000,
+    });
+  }, [queryClient]);
+
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
@@ -5857,6 +5883,7 @@ export default function Dashboard() {
                                 selectionMode={selectionMode}
                                 onContextMenu={handleContextMenu}
                                 onDragSelectStart={handleDragSelectStart}
+                                onPrefetch={handlePrefetchEmail}
                                 mailboxBadge={badge}
                                 showMailboxBadge={false}
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
@@ -5972,6 +5999,7 @@ export default function Dashboard() {
                             selectionMode={selectionMode}
                             onContextMenu={handleContextMenu}
                             onDragSelectStart={handleDragSelectStart}
+                            onPrefetch={handlePrefetchEmail}
                             mailboxBadge={badge}
                             showMailboxBadge={false}
                             isSlaBreach={slaBreachIds.has(Number(email.id))}
@@ -6129,6 +6157,7 @@ export default function Dashboard() {
                                 selectionMode={selectionMode}
                                 onContextMenu={handleContextMenu}
                                 onDragSelectStart={handleDragSelectStart}
+                                onPrefetch={handlePrefetchEmail}
                                 mailboxBadge={badge}
                                 showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
