@@ -3808,9 +3808,13 @@ export default function Dashboard() {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       lastMouseYRef.current = e.clientY;
-      if (!didDragRef.current) didDragRef.current = true;
       const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
-      if (hoverId !== null) selectRange(hoverId);
+      // Ne marquer un "drag" que si la souris a changé de ligne — sinon
+      // les micro-vibrations pendant un simple clic font perdre le onClick.
+      if (hoverId !== null && hoverId !== dragStartIdRef.current && !didDragRef.current) {
+        didDragRef.current = true;
+      }
+      if (hoverId !== null && didDragRef.current) selectRange(hoverId);
 
       cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
