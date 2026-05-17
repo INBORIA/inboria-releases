@@ -50,10 +50,110 @@ router.get("/automation-rules", requireAuth, async (req, res): Promise<void> => 
   }
 });
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Resolve human-readable project names / teammate names or emails into UUIDs
+ * BEFORE the rule reaches Zod validation. NL→rule parsers (heuristic + GPT)
+ * intentionally emit the literal text typed by the user; this resolver looks
+ * up the actual IDs in the DB. Returns a parallel `labels` map so the UI can
+ * still show the friendly name next to the UUID.
+ */
+async function resolveActionReferences(
+  userId: string,
+  candidate: any,
+): Promise<{ ok: true; rule: any; labels: Record<number, string> } | { ok: false; error: string }> {
+  if (!candidate || !Array.isArray(candidate.actions)) {
+    return { ok: true, rule: candidate, labels: {} };
+  }
+  const labels: Record<number, string> = {};
+  let projects: Array<{ id: string; name: string }> | null = null;
+  let teammates: Array<{ uid: string; fullName: string }> | null = null;
+
+  for (let i = 0; i < candidate.actions.length; i++) {
+    const a = candidate.actions[i];
+    if (!a || typeof a !== "object") continue;
+
+    if (a.type === "move_to_project" && typeof a.projectId === "string" && !UUID_RE.test(a.projectId)) {
+      if (projects === null) {
+        const { data } = await supabaseAdmin
+          .from("projects")
+          .select("id, name")
+          .eq("user_id", userId);
+        projects = (data || []).map((p: any) => ({ id: String(p.id), name: String(p.name || "") }));
+      }
+      const raw = a.projectId.trim();
+      const needle = raw.toLowerCase().replace(/^(?:le\s+|la\s+|les\s+|du\s+|projets?\s+)/i, "").trim();
+      const match =
+        projects.find((p) => p.name.toLowerCase() === needle) ||
+        projects.find((p) => p.name.toLowerCase() === raw.toLowerCase()) ||
+        projects.find((p) => p.name.toLowerCase().includes(needle));
+      if (!match) {
+        return {
+          ok: false,
+          error: `Projet « ${raw} » introuvable. Créez-le d'abord depuis /dashboard/projets ou vérifiez l'orthographe (projets existants : ${
+            projects.length === 0 ? "aucun" : projects.map((p) => `« ${p.name} »`).join(", ")
+          }).`,
+        };
+      }
+      a.projectId = match.id;
+      labels[i] = match.name;
+    }
+
+    if (a.type === "assign" && typeof a.userId === "string" && !UUID_RE.test(a.userId)) {
+      if (teammates === null) {
+        const { data: prof } = await supabaseAdmin
+          .from("profiles")
+          .select("organisation_id")
+          .eq("id", userId)
+          .maybeSingle();
+        const orgId = prof?.organisation_id;
+        if (!orgId) {
+          return {
+            ok: false,
+            error: `Action « assigner » impossible : vous n'appartenez à aucune organisation/équipe. Cette action n'est disponible qu'avec une équipe partagée.`,
+          };
+        }
+        const { data: members } = await supabaseAdmin
+          .from("organisation_members")
+          .select("user_id, profiles!inner(full_name)")
+          .eq("organisation_id", String(orgId))
+          .eq("status", "active");
+        teammates = (members || []).map((m: any) => {
+          const prof = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
+          return { uid: String(m.user_id), fullName: String(prof?.full_name || "") };
+        });
+      }
+      const raw = a.userId.trim();
+      const needle = raw.toLowerCase();
+      const match =
+        teammates.find((t) => t.fullName.toLowerCase() === needle) ||
+        teammates.find((t) => t.fullName.toLowerCase().includes(needle)) ||
+        teammates.find((t) => needle.includes(t.fullName.toLowerCase()) && t.fullName.length > 2);
+      if (!match) {
+        return {
+          ok: false,
+          error: `Coéquipier « ${raw} » introuvable dans votre organisation. Vérifiez l'orthographe du nom complet (membres : ${
+            teammates.length === 0 ? "aucun" : teammates.map((t) => `« ${t.fullName || "(sans nom)"} »`).join(", ")
+          }).`,
+        };
+      }
+      a.userId = match.uid;
+      labels[i] = match.fullName || "Coéquipier";
+    }
+  }
+  return { ok: true, rule: candidate, labels };
+}
+
 router.post("/automation-rules", requireAuth, async (req, res): Promise<void> => {
   try {
     const { name, conditions, actions, enabled, connectionId, naturalLanguageInput } = req.body || {};
-    const validation = validateRulePayload({ name, conditions, actions });
+    const resolved = await resolveActionReferences(req.userId!, { name, conditions, actions });
+    if (!resolved.ok) {
+      res.status(400).json({ error: resolved.error });
+      return;
+    }
+    const validation = validateRulePayload(resolved.rule);
     if (!validation.ok) {
       res.status(400).json({ error: "Invalid rule", details: validation.errors }); return;
     }
@@ -103,7 +203,12 @@ router.patch("/automation-rules/:id", requireAuth, async (req, res): Promise<voi
         conditions: body.conditions ?? existing.conditions,
         actions: body.actions ?? existing.actions,
       };
-      const validation = validateRulePayload(merged);
+      const resolved = await resolveActionReferences(req.userId!, merged);
+      if (!resolved.ok) {
+        res.status(400).json({ error: resolved.error });
+        return;
+      }
+      const validation = validateRulePayload(resolved.rule);
       if (!validation.ok) {
         res.status(400).json({ error: "Invalid rule", details: validation.errors }); return;
       }
@@ -156,7 +261,12 @@ router.post("/automation-rules/parse", requireAuth, async (req, res): Promise<vo
 
     const heuristic = parseRuleHeuristic(input, typeof name === "string" ? name : undefined);
     if (heuristic) {
-      res.json({ source: "heuristic", rule: heuristic });
+      const resolved = await resolveActionReferences(req.userId!, heuristic);
+      if (!resolved.ok) {
+        res.status(422).json({ error: resolved.error });
+        return;
+      }
+      res.json({ source: "heuristic", rule: resolved.rule, labels: resolved.labels });
       return;
     }
 
@@ -187,6 +297,8 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour, format strict :
     { "type": "categorize", "category": "string" } |
     { "type": "set_priority", "priority": "urgent|moyen|faible" } |
     { "type": "transfer", "to": "email@example.com" } |
+    { "type": "move_to_project", "projectId": "Nom du projet tel qu'écrit par l'utilisateur" } |
+    { "type": "assign", "userId": "Nom complet ou email du coéquipier tel qu'écrit" } |
     { "type": "create_task", "title": "string" } |
     { "type": "notify", "message": "string" }
   ]
@@ -197,7 +309,15 @@ Règles :
 - "value" doit être concrète (extraite de l'instruction), pas un placeholder.
 - Préfère "contains" sauf si l'utilisateur précise "exactement / égal à / regex".
 - Pour les emails dans "transfer.to" : récupère l'adresse fournie. Si aucune adresse, ne mets PAS d'action transfer.
-- Plusieurs actions sont autorisées dans le tableau "actions".`,
+- Plusieurs actions sont autorisées dans le tableau "actions".
+
+Désambiguïsation IMPORTANTE entre catégorie / projet / dossier :
+- "projet X" / "project X" / "vers le projet X" / "ranger dans projet X" / "classer dans projet X" → action "move_to_project" avec projectId = "X" (le NOM, pas un UUID — le backend résout).
+- "catégorie X" / "tag X" / "label X" / "étiquette X" → action "categorize" avec category = "X".
+- "dossier X" SANS contexte projet → essaie "move_to_project" en priorité (cas le plus fréquent). Ne JAMAIS interpréter "dossier projet X" comme une catégorie.
+- "assigner à NAME" / "attribuer à NAME" / "assign to NAME" → action "assign" avec userId = "NAME" (nom complet OU email tel qu'écrit, le backend résout).
+
+Ne génère JAMAIS un UUID toi-même pour projectId/userId — copie textuellement ce que l'utilisateur a écrit.`,
           },
           { role: "user", content: input.slice(0, 1000) },
         ],
@@ -212,13 +332,18 @@ Règles :
       return;
     }
 
-    const validation = validateRulePayload(aiCandidate);
+    const aiResolved = await resolveActionReferences(req.userId!, aiCandidate);
+    if (!aiResolved.ok) {
+      res.status(422).json({ error: aiResolved.error });
+      return;
+    }
+    const validation = validateRulePayload(aiResolved.rule);
     if (!validation.ok) {
       logger.info({ errors: validation.errors }, "[rules] AI candidate failed validation");
       res.status(422).json({ error: "Parsed rule is invalid", details: validation.errors });
       return;
     }
-    res.json({ source: "ai", rule: validation.rule });
+    res.json({ source: "ai", rule: validation.rule, labels: aiResolved.labels });
   } catch (e: any) {
     logger.error({ err: e?.message }, "[rules] parse exception");
     res.status(500).json({ error: "Failed to parse instruction" });

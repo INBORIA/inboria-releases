@@ -79,17 +79,17 @@ function describeCondition(c: RuleConditionShape, t: TFunction): string {
   return `${t(`rules.field.${c.field}`)} ${t(`rules.op.${c.op}`)} "${c.value || ""}"`;
 }
 
-function describeAction(a: RuleActionShape, t: TFunction): string {
+function describeAction(a: RuleActionShape, t: TFunction, label?: string): string {
   switch (a.type) {
     case "archive": return t("rules.action.archive");
     case "mark_read": return t("rules.action.mark_read");
     case "categorize": return t("rules.action.categorize", { category: a.category || "" });
     case "set_priority": return t("rules.action.set_priority", { priority: a.priority || "" });
-    case "move_to_project": return t("rules.action.move_to_project", { project: a.projectId || "" });
+    case "move_to_project": return t("rules.action.move_to_project", { project: label || a.projectId || "" });
     case "transfer": return t("rules.action.transfer", { to: a.to || "" });
     case "create_task": return t("rules.action.create_task", { title: a.title || "" });
     case "notify": return t("rules.action.notify");
-    case "assign": return t("rules.action.assign");
+    case "assign": return label ? `${t("rules.action.assign")} → ${label}` : t("rules.action.assign");
     default: return a.type;
   }
 }
@@ -116,6 +116,7 @@ export default function Regles() {
   const [nlInput, setNlInput] = useState("");
   const [draftName, setDraftName] = useState("");
   const [draftRule, setDraftRule] = useState<any>(null);
+  const [draftLabels, setDraftLabels] = useState<Record<number, string>>({});
   const [simulation, setSimulation] = useState<{ totalScanned: number; matchCount: number; matches: any[] } | null>(null);
 
   const refreshAudit = () => queryClient.invalidateQueries({ queryKey: getListAutomationRuleAuditQueryKey() });
@@ -124,6 +125,7 @@ export default function Regles() {
     setNlInput("");
     setDraftName("");
     setDraftRule(null);
+    setDraftLabels({});
     setSimulation(null);
     setEditing(null);
     setCreateOpen(true);
@@ -139,6 +141,7 @@ export default function Regles() {
       {
         onSuccess: (res: any) => {
           setDraftRule(res.rule);
+          setDraftLabels(res.labels || {});
           if (!draftName) setDraftName(res.rule.name);
           toast({
             title: t("rules.parsed"),
@@ -244,6 +247,7 @@ export default function Regles() {
     setNlInput(r.naturalLanguageInput || "");
     setDraftName(r.name);
     setDraftRule({ name: r.name, conditions: r.conditions, actions: r.actions });
+    setDraftLabels({});
     setSimulation(null);
     setCreateOpen(true);
   };
@@ -428,7 +432,7 @@ export default function Regles() {
                   {draftRule.actions.map((a: any, i: number) => (
                     <span key={i}>
                       {i > 0 ? ", " : ""}
-                      {describeAction(a, t)}
+                      {describeAction(a, t, draftLabels[i])}
                     </span>
                   ))}
                 </div>

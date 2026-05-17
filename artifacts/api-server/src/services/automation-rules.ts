@@ -274,12 +274,25 @@ export function parseRuleHeuristic(text: string, fallbackName?: string): Rule | 
 
   // ---- actions ------------------------------------------------------------
 
-  // move to project — "déplacer dans le projet X" / "move to project X"
+  // move to project — large coverage : "déplacer/classer/mettre/ranger/déposer
+  // dans (le) projet X" / "vers le projet X" / "move to project X" / etc.
+  // IMPORTANT : matche AVANT categorize, et la regex categorize a un negative
+  // lookahead anti-"projet" pour ne pas se déclencher sur le même texte.
+  // Le name capturé sera résolu en UUID côté route via resolveActionReferences.
   const moveProject = text.match(
-    /(?:d[eé]placer\s+(?:dans\s+(?:le\s+)?projet|vers\s+le\s+projet|au\s+projet)|move\s+to\s+(?:the\s+)?project|verschieben\s+in\s+(?:das\s+)?projekt|mover\s+al\s+proyecto|verplaatsen\s+naar\s+(?:het\s+)?project)\s+["“]?([^"”\n.;,]+?)["”]?(?=$|[.;,])/i,
+    /(?:d[eé]placer|classer|mettre|ranger|d[eé]poser|move|verschieben|mover|verplaatsen)\s+(?:le\s+mail\s+)?(?:dans|vers|au|to|in|en|al|naar)\s+(?:le\s+|la\s+|les\s+|du\s+|the\s+|das\s+|der\s+|el\s+|los\s+|het\s+)?projets?\s+["“]?([^"”\n.;,]+?)["”]?(?=$|[.;,])/i,
   );
   if (moveProject) {
-    actions.push({ type: "move_to_project", projectId: moveProject[1].trim() });
+    actions.push({ type: "move_to_project", projectId: moveProject[1].trim() } as RuleAction);
+  }
+
+  // assign — "assigner à NAME" / "assign to NAME" / "attribuer à NAME"
+  // NAME peut être un nom complet ou un email — résolu en UUID côté route.
+  const assignMatch = text.match(
+    /(?:assigner|assignez|attribuer|attribuez|assign|asignar|zuweisen|toewijzen)\s+(?:le\s+mail\s+)?(?:à|a|to|an|aan|au|aux)\s+["“]?([^"”\n.;,]+?)["”]?(?=$|[.;,])/i,
+  );
+  if (assignMatch) {
+    actions.push({ type: "assign", userId: assignMatch[1].trim() } as RuleAction);
   }
 
   // archive
@@ -296,14 +309,19 @@ export function parseRuleHeuristic(text: string, fallbackName?: string): Rule | 
     actions.push({ type: "mark_read" });
   }
 
-  // categorize
-  const catMatch =
-    text.match(
-      /(?:catégoriser|categoriser|categorize|classer|kategorisieren|categorizar|categoriseer)\s+(?:le\s+mail\s+)?(?:dans|in|en|als|comme|as)\s+["“]?([^"”\n.;,]+?)["”]?(?=$|[.;,])/i,
-    ) ||
-    text.match(
-      /(?:catégorie|categorie|category|kategorie|categoría|categorie)\s+["“]([^"”]+)["”]/i,
-    );
+  // categorize — negative lookahead anti-"projet"/"dossier"/"boîte" pour ne
+  // pas piquer le verbe à move_to_project. Si une action move_to_project a
+  // déjà été poussée, on skip pour éviter le doublon "classer dans projet X"
+  // → move_to_project ET categorize.
+  const hasMoveProject = actions.some((a) => a.type === "move_to_project");
+  const catMatch = hasMoveProject
+    ? null
+    : text.match(
+        /(?:catégoriser|categoriser|categorize|classer|kategorisieren|categorizar|categoriseer)\s+(?:le\s+mail\s+)?(?:dans|in|en|als|comme|as)\s+(?!(?:le\s+|la\s+|les\s+|du\s+|the\s+|das\s+|der\s+|el\s+|los\s+|het\s+)?(?:projets?|dossiers?|boîtes?|boites?|folders?|projects?|ordner|carpeta|map)\b)["“]?([^"”\n.;,]+?)["”]?(?=$|[.;,])/i,
+      ) ||
+      text.match(
+        /(?:catégorie|categorie|category|kategorie|categoría|categorie)\s+["“]([^"”]+)["”]/i,
+      );
   if (catMatch) {
     actions.push({
       type: "categorize",
