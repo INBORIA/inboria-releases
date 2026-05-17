@@ -36,6 +36,18 @@ uri = "file://attached_assets/generated_images/inboria_v3_final_maskable.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "pQrNd1AZZ7BTf58g62J9x"
+uri = "file://attached_assets/generated_images/inboria_v3_fixed_squircle.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Zyfe8wAAjxwNMLFgax8Mu"
+uri = "file://attached_assets/generated_images/inboria_v3_fixed_maskable.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "T1RHy0MwJctRmBHsjtlgG"
 uri = "file://NCV_Mail_Descriptif.md"
