@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <clipPath id="squircle">
+      <rect x="0" y="0" width="1024" height="1024" rx="225" ry="225"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#squircle)">
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#bgGrad)"/>
+    <!-- Envelope flap triangle above the I (closed envelope flap) -->
+    <polygon points="392,300 632,300 512,420" fill="#ffffff"/>
+    <!-- I vertical stroke -->
+    <rect x="452" y="450" width="120" height="380" rx="14" ry="14" fill="#ffffff"/>
+  </g>
+</svg>

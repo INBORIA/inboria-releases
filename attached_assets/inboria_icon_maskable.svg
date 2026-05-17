@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+  </defs>
+  <!-- Maskable: full edge-to-edge, no rounded corners. Glyph in 80% safe-zone (centered, smaller). -->
+  <rect x="0" y="0" width="1024" height="1024" fill="url(#bgGrad)"/>
+  <!-- Envelope flap triangle above the I (scaled to safe-zone) -->
+  <polygon points="422,380 602,380 512,470" fill="#ffffff"/>
+  <!-- I vertical stroke (safe-zone) -->
+  <rect x="468" y="495" width="88" height="290" rx="10" ry="10" fill="#ffffff"/>
+</svg>
