@@ -78,7 +78,7 @@ pnpm dev # Starts frontend and backend
 
 I prefer simple language and detailed explanations. I want iterative development and will provide feedback at each stage. Ask before making major changes.
 
-**Nom du produit : « Inboria »** (et non « NCV Mail »). NCV Mail = ancien nom historique encore présent dans les noms d'artifacts/workflows/dossiers (`artifacts/ncv-mail`, `artifacts/ncv-mail-mobile`, workflow « NCV Mail »…) — NE PAS renommer ces identifiants techniques (cassent les chemins, les workflows et l'historique git). Mais dans **toute communication produit, UI, copy, docs visibles utilisateur, emails, communication avec le user**, c'est **Inboria**. Quand le user dit « l'app » / « le produit », il parle d'Inboria.
+**Nom du produit : « Inboria »** (et non « NCV Mail »). NCV Mail = ancien nom historique encore présent dans les noms d'artifacts/workflows/dossiers (`artifacts/ncv-mail`, workflow « NCV Mail »…) — NE PAS renommer ces identifiants techniques (cassent les chemins, les workflows et l'historique git). Mais dans **toute communication produit, UI, copy, docs visibles utilisateur, emails, communication avec le user**, c'est **Inboria**. Quand le user dit « l'app » / « le produit », il parle d'Inboria.
 
 **TOUJOURS redémarrer automatiquement le workflow concerné après TOUTE modification de code (backend ET frontend, même si Vite est censé recharger). Ne jamais demander, ne jamais oublier, ne jamais supposer que le HMR suffit.**
 
