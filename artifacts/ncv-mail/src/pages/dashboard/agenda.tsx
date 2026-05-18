@@ -816,20 +816,10 @@ export default function Agenda() {
         }
         setApptDrag(null);
       }
-      if (sd) {
-        const h1 = Math.min(sd.startHour, sd.endHour);
-        const h2 = Math.max(sd.startHour, sd.endHour);
-        const start = new Date(sd.day);
-        start.setHours(h1, 0, 0, 0);
-        setSlotDrag(null);
-        if (h1 === h2) {
-          openCreateForm(start);
-        } else {
-          const end = new Date(sd.day);
-          end.setHours(h2 + 1, 0, 0, 0);
-          openCreateForm(start, end);
-        }
-      }
+      // sd : on garde la sélection visible après relâchement.
+      // L'ouverture du formulaire « Nouveau RDV » se fait au clic-droit
+      // sur la sélection (handler handleSlotContextMenu ci-dessous).
+      void sd;
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setApptDrag(null); setSlotDrag(null); }
@@ -855,6 +845,31 @@ export default function Agenda() {
     const sd = slotDragRef.current;
     if (!sd || !isSameDay(sd.day, day)) return;
     if (sd.endHour !== hour) setSlotDrag({ ...sd, endHour: hour });
+  };
+  // Clic-droit sur une cellule horaire : ouvre « Nouveau RDV »
+  // - si une plage est déjà sélectionnée sur ce jour, l'utilise
+  // - sinon, utilise l'heure de la cellule cliquée
+  const handleSlotContextMenu = (day: Date, hour: number) => (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-appt-block]") || target.closest("[data-ext-block]")) return;
+    e.preventDefault();
+    const sd = slotDragRef.current;
+    if (sd && isSameDay(sd.day, day)) {
+      const h1 = Math.min(sd.startHour, sd.endHour);
+      const h2 = Math.max(sd.startHour, sd.endHour);
+      const start = new Date(sd.day); start.setHours(h1, 0, 0, 0);
+      setSlotDrag(null);
+      if (h1 === h2) {
+        openCreateForm(start);
+      } else {
+        const end = new Date(sd.day); end.setHours(h2 + 1, 0, 0, 0);
+        openCreateForm(start, end);
+      }
+    } else {
+      const start = new Date(day); start.setHours(hour, 0, 0, 0);
+      setSlotDrag(null);
+      openCreateForm(start);
+    }
   };
   const startApptDrag = (apt: Appointment, mode: ApptDragMode, view: "week" | "day") =>
     (e: React.MouseEvent) => {
@@ -1394,6 +1409,7 @@ export default function Agenda() {
                         data-day-iso={format(d, "yyyy-MM-dd")}
                         onMouseDown={startSlotDrag(d, hour)}
                         onMouseEnter={extendSlotDrag(d, hour)}
+                        onContextMenu={handleSlotContextMenu(d, hour)}
                         className={`border-r border-border last:border-r-0 min-h-[40px] p-0.5 cursor-pointer select-none hover:bg-[#1a2235] ${isToday(d) ? "bg-primary/5" : ""} ${selected ? "bg-primary/20" : ""}`}
                       >
                         {dayAppts.map((apt) => {
@@ -1479,6 +1495,7 @@ export default function Agenda() {
                       className={`flex-1 min-h-[48px] p-1 cursor-pointer select-none hover:bg-[#1a2235] ${isCellInSlotDrag(currentDate, hour) ? "bg-primary/20" : ""}`}
                       onMouseDown={startSlotDrag(currentDate, hour)}
                       onMouseEnter={extendSlotDrag(currentDate, hour)}
+                      onContextMenu={handleSlotContextMenu(currentDate, hour)}
                     >
                       {hourAppts.map((apt) => {
                         const pc = apt.projects?.color;
