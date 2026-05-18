@@ -1022,6 +1022,14 @@ export default function Agenda() {
       <ContextMenuItem onSelect={() => openEditForm(apt)}>
         {t("agenda.ctxEdit", "Modifier")}
       </ContextMenuItem>
+      <ContextMenuItem
+        onSelect={(e) => {
+          e.preventDefault();
+          setTimeout(() => handleDuplicateAppt(apt, 1), 0);
+        }}
+      >
+        🧪 TEST Dupliquer demain (top-level)
+      </ContextMenuItem>
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t("agenda.ctxDuplicate", "Dupliquer")}</ContextMenuSubTrigger>
         <ContextMenuSubContent className="w-56">
