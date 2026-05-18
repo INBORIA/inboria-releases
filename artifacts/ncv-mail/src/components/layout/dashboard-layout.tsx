@@ -498,7 +498,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           </div>
           <div className="hidden md:block flex-1" />
           <div className="basis-full h-0 md:hidden" aria-hidden="true" />
-          <div className="flex items-center justify-between md:justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
+          <div className="flex items-center flex-wrap md:flex-nowrap justify-between md:justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
             <div className="shrink-0"><InboriaChatButton /></div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="block"><AutopilotIndicator /></div>
@@ -524,10 +524,13 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               >
                 {ncvTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
+            </div>
+            </div>
+            <div className="basis-full h-0 md:hidden" aria-hidden="true" />
+            <div className={cn("flex items-center gap-2 shrink-0 mr-auto md:mr-0", rightSidebar && "md:hidden")}>
               <LanguageSwitcher />
               <SupportChatWidget />
               <UserMenu />
-            </div>
             </div>
           </div>
         </div>
