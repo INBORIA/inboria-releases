@@ -933,6 +933,8 @@ export default function Agenda() {
     return d?.error || d?.message || err?.message || "Erreur";
   };
   const handleDuplicateAppt = (apt: Appointment, daysOffset: number = 7) => {
+    toast({ title: "Duplication…", description: `+${daysOffset}j — ${apt.title}` });
+    console.log("[agenda] handleDuplicateAppt", { aptId: apt.id, daysOffset, startAt: apt.startAt, endAt: apt.endAt });
     const start = parseISO(apt.startAt);
     const end = parseISO(apt.endAt);
     const newStart = addDays(start, daysOffset);
