@@ -497,6 +497,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
             </div>
           </div>
           <div className="hidden md:block flex-1" />
+          <div className="basis-full h-0 md:hidden" aria-hidden="true" />
           <div className="flex items-center justify-between md:justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
             <div className="shrink-0"><InboriaChatButton /></div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
