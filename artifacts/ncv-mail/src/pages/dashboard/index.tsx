@@ -5375,7 +5375,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex flex-nowrap md:flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+          <div className="flex flex-nowrap md:flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [&>*]:shrink-0">
               <button
                 onClick={() => {
                   setInboxMode("personal");

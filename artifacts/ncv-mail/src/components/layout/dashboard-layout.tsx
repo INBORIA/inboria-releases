@@ -492,18 +492,18 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
                 <SidebarContent />
               </SheetContent>
             </Sheet>
-            <div className="flex items-center gap-2 ml-2">
-              <img src={appLogo} alt="Inboria" className="h-14 w-auto object-contain" />
+            <div className="flex items-center gap-2 ml-2 shrink-0">
+              <img src={appLogo} alt="Inboria" className="h-12 sm:h-14 w-auto object-contain shrink-0" />
             </div>
           </div>
           <div className="flex-1" />
-          <div className="flex items-center gap-2">
-            <InboriaChatButton />
-            <AutopilotIndicator />
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="hidden sm:block"><InboriaChatButton /></div>
+            <div className="hidden md:block"><AutopilotIndicator /></div>
             <button
               type="button"
               onClick={toggleMailHeader}
-              className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
+              className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
               title={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
               aria-label={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
               data-testid="mail-header-toggle"
