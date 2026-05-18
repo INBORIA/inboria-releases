@@ -816,10 +816,12 @@ export default function Agenda() {
         }
         setApptDrag(null);
       }
-      // sd : on garde la sélection visible après relâchement.
-      // L'ouverture du formulaire « Nouveau RDV » se fait au clic-droit
-      // sur la sélection (handler handleSlotContextMenu ci-dessous).
-      void sd;
+      // sd : on garde la sélection visible après relâchement,
+      // mais on la passe en `active: false` pour autoriser le toggle-off
+      // au prochain clic dans la plage et bloquer l'extension par hover.
+      if (sd && sd.active) {
+        setSlotDrag({ ...sd, active: false });
+      }
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setApptDrag(null); setSlotDrag(null); }
