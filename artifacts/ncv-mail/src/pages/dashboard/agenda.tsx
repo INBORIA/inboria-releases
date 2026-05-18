@@ -816,11 +816,19 @@ export default function Agenda() {
         }
         setApptDrag(null);
       }
-      // sd : on garde la sélection visible après relâchement,
-      // mais on la passe en `active: false` pour autoriser le toggle-off
-      // au prochain clic dans la plage et bloquer l'extension par hover.
+      // Règle simple :
+      // - clic simple (pas de plage étendue) → on n'affiche AUCUNE sélection
+      // - drag d'une plage (≥ 2 cases) → on garde la plage visible (active:false)
+      // Comme ça l'utilisateur n'a jamais de mini-sélection coincée.
       if (sd && sd.active) {
-        setSlotDrag({ ...sd, active: false });
+        if (sd.startHour === sd.endHour) {
+          setSlotDrag(null);
+          slotDragRef.current = null;
+        } else {
+          const next = { ...sd, active: false };
+          setSlotDrag(next);
+          slotDragRef.current = next;
+        }
       }
     };
     const onKey = (e: KeyboardEvent) => {
@@ -849,10 +857,13 @@ export default function Agenda() {
       const hi = Math.max(sd.startHour, sd.endHour);
       if (hour >= lo && hour <= hi) {
         setSlotDrag(null);
+        slotDragRef.current = null;
         return;
       }
     }
-    setSlotDrag({ day, startHour: hour, endHour: hour, active: true });
+    const next = { day, startHour: hour, endHour: hour, active: true };
+    setSlotDrag(next);
+    slotDragRef.current = next;
   };
   const extendSlotDrag = (day: Date, hour: number) => () => {
     const sd = slotDragRef.current;
