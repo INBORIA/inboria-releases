@@ -1495,11 +1495,18 @@ export default function Agenda() {
                                 onMouseDown={startApptDrag(apt, "move", "week")}
                                 onClick={apptClickHandler(apt)}
                                 className={`relative text-[10px] px-1 py-0.5 rounded cursor-pointer ${isDragging ? "opacity-60 ring-1 ring-primary" : ""} ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
-                                style={pc && !nonConfirmed ? { backgroundColor: `${pc}20` } : undefined}
-                                title={`${apt.title} — ${shortLabel}`}
+                                style={pc && !nonConfirmed
+                                  ? { backgroundColor: `${pc}20`, borderLeft: `3px solid ${pc}` }
+                                  : undefined}
+                                title={`${apt.title} — ${shortLabel}${apt.projects?.name ? ` · ${apt.projects.name}` : ""}`}
                               >
                                 <div className={`truncate ${nonConfirmed ? "text-primary" : "text-foreground"}`}>{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
-                                <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
+                                <div className={`truncate flex items-center gap-1 ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>
+                                  {pc && (
+                                    <span className="inline-block w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: pc }} />
+                                  )}
+                                  <span className="truncate">{apt.projects?.name || shortLabel}</span>
+                                </div>
                                 <div
                                   onMouseDown={startApptDrag(apt, "resize-end", "week")}
                                   className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
@@ -1579,8 +1586,9 @@ export default function Agenda() {
                                   ? "bg-primary/10 border-primary/30"
                                   : "bg-primary/15 border-primary/30 hover:bg-primary/25"
                           }`}
-                          style={pc && !isPending && !isCounter && !isDeclined && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
+                          style={pc && !isPending && !isCounter && !isDeclined && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30`, borderLeft: `3px solid ${pc}` } : undefined}
                           data-testid={`agenda-appt-${apt.id}`}
+                          title={`${apt.title}${apt.projects?.name ? ` · ${apt.projects.name}` : ""}`}
                         >
                           <div
                             onMouseDown={startApptDrag(apt, "resize-start", "day")}
@@ -1593,14 +1601,22 @@ export default function Agenda() {
                           <div className="text-[12px] font-medium text-foreground">
                             <span className="truncate">{apt.title}</span>
                           </div>
-                          <div className={`text-[10px] mt-0.5 ${isPending || isCounter || isDeclined ? "text-primary" : "text-muted-foreground"}`}>
-                            {isPending
-                              ? t("agenda.statusPending", "En attente de réponse")
-                              : isCounter
-                                ? t("agenda.statusCounter", "Contre-proposition reçue")
-                                : isDeclined
-                                  ? t("agenda.statusDeclined", "Refusé par le contact")
-                                  : t("agenda.statusConfirmedShort", "Confirmé")}
+                          <div className={`text-[10px] mt-0.5 flex items-center gap-2 ${isPending || isCounter || isDeclined ? "text-primary" : "text-muted-foreground"}`}>
+                            <span>
+                              {isPending
+                                ? t("agenda.statusPending", "En attente de réponse")
+                                : isCounter
+                                  ? t("agenda.statusCounter", "Contre-proposition reçue")
+                                  : isDeclined
+                                    ? t("agenda.statusDeclined", "Refusé par le contact")
+                                    : t("agenda.statusConfirmedShort", "Confirmé")}
+                            </span>
+                            {apt.projects?.name && (
+                              <span className="flex items-center gap-1 text-muted-foreground">
+                                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ backgroundColor: pc || "#2d7dd2" }} />
+                                <span className="truncate">{apt.projects.name}</span>
+                              </span>
+                            )}
                           </div>
                           <div className="flex items-center gap-3 mt-0.5">
                             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
