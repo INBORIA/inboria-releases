@@ -744,7 +744,7 @@ export default function Agenda() {
   const HOUR_PX_DAY = 48;
   const SNAP_MIN = 30;
 
-  type SlotDrag = { day: Date; startHour: number; endHour: number };
+  type SlotDrag = { day: Date; startHour: number; endHour: number; active: boolean };
   const [slotDrag, setSlotDrag] = useState<SlotDrag | null>(null);
   const slotDragRef = useRef<SlotDrag | null>(null);
   useEffect(() => { slotDragRef.current = slotDrag; }, [slotDrag]);
@@ -839,11 +839,13 @@ export default function Agenda() {
     if (e.button !== 0) return;
     const target = e.target as HTMLElement;
     if (target.closest("[data-appt-block]") || target.closest("[data-ext-block]")) return;
-    setSlotDrag({ day, startHour: hour, endHour: hour });
+    setSlotDrag({ day, startHour: hour, endHour: hour, active: true });
   };
   const extendSlotDrag = (day: Date, hour: number) => () => {
     const sd = slotDragRef.current;
-    if (!sd || !isSameDay(sd.day, day)) return;
+    // N'étend la sélection QUE pendant un drag actif (bouton enfoncé).
+    // Sinon les survols après relâchement modifieraient la sélection.
+    if (!sd || !sd.active || !isSameDay(sd.day, day)) return;
     if (sd.endHour !== hour) setSlotDrag({ ...sd, endHour: hour });
   };
   // Clic-droit sur une cellule horaire : ouvre « Nouveau RDV »
@@ -906,11 +908,11 @@ export default function Agenda() {
     const d = err?.response?.data ?? err?.data ?? err;
     return d?.error || d?.message || err?.message || "Erreur";
   };
-  const handleDuplicateAppt = (apt: Appointment) => {
+  const handleDuplicateAppt = (apt: Appointment, daysOffset: number = 7) => {
     const start = parseISO(apt.startAt);
     const end = parseISO(apt.endAt);
-    const newStart = addDays(start, 7);
-    const newEnd = addDays(end, 7);
+    const newStart = addDays(start, daysOffset);
+    const newEnd = addDays(end, daysOffset);
     createAppointment.mutate(
       {
         data: {
@@ -994,9 +996,35 @@ export default function Agenda() {
       <ContextMenuItem onClick={() => openEditForm(apt)}>
         {t("agenda.ctxEdit", "Modifier")}
       </ContextMenuItem>
-      <ContextMenuItem onClick={() => handleDuplicateAppt(apt)}>
-        {t("agenda.ctxDuplicate", "Dupliquer (+7 jours)")}
-      </ContextMenuItem>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>{t("agenda.ctxDuplicate", "Dupliquer")}</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-56">
+          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 1)}>
+            {t("agenda.ctxDupNextDay", "Le lendemain")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 7)}>
+            {t("agenda.ctxDup7", "Dans 7 jours")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 14)}>
+            {t("agenda.ctxDup14", "Dans 14 jours")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 30)}>
+            {t("agenda.ctxDup30", "Dans 1 mois")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 90)}>
+            {t("agenda.ctxDup90", "Dans 3 mois")}
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={() => {
+            const raw = window.prompt(t("agenda.ctxDupCustom", "Dupliquer dans combien de jours ?"), "7");
+            if (raw == null) return;
+            const n = parseInt(raw, 10);
+            if (Number.isFinite(n) && n !== 0) handleDuplicateAppt(apt, n);
+          }}>
+            {t("agenda.ctxDupCustomMenu", "Personnalisé…")}
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
       <ContextMenuItem onClick={() => handleForwardAppt(apt)}>
         {t("agenda.ctxForward", "Transférer par email")}
       </ContextMenuItem>
