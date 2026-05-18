@@ -374,6 +374,17 @@ export default function Agenda() {
       videoProvider: formVideoProvider,
     };
 
+    const extractError = (err: any): string => {
+      const data = err?.response?.data ?? err?.data ?? err;
+      if (data?.details?.fieldErrors) {
+        const fieldErrs = Object.entries(data.details.fieldErrors)
+          .map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`)
+          .join(" | ");
+        if (fieldErrs) return fieldErrs;
+      }
+      return data?.error || data?.message || err?.message || "Erreur inconnue";
+    };
+
     if (editingId) {
       updateAppointment.mutate(
         { id: editingId, data: payload },
@@ -383,7 +394,12 @@ export default function Agenda() {
             invalidate();
             resetForm();
           },
-          onError: () => toast({ title: t("agenda.updateError"), variant: "destructive" }),
+          onError: (err: any) =>
+            toast({
+              title: t("agenda.updateError"),
+              description: extractError(err),
+              variant: "destructive",
+            }),
         }
       );
     } else {
@@ -395,7 +411,12 @@ export default function Agenda() {
             invalidate();
             resetForm();
           },
-          onError: () => toast({ title: t("agenda.createError"), variant: "destructive" }),
+          onError: (err: any) =>
+            toast({
+              title: t("agenda.createError"),
+              description: extractError(err),
+              variant: "destructive",
+            }),
         }
       );
     }
