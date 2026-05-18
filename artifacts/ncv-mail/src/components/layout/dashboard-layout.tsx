@@ -497,8 +497,9 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
             </div>
           </div>
           <div className="hidden md:block flex-1" />
-          <div className="flex items-center flex-wrap justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
-            <div className="block mr-auto md:mr-0"><InboriaChatButton /></div>
+          <div className="flex items-center justify-between md:justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
+            <div className="shrink-0"><InboriaChatButton /></div>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="block"><AutopilotIndicator /></div>
             <button
               type="button"
@@ -525,6 +526,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               <LanguageSwitcher />
               <SupportChatWidget />
               <UserMenu />
+            </div>
             </div>
           </div>
         </div>
