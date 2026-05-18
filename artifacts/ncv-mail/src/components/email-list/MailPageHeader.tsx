@@ -619,13 +619,13 @@ export function MailPageHeader({
       {!headerCollapsed && (
       <>
       {/* Bloc B — onglets boîtes & équipe */}
-      <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
+      <div className="flex flex-nowrap md:flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {isInbox ? (
           <button className={cls(true)} type="button">
             <Inbox className="w-3 h-3" />
             {t("inbox.title")}
             {inboxCountFromApi > 0 && (
-              <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {inboxCountFromApi}
               </span>
             )}
@@ -635,7 +635,7 @@ export function MailPageHeader({
             <Inbox className="w-3 h-3" />
             {t("inbox.title")}
             {inboxCountFromApi > 0 && (
-              <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {inboxCountFromApi}
               </span>
             )}
@@ -648,7 +648,7 @@ export function MailPageHeader({
           <ShieldAlert className="w-3 h-3" />
           {t("inbox.spamShort", "Indésirables")}
           {spamCountFromApi > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {spamCountFromApi}
             </span>
           )}
@@ -658,7 +658,7 @@ export function MailPageHeader({
           <Trash2 className="w-3 h-3" />
           {t("inbox.trash")}
           {trashCountFromApi > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {trashCountFromApi}
             </span>
           )}
@@ -734,6 +734,7 @@ export function MailPageHeader({
 
         <div
           aria-hidden="true"
+          className="hidden md:block"
           style={{ flexBasis: "100%", width: "100%", height: 0 }}
         />
 
@@ -742,7 +743,7 @@ export function MailPageHeader({
             <Users className="w-3 h-3" />
             {t("inbox.sharedMailboxShort", "Partagées")}
             {sharedMailboxesCount > 0 && (
-              <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {sharedMailboxesCount}
               </span>
             )}
@@ -757,7 +758,7 @@ export function MailPageHeader({
             <Activity className="w-3 h-3" />
             {t("inbox.assignedShort", "Assignés")}
             {assignedToMeCount > 0 && (
-              <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {assignedToMeCount}
               </span>
             )}
@@ -768,7 +769,7 @@ export function MailPageHeader({
           <BellOff className="w-3 h-3" />
           {t("sidebar.snoozed", "Reportés")}
           {snoozedCount > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {snoozedCount}
             </span>
           )}
@@ -778,7 +779,7 @@ export function MailPageHeader({
           <CheckSquare className="w-3 h-3" />
           {t("tasks.title")}
           {openTasksCount > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {openTasksCount}
             </span>
           )}
@@ -788,7 +789,7 @@ export function MailPageHeader({
           <FolderKanban className="w-3 h-3" />
           {t("sidebar.projects")}
           {projectsCount > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {projectsCount}
             </span>
           )}
@@ -798,7 +799,7 @@ export function MailPageHeader({
           <MailCheck className="w-3 h-3" />
           {t("sidebar.followups", "Relances")}
           {followupsCount > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {followupsCount}
             </span>
           )}
@@ -808,7 +809,7 @@ export function MailPageHeader({
           <Archive className="w-3 h-3" />
           {t("sidebar.archives")}
           {archivesCount > 0 && (
-            <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
               {archivesCount}
             </span>
           )}
@@ -817,7 +818,7 @@ export function MailPageHeader({
 
       {/* Bloc C — Filtres / Catégories */}
       <div
-        className="flex flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8"
+        className="flex flex-nowrap md:flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [&>*]:shrink-0"
         data-testid="row-filters-unified"
       >
         {(() => {

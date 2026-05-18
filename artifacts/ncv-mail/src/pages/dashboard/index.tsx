@@ -5375,7 +5375,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
+          <div className="flex flex-nowrap md:flex-wrap items-center gap-1.5 gap-y-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
               <button
                 onClick={() => {
                   setInboxMode("personal");
@@ -5393,7 +5393,7 @@ export default function Dashboard() {
                 <Inbox className="w-3 h-3" />
                 {t("inbox.title")}
                 {inboxCountFromApi > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
                 )}
               </button>
               <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
@@ -5404,7 +5404,7 @@ export default function Dashboard() {
                 <ShieldAlert className="w-3 h-3" />
                 {t("inbox.spamShort", "Indésirables")}
                 {spamCountFromApi > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
                 )}
               </Link>
               <Link
@@ -5414,7 +5414,7 @@ export default function Dashboard() {
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
                 {trashCountFromApi > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
                 )}
               </Link>
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
@@ -5498,6 +5498,7 @@ export default function Dashboard() {
                   Partagées / Assignés sont conditionnels. */}
               <div
                 aria-hidden="true"
+                className="hidden md:block"
                 style={{ flexBasis: "100%", width: "100%", height: 0 }}
               />
               {hasSharedMailboxes && (
@@ -5519,7 +5520,7 @@ export default function Dashboard() {
                   <Users className="w-3 h-3" />
                   {t("inbox.sharedMailboxShort", "Partagées")}
                   {sharedEmailsCount > 0 && (
-                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
+                    <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
                   )}
                 </button>
               )}
@@ -5539,7 +5540,7 @@ export default function Dashboard() {
                   <Activity className="w-3 h-3" />
                   {t("inbox.assignedShort", "Assignés")}
                   {assignedToMeCount > 0 && (
-                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
+                    <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
                   )}
                 </button>
               )}
@@ -5556,7 +5557,7 @@ export default function Dashboard() {
                 <BellOff className="w-3 h-3" />
                 {t("sidebar.snoozed", "Reportés")}
                 {snoozedCount > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{snoozedCount}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{snoozedCount}</span>
                 )}
               </Link>
               {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
@@ -5572,7 +5573,7 @@ export default function Dashboard() {
                 <CheckSquare className="w-3 h-3" />
                 {t("tasks.title")}
                 {openTasksCount > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{openTasksCount}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{openTasksCount}</span>
                 )}
               </Link>
               {/* Onglet Projets — déplacé depuis la sidebar (équipe).
@@ -5589,7 +5590,7 @@ export default function Dashboard() {
                 <FolderKanban className="w-3 h-3" />
                 {t("sidebar.projects")}
                 {projectsCount > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{projectsCount}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{projectsCount}</span>
                 )}
               </Link>
               {/* Onglet Relances — déplacé depuis la sidebar.
@@ -5606,7 +5607,7 @@ export default function Dashboard() {
                 <MailCheck className="w-3 h-3" />
                 {t("sidebar.followups", "Relances")}
                 {followupsCount > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{followupsCount}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{followupsCount}</span>
                 )}
               </Link>
               {/* Task #294 Phase 2 — Onglet Archives.
@@ -5624,7 +5625,7 @@ export default function Dashboard() {
                 <Archive className="w-3 h-3" />
                 {t("sidebar.archives")}
                 {archivesCount > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{archivesCount}</span>
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{archivesCount}</span>
                 )}
               </Link>
             </div>
@@ -5634,7 +5635,7 @@ export default function Dashboard() {
               bouton déroulant. Aucune fonction retirée.
               Les filtres actifs sont rappelés sous forme de pastilles à droite
               avec un bouton X pour les retirer individuellement. */}
-          <div className="flex flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8" data-testid="row-filters-unified">
+          <div className="flex flex-nowrap md:flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [&>*]:shrink-0" data-testid="row-filters-unified">
             {(() => {
               const activeCount =
                 (filterPriority !== "all" ? 1 : 0) +
