@@ -524,13 +524,10 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               >
                 {ncvTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-            </div>
-            </div>
-            <div className="basis-full h-0 md:hidden" aria-hidden="true" />
-            <div className={cn("flex items-center gap-2 shrink-0 mr-auto md:mr-0", rightSidebar && "md:hidden")}>
               <LanguageSwitcher />
               <SupportChatWidget />
               <UserMenu />
+            </div>
             </div>
           </div>
         </div>
