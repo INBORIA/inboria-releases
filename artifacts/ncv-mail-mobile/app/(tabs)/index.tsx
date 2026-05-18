@@ -348,6 +348,17 @@ export default function InboxScreen() {
         </View>
       ) : (
         <>
+          <View style={s.topBar}>
+            <TouchableOpacity
+              onPress={() => router.push("/menu")}
+              hitSlop={8}
+              style={[s.iconBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+            >
+              <MaterialCommunityIcons name="menu" size={20} color={colors.foreground} />
+            </TouchableOpacity>
+            <Text style={[s.brandTitle, { color: colors.foreground }]}>Inboria</Text>
+            <View style={{ flex: 1 }} />
+          </View>
           <View style={s.langSwitcherRow}>
             {LANGUAGES.map((lang) => {
               const isActive = currentLangCode === lang.code;
@@ -516,12 +527,55 @@ export default function InboxScreen() {
           </ScrollView>
         </View>
       )}
+
+      {!selectionMode ? (
+        <TouchableOpacity
+          onPress={() => router.push("/compose")}
+          activeOpacity={0.85}
+          style={[s.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
+        >
+          <MaterialCommunityIcons name="pencil" size={22} color={colors.primaryForeground} />
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1 },
+
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  iconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
+
+  fab: {
+    position: "absolute",
+    right: 20,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
+  },
 
   langSwitcherRow: {
     flexDirection: "row",
