@@ -292,6 +292,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
   projects,
   isPending,
   onSend,
+  onClose,
   initialTo = "",
   initialSubject = "",
   initialBody = "",
@@ -302,6 +303,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
   projects: any[];
   isPending: boolean;
   onSend: (p: ComposeSendPayload) => void;
+  onClose?: () => void;
   initialTo?: string;
   initialSubject?: string;
   initialBody?: string;
@@ -342,16 +344,31 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
 
   return (
     <>
-      <DialogHeader className="px-5 pt-4 pb-2 pr-12 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
+      <DialogHeader className="px-5 pt-4 pb-2 pr-4 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
         <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
-        <button
-          type="button"
-          onClick={() => setIsFullscreen((v: boolean) => !v)}
-          className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04] mr-2"
-          aria-label={isFullscreen ? t("inbox.exitFullscreen", "Quitter plein écran") : t("inbox.fullscreen", "Plein écran")}
-        >
-          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setIsFullscreen((v: boolean) => !v)}
+            className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04]"
+            aria-label={isFullscreen ? t("inbox.exitFullscreen", "Quitter plein écran") : t("inbox.fullscreen", "Plein écran")}
+          >
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
+          {onClose && (
+            <button
+              type="button"
+              onClick={() => {
+                if (body && body.trim() && !window.confirm(t("inbox.composeDiscardConfirm", "Abandonner ce brouillon ?"))) return;
+                onClose();
+              }}
+              className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04]"
+              aria-label={t("inbox.close", "Fermer")}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </DialogHeader>
       <div className="space-y-3 p-5 overflow-y-auto flex-1">
         {connections.length > 1 && (
@@ -5365,6 +5382,7 @@ export default function Dashboard() {
                     projects={(projects as any[]) || []}
                     isPending={sendEmailMut.isPending}
                     onSend={handleComposeSend}
+                    onClose={() => setIsComposeOpen(false)}
                     initialTo={composePrefill?.to}
                     initialSubject={composePrefill?.subject}
                     initialBody={composePrefill?.body}
