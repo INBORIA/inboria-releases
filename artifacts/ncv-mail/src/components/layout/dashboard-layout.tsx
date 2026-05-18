@@ -477,7 +477,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         )}
       >
         <div
-          className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4"
+          className="sticky top-0 z-20 flex h-auto md:h-16 shrink-0 flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 border-b border-border bg-background px-4 py-2 md:py-0"
           data-testid="app-top-header"
         >
           <div className="lg:hidden flex items-center">
@@ -496,14 +496,14 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               <img src={appLogo} alt="Inboria" className="h-12 sm:h-14 w-auto object-contain shrink-0" />
             </div>
           </div>
-          <div className="flex-1" />
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="hidden md:block flex-1" />
+          <div className="flex items-center flex-wrap justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
             <div className="block"><InboriaChatButton /></div>
-            <div className="hidden md:block"><AutopilotIndicator /></div>
+            <div className="block"><AutopilotIndicator /></div>
             <button
               type="button"
               onClick={toggleMailHeader}
-              className="hidden sm:inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
+              className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
               title={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
               aria-label={mailHeaderCollapsed ? "Afficher la barre mail" : "Masquer la barre mail"}
               data-testid="mail-header-toggle"
