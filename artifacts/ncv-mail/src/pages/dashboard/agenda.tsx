@@ -82,6 +82,8 @@ export default function Agenda() {
   const [formLocation, setFormLocation] = useState("");
   const [formStartAt, setFormStartAt] = useState("");
   const [formEndAt, setFormEndAt] = useState("");
+  const [formDuration, setFormDuration] = useState<string>("30");
+  const [formMultiDay, setFormMultiDay] = useState(false);
   const [formAllDay, setFormAllDay] = useState(false);
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
@@ -326,16 +328,27 @@ export default function Agenda() {
     setFormEmailId(undefined);
     setFormCalendarAccountId(calendarAccounts[0]?.id || "");
     setFormVideoProvider("none");
+    setFormDuration("30");
+    setFormMultiDay(false);
     setEditingId(null);
     setShowForm(false);
   };
 
-  const openCreateForm = (date?: Date) => {
+  const openCreateForm = (date?: Date, endDate?: Date) => {
     resetForm();
     if (date) {
-      const d = format(date, "yyyy-MM-dd");
-      setFormStartAt(`${d}T09:00`);
-      setFormEndAt(`${d}T10:00`);
+      setFormStartAt(format(date, "yyyy-MM-dd'T'HH:mm"));
+      if (endDate) {
+        if (!isSameDay(date, endDate)) {
+          setFormMultiDay(true);
+          setFormEndAt(format(endDate, "yyyy-MM-dd'T'HH:mm"));
+        } else {
+          const diffMin = Math.max(15, Math.round((endDate.getTime() - date.getTime()) / 60000));
+          setFormDuration(String(diffMin));
+        }
+      } else {
+        setFormDuration("30");
+      }
     }
     setShowForm(true);
   };
@@ -347,6 +360,17 @@ export default function Agenda() {
     setFormLocation(apt.location || "");
     setFormStartAt(apt.startAt ? format(parseISO(apt.startAt), "yyyy-MM-dd'T'HH:mm") : "");
     setFormEndAt(apt.endAt ? format(parseISO(apt.endAt), "yyyy-MM-dd'T'HH:mm") : "");
+    if (apt.startAt && apt.endAt) {
+      const s = parseISO(apt.startAt);
+      const e = parseISO(apt.endAt);
+      if (!isSameDay(s, e)) {
+        setFormMultiDay(true);
+      } else {
+        const diffMin = Math.max(15, Math.round((e.getTime() - s.getTime()) / 60000));
+        setFormDuration(String(diffMin));
+        setFormMultiDay(false);
+      }
+    }
     setFormAllDay(apt.allDay || false);
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
@@ -358,13 +382,19 @@ export default function Agenda() {
   };
 
   const handleSubmit = () => {
-    if (!formTitle || !formStartAt || !formEndAt) return;
+    if (!formTitle || !formStartAt) return;
+    if (formMultiDay && !formEndAt) return;
+    const startDate = new Date(formStartAt);
+    const endDate = formMultiDay
+      ? new Date(formEndAt)
+      : new Date(startDate.getTime() + (parseInt(formDuration) || 30) * 60000);
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || endDate <= startDate) return;
     const payload = {
       title: formTitle,
       description: formDescription || undefined,
       location: formLocation || undefined,
-      startAt: new Date(formStartAt).toISOString(),
-      endAt: new Date(formEndAt).toISOString(),
+      startAt: startDate.toISOString(),
+      endAt: endDate.toISOString(),
       allDay: formAllDay,
       projectId: formProjectId ? parseInt(formProjectId) : undefined,
       reminderMinutes: parseInt(formReminder) || 30,
@@ -702,6 +732,141 @@ export default function Agenda() {
         onError: () => invalidate(),
       },
     );
+  };
+
+  // ============================================================
+  // DRAG-TO-CREATE / MOVE / RESIZE sur vues Semaine & Jour
+  // ============================================================
+  const HOUR_PX_WEEK = 40;
+  const HOUR_PX_DAY = 48;
+  const SNAP_MIN = 30;
+
+  type SlotDrag = { day: Date; startHour: number; endHour: number };
+  const [slotDrag, setSlotDrag] = useState<SlotDrag | null>(null);
+  const slotDragRef = useRef<SlotDrag | null>(null);
+  useEffect(() => { slotDragRef.current = slotDrag; }, [slotDrag]);
+
+  type ApptDragMode = "move" | "resize-end" | "resize-start";
+  type ApptDrag = {
+    aptId: string;
+    mode: ApptDragMode;
+    origStart: Date;
+    origEnd: Date;
+    startY: number;
+    hourPx: number;
+    moved: boolean;
+    previewStart: Date;
+    previewEnd: Date;
+  };
+  const [apptDrag, setApptDrag] = useState<ApptDrag | null>(null);
+  const apptDragRef = useRef<ApptDrag | null>(null);
+  useEffect(() => { apptDragRef.current = apptDrag; }, [apptDrag]);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const ad = apptDragRef.current;
+      if (ad) {
+        const dy = e.clientY - ad.startY;
+        const deltaMin = Math.round((dy / ad.hourPx) * 60 / SNAP_MIN) * SNAP_MIN;
+        const moved = Math.abs(dy) > 4 || ad.moved;
+        let previewStart = ad.origStart;
+        let previewEnd = ad.origEnd;
+        if (ad.mode === "move") {
+          previewStart = new Date(ad.origStart.getTime() + deltaMin * 60000);
+          previewEnd = new Date(ad.origEnd.getTime() + deltaMin * 60000);
+        } else if (ad.mode === "resize-end") {
+          const candidate = new Date(ad.origEnd.getTime() + deltaMin * 60000);
+          if (candidate.getTime() >= ad.origStart.getTime() + 15 * 60000) previewEnd = candidate;
+        } else if (ad.mode === "resize-start") {
+          const candidate = new Date(ad.origStart.getTime() + deltaMin * 60000);
+          if (candidate.getTime() <= ad.origEnd.getTime() - 15 * 60000) previewStart = candidate;
+        }
+        setApptDrag({ ...ad, moved, previewStart, previewEnd });
+      }
+    };
+    const onUp = () => {
+      const ad = apptDragRef.current;
+      const sd = slotDragRef.current;
+      if (ad) {
+        const changed = ad.previewStart.getTime() !== ad.origStart.getTime()
+          || ad.previewEnd.getTime() !== ad.origEnd.getTime();
+        if (ad.moved && changed) {
+          updateAppointment.mutate(
+            { id: ad.aptId, data: { startAt: ad.previewStart.toISOString(), endAt: ad.previewEnd.toISOString() } },
+            { onSuccess: () => invalidate(), onError: () => invalidate() },
+          );
+        }
+        setApptDrag(null);
+      }
+      if (sd) {
+        const h1 = Math.min(sd.startHour, sd.endHour);
+        const h2 = Math.max(sd.startHour, sd.endHour);
+        const start = new Date(sd.day);
+        start.setHours(h1, 0, 0, 0);
+        setSlotDrag(null);
+        if (h1 === h2) {
+          openCreateForm(start);
+        } else {
+          const end = new Date(sd.day);
+          end.setHours(h2 + 1, 0, 0, 0);
+          openCreateForm(start, end);
+        }
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setApptDrag(null); setSlotDrag(null); }
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.removeEventListener("keydown", onKey);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startSlotDrag = (day: Date, hour: number) => (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-appt-block]") || target.closest("[data-ext-block]")) return;
+    setSlotDrag({ day, startHour: hour, endHour: hour });
+  };
+  const extendSlotDrag = (day: Date, hour: number) => () => {
+    const sd = slotDragRef.current;
+    if (!sd || !isSameDay(sd.day, day)) return;
+    if (sd.endHour !== hour) setSlotDrag({ ...sd, endHour: hour });
+  };
+  const startApptDrag = (apt: Appointment, mode: ApptDragMode, view: "week" | "day") =>
+    (e: React.MouseEvent) => {
+      if (e.button !== 0) return;
+      e.stopPropagation();
+      const origStart = parseISO(apt.startAt);
+      const origEnd = parseISO(apt.endAt);
+      setApptDrag({
+        aptId: apt.id,
+        mode,
+        origStart,
+        origEnd,
+        startY: e.clientY,
+        hourPx: view === "week" ? HOUR_PX_WEEK : HOUR_PX_DAY,
+        moved: false,
+        previewStart: origStart,
+        previewEnd: origEnd,
+      });
+    };
+  const apptClickHandler = (apt: Appointment) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const ad = apptDragRef.current;
+    if (ad && ad.aptId === apt.id && ad.moved) return;
+    setSelectedAppointment(apt);
+  };
+  const isCellInSlotDrag = (day: Date, hour: number): boolean => {
+    if (!slotDrag || !isSameDay(slotDrag.day, day)) return false;
+    const lo = Math.min(slotDrag.startHour, slotDrag.endHour);
+    const hi = Math.max(slotDrag.startHour, slotDrag.endHour);
+    return hour >= lo && hour <= hi;
   };
 
   const monthDays = useMemo(() => {
@@ -1065,15 +1230,13 @@ export default function Agenda() {
                       return h === hour;
                     });
                     const dayExt = getExternalEventsForDay(d).filter((ev) => parseISO(ev.start).getHours() === hour);
+                    const selected = isCellInSlotDrag(d, hour);
                     return (
                       <div
                         key={i}
-                        onClick={() => {
-                          const date = new Date(d);
-                          date.setHours(hour, 0, 0, 0);
-                          openCreateForm(date);
-                        }}
-                        className={`border-r border-border last:border-r-0 min-h-[40px] p-0.5 cursor-pointer hover:bg-[#1a2235] ${isToday(d) ? "bg-primary/5" : ""}`}
+                        onMouseDown={startSlotDrag(d, hour)}
+                        onMouseEnter={extendSlotDrag(d, hour)}
+                        className={`border-r border-border last:border-r-0 min-h-[40px] p-0.5 cursor-pointer select-none hover:bg-[#1a2235] ${isToday(d) ? "bg-primary/5" : ""} ${selected ? "bg-primary/20" : ""}`}
                       >
                         {dayAppts.map((apt) => {
                           const pc = apt.projects?.color;
@@ -1090,16 +1253,23 @@ export default function Agenda() {
                               : effective === "declined"
                                 ? t("agenda.statusDeclinedShort", "Refusé")
                                 : t("agenda.statusConfirmedShort", "Confirmé");
+                          const isDragging = apptDrag?.aptId === apt.id && apptDrag.moved;
                           return (
                           <div
                             key={apt.id}
-                            onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
+                            data-appt-block
+                            onMouseDown={startApptDrag(apt, "move", "week")}
+                            onClick={apptClickHandler(apt)}
+                            className={`relative text-[10px] px-1 py-0.5 rounded cursor-pointer ${isDragging ? "opacity-60 ring-1 ring-primary" : ""} ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
                             style={pc && !nonConfirmed ? { backgroundColor: `${pc}20` } : undefined}
                             title={`${apt.title} — ${shortLabel}`}
                           >
                             <div className={`truncate ${nonConfirmed ? "text-primary" : "text-foreground"}`}>{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
                             <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
+                            <div
+                              onMouseDown={startApptDrag(apt, "resize-end", "week")}
+                              className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
+                            />
                           </div>
                           );
                         })}
@@ -1144,12 +1314,9 @@ export default function Agenda() {
                       {String(hour).padStart(2, "0")}:00
                     </div>
                     <div
-                      className="flex-1 min-h-[48px] p-1 cursor-pointer hover:bg-[#1a2235]"
-                      onClick={() => {
-                        const date = new Date(currentDate);
-                        date.setHours(hour, 0, 0, 0);
-                        openCreateForm(date);
-                      }}
+                      className={`flex-1 min-h-[48px] p-1 cursor-pointer select-none hover:bg-[#1a2235] ${isCellInSlotDrag(currentDate, hour) ? "bg-primary/20" : ""}`}
+                      onMouseDown={startSlotDrag(currentDate, hour)}
+                      onMouseEnter={extendSlotDrag(currentDate, hour)}
                     >
                       {hourAppts.map((apt) => {
                         const pc = apt.projects?.color;
@@ -1157,11 +1324,14 @@ export default function Agenda() {
                         const isCounter = aptStatus === "counter_proposed";
                         const isDeclined = aptStatus === "declined";
                         const isPending = aptStatus === "pending" || (apt.confirmed === false && !isCounter && !isDeclined);
+                        const isDragging = apptDrag?.aptId === apt.id && apptDrag.moved;
                         return (
                         <div
                           key={apt.id}
-                          onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${
+                          data-appt-block
+                          onMouseDown={startApptDrag(apt, "move", "day")}
+                          onClick={apptClickHandler(apt)}
+                          className={`relative rounded px-2 py-1.5 cursor-pointer mb-1 border ${isDragging ? "opacity-60 ring-1 ring-primary" : ""} ${
                             isDeclined
                               ? "bg-card border-border opacity-60"
                               : isPending || isCounter
@@ -1173,6 +1343,14 @@ export default function Agenda() {
                           style={pc && !isPending && !isCounter && !isDeclined && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
                           data-testid={`agenda-appt-${apt.id}`}
                         >
+                          <div
+                            onMouseDown={startApptDrag(apt, "resize-start", "day")}
+                            className="absolute top-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
+                          />
+                          <div
+                            onMouseDown={startApptDrag(apt, "resize-end", "day")}
+                            className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
+                          />
                           <div className="text-[12px] font-medium text-foreground">
                             <span className="truncate">{apt.title}</span>
                           </div>
@@ -1454,15 +1632,55 @@ export default function Agenda() {
                       className="h-8 text-[12px]"
                     />
                   </div>
-                  <div>
-                    <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.endDate")}</label>
-                    <Input
-                      type="datetime-local"
-                      value={formEndAt}
-                      onChange={(e) => setFormEndAt(e.target.value)}
-                      className="h-8 text-[12px]"
-                    />
-                  </div>
+                  {formMultiDay ? (
+                    <div>
+                      <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.endDate")}</label>
+                      <Input
+                        type="datetime-local"
+                        value={formEndAt}
+                        onChange={(e) => setFormEndAt(e.target.value)}
+                        className="h-8 text-[12px]"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.duration", "Durée")}</label>
+                      <select
+                        value={formDuration}
+                        onChange={(e) => setFormDuration(e.target.value)}
+                        className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground"
+                      >
+                        <option value="15">15 min</option>
+                        <option value="30">30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60">1 h</option>
+                        <option value="90">1 h 30</option>
+                        <option value="120">2 h</option>
+                        <option value="180">3 h</option>
+                        <option value="240">4 h</option>
+                        <option value="480">8 h (journée)</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-end -mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !formMultiDay;
+                      setFormMultiDay(next);
+                      if (next && formStartAt) {
+                        const start = new Date(formStartAt);
+                        const end = new Date(start.getTime() + (parseInt(formDuration) || 30) * 60000);
+                        setFormEndAt(format(end, "yyyy-MM-dd'T'HH:mm"));
+                      }
+                    }}
+                    className="text-[11px] text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    {formMultiDay
+                      ? t("agenda.singleDay", "Revenir à durée simple")
+                      : t("agenda.multiDay", "Plusieurs jours…")}
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -1564,7 +1782,7 @@ export default function Agenda() {
                   <Button
                     size="sm"
                     onClick={handleSubmit}
-                    disabled={!formTitle || !formStartAt || !formEndAt || createAppointment.isPending || updateAppointment.isPending}
+                    disabled={!formTitle || !formStartAt || (formMultiDay && !formEndAt) || createAppointment.isPending || updateAppointment.isPending}
                     className="h-8 text-[12px]"
                   >
                     {(createAppointment.isPending || updateAppointment.isPending) && <Loader2 className="w-3 h-3 mr-1 animate-spin" />}
