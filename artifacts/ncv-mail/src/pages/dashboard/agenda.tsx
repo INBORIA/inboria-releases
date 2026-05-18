@@ -1505,7 +1505,10 @@ export default function Agenda() {
                                   {pc && (
                                     <span className="inline-block w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: pc }} />
                                   )}
-                                  <span className="truncate">{apt.projects?.name || shortLabel}</span>
+                                  <span className="truncate">
+                                    {shortLabel}
+                                    {apt.projects?.name && <> · {apt.projects.name}</>}
+                                  </span>
                                 </div>
                                 <div
                                   onMouseDown={startApptDrag(apt, "resize-end", "week")}
