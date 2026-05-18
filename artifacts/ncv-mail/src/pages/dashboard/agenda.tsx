@@ -89,7 +89,7 @@ export default function Agenda() {
   const [formEmailId, setFormEmailId] = useState<number | undefined>(undefined);
   const [formCalendarAccountId, setFormCalendarAccountId] = useState<string>("");
   type VideoProv = "none" | "jitsi" | "meet" | "teams";
-  const [formVideoProvider, setFormVideoProvider] = useState<VideoProv>("jitsi");
+  const [formVideoProvider, setFormVideoProvider] = useState<VideoProv>("none");
 
   type CalAccount = { id: string; provider: "google" | "outlook"; email_address: string; status: string };
   const [calendarAccounts, setCalendarAccounts] = useState<CalAccount[]>([]);
@@ -325,7 +325,7 @@ export default function Agenda() {
     setFormParticipants("");
     setFormEmailId(undefined);
     setFormCalendarAccountId(calendarAccounts[0]?.id || "");
-    setFormVideoProvider("jitsi");
+    setFormVideoProvider("none");
     setEditingId(null);
     setShowForm(false);
   };
