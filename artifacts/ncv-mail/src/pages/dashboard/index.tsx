@@ -5384,7 +5384,7 @@ export default function Dashboard() {
                   // ramène TOUJOURS la liste complète de la boîte.
                   setCrmFilter(null);
                 }}
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   inboxMode === "personal"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5399,7 +5399,7 @@ export default function Dashboard() {
               <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
               <Link
                 href="/dashboard/indesirables"
-                className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                className="inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <ShieldAlert className="w-3 h-3" />
                 {t("inbox.spamShort", "Indésirables")}
@@ -5409,7 +5409,7 @@ export default function Dashboard() {
               </Link>
               <Link
                 href="/dashboard/corbeille"
-                className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                className="inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
@@ -5511,7 +5511,7 @@ export default function Dashboard() {
                       setSelectedSharedMailboxId(mbs[0].id);
                     }
                   }}
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                     inboxMode === "shared"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5530,7 +5530,7 @@ export default function Dashboard() {
                     setInboxMode("assigned");
                     setCrmFilter(null);
                   }}
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                     inboxMode === "assigned"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5548,7 +5548,7 @@ export default function Dashboard() {
                   Toujours visible avec badge du nombre de mails reportés. */}
               <Link
                 href="/dashboard/reportes"
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/reportes"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5564,7 +5564,7 @@ export default function Dashboard() {
                   Toujours visible (perso + équipe) avec badge ouverts. */}
               <Link
                 href="/dashboard/taches"
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/taches"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5581,7 +5581,7 @@ export default function Dashboard() {
                   que Tâches : navigation via Link. */}
               <Link
                 href="/dashboard/projets"
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/projets"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5598,7 +5598,7 @@ export default function Dashboard() {
                   Tâches/Projets : navigation via Link. */}
               <Link
                 href="/dashboard/relances"
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/relances"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5616,7 +5616,7 @@ export default function Dashboard() {
                   par catégorie IA. Même pattern Link que les autres onglets. */}
               <Link
                 href="/dashboard/archives"
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/archives"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"

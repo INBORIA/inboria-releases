@@ -478,7 +478,7 @@ export function MailPageHeader({
 
   // ─── Helpers UI ───────────────────────────────────────────────────────────
   const tabBaseClass =
-    "inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors";
+    "inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap";
   const tabActiveClass = "bg-primary/15 text-primary border border-primary/20";
   const tabIdleClass =
     "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30";
