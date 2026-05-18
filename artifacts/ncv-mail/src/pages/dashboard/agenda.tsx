@@ -913,13 +913,15 @@ export default function Agenda() {
     const newEnd = addDays(end, 7);
     createAppointment.mutate(
       {
-        title: `${apt.title} (copie)`,
-        description: apt.description ?? null,
-        location: apt.location ?? null,
-        startAt: newStart.toISOString(),
-        endAt: newEnd.toISOString(),
-        allDay: (apt as any).allDay ?? false,
-        projectId: (apt as any).projectId ?? null,
+        data: {
+          title: `${apt.title} (copie)`,
+          description: apt.description ?? null,
+          location: apt.location ?? null,
+          startAt: newStart.toISOString(),
+          endAt: newEnd.toISOString(),
+          allDay: (apt as any).allDay ?? false,
+          projectId: (apt as any).projectId ?? null,
+        },
       } as any,
       {
         onSuccess: () => {
