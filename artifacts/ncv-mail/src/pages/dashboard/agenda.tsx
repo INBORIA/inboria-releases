@@ -41,6 +41,9 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
+  ContextMenuSubContent,
 } from "@/components/ui/context-menu";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -750,8 +753,10 @@ export default function Agenda() {
   type ApptDrag = {
     aptId: string;
     mode: ApptDragMode;
+    view: "week" | "day";
     origStart: Date;
     origEnd: Date;
+    startX: number;
     startY: number;
     hourPx: number;
     moved: boolean;
@@ -766,14 +771,27 @@ export default function Agenda() {
     const onMove = (e: MouseEvent) => {
       const ad = apptDragRef.current;
       if (ad) {
+        const dx = e.clientX - ad.startX;
         const dy = e.clientY - ad.startY;
         const deltaMin = Math.round((dy / ad.hourPx) * 60 / SNAP_MIN) * SNAP_MIN;
-        const moved = Math.abs(dy) > 4 || ad.moved;
+        const moved = Math.abs(dy) > 4 || Math.abs(dx) > 4 || ad.moved;
         let previewStart = ad.origStart;
         let previewEnd = ad.origEnd;
+        // Cross-day drag (vue Semaine, mode move) : on regarde la cellule sous le curseur
+        let dayDelta = 0;
+        if (ad.mode === "move" && ad.view === "week") {
+          const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+          const dayCell = target?.closest("[data-day-iso]") as HTMLElement | null;
+          const iso = dayCell?.getAttribute("data-day-iso");
+          if (iso) {
+            const newDay = parseISO(iso);
+            const origDay = new Date(ad.origStart.getFullYear(), ad.origStart.getMonth(), ad.origStart.getDate());
+            dayDelta = Math.round((newDay.getTime() - origDay.getTime()) / 86400000);
+          }
+        }
         if (ad.mode === "move") {
-          previewStart = new Date(ad.origStart.getTime() + deltaMin * 60000);
-          previewEnd = new Date(ad.origEnd.getTime() + deltaMin * 60000);
+          previewStart = addDays(new Date(ad.origStart.getTime() + deltaMin * 60000), dayDelta);
+          previewEnd = addDays(new Date(ad.origEnd.getTime() + deltaMin * 60000), dayDelta);
         } else if (ad.mode === "resize-end") {
           const candidate = new Date(ad.origEnd.getTime() + deltaMin * 60000);
           if (candidate.getTime() >= ad.origStart.getTime() + 15 * 60000) previewEnd = candidate;
@@ -847,8 +865,10 @@ export default function Agenda() {
       setApptDrag({
         aptId: apt.id,
         mode,
+        view,
         origStart,
         origEnd,
+        startX: e.clientX,
         startY: e.clientY,
         hourPx: view === "week" ? HOUR_PX_WEEK : HOUR_PX_DAY,
         moved: false,
@@ -862,6 +882,143 @@ export default function Agenda() {
     if (ad && ad.aptId === apt.id && ad.moved) return;
     setSelectedAppointment(apt);
   };
+
+  // ============================================================
+  // Handlers menu clic-droit (calqués Outlook : Ouvrir / Éditer /
+  // Dupliquer / Transférer / Projet / Marquer comme / Supprimer)
+  // ============================================================
+  const extractErr = (err: any): string => {
+    const d = err?.response?.data ?? err?.data ?? err;
+    return d?.error || d?.message || err?.message || "Erreur";
+  };
+  const handleDuplicateAppt = (apt: Appointment) => {
+    const start = parseISO(apt.startAt);
+    const end = parseISO(apt.endAt);
+    const newStart = addDays(start, 7);
+    const newEnd = addDays(end, 7);
+    createAppointment.mutate(
+      {
+        title: `${apt.title} (copie)`,
+        description: apt.description ?? null,
+        location: apt.location ?? null,
+        startAt: newStart.toISOString(),
+        endAt: newEnd.toISOString(),
+        allDay: (apt as any).allDay ?? false,
+        projectId: (apt as any).projectId ?? null,
+      } as any,
+      {
+        onSuccess: () => {
+          invalidate();
+          toast({ title: t("agenda.duplicated", "Rendez-vous dupliqué"), description: t("agenda.duplicatedDesc", "Copie créée 7 jours plus tard.") });
+        },
+        onError: (err: any) => {
+          toast({ title: t("agenda.duplicateError", "Erreur duplication"), description: extractErr(err), variant: "destructive" });
+        },
+      },
+    );
+  };
+  const handleForwardAppt = (apt: Appointment) => {
+    const start = parseISO(apt.startAt);
+    const end = parseISO(apt.endAt);
+    const dateStr = format(start, "EEEE d MMMM yyyy", { locale });
+    const startStr = format(start, "HH:mm");
+    const endStr = format(end, "HH:mm");
+    const lines: string[] = [
+      t("agenda.forwardIntro", "Bonjour,"),
+      "",
+      t("agenda.forwardBody", "Je vous transfère les détails de ce rendez-vous :"),
+      "",
+      `${t("agenda.forwardTitle", "Titre")} : ${apt.title}`,
+      `${t("agenda.forwardWhen", "Date")} : ${dateStr}, ${startStr} – ${endStr}`,
+    ];
+    if (apt.location) lines.push(`${t("agenda.forwardWhere", "Lieu")} : ${apt.location}`);
+    if ((apt as any).videoUrl) lines.push(`${t("agenda.forwardVideo", "Lien visio")} : ${(apt as any).videoUrl}`);
+    if (apt.description) { lines.push("", apt.description); }
+    lines.push("", t("agenda.forwardOutro", "Bien à vous,"));
+    const subject = `${t("agenda.forwardSubject", "TR : RDV")} — ${apt.title}`;
+    try {
+      sessionStorage.setItem("inboria.compose.prefill", JSON.stringify({
+        to: "",
+        subject,
+        body: lines.join("\n"),
+      }));
+    } catch { /* noop */ }
+    setLocation("/dashboard?compose=1");
+  };
+  const handleChangeProject = (apt: Appointment, projectId: string | number | null) => {
+    updateAppointment.mutate(
+      { id: apt.id, data: { projectId } as any },
+      { onSuccess: () => invalidate(), onError: (err: any) => toast({ title: t("agenda.updateError", "Erreur"), description: extractErr(err), variant: "destructive" }) },
+    );
+  };
+  const handleChangeStatus = (apt: Appointment, status: "confirmed" | "pending" | "declined") => {
+    const data: any = { status };
+    if (status === "confirmed") data.confirmed = true;
+    if (status === "pending" || status === "declined") data.confirmed = false;
+    updateAppointment.mutate(
+      { id: apt.id, data },
+      { onSuccess: () => invalidate(), onError: (err: any) => toast({ title: t("agenda.updateError", "Erreur"), description: extractErr(err), variant: "destructive" }) },
+    );
+  };
+  const handleDeleteAppt = (apt: Appointment) => {
+    if (!window.confirm(t("agenda.confirmDelete", "Supprimer ce rendez-vous ?"))) return;
+    deleteAppointment.mutate(
+      { id: apt.id },
+      { onSuccess: () => invalidate(), onError: (err: any) => toast({ title: t("agenda.deleteError", "Erreur suppression"), description: extractErr(err), variant: "destructive" }) },
+    );
+  };
+
+  // Composant menu clic-droit factorisé (utilisé en vue Semaine et Jour)
+  const ApptContextMenuItems = ({ apt }: { apt: Appointment }) => (
+    <ContextMenuContent className="w-56">
+      <ContextMenuItem onClick={() => setSelectedAppointment(apt)}>
+        {t("agenda.ctxOpen", "Ouvrir")}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={() => openEditForm(apt)}>
+        {t("agenda.ctxEdit", "Modifier")}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={() => handleDuplicateAppt(apt)}>
+        {t("agenda.ctxDuplicate", "Dupliquer (+7 jours)")}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={() => handleForwardAppt(apt)}>
+        {t("agenda.ctxForward", "Transférer par email")}
+      </ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>{t("agenda.ctxProject", "Projet")}</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-52">
+          <ContextMenuItem onClick={() => handleChangeProject(apt, null)}>
+            {t("agenda.ctxNoProject", "Aucun projet")}
+          </ContextMenuItem>
+          {projects.length > 0 && <ContextMenuSeparator />}
+          {projects.map((p: any) => (
+            <ContextMenuItem key={p.id} onClick={() => handleChangeProject(apt, p.id)}>
+              <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ backgroundColor: p.color || "#2d7dd2" }} />
+              {p.name}
+            </ContextMenuItem>
+          ))}
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>{t("agenda.ctxMarkAs", "Marquer comme")}</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-48">
+          <ContextMenuItem onClick={() => handleChangeStatus(apt, "confirmed")}>
+            {t("agenda.statusConfirmedShort", "Confirmé")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleChangeStatus(apt, "pending")}>
+            {t("agenda.statusPendingShort", "En attente")}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => handleChangeStatus(apt, "declined")}>
+            {t("agenda.statusDeclinedShort", "Refusé")}
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSeparator />
+      <ContextMenuItem onClick={() => handleDeleteAppt(apt)} className="text-red-400 focus:text-red-300">
+        {t("agenda.ctxDelete", "Supprimer")}
+      </ContextMenuItem>
+    </ContextMenuContent>
+  );
   const isCellInSlotDrag = (day: Date, hour: number): boolean => {
     if (!slotDrag || !isSameDay(slotDrag.day, day)) return false;
     const lo = Math.min(slotDrag.startHour, slotDrag.endHour);
@@ -1234,6 +1391,7 @@ export default function Agenda() {
                     return (
                       <div
                         key={i}
+                        data-day-iso={format(d, "yyyy-MM-dd")}
                         onMouseDown={startSlotDrag(d, hour)}
                         onMouseEnter={extendSlotDrag(d, hour)}
                         className={`border-r border-border last:border-r-0 min-h-[40px] p-0.5 cursor-pointer select-none hover:bg-[#1a2235] ${isToday(d) ? "bg-primary/5" : ""} ${selected ? "bg-primary/20" : ""}`}
@@ -1255,22 +1413,26 @@ export default function Agenda() {
                                 : t("agenda.statusConfirmedShort", "Confirmé");
                           const isDragging = apptDrag?.aptId === apt.id && apptDrag.moved;
                           return (
-                          <div
-                            key={apt.id}
-                            data-appt-block
-                            onMouseDown={startApptDrag(apt, "move", "week")}
-                            onClick={apptClickHandler(apt)}
-                            className={`relative text-[10px] px-1 py-0.5 rounded cursor-pointer ${isDragging ? "opacity-60 ring-1 ring-primary" : ""} ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
-                            style={pc && !nonConfirmed ? { backgroundColor: `${pc}20` } : undefined}
-                            title={`${apt.title} — ${shortLabel}`}
-                          >
-                            <div className={`truncate ${nonConfirmed ? "text-primary" : "text-foreground"}`}>{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
-                            <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
-                            <div
-                              onMouseDown={startApptDrag(apt, "resize-end", "week")}
-                              className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
-                            />
-                          </div>
+                          <ContextMenu key={apt.id}>
+                            <ContextMenuTrigger asChild>
+                              <div
+                                data-appt-block
+                                onMouseDown={startApptDrag(apt, "move", "week")}
+                                onClick={apptClickHandler(apt)}
+                                className={`relative text-[10px] px-1 py-0.5 rounded cursor-pointer ${isDragging ? "opacity-60 ring-1 ring-primary" : ""} ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
+                                style={pc && !nonConfirmed ? { backgroundColor: `${pc}20` } : undefined}
+                                title={`${apt.title} — ${shortLabel}`}
+                              >
+                                <div className={`truncate ${nonConfirmed ? "text-primary" : "text-foreground"}`}>{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
+                                <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
+                                <div
+                                  onMouseDown={startApptDrag(apt, "resize-end", "week")}
+                                  className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-primary/60"
+                                />
+                              </div>
+                            </ContextMenuTrigger>
+                            <ApptContextMenuItems apt={apt} />
+                          </ContextMenu>
                           );
                         })}
                         {dayExt.map((ev) => {
@@ -1326,8 +1488,9 @@ export default function Agenda() {
                         const isPending = aptStatus === "pending" || (apt.confirmed === false && !isCounter && !isDeclined);
                         const isDragging = apptDrag?.aptId === apt.id && apptDrag.moved;
                         return (
+                        <ContextMenu key={apt.id}>
+                          <ContextMenuTrigger asChild>
                         <div
-                          key={apt.id}
                           data-appt-block
                           onMouseDown={startApptDrag(apt, "move", "day")}
                           onClick={apptClickHandler(apt)}
@@ -1376,6 +1539,9 @@ export default function Agenda() {
                             )}
                           </div>
                         </div>
+                          </ContextMenuTrigger>
+                          <ApptContextMenuItems apt={apt} />
+                        </ContextMenu>
                         );
                       })}
                       {hourExt.map((ev) => {
