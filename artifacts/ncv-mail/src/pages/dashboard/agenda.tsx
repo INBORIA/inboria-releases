@@ -1014,32 +1014,32 @@ export default function Agenda() {
   // Composant menu clic-droit factorisé (utilisé en vue Semaine et Jour)
   const ApptContextMenuItems = ({ apt }: { apt: Appointment }) => (
     <ContextMenuContent className="w-56">
-      <ContextMenuItem onClick={() => setSelectedAppointment(apt)}>
+      <ContextMenuItem onSelect={() => setSelectedAppointment(apt)}>
         {t("agenda.ctxOpen", "Ouvrir")}
       </ContextMenuItem>
-      <ContextMenuItem onClick={() => openEditForm(apt)}>
+      <ContextMenuItem onSelect={() => openEditForm(apt)}>
         {t("agenda.ctxEdit", "Modifier")}
       </ContextMenuItem>
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t("agenda.ctxDuplicate", "Dupliquer")}</ContextMenuSubTrigger>
         <ContextMenuSubContent className="w-56">
-          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 1)}>
+          <ContextMenuItem onSelect={() => handleDuplicateAppt(apt, 1)}>
             {t("agenda.ctxDupNextDay", "Le lendemain")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 7)}>
+          <ContextMenuItem onSelect={() => handleDuplicateAppt(apt, 7)}>
             {t("agenda.ctxDup7", "Dans 7 jours")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 14)}>
+          <ContextMenuItem onSelect={() => handleDuplicateAppt(apt, 14)}>
             {t("agenda.ctxDup14", "Dans 14 jours")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 30)}>
+          <ContextMenuItem onSelect={() => handleDuplicateAppt(apt, 30)}>
             {t("agenda.ctxDup30", "Dans 1 mois")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleDuplicateAppt(apt, 90)}>
+          <ContextMenuItem onSelect={() => handleDuplicateAppt(apt, 90)}>
             {t("agenda.ctxDup90", "Dans 3 mois")}
           </ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuItem onClick={() => {
+          <ContextMenuItem onSelect={() => {
             const raw = window.prompt(t("agenda.ctxDupCustom", "Dupliquer dans combien de jours ?"), "7");
             if (raw == null) return;
             const n = parseInt(raw, 10);
@@ -1049,19 +1049,19 @@ export default function Agenda() {
           </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
-      <ContextMenuItem onClick={() => handleForwardAppt(apt)}>
+      <ContextMenuItem onSelect={() => handleForwardAppt(apt)}>
         {t("agenda.ctxForward", "Transférer par email")}
       </ContextMenuItem>
       <ContextMenuSeparator />
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t("agenda.ctxProject", "Projet")}</ContextMenuSubTrigger>
         <ContextMenuSubContent className="w-52">
-          <ContextMenuItem onClick={() => handleChangeProject(apt, null)}>
+          <ContextMenuItem onSelect={() => handleChangeProject(apt, null)}>
             {t("agenda.ctxNoProject", "Aucun projet")}
           </ContextMenuItem>
           {projects.length > 0 && <ContextMenuSeparator />}
           {projects.map((p: any) => (
-            <ContextMenuItem key={p.id} onClick={() => handleChangeProject(apt, p.id)}>
+            <ContextMenuItem key={p.id} onSelect={() => handleChangeProject(apt, p.id)}>
               <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ backgroundColor: p.color || "#2d7dd2" }} />
               {p.name}
             </ContextMenuItem>
@@ -1071,19 +1071,19 @@ export default function Agenda() {
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t("agenda.ctxMarkAs", "Marquer comme")}</ContextMenuSubTrigger>
         <ContextMenuSubContent className="w-48">
-          <ContextMenuItem onClick={() => handleChangeStatus(apt, "confirmed")}>
+          <ContextMenuItem onSelect={() => handleChangeStatus(apt, "confirmed")}>
             {t("agenda.statusConfirmedShort", "Confirmé")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleChangeStatus(apt, "pending")}>
+          <ContextMenuItem onSelect={() => handleChangeStatus(apt, "pending")}>
             {t("agenda.statusPendingShort", "En attente")}
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => handleChangeStatus(apt, "declined")}>
+          <ContextMenuItem onSelect={() => handleChangeStatus(apt, "declined")}>
             {t("agenda.statusDeclinedShort", "Refusé")}
           </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
       <ContextMenuSeparator />
-      <ContextMenuItem onClick={() => handleDeleteAppt(apt)} className="text-red-400 focus:text-red-300">
+      <ContextMenuItem onSelect={() => handleDeleteAppt(apt)} className="text-red-400 focus:text-red-300">
         {t("agenda.ctxDelete", "Supprimer")}
       </ContextMenuItem>
     </ContextMenuContent>
