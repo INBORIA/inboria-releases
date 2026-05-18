@@ -839,6 +839,17 @@ export default function Agenda() {
     if (e.button !== 0) return;
     const target = e.target as HTMLElement;
     if (target.closest("[data-appt-block]") || target.closest("[data-ext-block]")) return;
+    // Toggle off : si on clique dans une sélection déjà figée (drag relâché),
+    // ça désélectionne tout au lieu de démarrer un nouveau drag.
+    const sd = slotDragRef.current;
+    if (sd && !sd.active && isSameDay(sd.day, day)) {
+      const lo = Math.min(sd.startHour, sd.endHour);
+      const hi = Math.max(sd.startHour, sd.endHour);
+      if (hour >= lo && hour <= hi) {
+        setSlotDrag(null);
+        return;
+      }
+    }
     setSlotDrag({ day, startHour: hour, endHour: hour, active: true });
   };
   const extendSlotDrag = (day: Date, hour: number) => () => {
