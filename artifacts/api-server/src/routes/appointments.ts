@@ -70,6 +70,7 @@ const updateAppointmentSchema = z.object({
   projectId: z.union([z.number().int(), z.string()]).optional().nullable(),
   reminderMinutes: z.number().int().min(0).max(10080).optional(),
   confirmed: z.boolean().optional(),
+  status: z.enum(["confirmed", "pending", "declined", "counter_proposed", "cancelled"]).optional(),
   participants: participantsSchema.optional().nullable(),
   calendarAccountId: z.string().uuid().optional().nullable(),
   videoProvider: videoProviderSchema.optional().nullable(),
@@ -441,6 +442,9 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.emailId !== undefined) updates.email_id = body.emailId || null;
     if (body.projectId !== undefined) updates.project_id = body.projectId || null;
     if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
+    if (body.status !== undefined) {
+      updates.status = body.status;
+    }
     if (body.confirmed !== undefined) {
       updates.confirmed = body.confirmed;
       // Si on confirme une contre-proposition, promouvoir en "confirmed"
