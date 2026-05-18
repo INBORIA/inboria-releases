@@ -1382,7 +1382,7 @@ export default function Agenda() {
 
         {showForm && (
           <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-            <div className="bg-card border border-border rounded-lg w-full max-w-lg p-5 max-h-[90vh] overflow-y-auto">
+            <div className="bg-card text-card-foreground border border-border rounded-lg w-full max-w-lg p-5 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-[14px] font-semibold text-foreground">
                   {editingId ? t("agenda.editAppointment") : t("agenda.newAppointment")}
