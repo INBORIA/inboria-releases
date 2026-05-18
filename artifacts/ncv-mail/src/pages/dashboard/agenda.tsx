@@ -933,8 +933,6 @@ export default function Agenda() {
     return d?.error || d?.message || err?.message || "Erreur";
   };
   const handleDuplicateAppt = (apt: Appointment, daysOffset: number = 7) => {
-    toast({ title: "Duplication…", description: `+${daysOffset}j — ${apt.title}` });
-    console.log("[agenda] handleDuplicateAppt", { aptId: apt.id, daysOffset, startAt: apt.startAt, endAt: apt.endAt });
     const start = parseISO(apt.startAt);
     const end = parseISO(apt.endAt);
     const newStart = addDays(start, daysOffset);
@@ -1013,22 +1011,19 @@ export default function Agenda() {
     );
   };
 
-  // Composant menu clic-droit factorisé (utilisé en vue Semaine et Jour)
-  const ApptContextMenuItems = ({ apt }: { apt: Appointment }) => (
+  // Menu clic-droit factorisé (utilisé en vue Semaine et Jour).
+  // ⚠️ NE PAS transformer en composant React (ex: <ApptMenu apt={apt} />) :
+  // une fonction-composant définie ici aurait une identité différente à chaque render
+  // → React démonterait/remonterait le portail Radix juste avant le clic, avalant
+  // tous les onSelect (sauf navigation directe type setLocation). Garder un render
+  // helper { renderApptMenu(apt) } pour rester inline et stable côté reconciliation.
+  const renderApptMenu = (apt: Appointment) => (
     <ContextMenuContent className="w-56">
       <ContextMenuItem onSelect={() => setSelectedAppointment(apt)}>
         {t("agenda.ctxOpen", "Ouvrir")}
       </ContextMenuItem>
       <ContextMenuItem onSelect={() => openEditForm(apt)}>
         {t("agenda.ctxEdit", "Modifier")}
-      </ContextMenuItem>
-      <ContextMenuItem
-        onSelect={(e) => {
-          e.preventDefault();
-          setTimeout(() => handleDuplicateAppt(apt, 1), 0);
-        }}
-      >
-        🧪 TEST Dupliquer demain (top-level)
       </ContextMenuItem>
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t("agenda.ctxDuplicate", "Dupliquer")}</ContextMenuSubTrigger>
@@ -1511,7 +1506,7 @@ export default function Agenda() {
                                 />
                               </div>
                             </ContextMenuTrigger>
-                            <ApptContextMenuItems apt={apt} />
+                            {renderApptMenu(apt)}
                           </ContextMenu>
                           );
                         })}
@@ -1621,7 +1616,7 @@ export default function Agenda() {
                           </div>
                         </div>
                           </ContextMenuTrigger>
-                          <ApptContextMenuItems apt={apt} />
+                          {renderApptMenu(apt)}
                         </ContextMenu>
                         );
                       })}
