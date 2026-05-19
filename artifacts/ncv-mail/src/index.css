@@ -559,3 +559,37 @@ body[style*="overflow"] {
     inset: -1px;
   }
 }
+
+/* Rétablit puces et numéros dans l'éditeur de signature/compose
+   (le reset Tailwind supprime list-style par défaut). */
+.signature-editor ul {
+  list-style: disc outside;
+  margin: 0.25rem 0 0.25rem 1.5rem;
+  padding-left: 0.25rem;
+}
+.signature-editor ol {
+  list-style: decimal outside;
+  margin: 0.25rem 0 0.25rem 1.5rem;
+  padding-left: 0.25rem;
+}
+.signature-editor ul ul,
+.signature-editor ol ul {
+  list-style: circle outside;
+  margin: 0.15rem 0 0.15rem 1.25rem;
+}
+.signature-editor ul ul ul,
+.signature-editor ol ol ul,
+.signature-editor ul ol ul {
+  list-style: square outside;
+}
+.signature-editor ol ol,
+.signature-editor ul ol {
+  list-style: lower-alpha outside;
+  margin: 0.15rem 0 0.15rem 1.25rem;
+}
+.signature-editor ol ol ol {
+  list-style: lower-roman outside;
+}
+.signature-editor li {
+  margin: 0.1rem 0;
+}
