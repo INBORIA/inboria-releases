@@ -99,6 +99,7 @@ import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
+import { EmailRowSkeleton } from "@/components/email-list/EmailRowSkeleton";
 
 // Bag de callbacks pour la barre d'actions au survol — toutes les actions
 // du menu contextuel clic droit, dans le même ordre, avec popovers ancrés
@@ -3726,11 +3727,20 @@ export default function Dashboard() {
   const { data: userFolders } = useListFolders();
   const assignToFolderMut = useAssignEmailsToFolder();
   const handleMoveToFolder = async (emailIds: number[], folderId: string, folderName: string) => {
+    // Optimistic : on retire les mails déplacés de la Réception immédiatement.
+    const previousEmails = accumulatedEmails;
+    const previousSelected = selectedEmailId;
+    const idSet = new Set(emailIds);
+    setAccumulatedEmails((prev) => prev.filter((e: any) => !idSet.has(e.id)));
+    if (selectedEmailId !== null && idSet.has(selectedEmailId)) setSelectedEmailId(null);
+    setSelectedIds((prev) => { const next = new Set(prev); emailIds.forEach((id) => next.delete(id)); return next; });
     try {
       await assignToFolderMut.mutateAsync({ data: { folderId, emailIds } });
       toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
       queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
     } catch {
+      setAccumulatedEmails(previousEmails);
+      if (previousSelected !== null && idSet.has(previousSelected)) setSelectedEmailId(previousSelected);
       toast({ title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }), variant: "destructive" });
     }
   };
@@ -4218,12 +4228,10 @@ export default function Dashboard() {
   const handleQuickSnooze = (id: number, hours: number, label: string) => {
     let date: Date;
     if (hours === 24) {
-      // Demain matin 9h
       date = new Date();
       date.setDate(date.getDate() + 1);
       date.setHours(9, 0, 0, 0);
     } else if (hours === 168) {
-      // Lundi prochain 9h
       date = new Date();
       const day = date.getDay();
       const diff = (8 - day) % 7 || 7;
@@ -4232,11 +4240,20 @@ export default function Dashboard() {
     } else {
       date = new Date(Date.now() + hours * 60 * 60 * 1000);
     }
+    // Optimistic : le mail reporté quitte instantanément la Réception.
+    const previousEmails = accumulatedEmails;
+    const previousSelected = selectedEmailId;
+    setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
+    if (selectedEmailId === id) setSelectedEmailId(null);
     snoozeMutCtx.mutate(
       { id, data: { snoozeUntil: date.toISOString() } },
       {
         onSuccess: () => { invalidateAll(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); },
-        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          if (previousSelected === id) setSelectedEmailId(id);
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
       },
     );
   };
@@ -4245,12 +4262,19 @@ export default function Dashboard() {
     const email = findEmailAnywhere(id);
     const isUnread = email?.status === "non_lu" || email?.isRead === false || email?.unread === true;
     const newStatus = isUnread ? "read" : "non_lu";
+    // Optimistic : on bascule visuellement l'état lu/non-lu immédiatement.
+    const previousEmails = accumulatedEmails;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === id ? { ...e, status: newStatus } : e));
     updateEmail.mutate(
       { id, data: { status: newStatus } },
       {
         onSuccess: () => {
           invalidateAll();
           toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          toast({ variant: "destructive", title: e?.message || "Échec" });
         },
       },
     );
@@ -6145,10 +6169,7 @@ export default function Dashboard() {
                     </div>
                   )}
                   {sharedEmailsLoading ? (
-                    <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-                      <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
-                      <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
-                    </div>
+                    <EmailRowSkeleton count={10} />
                   ) : !selectedSharedMailboxId ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Users className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
@@ -6282,11 +6303,7 @@ export default function Dashboard() {
 
                   <div className="space-y-1">
                     {emailsLoading ? (
-                      <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-                        <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
-                        <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
-                        <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.loadingDesc", "Inboria récupère vos derniers messages, un instant.")}</p>
-                      </div>
+                      <EmailRowSkeleton count={12} />
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                         {crmFilter === "hubspot" ? (
