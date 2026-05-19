@@ -7,6 +7,9 @@ import { format, formatDistanceToNow } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import {
   ArrowLeft,
+} from "lucide-react";
+import { useSmartBack } from "@/components/dashboard/back-to-inbox-button";
+import {
   ShieldCheck,
   ShieldAlert,
   Lock,
@@ -59,6 +62,7 @@ const TARGET_ICON: Record<string, any> = {
 };
 
 export default function ParametresViePrivee() {
+  const back = useSmartBack("/dashboard/parametres", "settings.title", "Paramètres");
   useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
@@ -163,14 +167,14 @@ export default function ParametresViePrivee() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
-          <Link href="/dashboard/parametres">
+          <Link href={back.href}>
             <Button
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-[#b8c5d6] hover:text-white"
               data-testid="back-to-settings"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title", "Paramètres")}
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t(back.labelKey, back.labelFallback)}
             </Button>
           </Link>
         </div>

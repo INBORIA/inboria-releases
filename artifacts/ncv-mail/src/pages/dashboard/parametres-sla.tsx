@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Clock, AlertTriangle, Loader2, Save, ChevronRight, ArrowLeft } from "lucide-react";
+import { useSmartBack } from "@/components/dashboard/back-to-inbox-button";
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 
@@ -42,6 +43,7 @@ interface SlaBreach {
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export default function ParametresSla() {
+  const back = useSmartBack("/dashboard/parametres", "settings.title", "Paramètres");
   useEnableLightTheme();
   const { t } = useTranslation();
   const { session } = useAuth();
@@ -101,9 +103,9 @@ export default function ParametresSla() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/parametres">
+          <Link href={back.href}>
             <Button variant="ghost" size="sm" className="h-7 px-2">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t(back.labelKey, back.labelFallback)}
             </Button>
           </Link>
         </div>

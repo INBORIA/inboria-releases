@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { useSmartBack } from "@/components/dashboard/back-to-inbox-button";
 import {
   useGetMyOrganisation,
   useGetOrganisationMembers,
@@ -62,6 +63,7 @@ import { useTranslation } from "react-i18next";
 export default function Equipe() {
   useEnableLightTheme();
   const { t } = useTranslation();
+  const back = useSmartBack("/dashboard/parametres", "settings.title", "Paramètres");
   const { data: profile } = useGetProfile();
   const { data: org, isLoading: orgLoading } = useGetMyOrganisation();
   const { data: members } = useGetOrganisationMembers();
@@ -287,7 +289,7 @@ export default function Equipe() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <div className="mb-3">
-          <Link href="/dashboard/parametres">
+          <Link href={back.href}>
             <Button
               variant="ghost"
               size="sm"
@@ -295,7 +297,7 @@ export default function Equipe() {
               data-testid="back-to-settings"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("settings.title", "Paramètres")}
+              {t(back.labelKey, back.labelFallback)}
             </Button>
           </Link>
         </div>

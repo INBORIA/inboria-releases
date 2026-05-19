@@ -30,6 +30,8 @@ export default function ParametresAdministration() {
   useEnableLightTheme();
   const { t } = useTranslation();
 
+  const withFrom = (href: string) => (href.includes("?") ? `${href}&from=admin` : `${href}?from=admin`);
+
   const cards: AdminCard[] = [
     {
       href: "/dashboard/equipe",
@@ -125,7 +127,7 @@ export default function ParametresAdministration() {
             return (
               <Link
                 key={c.href}
-                href={c.href}
+                href={withFrom(c.href)}
                 data-testid={c.testId}
                 className="group bg-card border border-border rounded-lg p-4 hover:border-primary/40 transition-colors flex items-center gap-3"
               >
