@@ -4036,7 +4036,12 @@ export default function Dashboard() {
       const a = idx.get(dragStartIdRef.current) ?? -1;
       const b = idx.get(id) ?? -1;
       if (a < 0 || b < 0) return;
-      const [lo, hi] = a < b ? [a, b] : [b, a];
+      // Plage asymétrique : si curseur AU-DESSUS de l'ancre, on EXCLUT
+      // l'ancre de la plage (le « premier » mail bascule hors quand on
+      // remonte au-dessus). Si curseur sur ou en-dessous, ancre incluse.
+      let lo: number, hi: number;
+      if (b >= a) { lo = a; hi = b; }
+      else { lo = b; hi = a - 1; }
       const next = new Set(preSelectRef.current);
       if (anchorWasSelectedRef.current) {
         for (let i = lo; i <= hi; i++) next.delete(ids[i]);
