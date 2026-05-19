@@ -285,11 +285,76 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     if (req.query.q) {
       const raw = (req.query.q as string).trim();
       if (raw) {
-        const escaped = raw.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
-        const term = `%${escaped}%`;
-        const orFilter = `subject.ilike.${term},sender.ilike.${term},summary.ilike.${term}`;
-        query = query.or(orFilter);
-        countQuery = countQuery.or(orFilter);
+        // Recherche instantanée + opérateurs (wave perçue C).
+        // Opérateurs supportés (insensibles à la casse, FR + EN) :
+        //   de:foo / from:foo        → expéditeur (sender)
+        //   sujet:foo / subject:foo  → sujet (subject)
+        //   avec-pj / has:attachment → mails avec pièce jointe
+        // Tout terme restant après extraction est appliqué au filtre
+        // OR global (subject/sender/summary), comportement historique.
+        const esc = (s: string) => s.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
+        let remaining = raw;
+        let senderFilter: string | null = null;
+        let subjectFilter: string | null = null;
+        let wantsAttachments = false;
+
+        // de: / from: — capture une valeur (mot ou "expression entre guillemets")
+        const senderRe = /\b(?:de|from)\s*:\s*("([^"]+)"|(\S+))/gi;
+        remaining = remaining.replace(senderRe, (_m, _q, quoted, bare) => {
+          const v = (quoted ?? bare ?? "").trim();
+          if (v) senderFilter = v;
+          return " ";
+        });
+        const subjectRe = /\b(?:sujet|subject)\s*:\s*("([^"]+)"|(\S+))/gi;
+        remaining = remaining.replace(subjectRe, (_m, _q, quoted, bare) => {
+          const v = (quoted ?? bare ?? "").trim();
+          if (v) subjectFilter = v;
+          return " ";
+        });
+        // avec-pj seul OU has:attachment / has:attachments / has:pj
+        if (/\bavec-pj\b/i.test(remaining) || /\bhas\s*:\s*(attachments?|pj)\b/i.test(remaining)) {
+          wantsAttachments = true;
+          remaining = remaining.replace(/\bavec-pj\b/gi, " ").replace(/\bhas\s*:\s*(attachments?|pj)\b/gi, " ");
+        }
+
+        const freeText = remaining.trim().replace(/\s+/g, " ");
+
+        if (senderFilter) {
+          const t = `%${esc(senderFilter)}%`;
+          query = query.ilike("sender", t);
+          countQuery = countQuery.ilike("sender", t);
+        }
+        if (subjectFilter) {
+          const t = `%${esc(subjectFilter)}%`;
+          query = query.ilike("subject", t);
+          countQuery = countQuery.ilike("subject", t);
+        }
+        if (wantsAttachments) {
+          // Sous-requête : on récupère les email_id distincts ayant au moins
+          // une pièce jointe pour cet utilisateur (cap raisonnable 5000) puis
+          // on filtre la requête principale via .in(). Évite un JOIN cross-table
+          // que le client Supabase ne sait pas exprimer sans relation FK.
+          const { data: attRows } = await supabaseAdmin
+            .from("email_attachments")
+            .select("email_id")
+            .limit(5000);
+          const attIds = Array.from(new Set((attRows || []).map((r: any) => r.email_id).filter((x: any) => x != null)));
+          if (attIds.length === 0) {
+            // Aucune PJ ⇒ résultat forcément vide. On force un id impossible.
+            query = query.eq("id", -1);
+            countQuery = countQuery.eq("id", -1);
+          } else {
+            query = query.in("id", attIds);
+            countQuery = countQuery.in("id", attIds);
+          }
+        }
+        if (freeText) {
+          const escaped = esc(freeText);
+          const term = `%${escaped}%`;
+          const orFilter = `subject.ilike.${term},sender.ilike.${term},summary.ilike.${term}`;
+          query = query.or(orFilter);
+          countQuery = countQuery.or(orFilter);
+        }
       }
     }
 

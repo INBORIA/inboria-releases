@@ -3164,7 +3164,10 @@ export default function Dashboard() {
   }, []);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const searchQuery = useDebounce(searchInput, 300);
+  // Wave perçue C — recherche instantanée. 80ms = 1 frame perceptible,
+  // suffit pour grouper les frappes très rapides sans donner l'impression
+  // d'attendre. Le serveur reste appelé après chaque salve.
+  const searchQuery = useDebounce(searchInput, 80);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -5392,7 +5395,7 @@ export default function Dashboard() {
               Actualiser en icône, Composer en bouton indigo discret.
               Aucune fonction retirée. */}
           <div className="flex items-center gap-2 mb-2.5 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
-            <div className="flex-1 relative">
+            <div className="group flex-1 relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b95a7]" />
               <Input
                 value={searchInput}
@@ -5408,6 +5411,19 @@ export default function Dashboard() {
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
+              )}
+              {/* Hint opérateurs — apparaît au focus tant qu'aucun caractère
+                  n'a été tapé. Donne la grammaire de recherche sans
+                  polluer le placeholder. */}
+              {searchInput === "" && (
+                <div className="hidden group-focus-within:block pointer-events-none absolute left-0 right-0 top-full mt-1 z-20 rounded-md border border-[#1f2630] bg-[#0d1218] px-3 py-2 text-[11px] text-[#8b95a7] shadow-lg">
+                  <span className="text-[#b8c5d6]">{t("inbox.searchHintIntro", "Opérateurs :")}</span>{" "}
+                  <code className="text-[#7aa5ff]">de:nom</code>{" · "}
+                  <code className="text-[#7aa5ff]">sujet:facture</code>{" · "}
+                  <code className="text-[#7aa5ff]">avec-pj</code>
+                  <span className="text-[#5a6270]">{"  ·  "}</span>
+                  {t("inbox.searchHintCombo", "combinables — ex. : de:alice sujet:devis avec-pj")}
+                </div>
               )}
             </div>
 
