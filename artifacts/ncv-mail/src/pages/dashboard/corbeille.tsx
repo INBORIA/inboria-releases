@@ -144,7 +144,10 @@ export default function Corbeille() {
   };
 
   useEffect(() => {
-    if (!isDraggingRef.current && selectedIds.size === 0 && !contextMenu) return;
+    // Toujours attacher les listeners — onMove sort tôt si pas en drag.
+    // Sans ça, comme isDraggingRef est un ref (pas state), l'effet ne se
+    // re-lance pas quand le drag démarre et les listeners ne sont jamais
+    // attachés → la sélection au drag ne fonctionnait pas du tout.
     const onMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       // Seuil 5px : tant qu'on n'a pas bougé d'au moins 5px, on considère
