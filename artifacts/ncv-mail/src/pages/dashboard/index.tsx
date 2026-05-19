@@ -295,6 +295,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
   isPending,
   onSend,
   onClose,
+  onMinimize,
   initialTo = "",
   initialSubject = "",
   initialBody = "",
@@ -306,6 +307,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
   isPending: boolean;
   onSend: (p: ComposeSendPayload) => void;
   onClose?: () => void;
+  onMinimize?: (draft: { to: string; subject: string; body: string }) => void;
   initialTo?: string;
   initialSubject?: string;
   initialBody?: string;
@@ -349,6 +351,17 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
       <DialogHeader className="px-5 pt-4 pb-2 pr-4 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
         <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
         <div className="flex items-center gap-1">
+          {onMinimize && (
+            <button
+              type="button"
+              onClick={() => onMinimize({ to, subject, body })}
+              className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04]"
+              aria-label={t("inbox.composeMinimize", "Réduire le brouillon")}
+              title={t("inbox.composeMinimize", "Réduire le brouillon")}
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setIsFullscreen((v: boolean) => !v)}
@@ -3707,6 +3720,11 @@ export default function Dashboard() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
+  // Wave perçue D séance 2 — brouillon minimisé. Quand l'utilisateur clique
+  // sur ChevronDown dans le composer, on stocke {to, subject, body} ici et
+  // on ferme le panneau. Une barre flottante en bas à droite permet de
+  // reprendre. Persiste tant que le brouillon n'est pas envoyé ni abandonné.
+  const [minimizedDraft, setMinimizedDraft] = useState<{ to: string; subject: string; body: string } | null>(null);
 
 
   const isMobileViewport = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
@@ -5594,12 +5612,63 @@ export default function Dashboard() {
                     setIsComposeOpen(false);
                     setIsComposeFullscreen(false);
                     setComposePrefill(null);
+                    setMinimizedDraft(null);
+                  }}
+                  onMinimize={(draft) => {
+                    // On garde le brouillon en mémoire, on ferme le panneau
+                    // sans rien perdre. La barre flottante en bas à droite
+                    // permet de reprendre.
+                    setMinimizedDraft(draft);
+                    setIsComposeOpen(false);
+                    setIsComposeFullscreen(false);
+                    setComposePrefill(null);
                   }}
                   initialTo={composePrefill?.to}
                   initialSubject={composePrefill?.subject}
                   initialBody={composePrefill?.body}
                 />
               </div>
+            )}
+            {/* Barre flottante du brouillon minimisé — bas à droite, ne
+                couvre pas la liste de mails. Clic = restaure le composer
+                avec les valeurs en cours. Croix = abandonne. */}
+            {!isComposeOpen && minimizedDraft && (
+              <button
+                type="button"
+                onClick={() => {
+                  setComposePrefill(minimizedDraft);
+                  setIsComposeOpen(true);
+                  setMinimizedDraft(null);
+                }}
+                className="fixed bottom-4 right-4 z-40 flex items-center gap-2 h-10 pl-3 pr-2 bg-card border border-[#1f2937] hover:border-primary/40 hover:bg-white/[0.04] text-[#e6e9ef] text-[12px] rounded-md shadow-lg transition-colors group/draftbar max-w-[360px]"
+                aria-label={t("inbox.composeRestore", "Reprendre le brouillon")}
+              >
+                <PenSquare className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span className="truncate font-medium">
+                  {minimizedDraft.subject?.trim() || t("inbox.composeUntitled", "Brouillon sans objet")}
+                </span>
+                <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!window.confirm(t("inbox.composeDiscardConfirm", "Abandonner ce brouillon ?"))) return;
+                    setMinimizedDraft(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!window.confirm(t("inbox.composeDiscardConfirm", "Abandonner ce brouillon ?"))) return;
+                      setMinimizedDraft(null);
+                    }
+                  }}
+                  className="ml-1 p-1 rounded text-[#8b95a7] hover:text-white hover:bg-white/[0.06] shrink-0 cursor-pointer"
+                  aria-label={t("inbox.composeDiscard", "Abandonner")}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </span>
+              </button>
             )}
 
           </div>
