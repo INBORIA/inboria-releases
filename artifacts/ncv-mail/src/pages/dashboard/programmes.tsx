@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarClock, Trash2, Eye, Loader2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import {
   useListScheduledEmails,
@@ -80,17 +81,17 @@ export default function Programmes() {
           </div>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-4 h-4 text-[#8b95a7] animate-spin mr-2" />
-              <span className="text-[12px] text-[#8b95a7]">{t("inbox.loadingTitle", "Chargement…")}</span>
+            <div className="flex flex-col items-center justify-center py-12 border border-border border-dashed rounded-md bg-card/50">
+              <Loader2 className="w-5 h-5 text-[#b8c5d6] animate-spin mb-2" />
+              <p className="text-[12px] text-[#b8c5d6]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : emails.length === 0 ? (
-            <div className="text-center py-16">
-              <CalendarClock className="w-7 h-7 mx-auto text-[#8b95a7] mb-2 opacity-50" />
+            <div className="text-center py-8 border border-border rounded-md bg-card">
+              <CalendarClock className="w-7 h-7 mx-auto text-[#b8c5d6] mb-2 opacity-50" />
               <p className="text-[13px] text-white font-medium">
                 {t("wave1.scheduledPageEmpty", "Aucun envoi programmé")}
               </p>
-              <p className="text-[12px] text-[#8b95a7] mt-1 max-w-md mx-auto">
+              <p className="text-[12px] text-[#b8c5d6] mt-1">
                 {t(
                   "wave1.scheduledPageEmptyHint",
                   "Utilisez « Programmer » dans le composer pour planifier un envoi à une date/heure précise."
@@ -98,64 +99,57 @@ export default function Programmes() {
               </p>
             </div>
           ) : (
-            <div>
+            <div className="space-y-2">
               {emails.map((e: any) => {
-                const recipient = String(e.recipient || "");
-                const initial = (recipient[0] || "?").toUpperCase();
-                const dateShort = e.scheduledSendAt
-                  ? new Intl.DateTimeFormat(i18n.language, { day: "numeric", month: "short" }).format(new Date(e.scheduledSendAt))
-                  : "";
-                const timeShort = e.scheduledSendAt
-                  ? new Intl.DateTimeFormat(i18n.language, { hour: "2-digit", minute: "2-digit" }).format(new Date(e.scheduledSendAt))
-                  : "";
-                const excerpt = String(e.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 140);
+                const tooltip = `${e.recipient || ""}\n${e.subject || "(sans sujet)"}\n${
+                  e.scheduledSendAt ? fmt.format(new Date(e.scheduledSendAt)) : ""
+                }`;
                 return (
                   <div
                     key={e.id}
-                    className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors border-l-transparent hover:bg-white/[0.03]"
+                    className="border border-border rounded-md bg-card p-3 hover:bg-white/[0.02] cursor-pointer"
                     data-testid={`scheduled-email-${e.id}`}
+                    title={tooltip}
                     onClick={() => setOpenId(e.id)}
                   >
-                    <div className="w-3 h-3 shrink-0" />
-                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                      <span className="text-primary text-[11px] font-semibold">{initial}</span>
-                    </div>
-                    <div className="w-[140px] text-[13px] text-white font-medium truncate shrink-0">
-                      {recipient}
-                    </div>
-                    <div className="flex-1 min-w-0 text-[13px] truncate">
-                      <span className="text-white">{e.subject || "(sans sujet)"}</span>
-                      {excerpt && (
-                        <span className="text-[#8b95a7]"> — {excerpt}</span>
-                      )}
-                    </div>
-                    <div
-                      className="hidden group-hover:flex items-center gap-1 shrink-0"
-                      onClick={(ev) => ev.stopPropagation()}
-                    >
-                      <button
-                        onClick={() => setOpenId(e.id)}
-                        className="p-1.5 rounded hover:bg-white/[0.06] text-[#8b95a7] hover:text-white"
-                        title={t("wave1.scheduledShow", "Voir l'email") as string}
-                        data-testid={`scheduled-open-${e.id}`}
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleCancel(e.id)}
-                        disabled={cancelMut.isPending}
-                        className="p-1.5 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400 disabled:opacity-50"
-                        title={t("wave1.scheduledCancel") as string}
-                        data-testid={`scheduled-cancel-${e.id}`}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <div className="group-hover:hidden flex items-center gap-2 shrink-0">
-                      <CalendarClock className="w-3 h-3 text-[#8b95a7]" />
-                      <span className="text-[11px] tabular-nums text-[#8b95a7] whitespace-nowrap">
-                        {dateShort}{timeShort ? ` · ${timeShort}` : ""}
-                      </span>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[13px] text-white font-medium truncate">
+                          {e.subject || "(sans sujet)"}
+                        </div>
+                        <div className="text-[11px] text-[#b8c5d6] mt-0.5 truncate">
+                          → {e.recipient}
+                        </div>
+                        <div className="text-[11px] text-[#b8c5d6] mt-1 flex items-center gap-1">
+                          <CalendarClock className="w-3 h-3" />
+                          {t("wave1.scheduledSentAt", {
+                            date: fmt.format(new Date(e.scheduledSendAt)),
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 shrink-0" onClick={(ev) => ev.stopPropagation()}>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setOpenId(e.id)}
+                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+                          data-testid={`scheduled-open-${e.id}`}
+                        >
+                          <Eye className="w-3 h-3" />
+                          {t("wave1.scheduledShow", "Voir l'email")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleCancel(e.id)}
+                          disabled={cancelMut.isPending}
+                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+                          data-testid={`scheduled-cancel-${e.id}`}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {t("wave1.scheduledCancel")}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
