@@ -108,7 +108,7 @@ import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-li
 // (Composant HoverActions extrait dans @/components/email-list/HoverActions
 // — réutilisé tel quel par Envoyés pour parité 1:1.)
 
-function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
+function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number, x: number, y: number, additive: boolean) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -141,7 +141,7 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
         // sinon le mouvement involontaire de la souris pendant le clic
         // peut sélectionner une plage de mails.
         if ((e.target as HTMLElement).closest('button,[role="button"],a,input,textarea,select')) return;
-        if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); }
+        if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id, e.clientX, e.clientY, e.metaKey || e.ctrlKey || e.shiftKey); }
       }}
     >
       {/* Filet de couleur priorité — visible uniquement en vue inbox-classic */}
@@ -154,7 +154,7 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
           <button
             className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
             onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
-            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id); }}
+            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id, e.clientX, e.clientY, e.metaKey || e.ctrlKey || e.shiftKey); }}
           >
             {isSelected && <Check className="w-3 h-3 text-primary" />}
           </button>
@@ -3989,84 +3989,31 @@ export default function Dashboard() {
     return () => document.removeEventListener("mousedown", handler);
   }, [selectedIds.size > 0]);
 
+  // Drag-select : pattern recopié de corbeille.tsx (qui fonctionne le mieux).
+  // setSelectedIds à chaque move (avec snapshot id→index O(1) + throttle rAF
+  // + skip si hover id inchangé). Pas de bypass React / paintRow.
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const preSelectRef = useRef<Set<number>>(new Set());
+  const anchorWasSelectedRef = useRef<boolean>(false);
   const autoScrollRaf = useRef<number>(0);
   const moveRaf = useRef<number>(0);
   const lastMouseYRef = useRef(0);
   const lastMouseXRef = useRef(0);
-  // Snapshot des IDs visibles au moment du mousedown — évite un
-  // querySelectorAll coûteux à chaque mousemove (cause principale du
-  // drag-select laggy avec 100+ lignes).
   const dragIdsSnapshotRef = useRef<number[]>([]);
-  const dragElsSnapshotRef = useRef<HTMLElement[]>([]);
   const dragIdIndexRef = useRef<Map<number, number>>(new Map());
   const lastHoverIdRef = useRef<number | null>(null);
-  // Bornes [lo, hi] actuellement « peintes » via classList — permet de
-  // ne toucher que les rows qui changent de statut entre 2 frames
-  // (au lieu de réappliquer la classe sur toute la plage).
-  const paintedLoRef = useRef<number>(-1);
-  const paintedHiRef = useRef<number>(-1);
-  // IDs réellement sélectionnés pendant le drag (preSelect + plage en cours).
-  // Source de vérité pendant le drag — on commit à React seulement au mouseup.
-  const liveSelectionRef = useRef<Set<number>>(new Set());
-
-  // Applique visuellement la sélection sur un <row> via classList (bypass React).
-  // Doit rester strictement aligné avec le rendu JSX :
-  //   sélectionné  → `bg-primary/[0.10]` + retirer `hover:bg-white/[0.03]`
-  //   non sélect.  → l'inverse
-  const paintRow = useCallback((el: HTMLElement, selected: boolean) => {
-    if (selected) {
-      el.classList.add("bg-primary/[0.10]");
-      el.classList.remove("hover:bg-white/[0.03]");
-    } else {
-      el.classList.remove("bg-primary/[0.10]");
-      el.classList.add("hover:bg-white/[0.03]");
-    }
-  }, []);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
-    const el = document.elementFromPoint(x, y);
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
     if (!el) return null;
-    const row = (el as HTMLElement).closest?.("[data-row-id]");
+    const row = el.closest("[data-row-id]");
     if (!row) return null;
-    const id = Number(row.getAttribute("data-row-id"));
-    return isNaN(id) ? null : id;
+    const id = Number((row as HTMLElement).dataset.rowId);
+    return Number.isFinite(id) ? id : null;
   }, []);
-
-  const selectRange = useCallback((currentId: number) => {
-    if (currentId === lastHoverIdRef.current) return;
-    lastHoverIdRef.current = currentId;
-    const ids = dragIdsSnapshotRef.current;
-    const els = dragElsSnapshotRef.current;
-    const idx = dragIdIndexRef.current;
-    const startIdx = idx.get(dragStartIdRef.current!) ?? -1;
-    const endIdx = idx.get(currentId) ?? -1;
-    if (startIdx === -1 || endIdx === -1) return;
-
-    const lo = Math.min(startIdx, endIdx);
-    const hi = Math.max(startIdx, endIdx);
-    const live = liveSelectionRef.current;
-    const pre = preSelectRef.current;
-
-    // Brute-paint toute la liste visible : pour chaque row du snapshot,
-    // déterminer si elle doit être sélectionnée (preSelect OU dans la
-    // plage [lo,hi]) puis muter classList si l'état diffère. O(N) sur N
-    // = rows visibles (~200 max). Bypass complet React → setSelectedIds
-    // uniquement au mouseup.
-    for (let i = 0; i < ids.length; i++) {
-      const id = ids[i]; const el = els[i];
-      const shouldSelect = pre.has(id) || (i >= lo && i <= hi);
-      const isLive = live.has(id);
-      if (shouldSelect && !isLive) {
-        live.add(id); if (el) paintRow(el, true);
-      } else if (!shouldSelect && isLive) {
-        live.delete(id); if (el) paintRow(el, false);
-      }
-    }
-  }, [paintRow]);
 
   useEffect(() => {
     const threshold = 60;
@@ -4075,38 +4022,49 @@ export default function Dashboard() {
     const processMove = () => {
       moveRaf.current = 0;
       if (!isDraggingRef.current) return;
-      const y = lastMouseYRef.current;
-      const x = lastMouseXRef.current;
-      const hoverId = getRowIdFromPoint(y, x);
-      if (hoverId !== null && hoverId !== dragStartIdRef.current && !didDragRef.current) {
-        didDragRef.current = true;
+      const id = getRowIdFromPoint(lastMouseYRef.current, lastMouseXRef.current);
+      if (id == null || dragStartIdRef.current == null) return;
+      if (id === lastHoverIdRef.current) return;
+      lastHoverIdRef.current = id;
+      const idx = dragIdIndexRef.current;
+      const ids = dragIdsSnapshotRef.current;
+      const a = idx.get(dragStartIdRef.current) ?? -1;
+      const b = idx.get(id) ?? -1;
+      if (a < 0 || b < 0) return;
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const next = new Set(preSelectRef.current);
+      if (anchorWasSelectedRef.current) {
+        for (let i = lo; i <= hi; i++) next.delete(ids[i]);
+      } else {
+        for (let i = lo; i <= hi; i++) next.add(ids[i]);
       }
-      if (hoverId !== null && didDragRef.current) selectRange(hoverId);
+      setSelectedIds(next);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
-      lastMouseYRef.current = e.clientY;
-      lastMouseXRef.current = e.clientX;
-      // Throttle via rAF — coalesce les events trop rapides, ne traite
-      // qu'1 mousemove par frame (~60Hz) plutôt que ~120-200/sec.
-      if (moveRaf.current === 0) {
-        moveRaf.current = requestAnimationFrame(processMove);
+      if (!didDragRef.current && dragStartPosRef.current) {
+        const dx = Math.abs(e.clientX - dragStartPosRef.current.x);
+        const dy = Math.abs(e.clientY - dragStartPosRef.current.y);
+        if (dx < 5 && dy < 5) return;
+        didDragRef.current = true;
       }
+      lastMouseXRef.current = e.clientX;
+      lastMouseYRef.current = e.clientY;
+      if (moveRaf.current === 0) moveRaf.current = requestAnimationFrame(processMove);
 
+      // Auto-scroll en bord d'écran.
       if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
         if (!isDraggingRef.current) { autoScrollRaf.current = 0; return; }
         const y = lastMouseYRef.current;
         if (y > window.innerHeight - threshold) {
           window.scrollBy(0, speed);
-          const id = getRowIdFromPoint(y, window.innerWidth / 2);
-          if (id !== null) selectRange(id);
+          if (moveRaf.current === 0) moveRaf.current = requestAnimationFrame(processMove);
           autoScrollRaf.current = requestAnimationFrame(scroll);
         } else if (y < threshold) {
           window.scrollBy(0, -speed);
-          const id = getRowIdFromPoint(y, window.innerWidth / 2);
-          if (id !== null) selectRange(id);
+          if (moveRaf.current === 0) moveRaf.current = requestAnimationFrame(processMove);
           autoScrollRaf.current = requestAnimationFrame(scroll);
         } else {
           autoScrollRaf.current = 0;
@@ -4115,13 +4073,23 @@ export default function Dashboard() {
       autoScrollRaf.current = requestAnimationFrame(scroll);
     };
 
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      dragStartIdRef.current = null;
+      if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
+      if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
+      setTimeout(() => { didDragRef.current = false; }, 0);
+    };
+
     document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("mouseup", handleMouseUp);
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
       if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
       if (moveRaf.current !== 0) cancelAnimationFrame(moveRaf.current);
     };
-  }, [getRowIdFromPoint, selectRange]);
+  }, [getRowIdFromPoint]);
 
   // Préchargement du détail au survol — quand l'utilisateur passe la
   // souris sur une ligne, on lance la requête en arrière-plan. Le temps
@@ -4148,50 +4116,30 @@ export default function Dashboard() {
     });
   }, [queryClient]);
 
-  const handleDragSelectStart = useCallback((id: number) => {
+  const handleDragSelectStart = useCallback((id: number, x: number, y: number, additive: boolean) => {
+    // On arme le drag mais on NE sélectionne PAS encore : tant qu'aucun
+    // mouvement >= 5px n'est détecté, c'est un clic simple qui doit
+    // ouvrir le mail. La sélection ne démarre qu'au 1er mousemove.
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
+    dragStartPosRef.current = { x, y };
     lastHoverIdRef.current = null;
-    paintedLoRef.current = -1;
-    paintedHiRef.current = -1;
-    // Snapshot 1× au démarrage du drag — toutes les lignes visibles dans
-    // l'ordre du DOM (IDs + éléments). Évite un querySelectorAll par
-    // mousemove et permet de muter classList directement sans React.
-    const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
-    const ids: number[] = [];
-    const els: HTMLElement[] = [];
-    const idx = new Map<number, number>();
-    rows.forEach((r, i) => {
-      const n = Number(r.getAttribute("data-row-id"));
-      if (!isNaN(n)) { ids.push(n); els.push(r); idx.set(n, i); }
-    });
-    dragIdsSnapshotRef.current = ids;
-    dragElsSnapshotRef.current = els;
-    dragIdIndexRef.current = idx;
     setSelectedIds((prev) => {
-      preSelectRef.current = new Set(prev);
-      // La live-selection démarre avec la sélection pré-existante.
-      // Elle est mutée par paintRow pendant le drag (bypass React) et
-      // committée au mouseup.
-      liveSelectionRef.current = new Set(prev);
+      anchorWasSelectedRef.current = prev.has(id);
+      preSelectRef.current = additive ? new Set(prev) : new Set<number>();
       return prev;
     });
-    const handleMouseUp = () => {
-      isDraggingRef.current = false;
-      if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
-      if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
-      document.removeEventListener("mouseup", handleMouseUp);
-      // Commit final à React. La classList a déjà été mutée pendant
-      // le drag, donc le rerender qui suit applique exactement le même
-      // visuel : pas de flash, pas de reflow visible.
-      if (didDragRef.current) {
-        setSelectedIds(new Set(liveSelectionRef.current));
-      }
-      paintedLoRef.current = -1;
-      paintedHiRef.current = -1;
-    };
-    document.addEventListener("mouseup", handleMouseUp);
+    // Snapshot ordre courant des ids visibles (depuis le DOM).
+    const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
+    const ids: number[] = [];
+    const idx = new Map<number, number>();
+    rows.forEach((r, i) => {
+      const v = Number(r.dataset.rowId);
+      if (Number.isFinite(v)) { ids.push(v); idx.set(v, i); }
+    });
+    dragIdsSnapshotRef.current = ids;
+    dragIdIndexRef.current = idx;
   }, []);
 
   const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
