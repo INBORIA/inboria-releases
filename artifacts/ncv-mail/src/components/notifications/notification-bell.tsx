@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, AlertCircle, MessageSquare, UserPlus } from "lucide-react";
+import { Bell, AlertCircle, MessageSquare, UserPlus, X } from "lucide-react";
 import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -95,9 +95,10 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-xl z-[100] max-h-[400px] overflow-hidden flex flex-col">
+        <div className="absolute right-0 top-full mt-2 w-80 max-md:fixed max-md:inset-x-2 max-md:top-[110px] max-md:right-auto max-md:left-2 max-md:w-auto max-md:max-w-none bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-xl z-[100] max-h-[400px] overflow-hidden flex flex-col">
           <div className="flex items-center justify-between px-3 py-2 border-b border-[#1f2937]">
             <span className="text-[12px] font-semibold text-white">{t("notifications.title")}</span>
+            <div className="flex items-center gap-2">
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
@@ -106,6 +107,14 @@ export function NotificationBell() {
                 {t("notifications.markAllRead")}
               </button>
             )}
+            <button
+              onClick={() => setOpen(false)}
+              className="rounded p-1 text-white/40 hover:bg-white/5 hover:text-white transition"
+              aria-label={t("common.close", "Fermer")}
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             {!notifications || (notifications as any[]).length === 0 ? (

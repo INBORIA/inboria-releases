@@ -208,6 +208,7 @@ export function AutopilotIndicator() {
           data-inboria-activity-panel
           className={cn(
             "absolute right-0 top-[calc(100%+8px)] z-50 w-[380px] max-w-[calc(100vw-1rem)]",
+            "max-md:fixed max-md:inset-x-2 max-md:top-[110px] max-md:right-auto max-md:left-2 max-md:w-auto max-md:max-w-none",
             "overflow-hidden rounded-xl border border-white/10 bg-[#0b0d12] shadow-2xl shadow-black/50",
           )}
         >
