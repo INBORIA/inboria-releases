@@ -120,6 +120,72 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
     if (editorRef.current) onChange(editorRef.current.innerHTML);
   };
 
+  // AutoFormat type Word / Outlook :
+  // - Tab dans une liste -> indent, Shift+Tab -> outdent
+  // - "- " ou "* " en debut de ligne -> puce
+  // - "1. " (ou "12. ", etc.) en debut de ligne -> liste numerotee
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!editorRef.current) return;
+
+    // Tab / Shift+Tab dans une <li>
+    if (e.key === "Tab") {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        let cur: Node | null = sel.anchorNode;
+        while (cur && cur !== editorRef.current) {
+          if (cur.nodeType === 1 && (cur as Element).tagName === "LI") {
+            e.preventDefault();
+            document.execCommand("styleWithCSS", false, "true");
+            document.execCommand(e.shiftKey ? "outdent" : "indent");
+            onChange(editorRef.current.innerHTML);
+            return;
+          }
+          cur = cur.parentNode;
+        }
+      }
+    }
+
+    // Espace -> declenche la conversion en liste si le texte avant le curseur
+    // est un marqueur de liste seul sur la ligne ("-", "*", "1.", "12."...).
+    if (e.key === " ") {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      if (!range.collapsed) return;
+      if (!editorRef.current.contains(range.startContainer)) return;
+
+      const node = range.startContainer;
+      if (node.nodeType !== 3) return; // texte seul
+      const text = node.textContent || "";
+      const before = text.slice(0, range.startOffset);
+
+      // Le node ne doit contenir que le marqueur (caret au bout, rien apres),
+      // ce qui evite de declencher au milieu d'un paragraphe existant.
+      if (text !== before) return;
+
+      let listType: "ul" | "ol" | null = null;
+      if (before === "-" || before === "*") listType = "ul";
+      else if (/^\d+\.$/.test(before)) listType = "ol";
+      if (!listType) return;
+
+      e.preventDefault();
+      node.textContent = "";
+      // Repositionne le caret au debut du node vide pour que insertList
+      // s'applique sur la bonne ligne.
+      const r = document.createRange();
+      r.setStart(node, 0);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+
+      document.execCommand("styleWithCSS", false, "true");
+      document.execCommand(
+        listType === "ul" ? "insertUnorderedList" : "insertOrderedList",
+      );
+      onChange(editorRef.current.innerHTML);
+    }
+  };
+
   const handleInsertLink = () => {
     const url = window.prompt(t("signature.linkUrlPrompt", "URL du lien (https://...)"));
     if (!url) return;
@@ -358,6 +424,7 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
         contentEditable
         suppressContentEditableWarning
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
         onFocus={() => setIsFocused(true)}
         onBlur={() => { setIsFocused(false); saveSelection(); }}
         onKeyUp={saveSelection}
