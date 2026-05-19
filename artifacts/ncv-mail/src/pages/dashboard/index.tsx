@@ -108,7 +108,7 @@ import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-li
 // (Composant HoverActions extrait dans @/components/email-list/HoverActions
 // — réutilisé tel quel par Envoyés pour parité 1:1.)
 
-function EmailRow({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
+function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -263,6 +263,25 @@ function EmailRow({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryC
     </div>
   );
 }
+
+// Memoize : pendant un drag-select, le parent re-render à chaque ligne
+// traversée. Sans memo, les 100+ <EmailRow/> re-rendent toutes à chaque
+// mousemove → lag visible. On compare uniquement les props qui changent
+// l'apparence ; les callbacks sont supposés stables côté parent (ou leur
+// changement n'affecte pas le rendu visuel d'une ligne déjà à l'écran).
+const EmailRow = memo(EmailRowImpl, (prev, next) => {
+  return (
+    prev.isSelected === next.isSelected &&
+    prev.selectionMode === next.selectionMode &&
+    prev.isSlaBreach === next.isSlaBreach &&
+    prev.showMailboxBadge === next.showMailboxBadge &&
+    prev.email === next.email &&
+    prev.mailboxBadge === next.mailboxBadge &&
+    prev.hoverCb === next.hoverCb &&
+    prev.hoverCategories === next.hoverCategories &&
+    prev.hoverFolders === next.hoverFolders
+  );
+});
 
 function useDebounce(value: string, delay: number) {
   const [debounced, setDebounced] = useState(value);
