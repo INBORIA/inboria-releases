@@ -4048,41 +4048,24 @@ export default function Dashboard() {
 
     const lo = Math.min(startIdx, endIdx);
     const hi = Math.max(startIdx, endIdx);
-
-    // Diff-paint : on ne touche que les rows qui ENTRENT ou SORTENT
-    // de la nouvelle plage par rapport à la précédente. Avec la même
-    // ancre, le delta entre 2 frames consécutives est typiquement 1-2
-    // rows → 1-2 mutations DOM par frame, indépendant de la taille de
-    // la plage. Bypass complet de React pendant le drag.
-    const prevLo = paintedLoRef.current;
-    const prevHi = paintedHiRef.current;
     const live = liveSelectionRef.current;
+    const pre = preSelectRef.current;
 
-    if (prevLo === -1) {
-      for (let i = lo; i <= hi; i++) {
-        const id = ids[i]; const el = els[i];
-        if (!live.has(id)) { live.add(id); if (el) paintRow(el, true); }
-      }
-    } else {
-      // Sortie : rows présentes avant, absentes maintenant
-      for (let i = prevLo; i <= prevHi; i++) {
-        if (i < lo || i > hi) {
-          const id = ids[i]; const el = els[i];
-          if (!preSelectRef.current.has(id) && live.has(id)) {
-            live.delete(id); if (el) paintRow(el, false);
-          }
-        }
-      }
-      // Entrée : rows absentes avant, présentes maintenant
-      for (let i = lo; i <= hi; i++) {
-        if (i < prevLo || i > prevHi) {
-          const id = ids[i]; const el = els[i];
-          if (!live.has(id)) { live.add(id); if (el) paintRow(el, true); }
-        }
+    // Brute-paint toute la liste visible : pour chaque row du snapshot,
+    // déterminer si elle doit être sélectionnée (preSelect OU dans la
+    // plage [lo,hi]) puis muter classList si l'état diffère. O(N) sur N
+    // = rows visibles (~200 max). Bypass complet React → setSelectedIds
+    // uniquement au mouseup.
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i]; const el = els[i];
+      const shouldSelect = pre.has(id) || (i >= lo && i <= hi);
+      const isLive = live.has(id);
+      if (shouldSelect && !isLive) {
+        live.add(id); if (el) paintRow(el, true);
+      } else if (!shouldSelect && isLive) {
+        live.delete(id); if (el) paintRow(el, false);
       }
     }
-    paintedLoRef.current = lo;
-    paintedHiRef.current = hi;
   }, [paintRow]);
 
   useEffect(() => {
