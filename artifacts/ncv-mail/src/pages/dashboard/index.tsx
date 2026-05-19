@@ -100,6 +100,7 @@ import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/he
 
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { EmailRowSkeleton } from "@/components/email-list/EmailRowSkeleton";
+import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-list/SearchAutocomplete";
 
 // Bag de callbacks pour la barre d'actions au survol — toutes les actions
 // du menu contextuel clic droit, dans le même ordre, avec popovers ancrés
@@ -3168,6 +3169,10 @@ export default function Dashboard() {
   // suffit pour grouper les frappes très rapides sans donner l'impression
   // d'attendre. Le serveur reste appelé après chaque salve.
   const searchQuery = useDebounce(searchInput, 80);
+  // Autocomplete dropdown (séance 2 du bloc C). On garde l'index actif
+  // dans le state parent pour partager nav clavier + survol souris.
+  const [autocompleteIndex, setAutocompleteIndex] = useState(0);
+  const [autocompleteFocused, setAutocompleteFocused] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -3457,6 +3462,67 @@ export default function Dashboard() {
 
   const emails = accumulatedEmails;
   const hasMorePages = emailPage < totalPages;
+
+  // Autocomplete items (séance 2 bloc C). Construit à partir de la liste
+  // de mails déjà chargée — donc instantané, zéro requête supplémentaire.
+  // On split la requête en (opérateurs + texte libre), on cherche dans le
+  // texte libre uniquement, et on suggère 3 expéditeurs distincts + 5 mails
+  // + 3 opérateurs si l'utilisateur n'en a pas encore tapé.
+  const autocompleteItems = useMemo<AutocompleteItem[]>(() => {
+    const q = (searchInput || "").trim();
+    if (q.length < 1) return [];
+    const freeText = q
+      .replace(/\b(?:de|from)\s*:\s*("[^"]+"|\S+)/gi, " ")
+      .replace(/\b(?:sujet|subject)\s*:\s*("[^"]+"|\S+)/gi, " ")
+      .replace(/\bavec-pj\b/gi, " ")
+      .replace(/\bhas\s*:\s*(?:attachments?|pj)\b/gi, " ")
+      .trim()
+      .toLowerCase();
+    const senderMap = new Map<string, { sender: string; senderEmail: string }>();
+    const matchingEmails: any[] = [];
+    if (freeText) {
+      for (const eRaw of emails) {
+        const e = eRaw as any;
+        const sn = (e.sender || "").toLowerCase();
+        const sb = (e.subject || "").toLowerCase();
+        if (sn.includes(freeText)) {
+          const key = sn;
+          if (!senderMap.has(key)) {
+            senderMap.set(key, { sender: e.sender, senderEmail: e.senderEmail || extractEmailAddress(e.sender || "") || "" });
+          }
+        }
+        if (sn.includes(freeText) || sb.includes(freeText)) {
+          if (matchingEmails.length < 5) matchingEmails.push(e);
+        }
+      }
+    }
+    const senders = Array.from(senderMap.values()).slice(0, 3);
+    const items: AutocompleteItem[] = [];
+    for (const s of senders) {
+      items.push({ type: "sender", key: `s:${s.sender}`, sender: s.sender, senderEmail: s.senderEmail });
+    }
+    for (const e of matchingEmails) {
+      items.push({
+        type: "email",
+        key: `e:${e.id}`,
+        id: e.id,
+        sender: e.sender,
+        subject: e.subject || "",
+        hasAttachment: !!(e.hasAttachment || e.attachmentCount > 0),
+      });
+    }
+    // Suggestions d'opérateurs si l'utilisateur n'en a pas encore tapé.
+    const hasOp = /\b(?:de|from|sujet|subject)\s*:|\bavec-pj\b|\bhas\s*:\s*(?:attachments?|pj)\b/i.test(q);
+    if (!hasOp && freeText) {
+      items.push({ type: "operator", key: "op:de", label: t("inbox.searchOpSender", "filtrer par expéditeur"), insert: `de:${freeText}` });
+      items.push({ type: "operator", key: "op:sujet", label: t("inbox.searchOpSubject", "filtrer par sujet"), insert: `sujet:${freeText}` });
+      items.push({ type: "operator", key: "op:pj", label: t("inbox.searchOpAttachment", "mails avec pièce jointe"), insert: "avec-pj" });
+    }
+    return items;
+  }, [searchInput, emails, t]);
+
+  // Reset l'index actif quand les items changent (sinon flèche vers un index hors bornes).
+  useEffect(() => { setAutocompleteIndex(0); }, [autocompleteItems.length, searchInput]);
 
   // Lookup unifié : un email peut venir de la liste perso (`emails`), de
   // la liste partagée (`sharedEmailsList`) OU du dataset Assignés
@@ -5400,6 +5466,34 @@ export default function Dashboard() {
               <Input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
+                onFocus={() => setAutocompleteFocused(true)}
+                onBlur={() => { setTimeout(() => setAutocompleteFocused(false), 120); }}
+                onKeyDown={(e) => {
+                  if (autocompleteItems.length === 0) return;
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setAutocompleteIndex((i) => (i + 1) % autocompleteItems.length);
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setAutocompleteIndex((i) => (i - 1 + autocompleteItems.length) % autocompleteItems.length);
+                  } else if (e.key === "Enter") {
+                    const item = autocompleteItems[autocompleteIndex];
+                    if (!item) return;
+                    e.preventDefault();
+                    if (item.type === "sender") {
+                      const needsQuotes = /\s/.test(item.sender);
+                      setSearchInput(needsQuotes ? `de:"${item.sender}"` : `de:${item.sender}`);
+                    } else if (item.type === "email") {
+                      setSelectedEmailId(item.id);
+                      setAutocompleteFocused(false);
+                    } else if (item.type === "operator") {
+                      setSearchInput(item.insert);
+                    }
+                  } else if (e.key === "Escape") {
+                    if (searchInput) { e.preventDefault(); setSearchInput(""); }
+                    else setAutocompleteFocused(false);
+                  }
+                }}
                 placeholder={t("inbox.searchPlaceholder")}
                 className="pl-8 pr-16 bg-[#0d1218] border-[#1f2630] text-white placeholder:text-[#8b95a7]/70 h-9 text-[13px] rounded-md"
               />
@@ -5413,8 +5507,7 @@ export default function Dashboard() {
                 </button>
               )}
               {/* Hint opérateurs — apparaît au focus tant qu'aucun caractère
-                  n'a été tapé. Donne la grammaire de recherche sans
-                  polluer le placeholder. */}
+                  n'a été tapé. Disparaît dès qu'on tape (autocomplete prend le relais). */}
               {searchInput === "" && (
                 <div className="hidden group-focus-within:block pointer-events-none absolute left-0 right-0 top-full mt-1 z-20 rounded-md border border-[#1f2630] bg-[#0d1218] px-3 py-2 text-[11px] text-[#8b95a7] shadow-lg">
                   <span className="text-[#b8c5d6]">{t("inbox.searchHintIntro", "Opérateurs :")}</span>{" "}
@@ -5424,6 +5517,31 @@ export default function Dashboard() {
                   <span className="text-[#5a6270]">{"  ·  "}</span>
                   {t("inbox.searchHintCombo", "combinables — ex. : de:alice sujet:devis avec-pj")}
                 </div>
+              )}
+              {/* Autocomplete dropdown — apparaît dès la 1re lettre tant que
+                  l'input a le focus (ou est en cours de blur transitoire). */}
+              {autocompleteFocused && autocompleteItems.length > 0 && (
+                <SearchAutocomplete
+                  items={autocompleteItems}
+                  activeIndex={autocompleteIndex}
+                  onHoverIndex={setAutocompleteIndex}
+                  onSelect={(item) => {
+                    if (item.type === "sender") {
+                      const needsQuotes = /\s/.test(item.sender);
+                      setSearchInput(needsQuotes ? `de:"${item.sender}"` : `de:${item.sender}`);
+                    } else if (item.type === "email") {
+                      setSelectedEmailId(item.id);
+                      setAutocompleteFocused(false);
+                    } else if (item.type === "operator") {
+                      setSearchInput(item.insert);
+                    }
+                  }}
+                  labels={{
+                    senders: t("inbox.searchGroupSenders", "Expéditeurs"),
+                    emails: t("inbox.searchGroupEmails", "Mails"),
+                    operators: t("inbox.searchGroupOperators", "Affiner"),
+                  }}
+                />
               )}
             </div>
 
@@ -5440,50 +5558,49 @@ export default function Dashboard() {
 
             {/* Toggle clair/sombre déplacé dans le header global (entre notifications et langues). */}
 
-            <Dialog open={isComposeOpen} onOpenChange={(open) => {
-              setIsComposeOpen(open);
-              if (!open) {
-                setIsComposeFullscreen(false);
-                setComposePrefill(null);
-              }
-            }}>
-              <DialogTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-1.5 h-9 px-3 text-[12px] bg-card hover:bg-white/[0.04] text-[#e6e9ef] border-[#1f2937] hover:border-[#2a3441] shrink-0 rounded-md font-medium"
-                >
-                  <PenSquare className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                onPointerDownOutside={(e) => e.preventDefault()}
-                onInteractOutside={(e) => e.preventDefault()}
-                onEscapeKeyDown={(e) => e.preventDefault()}
-                className={
+            {/* Wave perçue D — composer en split view Superhuman-style.
+                Remplace la Dialog modale par un panneau coulissant ancré à
+                droite, sans backdrop : la liste de mails et le mail ouvert
+                restent visibles et cliquables derrière. Le mode plein écran
+                bascule sur inset-0. */}
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 h-9 px-3 text-[12px] bg-card hover:bg-white/[0.04] text-[#e6e9ef] border-[#1f2937] hover:border-[#2a3441] shrink-0 rounded-md font-medium"
+              onClick={() => setIsComposeOpen(true)}
+            >
+              <PenSquare className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
+            </Button>
+            {isComposeOpen && (
+              <div
+                role="dialog"
+                aria-modal="false"
+                aria-label={t("inbox.composeAria", "Rédiger un email")}
+                className={`fixed z-50 bg-card border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 ${
                   isComposeFullscreen
-                    ? "bg-card border-border w-screen max-w-none h-screen sm:rounded-none p-0 flex flex-col"
-                    : "bg-card border-border w-[95vw] sm:max-w-3xl p-0 flex flex-col max-h-[90vh]"
-                }
+                    ? "inset-0"
+                    : "top-0 right-0 bottom-0 w-full sm:w-[640px] max-w-[100vw] border-l"
+                }`}
               >
-                {isComposeOpen && (
-                  <ComposeDialogBody
-                    isFullscreen={isComposeFullscreen}
-                    setIsFullscreen={setIsComposeFullscreen}
-                    connections={composeConnections || []}
-                    projects={(projects as any[]) || []}
-                    isPending={sendEmailMut.isPending}
-                    onSend={handleComposeSend}
-                    onClose={() => setIsComposeOpen(false)}
-                    initialTo={composePrefill?.to}
-                    initialSubject={composePrefill?.subject}
-                    initialBody={composePrefill?.body}
-                  />
-                )}
-              </DialogContent>
-            </Dialog>
+                <ComposeDialogBody
+                  isFullscreen={isComposeFullscreen}
+                  setIsFullscreen={setIsComposeFullscreen}
+                  connections={composeConnections || []}
+                  projects={(projects as any[]) || []}
+                  isPending={sendEmailMut.isPending}
+                  onSend={handleComposeSend}
+                  onClose={() => {
+                    setIsComposeOpen(false);
+                    setIsComposeFullscreen(false);
+                    setComposePrefill(null);
+                  }}
+                  initialTo={composePrefill?.to}
+                  initialSubject={composePrefill?.subject}
+                  initialBody={composePrefill?.body}
+                />
+              </div>
+            )}
 
           </div>
 
