@@ -3,28 +3,17 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
-export function useSmartBack(defaultHref: string = "/dashboard", defaultLabelKey: string = "common.back", defaultLabelFallback?: string) {
+export function useSmartBack(defaultHref: string = "/dashboard", _defaultLabelKey?: string, _defaultLabelFallback?: string) {
   const search = useSearch();
   const params = new URLSearchParams(search);
   const from = params.get("from");
-  if (from === "admin") {
-    return {
-      href: "/dashboard/parametres/administration",
-      labelKey: "settings.hub.administration",
-      labelFallback: "Administration",
-    };
-  }
-  if (from === "settings") {
-    return {
-      href: "/dashboard/parametres",
-      labelKey: "settings.title",
-      labelFallback: "Paramètres",
-    };
-  }
+  let href = defaultHref;
+  if (from === "admin") href = "/dashboard/parametres/administration";
+  else if (from === "settings") href = "/dashboard/parametres";
   return {
-    href: defaultHref,
-    labelKey: defaultLabelKey,
-    labelFallback: defaultLabelFallback ?? "",
+    href,
+    labelKey: "common.back",
+    labelFallback: "Retour",
   };
 }
 
