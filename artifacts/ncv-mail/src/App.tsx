@@ -273,8 +273,8 @@ function Router() {
       <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
       <Route path="/dashboard/parametres/developpeurs" component={() => <AdminOnlyRoute component={ParametresDeveloppeurs} />} />
       <Route path="/dashboard/parametres/administration" component={() => <AdminOnlyRoute component={ParametresAdministration} />} />
-      <Route path="/dashboard/parametres/templates" component={() => <AdminOnlyRoute component={Templates} />} />
-      <Route path="/dashboard/parametres/regles" component={() => <AdminOnlyRoute component={Regles} />} />
+      <Route path="/dashboard/parametres/templates" component={() => <ProtectedRoute component={Templates} />} />
+      <Route path="/dashboard/parametres/regles" component={() => <ProtectedRoute component={Regles} />} />
       <Route path="/dashboard/parametres/sla" component={() => <AdminOnlyRoute component={ParametresSla} />} />
       <Route path="/dashboard/parametres/api" component={() => <AdminOnlyRoute component={ParametresApi} />} />
       <Route path="/dashboard/parametres/webhooks" component={() => <AdminOnlyRoute component={ParametresWebhooks} />} />

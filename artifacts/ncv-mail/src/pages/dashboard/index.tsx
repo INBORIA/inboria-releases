@@ -4001,8 +4001,31 @@ export default function Dashboard() {
   // querySelectorAll coûteux à chaque mousemove (cause principale du
   // drag-select laggy avec 100+ lignes).
   const dragIdsSnapshotRef = useRef<number[]>([]);
+  const dragElsSnapshotRef = useRef<HTMLElement[]>([]);
   const dragIdIndexRef = useRef<Map<number, number>>(new Map());
   const lastHoverIdRef = useRef<number | null>(null);
+  // Bornes [lo, hi] actuellement « peintes » via classList — permet de
+  // ne toucher que les rows qui changent de statut entre 2 frames
+  // (au lieu de réappliquer la classe sur toute la plage).
+  const paintedLoRef = useRef<number>(-1);
+  const paintedHiRef = useRef<number>(-1);
+  // IDs réellement sélectionnés pendant le drag (preSelect + plage en cours).
+  // Source de vérité pendant le drag — on commit à React seulement au mouseup.
+  const liveSelectionRef = useRef<Set<number>>(new Set());
+
+  // Applique visuellement la sélection sur un <row> via classList (bypass React).
+  // Doit rester strictement aligné avec le rendu JSX :
+  //   sélectionné  → `bg-primary/[0.10]` + retirer `hover:bg-white/[0.03]`
+  //   non sélect.  → l'inverse
+  const paintRow = useCallback((el: HTMLElement, selected: boolean) => {
+    if (selected) {
+      el.classList.add("bg-primary/[0.10]");
+      el.classList.remove("hover:bg-white/[0.03]");
+    } else {
+      el.classList.remove("bg-primary/[0.10]");
+      el.classList.add("hover:bg-white/[0.03]");
+    }
+  }, []);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
     const el = document.elementFromPoint(x, y);
@@ -4014,21 +4037,53 @@ export default function Dashboard() {
   }, []);
 
   const selectRange = useCallback((currentId: number) => {
-    if (currentId === lastHoverIdRef.current) return; // pas de changement → skip setState
+    if (currentId === lastHoverIdRef.current) return;
     lastHoverIdRef.current = currentId;
     const ids = dragIdsSnapshotRef.current;
+    const els = dragElsSnapshotRef.current;
     const idx = dragIdIndexRef.current;
     const startIdx = idx.get(dragStartIdRef.current!) ?? -1;
     const endIdx = idx.get(currentId) ?? -1;
     if (startIdx === -1 || endIdx === -1) return;
-    const keep = new Set(preSelectRef.current);
-    if (startIdx !== endIdx) {
-      const lo = Math.min(startIdx, endIdx);
-      const hi = Math.max(startIdx, endIdx);
-      for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+
+    // Diff-paint : on ne touche que les rows qui ENTRENT ou SORTENT
+    // de la nouvelle plage par rapport à la précédente. Avec la même
+    // ancre, le delta entre 2 frames consécutives est typiquement 1-2
+    // rows → 1-2 mutations DOM par frame, indépendant de la taille de
+    // la plage. Bypass complet de React pendant le drag.
+    const prevLo = paintedLoRef.current;
+    const prevHi = paintedHiRef.current;
+    const live = liveSelectionRef.current;
+
+    if (prevLo === -1) {
+      for (let i = lo; i <= hi; i++) {
+        const id = ids[i]; const el = els[i];
+        if (!live.has(id)) { live.add(id); if (el) paintRow(el, true); }
+      }
+    } else {
+      // Sortie : rows présentes avant, absentes maintenant
+      for (let i = prevLo; i <= prevHi; i++) {
+        if (i < lo || i > hi) {
+          const id = ids[i]; const el = els[i];
+          if (!preSelectRef.current.has(id) && live.has(id)) {
+            live.delete(id); if (el) paintRow(el, false);
+          }
+        }
+      }
+      // Entrée : rows absentes avant, présentes maintenant
+      for (let i = lo; i <= hi; i++) {
+        if (i < prevLo || i > prevHi) {
+          const id = ids[i]; const el = els[i];
+          if (!live.has(id)) { live.add(id); if (el) paintRow(el, true); }
+        }
+      }
     }
-    setSelectedIds(keep);
-  }, []);
+    paintedLoRef.current = lo;
+    paintedHiRef.current = hi;
+  }, [paintRow]);
 
   useEffect(() => {
     const threshold = 60;
@@ -4115,23 +4170,43 @@ export default function Dashboard() {
     didDragRef.current = false;
     dragStartIdRef.current = id;
     lastHoverIdRef.current = null;
+    paintedLoRef.current = -1;
+    paintedHiRef.current = -1;
     // Snapshot 1× au démarrage du drag — toutes les lignes visibles dans
-    // l'ordre du DOM. Évite un querySelectorAll par mousemove.
+    // l'ordre du DOM (IDs + éléments). Évite un querySelectorAll par
+    // mousemove et permet de muter classList directement sans React.
     const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
     const ids: number[] = [];
+    const els: HTMLElement[] = [];
     const idx = new Map<number, number>();
     rows.forEach((r, i) => {
       const n = Number(r.getAttribute("data-row-id"));
-      if (!isNaN(n)) { ids.push(n); idx.set(n, i); }
+      if (!isNaN(n)) { ids.push(n); els.push(r); idx.set(n, i); }
     });
     dragIdsSnapshotRef.current = ids;
+    dragElsSnapshotRef.current = els;
     dragIdIndexRef.current = idx;
-    setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
+    setSelectedIds((prev) => {
+      preSelectRef.current = new Set(prev);
+      // La live-selection démarre avec la sélection pré-existante.
+      // Elle est mutée par paintRow pendant le drag (bypass React) et
+      // committée au mouseup.
+      liveSelectionRef.current = new Set(prev);
+      return prev;
+    });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
       if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
       if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
       document.removeEventListener("mouseup", handleMouseUp);
+      // Commit final à React. La classList a déjà été mutée pendant
+      // le drag, donc le rerender qui suit applique exactement le même
+      // visuel : pas de flash, pas de reflow visible.
+      if (didDragRef.current) {
+        setSelectedIds(new Set(liveSelectionRef.current));
+      }
+      paintedLoRef.current = -1;
+      paintedHiRef.current = -1;
     };
     document.addEventListener("mouseup", handleMouseUp);
   }, []);
