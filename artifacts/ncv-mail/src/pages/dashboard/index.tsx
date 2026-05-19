@@ -218,7 +218,7 @@ function EmailRow({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryC
         )}
         {isSlaBreach && (
           <span
-            className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
+            className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-red-500/15 text-black dark:text-white border border-red-500/30 inline-flex items-center gap-1"
             title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
           >
             <AlertCircle className="w-2.5 h-2.5" />
