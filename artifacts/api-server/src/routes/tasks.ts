@@ -89,7 +89,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       let q = supabaseAdmin
         .from("tasks")
         .select(
-          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
+          "*, emails(subject, sender, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
         )
         .order("created_at", { ascending: false });
 
@@ -130,7 +130,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       let teamQ = supabaseAdmin
         .from("tasks")
         .select(
-          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
+          "*, emails(subject, sender, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
         )
         .order("created_at", { ascending: false })
         .in("assigned_to_user_id", memberIds)
