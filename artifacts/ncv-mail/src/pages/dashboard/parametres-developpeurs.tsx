@@ -46,7 +46,7 @@ export default function ParametresDeveloppeurs() {
         <div>
           <Link href="/dashboard/parametres">
             <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("common.back", "Retour")}
             </Button>
           </Link>
         </div>
