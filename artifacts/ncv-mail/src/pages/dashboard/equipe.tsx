@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useGetMyOrganisation,
   useGetOrganisationMembers,
@@ -59,6 +60,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 export default function Equipe() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { data: profile } = useGetProfile();
   const { data: org, isLoading: orgLoading } = useGetMyOrganisation();
