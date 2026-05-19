@@ -133,6 +133,10 @@ export default function Corbeille() {
   const dragStartIdRef = useRef<number | null>(null);
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const preSelectRef = useRef<Set<number>>(new Set());
+  // Au mousedown on capture si la ligne d'ancrage était déjà sélectionnée.
+  // Si oui → le drag DÉSÉLECTIONNE la plage. Sinon → le drag SÉLECTIONNE
+  // la plage. Comportement type Mac Finder / Superhuman.
+  const anchorWasSelectedRef = useRef<boolean>(false);
 
   const getRowIdFromPoint = (y: number, x: number): number | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -167,9 +171,15 @@ export default function Corbeille() {
       const b = ids.indexOf(id);
       if (a < 0 || b < 0) return;
       const [lo, hi] = a < b ? [a, b] : [b, a];
-      const range = new Set(preSelectRef.current);
-      for (let i = lo; i <= hi; i++) range.add(ids[i]);
-      setSelectedIds(range);
+      const next = new Set(preSelectRef.current);
+      if (anchorWasSelectedRef.current) {
+        // Drag depuis une ligne déjà sélectionnée → on RETIRE la plage.
+        for (let i = lo; i <= hi; i++) next.delete(ids[i]);
+      } else {
+        // Drag depuis une ligne non sélectionnée → on AJOUTE la plage.
+        for (let i = lo; i <= hi; i++) next.add(ids[i]);
+      }
+      setSelectedIds(next);
     };
     const onUp = () => {
       isDraggingRef.current = false;
