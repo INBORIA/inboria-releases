@@ -3069,6 +3069,7 @@ export default function Dashboard() {
   }, [smartSort]);
   const [readingPaneEnabled] = useReadingPaneEnabled();
   const [mailHeaderCollapsed] = useMailHeaderCollapsed();
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
@@ -4392,21 +4393,24 @@ export default function Dashboard() {
   };
 
   const handleArchive = (id: number) => {
+    // Optimistic : on retire le mail de la liste immédiatement (style
+    // Superhuman). Si le serveur échoue, on le remet à sa place + toast erreur.
+    const previousEmails = accumulatedEmails;
+    const previousSelected = selectedEmailId;
+    setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
+    if (selectedEmailId === id) setSelectedEmailId(null);
+    setSelectedIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
     updateEmail.mutate(
       { id, data: { status: "archived" } },
       {
         onSuccess: () => {
-          setSelectedEmailId(null);
-          setSelectedIds(new Set());
           invalidateAll();
-          // Invalidate la page Archives aussi (clé partielle déjà couverte
-          // par getListEmailsQueryKey() sans param, mais on force un refetch
-          // de la variante {status:"archived"} pour que la liste apparaisse
-          // immédiatement quand l'utilisateur clique sur "Archives".
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey({ status: "archived" } as any) });
           toast({ title: t("inbox.emailArchived") });
         },
         onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          if (previousSelected === id) setSelectedEmailId(id);
           toast({ variant: "destructive", title: t("common.error"), description: e?.message || "Échec de l'archivage" });
         },
       }
@@ -4414,15 +4418,21 @@ export default function Dashboard() {
   };
 
   const handleDelete = (id: number) => {
+    // Optimistic : on retire le mail immédiatement, rollback en cas d'erreur.
+    const previousEmails = accumulatedEmails;
+    const previousSelected = selectedEmailId;
+    setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
+    if (selectedEmailId === id) setSelectedEmailId(null);
     deleteEmail.mutate(
       { id },
       {
         onSuccess: () => {
-          setSelectedEmailId(null);
           invalidateAll();
           toast({ title: t("inbox.emailDeleted") });
         },
         onError: () => {
+          setAccumulatedEmails(previousEmails);
+          if (previousSelected === id) setSelectedEmailId(id);
           toast({ variant: "destructive", title: t("common.error"), description: t("inbox.sendError") });
         },
       }
@@ -4469,6 +4479,19 @@ export default function Dashboard() {
       } else if (k === "r" && selectedEmailId) {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: selectedEmailId } }));
+      } else if (k === "f" && selectedEmailId) {
+        e.preventDefault();
+        handleQuickForward(selectedEmailId);
+      } else if (k === "h" && selectedEmailId) {
+        // H = snooze (reporte) — 24h par défaut, raccourci Superhuman-style.
+        e.preventDefault();
+        handleQuickSnooze(selectedEmailId, 24, t("inbox.snoozedFor24h", "Reporté à demain"));
+      } else if ((e.key === "#" || (e.shiftKey && k === "3")) && selectedEmailId) {
+        e.preventDefault();
+        handleDelete(selectedEmailId);
+      } else if (k === "?" || (e.shiftKey && k === "/")) {
+        e.preventDefault();
+        setShowShortcutsHelp((v) => !v);
       }
     };
     document.addEventListener("keydown", onKey);
@@ -6412,6 +6435,49 @@ export default function Dashboard() {
           </div>
         ) : null}
       </MailReadingPane>
+
+      {showShortcutsHelp && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowShortcutsHelp(false)}
+        >
+          <div
+            className="w-[min(560px,92vw)] rounded-xl border border-white/10 bg-[#0f1620] p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-white">{t("inbox.shortcutsTitle", "Raccourcis clavier")}</h2>
+              <button
+                className="text-[#8b95a7] hover:text-white text-sm"
+                onClick={() => setShowShortcutsHelp(false)}
+              >
+                Esc
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-[13px]">
+              {[
+                ["J", t("inbox.scNext", "Mail suivant")],
+                ["K", t("inbox.scPrev", "Mail précédent")],
+                ["E", t("inbox.scArchive", "Archiver")],
+                ["#", t("inbox.scDelete", "Supprimer")],
+                ["R", t("inbox.scReply", "Répondre")],
+                ["F", t("inbox.scForward", "Transférer")],
+                ["H", t("inbox.scSnooze", "Reporter (24 h)")],
+                ["⌘K / Ctrl+K", t("inbox.scSearch", "Rechercher")],
+                ["Esc", t("inbox.scClose", "Fermer le mail")],
+                ["?", t("inbox.scHelp", "Afficher cette aide")],
+              ].map(([key, label]) => (
+                <div key={key} className="flex items-center gap-3">
+                  <kbd className="min-w-[44px] text-center rounded border border-white/15 bg-white/[0.04] px-2 py-0.5 text-[11px] font-mono text-[#b8c5d6]">
+                    {key}
+                  </kbd>
+                  <span className="text-[#c8d0db]">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
