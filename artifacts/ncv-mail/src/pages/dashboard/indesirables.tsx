@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download } from "lucide-react";
@@ -125,6 +125,20 @@ export default function Indesirables() {
   const emptySpam = useEmptySpam();
   const blockSender = useBlockSender();
 
+  // Sélection multiple par drag souris + menu contextuel clic droit
+  // (parité Corbeille). Anchor-was-selected → drag retire la plage ; sinon
+  // ajoute. Seuil 5px pour distinguer clic simple vs drag.
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; ids: number[] } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<number | null>(null);
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const preSelectRef = useRef<Set<number>>(new Set());
+  const anchorWasSelectedRef = useRef<boolean>(false);
+  const [menuPos, setMenuPos] = useState<{ left: number; top: number; opacity: number }>({ left: 0, top: 0, opacity: 0 });
+
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetSpamCountQueryKey() });
@@ -212,6 +226,129 @@ export default function Indesirables() {
           toast({ variant: "destructive", title: t("common.error"), description: e?.message || "Échec" }),
       },
     );
+  };
+
+  const getRowIdFromPoint = (y: number, x: number): number | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    if (!el) return null;
+    const row = el.closest("[data-row-id]");
+    if (!row) return null;
+    const id = Number((row as HTMLElement).dataset.rowId);
+    return Number.isFinite(id) ? id : null;
+  };
+
+  const visibleIds = useMemo(() => {
+    const dang = emails.filter((e) => getRisk(e) === "veryHigh");
+    const norm = emails.filter((e) => getRisk(e) !== "veryHigh");
+    return (showDangerous ? [...norm, ...dang] : norm).map((e: any) => e.id);
+  }, [emails, showDangerous]);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      if (!didDragRef.current && dragStartPosRef.current) {
+        const dx = Math.abs(e.clientX - dragStartPosRef.current.x);
+        const dy = Math.abs(e.clientY - dragStartPosRef.current.y);
+        if (dx < 5 && dy < 5) return;
+        didDragRef.current = true;
+      }
+      const id = getRowIdFromPoint(e.clientY, e.clientX);
+      if (id == null || dragStartIdRef.current == null) return;
+      const a = visibleIds.indexOf(dragStartIdRef.current);
+      const b = visibleIds.indexOf(id);
+      if (a < 0 || b < 0) return;
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const next = new Set(preSelectRef.current);
+      if (anchorWasSelectedRef.current) {
+        for (let i = lo; i <= hi; i++) next.delete(visibleIds[i]);
+      } else if (a !== b) {
+        for (let i = lo; i <= hi; i++) next.add(visibleIds[i]);
+      }
+      setSelectedIds(next);
+    };
+    const onUp = () => {
+      isDraggingRef.current = false;
+      dragStartIdRef.current = null;
+      setTimeout(() => { didDragRef.current = false; }, 0);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+  }, [visibleIds]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedIds(new Set());
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [contextMenu]);
+
+  useLayoutEffect(() => {
+    if (!contextMenu || !contextMenuRef.current) {
+      setMenuPos({ left: 0, top: 0, opacity: 0 });
+      return;
+    }
+    const m = 8;
+    const rect = contextMenuRef.current.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = contextMenu.x;
+    let top = contextMenu.y;
+    if (left + rect.width + m > vw) left = Math.max(m, vw - rect.width - m);
+    if (top + rect.height + m > vh) top = Math.max(m, vh - rect.height - m);
+    setMenuPos({ left, top, opacity: 1 });
+  }, [contextMenu]);
+
+  const handleBulkRestore = (ids: number[]) => {
+    for (const id of ids) {
+      restore.mutate({ id }, { onSuccess: () => { invalidate(); }, onError: () => toast({ title: t("common.error"), variant: "destructive" }) });
+    }
+    setSelectedIds(new Set());
+    setContextMenu(null);
+    toast({ title: t("junk.restored"), description: `${ids.length} mail(s)` });
+  };
+
+  const handleBulkDelete = (ids: number[]) => {
+    for (const id of ids) {
+      permDelete.mutate({ id }, { onSuccess: () => { invalidate(); }, onError: () => toast({ title: t("common.error"), variant: "destructive" }) });
+    }
+    setSelectedIds(new Set());
+    setContextMenu(null);
+    toast({ title: t("junk.deleted"), description: `${ids.length} mail(s)` });
+  };
+
+  const handleBulkBlock = (ids: number[]) => {
+    let ok = 0;
+    for (const id of ids) {
+      const em = emails.find((e) => e.id === id) as any;
+      const addr = (em?.senderEmail || "").trim();
+      if (!addr || !firstConnectionId) continue;
+      blockSender.mutate({ data: { email: addr, connectionId: firstConnectionId, scope: "all_accounts" } }, {
+        onError: () => toast({ title: t("junk.blockFailed"), variant: "destructive" }),
+      });
+      ok++;
+    }
+    setSelectedIds(new Set());
+    setContextMenu(null);
+    if (ok > 0) toast({ title: t("junk.blocked"), description: `${ok} expéditeur(s)` });
   };
 
   const handleEmpty = () => {
@@ -501,14 +638,49 @@ export default function Indesirables() {
             <div>
               {visible.map((email: any) => {
                 const risk = getRisk(email);
+                const isSelected = selectedIds.has(email.id);
                 return (
                   <div
                     key={email.id}
+                    data-row-id={email.id}
                     title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${new Date(email.createdAt).toLocaleString()}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
-                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 hover:bg-white/[0.03] transition-colors ${
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
                       risk === "veryHigh" ? "border-l-red-500/70" : risk === "medium" ? "border-l-amber-500/60" : "border-l-transparent"
-                    }`}
-                    onClick={() => setSelectedEmailId(email.id)}
+                    } ${isSelected ? "bg-primary/[0.10]" : "hover:bg-white/[0.03]"}`}
+                    onMouseDown={(e) => {
+                      if (e.button !== 0) return;
+                      isDraggingRef.current = true;
+                      didDragRef.current = false;
+                      dragStartIdRef.current = email.id;
+                      dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+                      const additive = e.metaKey || e.ctrlKey || e.shiftKey;
+                      preSelectRef.current = additive ? new Set(selectedIds) : new Set<number>();
+                      anchorWasSelectedRef.current = selectedIds.has(email.id);
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      let ids: number[];
+                      if (selectedIds.has(email.id) && selectedIds.size > 0) {
+                        ids = Array.from(selectedIds);
+                      } else {
+                        ids = [email.id];
+                        setSelectedIds(new Set([email.id]));
+                      }
+                      setContextMenu({ x: e.clientX, y: e.clientY, ids });
+                    }}
+                    onClick={(e) => {
+                      if (didDragRef.current) return;
+                      if (e.metaKey || e.ctrlKey || e.shiftKey) {
+                        e.preventDefault();
+                        const next = new Set(selectedIds);
+                        if (next.has(email.id)) next.delete(email.id);
+                        else next.add(email.id);
+                        setSelectedIds(next);
+                        return;
+                      }
+                      if (selectedIds.size > 0) setSelectedIds(new Set());
+                      setSelectedEmailId(email.id);
+                    }}
                   >
                     <div className="w-4 flex items-center justify-center shrink-0">
                       {risk !== "low" && (
@@ -561,6 +733,50 @@ export default function Indesirables() {
           </>
         )}
       </div>
+
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          style={{
+            position: "fixed",
+            left: menuPos.left,
+            top: menuPos.top,
+            opacity: menuPos.opacity,
+            zIndex: 9999,
+            maxHeight: "calc(100vh - 16px)",
+            overflowY: "auto",
+          }}
+          className="min-w-[220px] max-w-[280px] rounded-md border border-border bg-popover shadow-lg py-1"
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <div className="px-3 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground border-b border-border/60">
+            {contextMenu.ids.length} {contextMenu.ids.length > 1 ? "mails" : "mail"}
+          </div>
+          <button
+            className="w-full text-left px-3 py-1.5 text-[12px] text-foreground hover:bg-foreground/[0.06] flex items-center gap-2"
+            onClick={() => handleBulkRestore(contextMenu.ids)}
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            {t("junk.restore")}
+          </button>
+          <button
+            className="w-full text-left px-3 py-1.5 text-[12px] text-amber-300 hover:bg-amber-500/[0.10] flex items-center gap-2"
+            onClick={() => handleBulkBlock(contextMenu.ids)}
+            disabled={blockSender.isPending}
+          >
+            <ShieldX className="w-3.5 h-3.5" />
+            {t("junk.blockSender")}
+          </button>
+          <div className="my-1 border-t border-border/60" />
+          <button
+            className="w-full text-left px-3 py-1.5 text-[12px] text-red-400 hover:bg-red-500/[0.10] flex items-center gap-2"
+            onClick={() => handleBulkDelete(contextMenu.ids)}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {t("junk.permanentDelete")}
+          </button>
+        </div>
+      )}
 
       <AlertDialog open={emptyConfirmOpen} onOpenChange={setEmptyConfirmOpen}>
         <AlertDialogContent>
