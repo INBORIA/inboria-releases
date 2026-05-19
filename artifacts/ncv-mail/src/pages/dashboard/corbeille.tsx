@@ -131,6 +131,7 @@ export default function Corbeille() {
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const preSelectRef = useRef<Set<number>>(new Set());
 
   const getRowIdFromPoint = (y: number, x: number): number | null => {
@@ -146,7 +147,16 @@ export default function Corbeille() {
     if (!isDraggingRef.current && selectedIds.size === 0 && !contextMenu) return;
     const onMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
-      didDragRef.current = true;
+      // Seuil 5px : tant qu'on n'a pas bougé d'au moins 5px, on considère
+      // que c'est un clic simple (qui ouvrira le mail au mouseup), pas un
+      // drag de sélection. Sans ça, le moindre tremblement du doigt
+      // déclenchait une sélection involontaire.
+      if (!didDragRef.current && dragStartPosRef.current) {
+        const dx = Math.abs(e.clientX - dragStartPosRef.current.x);
+        const dy = Math.abs(e.clientY - dragStartPosRef.current.y);
+        if (dx < 5 && dy < 5) return;
+        didDragRef.current = true;
+      }
       const id = getRowIdFromPoint(e.clientY, e.clientX);
       if (id == null || dragStartIdRef.current == null) return;
       const ids = emails.map((m: any) => m.id);
@@ -347,7 +357,7 @@ export default function Corbeille() {
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.backToInbox", "Retour à la Réception")}
+              {t("common.back", "Retour")}
             </Button>
           </Link>
         </div>
@@ -382,40 +392,6 @@ export default function Corbeille() {
           </div>
         ) : (
           <>
-            {/* Barre d'actions groupées — apparaît dès qu'au moins 1 mail est sélectionné. */}
-            {selectedIds.size > 0 && (
-              <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 mb-2 bg-[#0d1218]/95 backdrop-blur border-b border-border flex items-center gap-2">
-                <span className="text-[12px] text-white font-medium">
-                  {selectedIds.size} {t("trash.selected", "sélectionné(s)")}
-                </span>
-                <span className="w-px h-4 bg-border mx-1" />
-                <Button
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px]"
-                  onClick={() => handleBulkRestore(Array.from(selectedIds))}
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  {t("trash.restore")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/80 hover:text-red-400 hover:bg-red-500/[0.08]"
-                  onClick={() => handleBulkDelete(Array.from(selectedIds))}
-                >
-                  <Trash2 className="w-3 h-3" />
-                  {t("trash.permanentDelete")}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-[11px] text-[#b8c5d6] hover:text-white ml-auto"
-                  onClick={() => setSelectedIds(new Set())}
-                >
-                  {t("common.cancel", "Annuler")}
-                </Button>
-              </div>
-            )}
             <div ref={listContainerRef}>
               {emails.map((email: any) => {
                 const isSelected = selectedIds.has(email.id);
@@ -424,27 +400,27 @@ export default function Corbeille() {
                     key={email.id}
                     data-row-id={email.id}
                     title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${new Date(email.createdAt).toLocaleString()}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
-                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
-                      isSelected ? "border-l-primary bg-primary/[0.10]" : "border-l-transparent hover:bg-white/[0.03]"
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-border/40 transition-colors ${
+                      isSelected ? "bg-primary/[0.10]" : "hover:bg-white/[0.03]"
                     }`}
                     onMouseDown={(e) => {
                       if (e.button !== 0) return;
-                      // Démarre le drag de sélection. Si Cmd/Ctrl/Shift, on
-                      // garde la sélection précédente, sinon on repart à zéro.
+                      // On arme le drag mais on NE sélectionne PAS encore :
+                      // tant qu'aucun mouvement n'est détecté, c'est un clic
+                      // simple qui doit ouvrir le mail. La sélection ne
+                      // démarre qu'au 1er mousemove (seuil 5px).
                       isDraggingRef.current = true;
                       didDragRef.current = false;
                       dragStartIdRef.current = email.id;
+                      dragStartPosRef.current = { x: e.clientX, y: e.clientY };
                       const additive = e.metaKey || e.ctrlKey || e.shiftKey;
-                      const base = additive ? new Set(selectedIds) : new Set<number>();
-                      base.add(email.id);
                       preSelectRef.current = additive ? new Set(selectedIds) : new Set<number>();
-                      setSelectedIds(base);
                     }}
                     onClick={(e) => {
-                      // Pas d'ouverture si on vient de drag-sélectionner, ou
-                      // si on a déjà une sélection en cours.
+                      // Pas d'ouverture si on vient juste de drag-sélectionner.
                       if (didDragRef.current) return;
-                      if (selectedIds.size > 0) {
+                      // Cmd/Ctrl/Shift + clic = toggle dans la sélection
+                      if (e.metaKey || e.ctrlKey || e.shiftKey) {
                         e.preventDefault();
                         const next = new Set(selectedIds);
                         if (next.has(email.id)) next.delete(email.id);
@@ -452,6 +428,8 @@ export default function Corbeille() {
                         setSelectedIds(next);
                         return;
                       }
+                      // Clic simple = ouvre le mail (et vide la sélection)
+                      if (selectedIds.size > 0) setSelectedIds(new Set());
                       setSelectedEmailId(email.id);
                     }}
                     onContextMenu={(e) => {
