@@ -3430,7 +3430,7 @@ export default function Dashboard() {
     limit: 200,
     ...(crmFilter ? { crmFilter } : {}),
     ...(smartSort ? { sort: "smart" as const } : {}),
-  }, { query: { placeholderData: (prev: any) => prev } as any });
+  }, { query: { placeholderData: (prev: any) => prev, staleTime: 120_000 } as any });
 
   useEffect(() => {
     if (emailsData) {
@@ -4011,6 +4011,37 @@ export default function Dashboard() {
       window.scrollTo({ top: 0 });
     }
   }, [selectedEmailId]);
+
+  // Prefetch agressif des 5 premiers mails dès que la liste est chargée.
+  // On le fait à l'idle pour ne pas gêner la navigation. Résultat : quand
+  // l'utilisateur clique sur l'un des premiers mails (ce qui arrive 80% du
+  // temps), c'est déjà en cache → ouverture instantanée.
+  useEffect(() => {
+    if (!emails || emails.length === 0) return;
+    const top = emails.slice(0, 5).map((e: any) => Number(e.id));
+    const schedule = (window as any).requestIdleCallback
+      ? (cb: () => void) => (window as any).requestIdleCallback(cb, { timeout: 1500 })
+      : (cb: () => void) => window.setTimeout(cb, 300);
+    const handle = schedule(() => { top.forEach((id) => handlePrefetchEmail(id)); });
+    return () => {
+      if ((window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else window.clearTimeout(handle);
+    };
+  }, [emails]);
+
+  // Prefetch des mails voisins (suivant + précédent) quand un mail est ouvert.
+  // Permet la navigation J/K instantanée style Superhuman : l'utilisateur ouvre
+  // un mail, on charge silencieusement les deux voisins en arrière-plan. Quand
+  // il passe au suivant, c'est déjà en cache → ouverture 0 ms.
+  useEffect(() => {
+    if (!selectedEmailId || !emails || emails.length === 0) return;
+    const currentIdx = emails.findIndex((e: any) => e.id === selectedEmailId);
+    if (currentIdx === -1) return;
+    const neighbors: number[] = [];
+    if (currentIdx + 1 < emails.length) neighbors.push(Number(emails[currentIdx + 1].id));
+    if (currentIdx - 1 >= 0) neighbors.push(Number(emails[currentIdx - 1].id));
+    neighbors.forEach((id) => handlePrefetchEmail(id));
+  }, [selectedEmailId, emails]);
 
   // Auto-marquage comme lu à l'ouverture (style Outlook/Superhuman) :
   // dès que l'email ouvert est non-lu, on bascule son statut en "read"
