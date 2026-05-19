@@ -133,10 +133,15 @@ export default function Corbeille() {
   const dragStartIdRef = useRef<number | null>(null);
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const preSelectRef = useRef<Set<number>>(new Set());
-  // Au mousedown on capture si la ligne d'ancrage était déjà sélectionnée.
-  // Si oui → le drag DÉSÉLECTIONNE la plage. Sinon → le drag SÉLECTIONNE
-  // la plage. Comportement type Mac Finder / Superhuman.
   const anchorWasSelectedRef = useRef<boolean>(false);
+  // Optims drag-select : snapshot ids 1× au mousedown (Map id→index O(1)),
+  // throttle rAF du mousemove, skip si hover id inchangé.
+  const dragIdsSnapshotRef = useRef<number[]>([]);
+  const dragIdIndexRef = useRef<Map<number, number>>(new Map());
+  const moveRaf = useRef<number>(0);
+  const lastMouseXRef = useRef(0);
+  const lastMouseYRef = useRef(0);
+  const lastHoverIdRef = useRef<number | null>(null);
 
   const getRowIdFromPoint = (y: number, x: number): number | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -148,54 +153,53 @@ export default function Corbeille() {
   };
 
   useEffect(() => {
-    // Toujours attacher les listeners — onMove sort tôt si pas en drag.
-    // Sans ça, comme isDraggingRef est un ref (pas state), l'effet ne se
-    // re-lance pas quand le drag démarre et les listeners ne sont jamais
-    // attachés → la sélection au drag ne fonctionnait pas du tout.
+    const processMove = () => {
+      moveRaf.current = 0;
+      if (!isDraggingRef.current) return;
+      const id = getRowIdFromPoint(lastMouseYRef.current, lastMouseXRef.current);
+      if (id == null || dragStartIdRef.current == null) return;
+      if (id === lastHoverIdRef.current) return;
+      lastHoverIdRef.current = id;
+      const idx = dragIdIndexRef.current;
+      const ids = dragIdsSnapshotRef.current;
+      const a = idx.get(dragStartIdRef.current) ?? -1;
+      const b = idx.get(id) ?? -1;
+      if (a < 0 || b < 0) return;
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const next = new Set(preSelectRef.current);
+      if (anchorWasSelectedRef.current) {
+        for (let i = lo; i <= hi; i++) next.delete(ids[i]);
+      } else if (a !== b) {
+        for (let i = lo; i <= hi; i++) next.add(ids[i]);
+      }
+      setSelectedIds(next);
+    };
     const onMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
-      // Seuil 5px : tant qu'on n'a pas bougé d'au moins 5px, on considère
-      // que c'est un clic simple (qui ouvrira le mail au mouseup), pas un
-      // drag de sélection. Sans ça, le moindre tremblement du doigt
-      // déclenchait une sélection involontaire.
       if (!didDragRef.current && dragStartPosRef.current) {
         const dx = Math.abs(e.clientX - dragStartPosRef.current.x);
         const dy = Math.abs(e.clientY - dragStartPosRef.current.y);
         if (dx < 5 && dy < 5) return;
         didDragRef.current = true;
       }
-      const id = getRowIdFromPoint(e.clientY, e.clientX);
-      if (id == null || dragStartIdRef.current == null) return;
-      const ids = emails.map((m: any) => m.id);
-      const a = ids.indexOf(dragStartIdRef.current);
-      const b = ids.indexOf(id);
-      if (a < 0 || b < 0) return;
-      const [lo, hi] = a < b ? [a, b] : [b, a];
-      const next = new Set(preSelectRef.current);
-      if (anchorWasSelectedRef.current) {
-        // Drag depuis une ligne déjà sélectionnée → on RETIRE la plage.
-        for (let i = lo; i <= hi; i++) next.delete(ids[i]);
-      } else if (a !== b) {
-        // Drag depuis une ligne non sélectionnée → on AJOUTE la plage.
-        // Mais si la tête est revenue sur l'ancre (a === b), on ne sélectionne
-        // RIEN — comme ça un drag 1→10 puis 10→1 désélectionne TOUT (y compris
-        // la ligne 1), au lieu de garder l'ancre coincée en sélection.
-        for (let i = lo; i <= hi; i++) next.add(ids[i]);
-      }
-      setSelectedIds(next);
+      lastMouseXRef.current = e.clientX;
+      lastMouseYRef.current = e.clientY;
+      if (moveRaf.current === 0) moveRaf.current = requestAnimationFrame(processMove);
     };
     const onUp = () => {
       isDraggingRef.current = false;
       dragStartIdRef.current = null;
+      if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
       setTimeout(() => { didDragRef.current = false; }, 0);
     };
-    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseup", onUp);
     return () => {
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
+      if (moveRaf.current !== 0) cancelAnimationFrame(moveRaf.current);
     };
-  }, [emails, selectedIds.size, contextMenu]);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -429,8 +433,20 @@ export default function Corbeille() {
                       didDragRef.current = false;
                       dragStartIdRef.current = email.id;
                       dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+                      lastHoverIdRef.current = null;
+                      anchorWasSelectedRef.current = selectedIds.has(email.id);
                       const additive = e.metaKey || e.ctrlKey || e.shiftKey;
                       preSelectRef.current = additive ? new Set(selectedIds) : new Set<number>();
+                      // Snapshot ordre courant des ids visibles (depuis le DOM).
+                      const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
+                      const ids: number[] = [];
+                      const idx = new Map<number, number>();
+                      rows.forEach((r, i) => {
+                        const v = Number(r.dataset.rowId);
+                        if (Number.isFinite(v)) { ids.push(v); idx.set(v, i); }
+                      });
+                      dragIdsSnapshotRef.current = ids;
+                      dragIdIndexRef.current = idx;
                     }}
                     onClick={(e) => {
                       // Pas d'ouverture si on vient juste de drag-sélectionner.

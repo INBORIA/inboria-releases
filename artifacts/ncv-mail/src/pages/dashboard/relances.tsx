@@ -173,27 +173,34 @@ export default function Relances() {
     return () => document.removeEventListener("mousedown", handler);
   }, [selectedIds.size]);
 
-  // ─── Drag-select ─────────────────────────────────────────────────────────
+  // ─── Drag-select — optimisé (snapshot DOM 1× + throttle rAF) ───
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<string | null>(null);
   const preSelectRef = useRef<Set<string>>(new Set());
   const autoScrollRaf = useRef<number>(0);
+  const moveRaf = useRef<number>(0);
   const lastMouseYRef = useRef(0);
+  const lastMouseXRef = useRef(0);
+  const dragIdsSnapshotRef = useRef<string[]>([]);
+  const dragIdIndexRef = useRef<Map<string, number>>(new Map());
+  const lastHoverIdRef = useRef<string | null>(null);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): string | null => {
     const el = document.elementFromPoint(x, y);
     if (!el) return null;
-    const row = (el as HTMLElement).closest?.("[data-row-id]");
+    const row = (el as HTMLElement).closest?.("[data-followup-row]");
     if (!row) return null;
     return row.getAttribute("data-row-id");
   }, []);
 
   const selectRange = useCallback((currentId: string) => {
-    const rows = Array.from(document.querySelectorAll("[data-followup-row][data-row-id]"));
-    const ids = rows.map((r) => r.getAttribute("data-row-id")!);
-    const startIdx = ids.indexOf(dragStartIdRef.current!);
-    const endIdx = ids.indexOf(currentId);
+    if (currentId === lastHoverIdRef.current) return;
+    lastHoverIdRef.current = currentId;
+    const ids = dragIdsSnapshotRef.current;
+    const idx = dragIdIndexRef.current;
+    const startIdx = idx.get(dragStartIdRef.current!) ?? -1;
+    const endIdx = idx.get(currentId) ?? -1;
     if (startIdx === -1 || endIdx === -1) return;
     const keep = new Set(preSelectRef.current);
     if (startIdx !== endIdx) {
@@ -207,15 +214,23 @@ export default function Relances() {
   useEffect(() => {
     const threshold = 60;
     const speed = 14;
+    const processMove = () => {
+      moveRaf.current = 0;
+      if (!isDraggingRef.current) return;
+      const hoverId = getRowIdFromPoint(lastMouseYRef.current, lastMouseXRef.current);
+      if (hoverId !== null) {
+        if (!didDragRef.current) didDragRef.current = true;
+        selectRange(hoverId);
+      }
+    };
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       lastMouseYRef.current = e.clientY;
-      if (!didDragRef.current) didDragRef.current = true;
-      const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
-      if (hoverId !== null) selectRange(hoverId);
-      cancelAnimationFrame(autoScrollRaf.current);
+      lastMouseXRef.current = e.clientX;
+      if (moveRaf.current === 0) moveRaf.current = requestAnimationFrame(processMove);
+      if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
-        if (!isDraggingRef.current) return;
+        if (!isDraggingRef.current) { autoScrollRaf.current = 0; return; }
         const y = lastMouseYRef.current;
         if (y > window.innerHeight - threshold) {
           window.scrollBy(0, speed);
@@ -227,22 +242,36 @@ export default function Relances() {
           const id = getRowIdFromPoint(y, window.innerWidth / 2);
           if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
+        } else {
+          autoScrollRaf.current = 0;
         }
       };
-      scroll();
+      autoScrollRaf.current = requestAnimationFrame(scroll);
     };
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
+      if (moveRaf.current !== 0) cancelAnimationFrame(moveRaf.current);
+    };
   }, [getRowIdFromPoint, selectRange]);
 
   const handleDragSelectStart = useCallback((id: string) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
+    lastHoverIdRef.current = null;
+    const rows = document.querySelectorAll<HTMLElement>("[data-followup-row][data-row-id]");
+    const ids: string[] = [];
+    const idx = new Map<string, number>();
+    rows.forEach((r, i) => { const v = r.getAttribute("data-row-id"); if (v != null) { ids.push(v); idx.set(v, i); } });
+    dragIdsSnapshotRef.current = ids;
+    dragIdIndexRef.current = idx;
     setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
-      cancelAnimationFrame(autoScrollRaf.current);
+      if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
+      if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
       document.removeEventListener("mouseup", handleMouseUp);
     };
     document.addEventListener("mouseup", handleMouseUp);
