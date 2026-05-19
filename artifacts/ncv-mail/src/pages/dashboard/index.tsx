@@ -3975,7 +3975,15 @@ export default function Dashboard() {
   const dragStartIdRef = useRef<number | null>(null);
   const preSelectRef = useRef<Set<number>>(new Set());
   const autoScrollRaf = useRef<number>(0);
+  const moveRaf = useRef<number>(0);
   const lastMouseYRef = useRef(0);
+  const lastMouseXRef = useRef(0);
+  // Snapshot des IDs visibles au moment du mousedown — évite un
+  // querySelectorAll coûteux à chaque mousemove (cause principale du
+  // drag-select laggy avec 100+ lignes).
+  const dragIdsSnapshotRef = useRef<number[]>([]);
+  const dragIdIndexRef = useRef<Map<number, number>>(new Map());
+  const lastHoverIdRef = useRef<number | null>(null);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
     const el = document.elementFromPoint(x, y);
@@ -3987,10 +3995,12 @@ export default function Dashboard() {
   }, []);
 
   const selectRange = useCallback((currentId: number) => {
-    const rows = Array.from(document.querySelectorAll("[data-row-id]"));
-    const ids = rows.map((r) => Number(r.getAttribute("data-row-id")));
-    const startIdx = ids.indexOf(dragStartIdRef.current!);
-    const endIdx = ids.indexOf(currentId);
+    if (currentId === lastHoverIdRef.current) return; // pas de changement → skip setState
+    lastHoverIdRef.current = currentId;
+    const ids = dragIdsSnapshotRef.current;
+    const idx = dragIdIndexRef.current;
+    const startIdx = idx.get(dragStartIdRef.current!) ?? -1;
+    const endIdx = idx.get(currentId) ?? -1;
     if (startIdx === -1 || endIdx === -1) return;
     const keep = new Set(preSelectRef.current);
     if (startIdx !== endIdx) {
@@ -4005,20 +4015,31 @@ export default function Dashboard() {
     const threshold = 60;
     const speed = 14;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const processMove = () => {
+      moveRaf.current = 0;
       if (!isDraggingRef.current) return;
-      lastMouseYRef.current = e.clientY;
-      const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
-      // Ne marquer un "drag" que si la souris a changé de ligne — sinon
-      // les micro-vibrations pendant un simple clic font perdre le onClick.
+      const y = lastMouseYRef.current;
+      const x = lastMouseXRef.current;
+      const hoverId = getRowIdFromPoint(y, x);
       if (hoverId !== null && hoverId !== dragStartIdRef.current && !didDragRef.current) {
         didDragRef.current = true;
       }
       if (hoverId !== null && didDragRef.current) selectRange(hoverId);
+    };
 
-      cancelAnimationFrame(autoScrollRaf.current);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      lastMouseYRef.current = e.clientY;
+      lastMouseXRef.current = e.clientX;
+      // Throttle via rAF — coalesce les events trop rapides, ne traite
+      // qu'1 mousemove par frame (~60Hz) plutôt que ~120-200/sec.
+      if (moveRaf.current === 0) {
+        moveRaf.current = requestAnimationFrame(processMove);
+      }
+
+      if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
-        if (!isDraggingRef.current) return;
+        if (!isDraggingRef.current) { autoScrollRaf.current = 0; return; }
         const y = lastMouseYRef.current;
         if (y > window.innerHeight - threshold) {
           window.scrollBy(0, speed);
@@ -4030,13 +4051,19 @@ export default function Dashboard() {
           const id = getRowIdFromPoint(y, window.innerWidth / 2);
           if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
+        } else {
+          autoScrollRaf.current = 0;
         }
       };
-      scroll();
+      autoScrollRaf.current = requestAnimationFrame(scroll);
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      if (autoScrollRaf.current !== 0) cancelAnimationFrame(autoScrollRaf.current);
+      if (moveRaf.current !== 0) cancelAnimationFrame(moveRaf.current);
+    };
   }, [getRowIdFromPoint, selectRange]);
 
   // Préchargement du détail au survol — quand l'utilisateur passe la
@@ -4068,10 +4095,23 @@ export default function Dashboard() {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
+    lastHoverIdRef.current = null;
+    // Snapshot 1× au démarrage du drag — toutes les lignes visibles dans
+    // l'ordre du DOM. Évite un querySelectorAll par mousemove.
+    const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
+    const ids: number[] = [];
+    const idx = new Map<number, number>();
+    rows.forEach((r, i) => {
+      const n = Number(r.getAttribute("data-row-id"));
+      if (!isNaN(n)) { ids.push(n); idx.set(n, i); }
+    });
+    dragIdsSnapshotRef.current = ids;
+    dragIdIndexRef.current = idx;
     setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
-      cancelAnimationFrame(autoScrollRaf.current);
+      if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
+      if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
       document.removeEventListener("mouseup", handleMouseUp);
     };
     document.addEventListener("mouseup", handleMouseUp);
