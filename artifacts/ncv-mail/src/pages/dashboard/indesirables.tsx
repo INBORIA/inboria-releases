@@ -23,7 +23,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
-import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download } from "lucide-react";
+import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download, Check } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -682,6 +682,25 @@ export default function Indesirables() {
                       setSelectedEmailId(email.id);
                     }}
                   >
+                    {/* Case à cocher — visible en mode sélection ou si la ligne est sélectionnée */}
+                    {(selectedIds.size > 0 || isSelected) ? (
+                      <div
+                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                          isSelected ? "bg-primary border-primary" : "border-[#3a4452] bg-transparent"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const next = new Set(selectedIds);
+                          if (next.has(email.id)) next.delete(email.id);
+                          else next.add(email.id);
+                          setSelectedIds(next);
+                        }}
+                      >
+                        {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                      </div>
+                    ) : (
+                      <div className="w-4 shrink-0" />
+                    )}
                     <div className="w-4 flex items-center justify-center shrink-0">
                       {risk !== "low" && (
                         <span className={`w-1.5 h-1.5 rounded-full ${RISK_DOT[risk]}`} title={t(`junk.risk.${risk}`)} />

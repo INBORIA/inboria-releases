@@ -17,7 +17,7 @@ import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, v
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { ArrowLeft, RotateCcw, Trash2, Clock, Loader2, Inbox, Download } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trash2, Clock, Loader2, Inbox, Download, Check } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
