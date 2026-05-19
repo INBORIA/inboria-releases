@@ -117,6 +117,8 @@ interface MailPageHeaderProps {
   currentTab: CurrentTab;
   searchValue?: string;
   onSearchChange?: (v: string) => void;
+  showReadingPaneToggle?: boolean;
+  showHeaderCollapseToggle?: boolean;
 }
 
 function useDebounce<T>(value: T, delay = 300): T {
@@ -132,6 +134,8 @@ export function MailPageHeader({
   currentTab,
   searchValue,
   onSearchChange,
+  showReadingPaneToggle = true,
+  showHeaderCollapseToggle = true,
 }: MailPageHeaderProps) {
   const { t } = useTranslation();
   const qc = useQueryClient();
@@ -567,53 +571,57 @@ export function MailPageHeader({
           </DialogContent>
         </Dialog>
 
-        <button
-          type="button"
-          onClick={() => toggleReadingPane()}
-          className={`inline-flex items-center justify-center h-9 w-9 rounded-md border border-[#1f2630] shrink-0 ${readingPaneEnabled ? "text-primary bg-primary/10 border-primary/30" : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"}`}
-          title={
-            readingPaneEnabled
-              ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
-              : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
-          }
-          aria-label={
-            readingPaneEnabled
-              ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
-              : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
-          }
-          aria-pressed={readingPaneEnabled}
-          data-testid="mail-header-toggle-reading-pane"
-        >
-          {readingPaneEnabled ? (
-            <PanelRightClose className="w-3.5 h-3.5" />
-          ) : (
-            <PanelRight className="w-3.5 h-3.5" />
-          )}
-        </button>
+        {showReadingPaneToggle && (
+          <button
+            type="button"
+            onClick={() => toggleReadingPane()}
+            className={`inline-flex items-center justify-center h-9 w-9 rounded-md border border-[#1f2630] shrink-0 ${readingPaneEnabled ? "text-primary bg-primary/10 border-primary/30" : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"}`}
+            title={
+              readingPaneEnabled
+                ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
+                : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
+            }
+            aria-label={
+              readingPaneEnabled
+                ? t("inbox.readingPaneOff", "Désactiver le volet de lecture")
+                : t("inbox.readingPaneOn", "Activer le volet de lecture (3 colonnes)")
+            }
+            aria-pressed={readingPaneEnabled}
+            data-testid="mail-header-toggle-reading-pane"
+          >
+            {readingPaneEnabled ? (
+              <PanelRightClose className="w-3.5 h-3.5" />
+            ) : (
+              <PanelRight className="w-3.5 h-3.5" />
+            )}
+          </button>
+        )}
 
-        <button
-          type="button"
-          onClick={toggleHeaderCollapsed}
-          className="inline-flex items-center justify-center h-9 w-9 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-[#1f2630] shrink-0"
-          title={
-            headerCollapsed
-              ? t("inbox.headerExpand", "Afficher onglets et filtres")
-              : t("inbox.headerCollapse", "Masquer onglets et filtres")
-          }
-          aria-label={
-            headerCollapsed
-              ? t("inbox.headerExpand", "Afficher onglets et filtres")
-              : t("inbox.headerCollapse", "Masquer onglets et filtres")
-          }
-          aria-expanded={!headerCollapsed}
-          data-testid="mail-header-toggle-collapse"
-        >
-          {headerCollapsed ? (
-            <ChevronsUpDown className="w-3.5 h-3.5" />
-          ) : (
-            <ChevronsDownUp className="w-3.5 h-3.5" />
-          )}
-        </button>
+        {showHeaderCollapseToggle && (
+          <button
+            type="button"
+            onClick={toggleHeaderCollapsed}
+            className="inline-flex items-center justify-center h-9 w-9 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-[#1f2630] shrink-0"
+            title={
+              headerCollapsed
+                ? t("inbox.headerExpand", "Afficher onglets et filtres")
+                : t("inbox.headerCollapse", "Masquer onglets et filtres")
+            }
+            aria-label={
+              headerCollapsed
+                ? t("inbox.headerExpand", "Afficher onglets et filtres")
+                : t("inbox.headerCollapse", "Masquer onglets et filtres")
+            }
+            aria-expanded={!headerCollapsed}
+            data-testid="mail-header-toggle-collapse"
+          >
+            {headerCollapsed ? (
+              <ChevronsUpDown className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronsDownUp className="w-3.5 h-3.5" />
+            )}
+          </button>
+        )}
       </div>
 
       {!headerCollapsed && (

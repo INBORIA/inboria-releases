@@ -468,7 +468,7 @@ export default function Archives() {
   if (selectedCategory && selectedEmails) {
     return (
       <DashboardLayout>
-        <MailPageHeader currentTab="archives" />
+        <MailPageHeader currentTab="archives" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center gap-3 mb-4">
             <Button
@@ -766,7 +766,7 @@ export default function Archives() {
   // ─── Vue Racine — grille de catégories ────────────────────────────────
   return (
     <DashboardLayout>
-      <MailPageHeader currentTab="archives" />
+      <MailPageHeader currentTab="archives" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="mb-5">

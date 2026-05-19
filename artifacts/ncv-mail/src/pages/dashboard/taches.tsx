@@ -632,6 +632,8 @@ export default function Taches() {
           currentTab="taches"
           searchValue={headerSearch}
           onSearchChange={setHeaderSearch}
+          showReadingPaneToggle={false}
+          showHeaderCollapseToggle={false}
         />
       )}
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-[1600px]">

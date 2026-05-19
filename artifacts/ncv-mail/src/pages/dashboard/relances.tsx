@@ -569,7 +569,7 @@ export default function Relances() {
 
   return (
     <DashboardLayout>
-      <MailPageHeader currentTab="relances" />
+      <MailPageHeader currentTab="relances" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-3">
         <BackToInboxButton />
         <div>
