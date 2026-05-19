@@ -61,15 +61,6 @@ export default function ParametresAdministration() {
       testId: "admin-card-sla",
     },
     {
-      href: "/dashboard/parametres/regles",
-      icon: Tag,
-      titleKey: "settings.admin.rules",
-      titleFallback: "Règles & catégories",
-      descKey: "settings.admin.rulesDesc",
-      descFallback: "Règles d'automatisation et catégories partagées",
-      testId: "admin-card-rules",
-    },
-    {
       href: "/dashboard/parametres/vie-privee",
       icon: Lock,
       titleKey: "settings.admin.privacy",
@@ -77,24 +68,6 @@ export default function ParametresAdministration() {
       descKey: "settings.admin.privacyDesc",
       descFallback: "Journal des accès admin aux dossiers équipe",
       testId: "admin-card-privacy",
-    },
-    {
-      href: "/dashboard/bilan",
-      icon: BarChart3,
-      titleKey: "settings.admin.bilan",
-      titleFallback: "Bilan équipe",
-      descKey: "settings.admin.bilanDesc",
-      descFallback: "Statistiques agrégées et performances de l'équipe",
-      testId: "admin-card-bilan",
-    },
-    {
-      href: "/dashboard/classement",
-      icon: Trophy,
-      titleKey: "settings.admin.classement",
-      titleFallback: "Classement & dédoublonnage",
-      descKey: "settings.admin.classementDesc",
-      descFallback: "Classement contacts et fusion des doublons de l'org",
-      testId: "admin-card-classement",
     },
   ];
 
