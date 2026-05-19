@@ -96,7 +96,7 @@ export default function Parametres() {
             titleKey: "settings.hub.developers",
             titleFallback: "Pour développeurs",
             descKey: "settings.hub.developersDesc",
-            descFallback: "API, Webhooks, SLA",
+            descFallback: "API, Webhooks",
             testId: "hub-card-developers",
           },
         ]

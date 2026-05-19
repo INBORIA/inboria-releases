@@ -1226,7 +1226,7 @@
       "crm": "CRM",
       "crmDesc": "HubSpot, Pipedrive, Salesforce, Odoo",
       "developers": "Pour développeurs",
-      "developersDesc": "API, Webhooks, SLA",
+      "developersDesc": "API, Webhooks",
       "comingSoon": "Bientôt disponible",
       "salesforceDesc": "Synchronisation des contacts, comptes et opportunités Salesforce.",
       "salesforceSandbox": "Connecter une org Sandbox (test.salesforce.com)",
