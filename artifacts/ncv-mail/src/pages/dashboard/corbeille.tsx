@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import {
   useListEmails,
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Corbeille() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
