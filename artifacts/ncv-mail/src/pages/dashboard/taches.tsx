@@ -773,12 +773,8 @@ export default function Taches() {
                       data-email-row
                       data-row-id={task.id}
                       title={task.title + (task.emailSubject ? `\n— ${task.emailSubject}` : "")}
-                      className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-[#1f2937] transition-colors ${
-                        isOpen
-                          ? "border-l-transparent bg-white/[0.05]"
-                          : isTaskSelected
-                          ? "border-l-transparent bg-white/[0.05]"
-                          : "border-l-transparent hover:bg-white/[0.03]"
+                      className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-[#1f2937] transition-colors ${
+                        isOpen || isTaskSelected ? "bg-primary/[0.10]" : "hover:bg-white/[0.03]"
                       } ${isDone ? "opacity-50" : ""}`}
                       onClick={() => {
                         if (didDragRef.current) return;
