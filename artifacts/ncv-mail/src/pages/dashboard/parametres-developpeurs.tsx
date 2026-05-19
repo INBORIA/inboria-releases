@@ -3,7 +3,7 @@ import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Code2, Key, Webhook, Clock, ChevronRight, ArrowLeft } from "lucide-react";
+import { Code2, Key, Webhook, ChevronRight, ArrowLeft } from "lucide-react";
 
 interface DevCard {
   href: string;
@@ -38,15 +38,6 @@ export default function ParametresDeveloppeurs() {
       descFallback: "Notifications HTTP signées",
       testId: "dev-card-webhooks",
     },
-    {
-      href: "/dashboard/parametres/sla",
-      icon: Clock,
-      titleKey: "settings.slaCard",
-      titleFallback: "SLA boîtes partagées",
-      descKey: "settings.slaCardDesc",
-      descFallback: "Délais de réponse, alertes",
-      testId: "dev-card-sla",
-    },
   ];
 
   return (
@@ -65,7 +56,7 @@ export default function ParametresDeveloppeurs() {
             {t("settings.hub.developers", "Pour développeurs")}
           </h1>
           <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-            {t("settings.hub.developersDesc", "API, Webhooks, SLA")}
+            {t("settings.hub.developersDesc", "API publique et webhooks pour intégrations techniques")}
           </p>
         </div>
 

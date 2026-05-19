@@ -44,6 +44,7 @@ import ParametresCalendriers from "@/pages/dashboard/parametres-calendriers";
 import ParametresViePrivee from "@/pages/dashboard/parametres-vie-privee";
 import ParametresCrm from "@/pages/dashboard/parametres-crm";
 import ParametresDeveloppeurs from "@/pages/dashboard/parametres-developpeurs";
+import ParametresAdministration from "@/pages/dashboard/parametres-administration";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
 import Contacts from "@/pages/dashboard/contacts";
@@ -271,6 +272,7 @@ function Router() {
       <Route path="/dashboard/parametres/vie-privee" component={() => <ProtectedRoute component={ParametresViePrivee} />} />
       <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
       <Route path="/dashboard/parametres/developpeurs" component={() => <AdminOnlyRoute component={ParametresDeveloppeurs} />} />
+      <Route path="/dashboard/parametres/administration" component={() => <AdminOnlyRoute component={ParametresAdministration} />} />
       <Route path="/dashboard/parametres/templates" component={() => <AdminOnlyRoute component={Templates} />} />
       <Route path="/dashboard/parametres/regles" component={() => <AdminOnlyRoute component={Regles} />} />
       <Route path="/dashboard/parametres/sla" component={() => <AdminOnlyRoute component={ParametresSla} />} />

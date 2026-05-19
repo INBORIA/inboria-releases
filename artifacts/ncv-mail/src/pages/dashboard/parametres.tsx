@@ -34,6 +34,20 @@ export default function Parametres() {
       descFallback: "Profil, sécurité, comptes email, Inboria et notifications",
       testId: "hub-card-mon-compte",
     },
+    ...(isOrgAdmin
+      ? [
+          {
+            href: "/dashboard/parametres/administration",
+            icon: ShieldCheck,
+            titleKey: "settings.hub.administration",
+            titleFallback: "Administration",
+            descKey: "settings.hub.administrationDesc",
+            descFallback:
+              "Équipe, boîtes partagées, SLA, règles, audit — réglages admin",
+            testId: "hub-card-administration",
+          },
+        ]
+      : []),
     ...(isBusiness && isOrgAdmin
       ? [
           {
