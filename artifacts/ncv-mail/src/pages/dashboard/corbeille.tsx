@@ -175,8 +175,11 @@ export default function Corbeille() {
       if (anchorWasSelectedRef.current) {
         // Drag depuis une ligne déjà sélectionnée → on RETIRE la plage.
         for (let i = lo; i <= hi; i++) next.delete(ids[i]);
-      } else {
+      } else if (a !== b) {
         // Drag depuis une ligne non sélectionnée → on AJOUTE la plage.
+        // Mais si la tête est revenue sur l'ancre (a === b), on ne sélectionne
+        // RIEN — comme ça un drag 1→10 puis 10→1 désélectionne TOUT (y compris
+        // la ligne 1), au lieu de garder l'ancre coincée en sélection.
         for (let i = lo; i <= hi; i++) next.add(ids[i]);
       }
       setSelectedIds(next);
