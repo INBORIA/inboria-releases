@@ -346,6 +346,16 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
     setAppliedSig(newSig);
   }, [fromId, computeSig]);
 
+  // Wave perçue D séance 3 — Esc dans le panneau composer déclenche un
+  // event global "inbox-compose-minimize-request" qu'on écoute ici pour
+  // appeler onMinimize avec l'état courant du brouillon.
+  useEffect(() => {
+    if (!onMinimize) return;
+    const handler = () => onMinimize({ to, subject, body });
+    window.addEventListener("inbox-compose-minimize-request", handler as EventListener);
+    return () => window.removeEventListener("inbox-compose-minimize-request", handler as EventListener);
+  }, [onMinimize, to, subject, body]);
+
   return (
     <>
       <DialogHeader className="px-5 pt-4 pb-2 pr-4 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
@@ -3898,6 +3908,58 @@ export default function Dashboard() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Wave perçue D séance 3 — raccourcis clavier globaux style Superhuman.
+  // C = nouveau mail, R = reply, F = forward sur le mail ouvert. Esc dans
+  // le composer = minimise au lieu d'abandonner. On ignore quand un input,
+  // textarea ou élément contenteditable a le focus (sinon la touche serait
+  // capturée pendant la frappe normale).
+  useEffect(() => {
+    const isTypingTarget = (el: EventTarget | null) => {
+      const node = el as HTMLElement | null;
+      if (!node) return false;
+      const tag = (node.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return true;
+      if (node.isContentEditable) return true;
+      return false;
+    };
+    const handler = (e: KeyboardEvent) => {
+      // Esc dans le composer ouvert → minimise s'il y a du contenu
+      if (e.key === "Escape" && isComposeOpen) {
+        // On laisse Esc fonctionner normalement si l'utilisateur est en
+        // train d'éditer un champ (il peut vouloir juste blur). On agit
+        // uniquement si la cible n'est pas un input ou si elle est dans
+        // le panneau et qu'on a déjà tapé quelque chose.
+        const target = e.target as HTMLElement | null;
+        if (target?.closest?.('[role="dialog"]')) {
+          e.preventDefault();
+          // Ferme le panneau en minimisant. Le bouton ChevronDown du
+          // composer reçoit l'info via un événement personnalisé pour
+          // déclencher la même logique que le clic. Fallback : si pas
+          // de listener, ferme simplement.
+          window.dispatchEvent(new CustomEvent("inbox-compose-minimize-request"));
+        }
+        return;
+      }
+      // Pas de raccourci si frappe dans un champ
+      if (isTypingTarget(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const k = e.key.toLowerCase();
+      if (k === "c") {
+        e.preventDefault();
+        setComposePrefill(null);
+        setIsComposeOpen(true);
+      } else if (k === "r" && selectedEmailId) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: selectedEmailId } }));
+      } else if (k === "f" && selectedEmailId) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: selectedEmailId } }));
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [isComposeOpen, selectedEmailId]);
 
   useEffect(() => {
     if (selectedIds.size === 0) return;
