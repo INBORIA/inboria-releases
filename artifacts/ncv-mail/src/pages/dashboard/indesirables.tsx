@@ -715,9 +715,7 @@ export default function Indesirables() {
                     {/* Case à cocher — visible en mode sélection ou si la ligne est sélectionnée */}
                     {(selectedIds.size > 0 || isSelected) ? (
                       <div
-                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                          isSelected ? "bg-primary border-primary" : "border-[#3a4452] bg-transparent"
-                        }`}
+                        className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary shrink-0"
                         onClick={(e) => {
                           e.stopPropagation();
                           const next = new Set(selectedIds);
@@ -726,7 +724,7 @@ export default function Indesirables() {
                           setSelectedIds(next);
                         }}
                       >
-                        {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                        {isSelected && <Check className="w-3 h-3 text-primary" />}
                       </div>
                     ) : (
                       <div className="w-4 shrink-0" />

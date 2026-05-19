@@ -480,15 +480,9 @@ export default function Corbeille() {
                     {/* Case à cocher — visible en mode sélection ou si la ligne est sélectionnée */}
                     {(selectedIds.size > 0 || isSelected) ? (
                       <div
-                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                          isSelected ? "bg-primary border-primary" : "border-[#3a4452] bg-transparent"
-                        }`}
+                        className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary shrink-0"
                       >
-                        {isSelected && (
-                          <svg className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7 7a1 1 0 01-1.4 0l-3-3a1 1 0 011.4-1.4L9 11.6l6.3-6.3a1 1 0 011.4 0z" clipRule="evenodd" />
-                          </svg>
-                        )}
+                        {isSelected && <Check className="w-3 h-3 text-primary" />}
                       </div>
                     ) : (
                       <div className="w-4 shrink-0" />
