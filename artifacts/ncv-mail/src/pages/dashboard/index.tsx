@@ -3817,6 +3817,11 @@ export default function Dashboard() {
   }, []);
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  // Ref miroir de selectedIds — lecture synchrone dans handleDragSelectStart
+  // (l'updater de setSelectedIds peut être différé par React et donner
+  // lieu à des refs stales si on lit prev à l'intérieur).
+  const selectedIdsRef = useRef(selectedIds);
+  useEffect(() => { selectedIdsRef.current = selectedIds; }, [selectedIds]);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
   const [folderSubmenuOpen, setFolderSubmenuOpen] = useState(false);
@@ -4125,11 +4130,12 @@ export default function Dashboard() {
     dragStartIdRef.current = id;
     dragStartPosRef.current = { x, y };
     lastHoverIdRef.current = null;
-    setSelectedIds((prev) => {
-      anchorWasSelectedRef.current = prev.has(id);
-      preSelectRef.current = additive ? new Set(prev) : new Set<number>();
-      return prev;
-    });
+    // Lecture SYNCHRONE via ref miroir — l'updater de setSelectedIds peut
+    // être différé par React et laisser preSelect/anchorWasSelected stales
+    // au moment du 1er processMove.
+    const cur = selectedIdsRef.current;
+    anchorWasSelectedRef.current = cur.has(id);
+    preSelectRef.current = additive ? new Set(cur) : new Set<number>();
     // Snapshot ordre courant des ids visibles (depuis le DOM).
     const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
     const ids: number[] = [];
