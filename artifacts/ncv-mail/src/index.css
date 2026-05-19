@@ -236,6 +236,9 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#141c2b\]:hove
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#161b22\]:hover:not(.fixed) { background-color: #f0f0ec !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\]:not(.fixed) { background-color: rgba(79, 70, 229, 0.10) !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#222a35\]:not(.fixed) { background-color: #eef0f3 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0d1117\]:not(.fixed) { background-color: #fbfbfa !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1f2937\]:not(.fixed) { background-color: #eef0f3 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2937\]:not(.fixed) { border-color: #e5e7eb !important; }
 
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#e6e9ef\] { color: #1a1f2e !important; }
 /* `.text-white` is heavily reused on indigo / colored action buttons
