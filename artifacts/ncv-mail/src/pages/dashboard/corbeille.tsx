@@ -123,6 +123,100 @@ export default function Corbeille() {
 
   const selectedEmail = emails.find((e) => e.id === selectedEmailId);
 
+  // Sélection multiple par drag souris + menu contextuel clic droit.
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; ids: number[] } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const listContainerRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<number | null>(null);
+  const preSelectRef = useRef<Set<number>>(new Set());
+
+  const getRowIdFromPoint = (y: number, x: number): number | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    if (!el) return null;
+    const row = el.closest("[data-row-id]");
+    if (!row) return null;
+    const id = Number((row as HTMLElement).dataset.rowId);
+    return Number.isFinite(id) ? id : null;
+  };
+
+  useEffect(() => {
+    if (!isDraggingRef.current && selectedIds.size === 0 && !contextMenu) return;
+    const onMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      didDragRef.current = true;
+      const id = getRowIdFromPoint(e.clientY, e.clientX);
+      if (id == null || dragStartIdRef.current == null) return;
+      const ids = emails.map((m: any) => m.id);
+      const a = ids.indexOf(dragStartIdRef.current);
+      const b = ids.indexOf(id);
+      if (a < 0 || b < 0) return;
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const range = new Set(preSelectRef.current);
+      for (let i = lo; i <= hi; i++) range.add(ids[i]);
+      setSelectedIds(range);
+    };
+    const onUp = () => {
+      isDraggingRef.current = false;
+      dragStartIdRef.current = null;
+      setTimeout(() => { didDragRef.current = false; }, 0);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+  }, [emails, selectedIds.size, contextMenu]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedIds(new Set());
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [contextMenu]);
+
+  const handleBulkRestore = (ids: number[]) => {
+    for (const id of ids) {
+      restore.mutate({ id }, {
+        onSuccess: () => { invalidate(); },
+        onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      });
+    }
+    setSelectedIds(new Set());
+    setContextMenu(null);
+    toast({ title: t("trash.restored"), description: `${ids.length} mail(s)` });
+  };
+
+  const handleBulkDelete = (ids: number[]) => {
+    for (const id of ids) {
+      permDelete.mutate({ id }, {
+        onSuccess: () => { invalidate(); },
+        onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      });
+    }
+    setSelectedIds(new Set());
+    setContextMenu(null);
+    toast({ title: t("trash.deleted"), description: `${ids.length} mail(s)` });
+  };
+
   useEffect(() => {
     if (!selectedEmail) return;
     const id = selectedEmail.id;
@@ -287,51 +381,181 @@ export default function Corbeille() {
             <p className="text-[12px] text-[#b8c5d6]">{t("trash.noEmails")}</p>
           </div>
         ) : (
-          <div>
-            {emails.map((email: any) => (
-              <div
-                key={email.id}
-                title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${new Date(email.createdAt).toLocaleString()}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
-                className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-border/40 hover:bg-white/[0.03] transition-colors"
-                onClick={() => setSelectedEmailId(email.id)}
-              >
-                <div className="w-4 shrink-0" />
-                <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                  <span className="text-primary text-[11px] font-semibold">
-                    {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
-                  </span>
-                </div>
-                <div className="w-[140px] shrink-0 min-w-0">
-                  <span className="text-[13px] truncate text-[#c2c8d4] block">{email.sender}</span>
-                </div>
-                <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-                  <span className="text-[13px] truncate text-[#c2c8d4]">{email.subject}</span>
-                  {email.summary && (
-                    <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
-                  )}
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
-                  className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-primary hover:bg-primary/10"
-                  title={t("trash.restore")}
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleDelete(email.id); }}
-                  className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-red-400 hover:bg-red-500/10"
-                  title={t("trash.permanentDelete")}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-                <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
-                  {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+          <>
+            {/* Barre d'actions groupées — apparaît dès qu'au moins 1 mail est sélectionné. */}
+            {selectedIds.size > 0 && (
+              <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 mb-2 bg-[#0d1218]/95 backdrop-blur border-b border-border flex items-center gap-2">
+                <span className="text-[12px] text-white font-medium">
+                  {selectedIds.size} {t("trash.selected", "sélectionné(s)")}
                 </span>
+                <span className="w-px h-4 bg-border mx-1" />
+                <Button
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px]"
+                  onClick={() => handleBulkRestore(Array.from(selectedIds))}
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  {t("trash.restore")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/80 hover:text-red-400 hover:bg-red-500/[0.08]"
+                  onClick={() => handleBulkDelete(Array.from(selectedIds))}
+                >
+                  <Trash2 className="w-3 h-3" />
+                  {t("trash.permanentDelete")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[11px] text-[#b8c5d6] hover:text-white ml-auto"
+                  onClick={() => setSelectedIds(new Set())}
+                >
+                  {t("common.cancel", "Annuler")}
+                </Button>
               </div>
-            ))}
-          </div>
+            )}
+            <div ref={listContainerRef}>
+              {emails.map((email: any) => {
+                const isSelected = selectedIds.has(email.id);
+                return (
+                  <div
+                    key={email.id}
+                    data-row-id={email.id}
+                    title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${new Date(email.createdAt).toLocaleString()}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+                      isSelected ? "border-l-primary bg-primary/[0.10]" : "border-l-transparent hover:bg-white/[0.03]"
+                    }`}
+                    onMouseDown={(e) => {
+                      if (e.button !== 0) return;
+                      // Démarre le drag de sélection. Si Cmd/Ctrl/Shift, on
+                      // garde la sélection précédente, sinon on repart à zéro.
+                      isDraggingRef.current = true;
+                      didDragRef.current = false;
+                      dragStartIdRef.current = email.id;
+                      const additive = e.metaKey || e.ctrlKey || e.shiftKey;
+                      const base = additive ? new Set(selectedIds) : new Set<number>();
+                      base.add(email.id);
+                      preSelectRef.current = additive ? new Set(selectedIds) : new Set<number>();
+                      setSelectedIds(base);
+                    }}
+                    onClick={(e) => {
+                      // Pas d'ouverture si on vient de drag-sélectionner, ou
+                      // si on a déjà une sélection en cours.
+                      if (didDragRef.current) return;
+                      if (selectedIds.size > 0) {
+                        e.preventDefault();
+                        const next = new Set(selectedIds);
+                        if (next.has(email.id)) next.delete(email.id);
+                        else next.add(email.id);
+                        setSelectedIds(next);
+                        return;
+                      }
+                      setSelectedEmailId(email.id);
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      // Si on clique droit sur une ligne non sélectionnée,
+                      // on bascule la sélection sur cette ligne uniquement.
+                      const targetIds = selectedIds.has(email.id)
+                        ? Array.from(selectedIds)
+                        : [email.id];
+                      if (!selectedIds.has(email.id)) {
+                        setSelectedIds(new Set([email.id]));
+                      }
+                      setContextMenu({ x: e.clientX, y: e.clientY, ids: targetIds });
+                    }}
+                  >
+                    {/* Case à cocher — visible en mode sélection ou si la ligne est sélectionnée */}
+                    {(selectedIds.size > 0 || isSelected) ? (
+                      <div
+                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                          isSelected ? "bg-primary border-primary" : "border-[#3a4452] bg-transparent"
+                        }`}
+                      >
+                        {isSelected && (
+                          <svg className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7 7a1 1 0 01-1.4 0l-3-3a1 1 0 011.4-1.4L9 11.6l6.3-6.3a1 1 0 011.4 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-4 shrink-0" />
+                    )}
+                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                      <span className="text-primary text-[11px] font-semibold">
+                        {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
+                      </span>
+                    </div>
+                    <div className="w-[140px] shrink-0 min-w-0">
+                      <span className="text-[13px] truncate text-[#c2c8d4] block">{email.sender}</span>
+                    </div>
+                    <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                      <span className="text-[13px] truncate text-[#c2c8d4]">{email.subject}</span>
+                      {email.summary && (
+                        <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
+                      className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-primary hover:bg-primary/10"
+                      title={t("trash.restore")}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(email.id); }}
+                      className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-red-400 hover:bg-red-500/10"
+                      title={t("trash.permanentDelete")}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
+                      {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
+
+      {/* Menu contextuel clic droit */}
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="fixed z-50 min-w-[200px] rounded-md border border-[#1f2630] bg-[#0d1218] shadow-2xl py-1 text-[12px]"
+          style={{
+            left: Math.min(contextMenu.x, window.innerWidth - 220),
+            top: Math.min(contextMenu.y, window.innerHeight - 100),
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => handleBulkRestore(contextMenu.ids)}
+            className="w-full text-left px-3 py-2 flex items-center gap-2 text-[#e6e9ef] hover:bg-white/[0.05]"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-[#b8c5d6]" />
+            {t("trash.restore")}
+            {contextMenu.ids.length > 1 && (
+              <span className="ml-auto text-[10px] text-[#8b95a7]">{contextMenu.ids.length}</span>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleBulkDelete(contextMenu.ids)}
+            className="w-full text-left px-3 py-2 flex items-center gap-2 text-red-400 hover:bg-red-500/[0.08]"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {t("trash.permanentDelete")}
+            {contextMenu.ids.length > 1 && (
+              <span className="ml-auto text-[10px] text-red-400/70">{contextMenu.ids.length}</span>
+            )}
+          </button>
+        </div>
+      )}
 
       <AlertDialog open={emptyConfirmOpen} onOpenChange={setEmptyConfirmOpen}>
         <AlertDialogContent>
