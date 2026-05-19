@@ -775,9 +775,9 @@ export default function Taches() {
                       title={task.title + (task.emailSubject ? `\n— ${task.emailSubject}` : "")}
                       className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-[#1f2937] transition-colors ${
                         isOpen
-                          ? "border-l-white/40 bg-white/[0.05]"
+                          ? "border-l-transparent bg-white/[0.05]"
                           : isTaskSelected
-                          ? "border-l-white/40 bg-white/[0.05]"
+                          ? "border-l-transparent bg-white/[0.05]"
                           : "border-l-transparent hover:bg-white/[0.03]"
                       } ${isDone ? "opacity-50" : ""}`}
                       onClick={() => {
