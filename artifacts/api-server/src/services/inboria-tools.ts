@@ -582,13 +582,10 @@ async function handleCreateUserFolder(
   args: { name: string; description?: string; color?: string },
   ctx: InboriaToolCtx,
 ): Promise<string> {
-  // RGPD: en mode admin team on consulte un AUTRE user — interdire la
-  // creation d'objets dans son perimetre.
-  if (ctx.adminTeamCtx) {
-    return JSON.stringify({
-      error: "Creation interdite en mode consultation d'un collaborateur.",
-    });
-  }
+  // Pas de garde adminTeamCtx ici : la creation s'execute toujours sur
+  // ctx.userId (= utilisateur connecte), JAMAIS sur un autre membre de
+  // l'organisation. Un admin org qui demande "cree-moi un dossier X" cree
+  // donc bien dans SES propres dossiers, pas dans ceux d'un collaborateur.
   const name = String(args.name || "").trim();
   if (!name || name.length < 1 || name.length > 80) {
     return JSON.stringify({ error: "Nom invalide (1-80 caracteres requis)." });
@@ -657,11 +654,8 @@ async function handleCreateProject(
   args: { name: string; description?: string; color?: string },
   ctx: InboriaToolCtx,
 ): Promise<string> {
-  if (ctx.adminTeamCtx) {
-    return JSON.stringify({
-      error: "Creation interdite en mode consultation d'un collaborateur.",
-    });
-  }
+  // Pas de garde adminTeamCtx : creation toujours scopee sur ctx.userId
+  // (cf. handleCreateUserFolder).
   const name = String(args.name || "").trim();
   if (!name || name.length < 2 || name.length > 120) {
     return JSON.stringify({ error: "Nom invalide (2-120 caracteres requis)." });
