@@ -4019,20 +4019,14 @@ export default function Dashboard() {
   // pendant le drag — committé à React au mouseup).
   const liveSelectionRef = useRef<Set<number>>(new Set());
 
-  // On peint en INLINE STYLE (pas en classList) pour que les re-renders
-  // React (re-fetch de queries de polling, compteurs, etc.) ne réécrasent
-  // pas la peinture en réinitialisant `className`. Le style inline a la
-  // priorité sur les classes Tailwind, donc même quand `isSelected` est
-  // encore `false` côté React (avant commit au mouseup), le visuel est
-  // correct. Symétriquement, quand on déselectionne une ligne déjà
-  // sélectionnée côté React, on force `transparent` pour cacher le
-  // `bg-primary/[0.10]` provenant du className.
+  // On peint via DATA-ATTRIBUTE (et règles CSS !important dans index.css).
+  // Les re-renders React ne touchent jamais aux data-attributes absents
+  // du JSX, donc même quand `isSelected` côté React est encore stale
+  // (avant commit au mouseup), notre peinture tient. Plus solide que
+  // classList (que React réécrase) ou inline style (que `:hover` peut
+  // overrider sur certains rows).
   const paintRow = useCallback((el: HTMLElement, selected: boolean) => {
-    if (selected) {
-      el.style.backgroundColor = "hsl(var(--primary) / 0.10)";
-    } else {
-      el.style.backgroundColor = "transparent";
-    }
+    el.dataset.dragPaint = selected ? "on" : "off";
   }, []);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
@@ -4135,7 +4129,7 @@ export default function Dashboard() {
       // jusqu'au prochain unmount.
       if (wasDragging && didDrag) {
         for (const el of dragElsSnapshotRef.current) {
-          el.style.backgroundColor = "";
+          delete el.dataset.dragPaint;
         }
         setSelectedIds(new Set(liveSelectionRef.current));
       }
