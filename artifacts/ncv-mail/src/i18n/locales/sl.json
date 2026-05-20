@@ -523,7 +523,8 @@
     "filtersLabel": "Filtri",
     "importance": {
       "all": "Vsa e-pošta",
-      "allLong": "Vsa e-pošta"
+      "allLong": "Vsa e-pošta",
+      "important": "Pomembno"
     },
     "date": {
       "all": "Vsi datumi"

@@ -523,7 +523,8 @@
     "filtersLabel": "Filtrai",
     "importance": {
       "all": "Visi laiškai",
-      "allLong": "Visi laiškai"
+      "allLong": "Visi laiškai",
+      "important": "Svarbūs"
     },
     "date": {
       "all": "Visos datos"

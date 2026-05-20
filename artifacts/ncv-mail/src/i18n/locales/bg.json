@@ -523,7 +523,8 @@
     "filtersLabel": "Филтри",
     "importance": {
       "all": "Всички имейли",
-      "allLong": "Всички имейли"
+      "allLong": "Всички имейли",
+      "important": "Важни"
     },
     "date": {
       "all": "Всички дати"

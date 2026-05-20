@@ -523,7 +523,8 @@
     "filtersLabel": "Filtre",
     "importance": {
       "all": "Toate e-mailurile",
-      "allLong": "Toate e-mailurile"
+      "allLong": "Toate e-mailurile",
+      "important": "Importante"
     },
     "date": {
       "all": "Toate datele"

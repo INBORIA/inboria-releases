@@ -523,7 +523,8 @@
     "filtersLabel": "Suodattimet",
     "importance": {
       "all": "Kaikki sähköpostit",
-      "allLong": "Kaikki sähköpostit"
+      "allLong": "Kaikki sähköpostit",
+      "important": "Tärkeät"
     },
     "date": {
       "all": "Kaikki päivämäärät"

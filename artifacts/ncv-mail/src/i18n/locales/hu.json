@@ -523,7 +523,8 @@
     "filtersLabel": "Szűrők",
     "importance": {
       "all": "Összes e-mail",
-      "allLong": "Összes e-mail"
+      "allLong": "Összes e-mail",
+      "important": "Fontosak"
     },
     "date": {
       "all": "Összes dátum"

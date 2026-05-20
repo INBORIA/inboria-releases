@@ -523,7 +523,8 @@
     "filtersLabel": "Filtri",
     "importance": {
       "all": "L-emails kollha",
-      "allLong": "L-emails kollha"
+      "allLong": "L-emails kollha",
+      "important": "Importanti"
     },
     "date": {
       "all": "Id-dati kollha"

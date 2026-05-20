@@ -539,7 +539,8 @@
     "filtersLabel": "Filtres",
     "importance": {
       "all": "Tous les mails",
-      "allLong": "Tous les mails"
+      "allLong": "Tous les mails",
+      "important": "Importants"
     },
     "date": {
       "all": "Toutes les dates"

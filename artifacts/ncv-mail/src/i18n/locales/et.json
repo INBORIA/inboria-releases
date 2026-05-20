@@ -523,7 +523,8 @@
     "filtersLabel": "Filtrid",
     "importance": {
       "all": "Kõik kirjad",
-      "allLong": "Kõik kirjad"
+      "allLong": "Kõik kirjad",
+      "important": "Olulised"
     },
     "date": {
       "all": "Kõik kuupäevad"

@@ -523,7 +523,8 @@
     "filtersLabel": "Bộ lọc",
     "importance": {
       "all": "Tất cả thư",
-      "allLong": "Tất cả thư"
+      "allLong": "Tất cả thư",
+      "important": "Quan trọng"
     },
     "date": {
       "all": "Tất cả ngày"

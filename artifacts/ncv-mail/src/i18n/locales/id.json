@@ -523,7 +523,8 @@
     "filtersLabel": "Filter",
     "importance": {
       "all": "Semua email",
-      "allLong": "Semua email"
+      "allLong": "Semua email",
+      "important": "Penting"
     },
     "date": {
       "all": "Semua tanggal"

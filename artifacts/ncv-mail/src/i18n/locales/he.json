@@ -523,7 +523,8 @@
     "filtersLabel": "מסננים",
     "importance": {
       "all": "כל הדוא״ל",
-      "allLong": "כל הדוא״ל"
+      "allLong": "כל הדוא״ל",
+      "important": "חשובים"
     },
     "date": {
       "all": "כל התאריכים"

@@ -523,7 +523,8 @@
     "filtersLabel": "Filtre",
     "importance": {
       "all": "Alle e-poster",
-      "allLong": "Alle e-poster"
+      "allLong": "Alle e-poster",
+      "important": "Viktig"
     },
     "date": {
       "all": "Alle datoer"

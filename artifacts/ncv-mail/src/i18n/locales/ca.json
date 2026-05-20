@@ -523,7 +523,8 @@
     "filtersLabel": "Filtres",
     "importance": {
       "all": "Tots els correus",
-      "allLong": "Tots els correus"
+      "allLong": "Tots els correus",
+      "important": "Importants"
     },
     "date": {
       "all": "Totes les dates"

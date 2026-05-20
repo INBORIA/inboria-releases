@@ -523,7 +523,8 @@
     "filtersLabel": "Scagairí",
     "importance": {
       "all": "Gach ríomhphost",
-      "allLong": "Gach ríomhphost"
+      "allLong": "Gach ríomhphost",
+      "important": "Tábhachtach"
     },
     "date": {
       "all": "Gach dáta"

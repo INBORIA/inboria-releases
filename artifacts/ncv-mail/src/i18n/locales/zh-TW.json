@@ -523,7 +523,8 @@
     "filtersLabel": "篩選",
     "importance": {
       "all": "全部郵件",
-      "allLong": "全部郵件"
+      "allLong": "全部郵件",
+      "important": "重要"
     },
     "date": {
       "all": "全部日期"

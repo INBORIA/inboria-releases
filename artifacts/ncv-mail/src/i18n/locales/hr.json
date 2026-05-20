@@ -523,7 +523,8 @@
     "filtersLabel": "Filtri",
     "importance": {
       "all": "Sva e-pošta",
-      "allLong": "Sva e-pošta"
+      "allLong": "Sva e-pošta",
+      "important": "Važno"
     },
     "date": {
       "all": "Svi datumi"

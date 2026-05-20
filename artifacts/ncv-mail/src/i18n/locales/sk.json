@@ -523,7 +523,8 @@
     "filtersLabel": "Filtre",
     "importance": {
       "all": "Všetky e-maily",
-      "allLong": "Všetky e-maily"
+      "allLong": "Všetky e-maily",
+      "important": "Dôležité"
     },
     "date": {
       "all": "Všetky dátumy"

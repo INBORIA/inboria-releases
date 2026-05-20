@@ -523,7 +523,8 @@
     "filtersLabel": "فلٹرز",
     "importance": {
       "all": "تمام ای میلز",
-      "allLong": "تمام ای میلز"
+      "allLong": "تمام ای میلز",
+      "important": "اہم"
     },
     "date": {
       "all": "تمام تواریخ"

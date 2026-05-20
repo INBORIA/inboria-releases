@@ -523,7 +523,8 @@
     "filtersLabel": "Фильтры",
     "importance": {
       "all": "Все письма",
-      "allLong": "Все письма"
+      "allLong": "Все письма",
+      "important": "Важные"
     },
     "date": {
       "all": "Все даты"

@@ -523,7 +523,8 @@
     "filtersLabel": "फ़िल्टर",
     "importance": {
       "all": "सभी ईमेल",
-      "allLong": "सभी ईमेल"
+      "allLong": "सभी ईमेल",
+      "important": "महत्वपूर्ण"
     },
     "date": {
       "all": "सभी तिथियाँ"

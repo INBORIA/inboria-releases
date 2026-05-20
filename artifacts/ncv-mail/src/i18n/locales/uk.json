@@ -523,7 +523,8 @@
     "filtersLabel": "Фільтри",
     "importance": {
       "all": "Усі листи",
-      "allLong": "Усі листи"
+      "allLong": "Усі листи",
+      "important": "Важливі"
     },
     "date": {
       "all": "Усі дати"

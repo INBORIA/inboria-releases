@@ -523,7 +523,8 @@
     "filtersLabel": "Filters",
     "importance": {
       "all": "Alle e-mails",
-      "allLong": "Alle e-mails"
+      "allLong": "Alle e-mails",
+      "important": "Belangrijk"
     },
     "date": {
       "all": "Alle datums"

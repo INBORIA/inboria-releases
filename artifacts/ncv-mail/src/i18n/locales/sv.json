@@ -523,7 +523,8 @@
     "filtersLabel": "Filter",
     "importance": {
       "all": "Alla e-postmeddelanden",
-      "allLong": "Alla e-postmeddelanden"
+      "allLong": "Alla e-postmeddelanden",
+      "important": "Viktigt"
     },
     "date": {
       "all": "Alla datum"

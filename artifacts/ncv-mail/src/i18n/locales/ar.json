@@ -523,7 +523,8 @@
     "filtersLabel": "عوامل التصفية",
     "importance": {
       "all": "كل الرسائل",
-      "allLong": "كل الرسائل"
+      "allLong": "كل الرسائل",
+      "important": "مهم"
     },
     "date": {
       "all": "كل التواريخ"

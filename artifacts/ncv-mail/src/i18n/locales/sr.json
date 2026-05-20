@@ -523,7 +523,8 @@
     "filtersLabel": "Филтери",
     "importance": {
       "all": "Сви мејлови",
-      "allLong": "Сви мејлови"
+      "allLong": "Сви мејлови",
+      "important": "Важни"
     },
     "date": {
       "all": "Сви датуми"

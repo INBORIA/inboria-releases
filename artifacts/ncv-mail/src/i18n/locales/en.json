@@ -280,7 +280,8 @@
     "filtersLabel": "Filters",
     "importance": {
       "all": "All mail",
-      "allLong": "All mail"
+      "allLong": "All mail",
+      "important": "Important"
     },
     "date": {
       "all": "All dates"

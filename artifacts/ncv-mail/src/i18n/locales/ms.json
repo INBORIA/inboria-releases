@@ -523,7 +523,8 @@
     "filtersLabel": "Penapis",
     "importance": {
       "all": "Semua e-mel",
-      "allLong": "Semua e-mel"
+      "allLong": "Semua e-mel",
+      "important": "Penting"
     },
     "date": {
       "all": "Semua tarikh"

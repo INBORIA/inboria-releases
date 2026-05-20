@@ -523,7 +523,8 @@
     "filtersLabel": "フィルター",
     "importance": {
       "all": "すべてのメール",
-      "allLong": "すべてのメール"
+      "allLong": "すべてのメール",
+      "important": "重要"
     },
     "date": {
       "all": "すべての日付"

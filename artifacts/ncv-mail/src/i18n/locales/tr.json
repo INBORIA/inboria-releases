@@ -523,7 +523,8 @@
     "filtersLabel": "Filtreler",
     "importance": {
       "all": "Tüm e-postalar",
-      "allLong": "Tüm e-postalar"
+      "allLong": "Tüm e-postalar",
+      "important": "Önemli"
     },
     "date": {
       "all": "Tüm tarihler"

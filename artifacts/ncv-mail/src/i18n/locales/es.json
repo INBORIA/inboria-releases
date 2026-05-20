@@ -523,7 +523,8 @@
     "filtersLabel": "Filtros",
     "importance": {
       "all": "Todos los correos",
-      "allLong": "Todos los correos"
+      "allLong": "Todos los correos",
+      "important": "Importantes"
     },
     "date": {
       "all": "Todas las fechas"

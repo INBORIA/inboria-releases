@@ -523,7 +523,8 @@
     "filtersLabel": "Filtri",
     "importance": {
       "all": "Visi e-pasti",
-      "allLong": "Visi e-pasti"
+      "allLong": "Visi e-pasti",
+      "important": "Svarīgi"
     },
     "date": {
       "all": "Visi datumi"

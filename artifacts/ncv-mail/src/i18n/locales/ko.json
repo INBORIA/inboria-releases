@@ -523,7 +523,8 @@
     "filtersLabel": "필터",
     "importance": {
       "all": "모든 메일",
-      "allLong": "모든 메일"
+      "allLong": "모든 메일",
+      "important": "중요"
     },
     "date": {
       "all": "모든 날짜"
