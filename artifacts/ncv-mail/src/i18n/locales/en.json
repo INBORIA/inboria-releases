@@ -274,6 +274,18 @@
       "urgentPlural": "Urgent",
       "mediumPlural": "Medium",
       "lowPlural": "Low",
+      "all": "All",
+      "allLong": "All priorities"
+    },
+    "filtersLabel": "Filters",
+    "importance": {
+      "all": "All mail",
+      "allLong": "All mail"
+    },
+    "date": {
+      "all": "All dates"
+    },
+    "read": {
       "all": "All"
     },
     "reply": "Reply",
