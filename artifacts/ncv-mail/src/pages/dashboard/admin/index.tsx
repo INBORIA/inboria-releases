@@ -14,6 +14,7 @@ import {
   Send,
   Cloud,
   TrendingUp,
+  Download,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
@@ -26,6 +27,7 @@ import AdminPaddle from "./paddle";
 import AdminBrevo from "./brevo";
 import AdminOpenAI from "./openai";
 import AdminReplit from "./replit";
+import AdminDistribution from "./distribution";
 import AdminRentabilite from "./rentabilite";
 
 interface ProfileWithAdmin {
@@ -40,6 +42,7 @@ type TopTab =
   | "brevo"
   | "openai"
   | "replit"
+  | "distribution"
   | "rentabilite";
 // Sub-tab inside "inboria"
 type InboriaSubTab = "waitlist" | "abonnes" | "email-brain" | "chat";
@@ -57,6 +60,7 @@ const TOP_TABS: TopTab[] = [
   "brevo",
   "openai",
   "replit",
+  "distribution",
   "rentabilite",
 ];
 
@@ -183,6 +187,10 @@ export default function AdminIndex() {
               <Cloud className="h-3.5 w-3.5 mr-1.5" />
               Replit
             </TabsTrigger>
+            <TabsTrigger value="distribution" data-testid="tab-distribution">
+              <Download className="h-3.5 w-3.5 mr-1.5" />
+              Distribution
+            </TabsTrigger>
             <TabsTrigger value="rentabilite" data-testid="tab-rentabilite">
               <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
               Résultat
@@ -250,6 +258,10 @@ export default function AdminIndex() {
 
           <TabsContent value="replit" className="mt-4">
             <AdminReplit />
+          </TabsContent>
+
+          <TabsContent value="distribution" className="mt-4">
+            <AdminDistribution />
           </TabsContent>
 
           <TabsContent value="rentabilite" className="mt-4">

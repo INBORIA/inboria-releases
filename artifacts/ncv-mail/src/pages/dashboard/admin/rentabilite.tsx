@@ -14,6 +14,10 @@ import {
   CircleDashed,
   Receipt,
 } from "lucide-react";
+import {
+  useDistributionActive,
+  activeDistributionMonthlyEur,
+} from "@/lib/distribution-costs";
 
 function SourceBadge({ source }: { source: "live" | "estimated" }) {
   if (source === "live") {
@@ -61,6 +65,7 @@ export default function AdminRentabilite() {
   const isAdmin = !!profile.isAdmin;
   const { data, isLoading, refetch, isFetching, error } =
     useAdminProfitabilitySnapshot();
+  const { active: distributionActive } = useDistributionActive();
 
   if (profileLoading || isLoading) {
     return (
@@ -122,17 +127,50 @@ export default function AdminRentabilite() {
     source: "live" | "estimated";
   };
   const paddleFeeSource: "live" | "estimated" = revenueLive ? "live" : "estimated";
+  const distribution = activeDistributionMonthlyEur(distributionActive, meta.fxUsdToEur);
+  const distributionColors: Record<string, string> = {
+    "apple-developer": "bg-slate-400",
+    "google-play": "bg-lime-500",
+    "windows-signing": "bg-cyan-500",
+  };
   const costRows: CostRow[] = [
     { key: "supabase", label: "Supabase", val: costs.supabaseEur, color: "bg-emerald-500", source: "estimated" },
     { key: "openai", label: "OpenAI", val: costs.openaiEur, color: "bg-sky-500", source: "estimated" },
     { key: "paddle", label: "Frais Paddle", val: costs.paddleFeesEur, color: "bg-violet-500", source: paddleFeeSource },
     { key: "replit", label: "Replit", val: costs.replitEur, color: "bg-amber-500", source: "estimated" },
     { key: "brevo", label: "Brevo", val: costs.brevoEur, color: "bg-rose-500", source: "estimated" },
+    ...distribution.rows.map((r) => ({
+      key: r.key,
+      label: r.label,
+      val: r.eur,
+      color: distributionColors[r.key] ?? "bg-slate-500",
+      source: "estimated" as const,
+    })),
   ];
   costRows.sort((a, b) => b.val - a.val);
 
-  const totalCost = costs.totalEur || 0.01;
-  const isProfit = margin.grossEur >= 0;
+  // Surcoût distribution → recalcul local du total coût + marge,
+  // sans modifier le backend (overlay pur frontend).
+  const totalCostBackend = costs.totalEur;
+  const totalCost = (totalCostBackend + distribution.totalEur) || 0.01;
+  const overlayGrossEur = revenue.mrrEur - totalCost;
+  const overlayGrossPct = revenue.mrrEur > 0
+    ? Math.round((overlayGrossEur / revenue.mrrEur) * 1000) / 10
+    : null;
+  const overlayAvgCostEur = users.total > 0 ? totalCost / users.total : 0;
+  const overlayAvgMarginEur = users.total > 0 ? overlayGrossEur / users.total : 0;
+  const isProfit = overlayGrossEur >= 0;
+
+  // Allocate distribution overlay across plans, prorata utilisateurs (même règle que coûts fixes).
+  const distPerUser = users.total > 0 ? distribution.totalEur / users.total : 0;
+  const overlayByPlan = byPlan.map((p) => {
+    const extra = distPerUser * p.count;
+    const allocatedCostEur = p.allocatedCostEur + extra;
+    const marginEur = p.revenueEur - allocatedCostEur;
+    const marginPct =
+      p.revenueEur > 0 ? Math.round((marginEur / p.revenueEur) * 1000) / 10 : null;
+    return { ...p, allocatedCostEur, marginEur, marginPct };
+  });
 
   return (
     <div className="space-y-4">
@@ -217,10 +255,10 @@ export default function AdminRentabilite() {
               <div
                 className={`text-4xl font-bold tabular-nums ${isProfit ? "text-emerald-400" : "text-red-400"}`}
               >
-                {fmtEur(margin.grossEur)}
+                {fmtEur(overlayGrossEur)}
               </div>
               <div className="text-sm text-[#b8c5d6]">
-                soit <b className={isProfit ? "text-emerald-300" : "text-red-300"}>{fmtPct(margin.grossPct)}</b> du MRR
+                soit <b className={isProfit ? "text-emerald-300" : "text-red-300"}>{fmtPct(overlayGrossPct)}</b> du MRR
               </div>
             </div>
             <Button
@@ -245,8 +283,13 @@ export default function AdminRentabilite() {
             <div className="rounded bg-red-500/10 border border-red-500/20 px-3 py-2">
               <div className="text-[10px] uppercase text-red-300/70">− Coûts</div>
               <div className="text-lg font-bold text-red-400 tabular-nums">
-                {fmtEur0(costs.totalEur)}
+                {fmtEur0(totalCost)}
               </div>
+              {distribution.totalEur > 0 && (
+                <div className="text-[10px] text-red-300/60 mt-0.5">
+                  dont {fmtEur(distribution.totalEur)} distribution
+                </div>
+              )}
             </div>
             <div
               className={`rounded border px-3 py-2 ${isProfit ? "bg-emerald-500/15 border-emerald-500/30" : "bg-red-500/15 border-red-500/30"}`}
@@ -255,7 +298,7 @@ export default function AdminRentabilite() {
               <div
                 className={`text-lg font-bold tabular-nums ${isProfit ? "text-emerald-300" : "text-red-300"}`}
               >
-                {fmtEur0(margin.grossEur)}
+                {fmtEur0(overlayGrossEur)}
               </div>
             </div>
           </div>
@@ -277,7 +320,7 @@ export default function AdminRentabilite() {
           <CardContent className="pt-6">
             <div className="text-xs text-[#8b95a7] uppercase tracking-wide">Coût moyen / user</div>
             <div className="text-2xl font-bold text-red-400 mt-1 tabular-nums">
-              {fmtEur(perUser.avgCostEur)}
+              {fmtEur(overlayAvgCostEur)}
             </div>
             <div className="text-[11px] text-[#6b7280] mt-1">
               sur {users.total} utilisateurs
@@ -290,9 +333,9 @@ export default function AdminRentabilite() {
               Marge / user
             </div>
             <div
-              className={`text-2xl font-bold mt-1 tabular-nums ${perUser.avgMarginEur >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              className={`text-2xl font-bold mt-1 tabular-nums ${overlayAvgMarginEur >= 0 ? "text-emerald-400" : "text-red-400"}`}
             >
-              {fmtEur(perUser.avgMarginEur)}
+              {fmtEur(overlayAvgMarginEur)}
             </div>
             <div className="text-[11px] text-[#6b7280] mt-1">essai + payant inclus</div>
           </CardContent>
@@ -315,7 +358,7 @@ export default function AdminRentabilite() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white text-base">
             <PieChart className="h-4 w-4 text-primary" />
-            Ventilation des coûts ({fmtEur0(costs.totalEur)} / mois)
+            Ventilation des coûts ({fmtEur0(totalCost)} / mois)
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -357,6 +400,13 @@ export default function AdminRentabilite() {
               <code className="text-[10px] bg-[#161b22] px-1 py-0.5 rounded">REPLIT_MONTHLY_COST_EUR</code>{" "}
               <code className="text-[10px] bg-[#161b22] px-1 py-0.5 rounded">BREVO_MONTHLY_COST_EUR</code>.
             </div>
+            {distribution.totalEur > 0 && (
+              <div>
+                <b>Distribution</b> : {distribution.rows.map((r) => r.label).join(" + ")} —
+                toggleable depuis l'onglet « Distribution » de l'admin (overlay frontend,
+                stocké en localStorage).
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -384,7 +434,7 @@ export default function AdminRentabilite() {
                 </tr>
               </thead>
               <tbody>
-                {byPlan.map((p) => {
+                {overlayByPlan.map((p) => {
                   const pos = p.marginEur >= 0;
                   return (
                     <tr key={p.id} className="border-b border-[#1f2937]/50">
@@ -426,17 +476,17 @@ export default function AdminRentabilite() {
                     {fmtEur(revenue.mrrEur)}
                   </td>
                   <td className="py-2 px-2 text-right text-red-300 font-semibold tabular-nums">
-                    {fmtEur(costs.totalEur)}
+                    {fmtEur(totalCost)}
                   </td>
                   <td
                     className={`py-2 px-2 text-right font-semibold tabular-nums ${isProfit ? "text-emerald-300" : "text-red-300"}`}
                   >
-                    {fmtEur(margin.grossEur)}
+                    {fmtEur(overlayGrossEur)}
                   </td>
                   <td
                     className={`py-2 px-2 text-right font-semibold tabular-nums ${isProfit ? "text-emerald-400" : "text-red-400"}`}
                   >
-                    {fmtPct(margin.grossPct)}
+                    {fmtPct(overlayGrossPct)}
                   </td>
                 </tr>
               </tfoot>
@@ -542,7 +592,7 @@ export default function AdminRentabilite() {
             <li className="flex gap-2">
               <Users className="h-4 w-4 text-primary shrink-0 mt-0.5" />
               <span>
-                <b>Convertir l'essai</b> : chaque essai coûte ~{fmtEur(perUser.avgCostEur)} sans rapporter.
+                <b>Convertir l'essai</b> : chaque essai coûte ~{fmtEur(overlayAvgCostEur)} sans rapporter.
                 Atteindre 20%+ de conversion change radicalement le P&L.
               </span>
             </li>
