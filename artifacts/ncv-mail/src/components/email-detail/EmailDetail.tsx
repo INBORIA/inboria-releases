@@ -761,7 +761,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                         className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                       >
                         <FolderKanban className="w-3 h-3" />
-                        {t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })}
+                        {t("inbox.myFoldersLabel", { defaultValue: "Mes dossiers" })}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border max-h-[300px] overflow-y-auto">

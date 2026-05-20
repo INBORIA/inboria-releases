@@ -5078,7 +5078,7 @@ export default function Dashboard() {
     <div
       ref={contextMenuRef}
       data-context-menu
-      className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+      className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl animate-in fade-in zoom-in-95 duration-100"
       style={{
         top: ctxMenuPos.ready ? ctxMenuPos.top : contextMenu.y,
         left: ctxMenuPos.ready ? ctxMenuPos.left : contextMenu.x,
