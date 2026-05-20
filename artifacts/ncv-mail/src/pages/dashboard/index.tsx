@@ -5658,18 +5658,6 @@ export default function Dashboard() {
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
-              {/* Hint opérateurs — apparaît au focus tant qu'aucun caractère
-                  n'a été tapé. Disparaît dès qu'on tape (autocomplete prend le relais). */}
-              {searchInput === "" && (
-                <div className="hidden group-focus-within:block pointer-events-none absolute left-0 right-0 top-full mt-1 z-20 rounded-md border border-[#1f2630] bg-[#0d1218] px-3 py-2 text-[11px] text-[#8b95a7] shadow-lg">
-                  <span className="text-[#b8c5d6]">{t("inbox.searchHintIntro", "Opérateurs :")}</span>{" "}
-                  <code className="text-[#7aa5ff]">de:nom</code>{" · "}
-                  <code className="text-[#7aa5ff]">sujet:facture</code>{" · "}
-                  <code className="text-[#7aa5ff]">avec-pj</code>
-                  <span className="text-[#5a6270]">{"  ·  "}</span>
-                  {t("inbox.searchHintCombo", "combinables — ex. : de:alice sujet:devis avec-pj")}
-                </div>
-              )}
               {/* Autocomplete dropdown — apparaît dès la 1re lettre tant que
                   l'input a le focus (ou est en cours de blur transitoire). */}
               {autocompleteFocused && autocompleteItems.length > 0 && (
