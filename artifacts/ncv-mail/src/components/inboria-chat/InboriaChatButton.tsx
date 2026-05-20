@@ -1556,6 +1556,12 @@ export function InboriaChatButton() {
       const data = await res.json();
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply || "" }]);
       queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+      // Le chat peut creer dossiers/projets via tool calls (create_user_folder,
+      // create_project). On invalide systematiquement pour rafraichir la
+      // sidebar — cout reseau negligeable, gain UX direct (l'utilisateur voit
+      // son nouveau dossier/projet sans recharger).
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     } catch (err: any) {
       const isQuota = err?.message && /quota|crédit|credit/i.test(String(err.message));
       const errorMsg = isQuota ? t("inboriaChat.errorQuota") : t("inboriaChat.errorGeneric");

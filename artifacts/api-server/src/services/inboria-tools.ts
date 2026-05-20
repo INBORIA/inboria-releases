@@ -162,6 +162,60 @@ export const INBORIA_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
   {
     type: "function",
     function: {
+      name: "create_user_folder",
+      description:
+        "Cree un nouveau dossier personnel dans 'Mes dossiers' (sidebar). A utiliser SEULEMENT quand l'utilisateur demande explicitement de creer/ajouter un dossier (ex: 'cree un dossier Factures 2026', 'ajoute un dossier Clients VIP'). Le dossier est cree immediatement et apparait dans la sidebar apres rafraichissement. Ne PAS demander confirmation, agir directement. Retourne l'id et le nom crees.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            description: "Nom du dossier (obligatoire, 1-80 chars). Preserver la casse demandee par l'utilisateur.",
+          },
+          description: {
+            type: "string",
+            description: "Description optionnelle (max 280 chars).",
+          },
+          color: {
+            type: "string",
+            description: "Couleur optionnelle parmi: blue, green, red, yellow, purple, pink, orange, gray. Defaut: blue.",
+          },
+        },
+        required: ["name"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "create_project",
+      description:
+        "Cree un nouveau projet dans la section 'Projets' (sidebar). A utiliser SEULEMENT quand l'utilisateur demande explicitement de creer/ajouter un projet (ex: 'cree un projet Client Dupont', 'ajoute un projet Refonte site 2026'). La reference (PROJ-XXX) est auto-generee. Ne PAS demander confirmation, agir directement. Retourne l'id, le nom et la reference crees.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            description: "Nom du projet (obligatoire, min 2 chars). Preserver la casse demandee par l'utilisateur.",
+          },
+          description: {
+            type: "string",
+            description: "Description optionnelle.",
+          },
+          color: {
+            type: "string",
+            description: "Couleur optionnelle parmi: blue, green, red, yellow, purple, pink, orange, gray. Defaut: blue.",
+          },
+        },
+        required: ["name"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "read_attachment",
       description:
         "Lit le contenu textuel d'une piece jointe d'un mail (PDF, docx, txt, html, csv, json). Indispensable pour repondre 'que dit la PJ X', 'quel est le montant de la facture en PJ', 'resume le contrat joint'. Donne l'ID du mail et le nom exact du fichier (visibles dans la memoire courte sous forme '[PJ: nom1.pdf, nom2.docx]').",
@@ -520,6 +574,154 @@ async function handleReadAttachment(
   );
 }
 
+const ALLOWED_COLORS = new Set([
+  "blue", "green", "red", "yellow", "purple", "pink", "orange", "gray",
+]);
+
+async function handleCreateUserFolder(
+  args: { name: string; description?: string; color?: string },
+  ctx: InboriaToolCtx,
+): Promise<string> {
+  // RGPD: en mode admin team on consulte un AUTRE user — interdire la
+  // creation d'objets dans son perimetre.
+  if (ctx.adminTeamCtx) {
+    return JSON.stringify({
+      error: "Creation interdite en mode consultation d'un collaborateur.",
+    });
+  }
+  const name = String(args.name || "").trim();
+  if (!name || name.length < 1 || name.length > 80) {
+    return JSON.stringify({ error: "Nom invalide (1-80 caracteres requis)." });
+  }
+  const desc = args.description
+    ? String(args.description).trim().slice(0, 280)
+    : null;
+  const color = args.color && ALLOWED_COLORS.has(String(args.color).toLowerCase())
+    ? String(args.color).toLowerCase()
+    : "blue";
+
+  // Verifier que la table existe (migration 2026_05_17_user_folders.sql).
+  const probe = await supabaseAdmin
+    .from("user_folders")
+    .select("id")
+    .limit(1);
+  if (probe.error) {
+    return JSON.stringify({
+      error: "Fonctionnalite 'Mes dossiers' non encore activee sur ce compte (migration manquante). Demande a un admin d'appliquer la migration.",
+    });
+  }
+  // Anti-doublon : si un dossier du meme nom existe deja pour ce user, le renvoyer
+  // au lieu d'en creer un nouveau.
+  const existing = await supabaseAdmin
+    .from("user_folders")
+    .select("id, name")
+    .eq("user_id", ctx.userId)
+    .ilike("name", name)
+    .limit(1)
+    .maybeSingle();
+  if (existing.data) {
+    return JSON.stringify({
+      already_exists: true,
+      id: (existing.data as any).id,
+      name: (existing.data as any).name,
+      message: `Le dossier '${(existing.data as any).name}' existe deja.`,
+    });
+  }
+  const { data, error } = await supabaseAdmin
+    .from("user_folders")
+    .insert({
+      user_id: ctx.userId,
+      name,
+      description: desc,
+      color,
+      keywords: [],
+      enabled: true,
+    })
+    .select("id, name, color")
+    .single();
+  if (error || !data) {
+    ctx.log.error?.({ err: error?.message }, "[inboria-tools] create_user_folder failed");
+    return JSON.stringify({ error: `Creation du dossier impossible: ${error?.message || "erreur DB"}` });
+  }
+  return JSON.stringify({
+    success: true,
+    id: (data as any).id,
+    name: (data as any).name,
+    color: (data as any).color,
+    message: `Dossier '${(data as any).name}' cree. Il apparait dans la sidebar 'Mes dossiers'.`,
+    side_effect: "folders_changed",
+  });
+}
+
+async function handleCreateProject(
+  args: { name: string; description?: string; color?: string },
+  ctx: InboriaToolCtx,
+): Promise<string> {
+  if (ctx.adminTeamCtx) {
+    return JSON.stringify({
+      error: "Creation interdite en mode consultation d'un collaborateur.",
+    });
+  }
+  const name = String(args.name || "").trim();
+  if (!name || name.length < 2 || name.length > 120) {
+    return JSON.stringify({ error: "Nom invalide (2-120 caracteres requis)." });
+  }
+  const desc = args.description ? String(args.description).trim().slice(0, 500) : null;
+  const color = args.color && ALLOWED_COLORS.has(String(args.color).toLowerCase())
+    ? String(args.color).toLowerCase()
+    : "blue";
+
+  // Anti-doublon : meme nom (case-insensitive) sur ce user -> renvoyer l'existant.
+  const existing = await supabaseAdmin
+    .from("projects")
+    .select("id, name, reference")
+    .eq("user_id", ctx.userId)
+    .ilike("name", name)
+    .limit(1)
+    .maybeSingle();
+  if (existing.data) {
+    return JSON.stringify({
+      already_exists: true,
+      id: (existing.data as any).id,
+      name: (existing.data as any).name,
+      reference: (existing.data as any).reference,
+      message: `Le projet '${(existing.data as any).name}' (${(existing.data as any).reference}) existe deja.`,
+    });
+  }
+  // Auto-reference PROJ-XXX (cf. routes/projects.ts).
+  const { count } = await supabaseAdmin
+    .from("projects")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", ctx.userId);
+  const reference = `PROJ-${(((count || 0) + 1).toString().padStart(3, "0"))}`;
+
+  const { data, error } = await supabaseAdmin
+    .from("projects")
+    .insert({
+      user_id: ctx.userId,
+      name,
+      reference,
+      description: desc,
+      status: "actif",
+      color,
+    })
+    .select("id, name, reference, color")
+    .single();
+  if (error || !data) {
+    ctx.log.error?.({ err: error?.message }, "[inboria-tools] create_project failed");
+    return JSON.stringify({ error: `Creation du projet impossible: ${error?.message || "erreur DB"}` });
+  }
+  return JSON.stringify({
+    success: true,
+    id: (data as any).id,
+    name: (data as any).name,
+    reference: (data as any).reference,
+    color: (data as any).color,
+    message: `Projet '${(data as any).name}' (${(data as any).reference}) cree. Il apparait dans la sidebar 'Projets'.`,
+    side_effect: "projects_changed",
+  });
+}
+
 // =============================================================================
 // DISPATCHER
 // =============================================================================
@@ -541,6 +743,10 @@ export async function runInboriaTool(
         return await handleSearchEmails(args, ctx);
       case "read_attachment":
         return await handleReadAttachment(args, ctx);
+      case "create_user_folder":
+        return await handleCreateUserFolder(args, ctx);
+      case "create_project":
+        return await handleCreateProject(args, ctx);
       default:
         return JSON.stringify({ error: `Outil inconnu: ${name}` });
     }
