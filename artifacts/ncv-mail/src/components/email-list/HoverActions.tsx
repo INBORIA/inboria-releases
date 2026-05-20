@@ -13,6 +13,7 @@ import {
   Archive,
   Folder,
   FolderKanban,
+  Briefcase,
   Copy,
   Type as TypeIcon,
   Download,
@@ -31,6 +32,7 @@ export type HoverActionsCb = {
   onArchive: () => void;
   onSetCategory: (categoryId: string, name: string) => void;
   onMove: (folderId: string, name: string) => void;
+  onSetProject?: (projectId: string, name: string) => void;
   onCopySender: () => void;
   onCopySubject: () => void;
   onDownloadEml: () => void;
@@ -51,6 +53,7 @@ export function HoverActions({
   isUnread,
   categoryCounts,
   userFolders,
+  userProjects,
   cb,
   showBlockSender = true,
   showUnsnooze = false,
@@ -58,12 +61,13 @@ export function HoverActions({
   isUnread: boolean;
   categoryCounts: any[] | undefined;
   userFolders: any[] | undefined;
+  userProjects?: any[] | undefined;
   cb: HoverActionsCb;
   showBlockSender?: boolean;
   showUnsnooze?: boolean;
 }) {
   const { t } = useTranslation();
-  const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move" | "more">(null);
+  const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move" | "project" | "more">(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!openMenu) return;
@@ -141,6 +145,21 @@ export function HoverActions({
                 <button key={f.id} className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left" onMouseDown={stopMD} onClick={click(() => cb.onMove(f.id, f.name))}>
                   <Folder className="w-3 h-3 shrink-0 text-primary/70" />
                   <span className="truncate">{f.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {userProjects && userProjects.length > 0 && cb.onSetProject && (
+        <div className="relative">
+          <button className={btn} title={t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "project" ? null : "project"); }}><Briefcase className="w-3.5 h-3.5" /></button>
+          {openMenu === "project" && (
+            <div className={`${popover} max-h-[260px] overflow-y-auto`} onMouseDown={stopMD}>
+              {userProjects.map((p: any) => (
+                <button key={p.id} className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left" onMouseDown={stopMD} onClick={click(() => cb.onSetProject!(String(p.id), p.name || p.reference || ""))}>
+                  <Briefcase className="w-3 h-3 shrink-0 text-primary/70" />
+                  <span className="truncate">{p.name || p.reference}</span>
                 </button>
               ))}
             </div>

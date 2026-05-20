@@ -751,6 +751,33 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   emailId={email.id}
                   snoozedUntil={(email as any).snoozedUntil ?? null}
                 />
+                {userFoldersList && userFoldersList.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={folderMoving}
+                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+                      >
+                        <FolderKanban className="w-3 h-3" />
+                        {t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border-border max-h-[300px] overflow-y-auto">
+                      {userFoldersList.map((f: any) => (
+                        <DropdownMenuItem
+                          key={f.id}
+                          onClick={() => handleMoveToFolderFromDetail(f.id, f.name)}
+                          className="gap-2 text-[12px] cursor-pointer"
+                        >
+                          <Folder className="w-3 h-3 shrink-0 text-primary/70" />
+                          <span className="truncate">{f.name}</span>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
                 <Button
                   variant="outline"
                   size="sm"

@@ -108,7 +108,7 @@ import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-li
 // (Composant HoverActions extrait dans @/components/email-list/HoverActions
 // — réutilisé tel quel par Envoyés pour parité 1:1.)
 
-function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number, x: number, y: number, additive: boolean) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
+function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders, hoverProjects }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number, x: number, y: number, additive: boolean) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[]; hoverProjects?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -238,6 +238,7 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
           isUnread={isUnread}
           categoryCounts={hoverCategories}
           userFolders={hoverFolders}
+          userProjects={hoverProjects}
           cb={hoverCb}
         />
       ) : (
@@ -279,7 +280,8 @@ const EmailRow = memo(EmailRowImpl, (prev, next) => {
     prev.mailboxBadge === next.mailboxBadge &&
     prev.hoverCb === next.hoverCb &&
     prev.hoverCategories === next.hoverCategories &&
-    prev.hoverFolders === next.hoverFolders
+    prev.hoverFolders === next.hoverFolders &&
+    prev.hoverProjects === next.hoverProjects
   );
 });
 
@@ -3825,8 +3827,10 @@ export default function Dashboard() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
   const [folderSubmenuOpen, setFolderSubmenuOpen] = useState(false);
+  const [projectSubmenuOpen, setProjectSubmenuOpen] = useState(false);
   const categorySubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const folderSubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const projectSubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openCategorySubmenu = () => {
     if (categorySubmenuTimerRef.current) { clearTimeout(categorySubmenuTimerRef.current); categorySubmenuTimerRef.current = null; }
     setCategorySubmenuOpen(true);
@@ -3842,6 +3846,28 @@ export default function Dashboard() {
   const scheduleCloseFolderSubmenu = () => {
     if (folderSubmenuTimerRef.current) clearTimeout(folderSubmenuTimerRef.current);
     folderSubmenuTimerRef.current = setTimeout(() => setFolderSubmenuOpen(false), 220);
+  };
+  const openProjectSubmenu = () => {
+    if (projectSubmenuTimerRef.current) { clearTimeout(projectSubmenuTimerRef.current); projectSubmenuTimerRef.current = null; }
+    setProjectSubmenuOpen(true);
+  };
+  const scheduleCloseProjectSubmenu = () => {
+    if (projectSubmenuTimerRef.current) clearTimeout(projectSubmenuTimerRef.current);
+    projectSubmenuTimerRef.current = setTimeout(() => setProjectSubmenuOpen(false), 220);
+  };
+  const handleBulkAssignProject = async (emailIds: number[], projectId: string) => {
+    // Bulk : on enchaîne handleUpdateProject sur chaque mail (pas de bulk endpoint
+    // côté backend, parité avec handleBulkCategory). Optimiste minimaliste.
+    for (const id of emailIds) {
+      await new Promise<void>((resolve) => {
+        updateEmail.mutate(
+          { id, data: { projectId } as any },
+          { onSuccess: () => resolve(), onError: () => resolve() },
+        );
+      });
+    }
+    invalidateAll();
+    toast({ title: t("inbox.projectUpdated") });
   };
   const { data: userFolders } = useListFolders();
   const assignToFolderMut = useAssignEmailsToFolder();
@@ -5168,6 +5194,30 @@ export default function Dashboard() {
                 )}
               </div>
             )}
+            {(projects && projects.length > 0) && (
+              <div className="relative">
+                <button onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu} onClick={openProjectSubmenu}
+                  className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })}</span>
+                  <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+                {projectSubmenuOpen && (
+                  <div className={`absolute top-0 ${ctxMenuPos.flipSubLeft ? "right-full -mr-px pr-2" : "left-full -ml-px pl-2"} min-w-[200px] max-h-[260px] overflow-y-auto`}
+                    onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu}>
+                    <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                      {projects.map((p: any) => (
+                        <button key={p.id}
+                          onClick={() => { handleUpdateProject(contextMenu.emailId, String(p.id)); setContextMenu(null); setProjectSubmenuOpen(false); }}
+                          className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
+                          <Briefcase className="w-3 h-3 shrink-0 text-primary/70" />
+                          <span className="truncate">{p.name || p.reference}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <button onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <Copy className="w-3.5 h-3.5" />{t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
@@ -5218,6 +5268,30 @@ export default function Dashboard() {
                           className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
                           <Folder className="w-3 h-3 shrink-0 text-primary/70" />
                           <span className="truncate">{f.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            {(projects && projects.length > 0) && (
+              <div className="relative">
+                <button onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu} onClick={openProjectSubmenu}
+                  className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })} ({selectedIds.size})</span>
+                  <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+                {projectSubmenuOpen && (
+                  <div className={`absolute top-0 ${ctxMenuPos.flipSubLeft ? "right-full -mr-px pr-2" : "left-full -ml-px pl-2"} min-w-[200px] max-h-[260px] overflow-y-auto`}
+                    onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu}>
+                    <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                      {projects.map((p: any) => (
+                        <button key={p.id}
+                          onClick={() => { handleBulkAssignProject([...selectedIds], String(p.id)); setContextMenu(null); setProjectSubmenuOpen(false); setSelectedIds(new Set()); }}
+                          className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
+                          <Briefcase className="w-3 h-3 shrink-0 text-primary/70" />
+                          <span className="truncate">{p.name || p.reference}</span>
                         </button>
                       ))}
                     </div>
@@ -6420,6 +6494,7 @@ export default function Dashboard() {
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
                                 hoverCategories={categoryCounts}
                                 hoverFolders={userFolders}
+                                hoverProjects={projects}
                                 hoverCb={{
                                   onOpen: () => { setSelectedEmailId(Number(email.id)); setSelectedIds(new Set()); },
                                   onReply: () => handleQuickReply(email.id),
@@ -6430,6 +6505,7 @@ export default function Dashboard() {
                                   onArchive: () => handleArchive(email.id),
                                   onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
                                   onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                                  onSetProject: (projectId: string) => handleUpdateProject(email.id, projectId),
                                   onCopySender: () => handleCopySender(email.id),
                                   onCopySubject: () => handleCopySubject(email.id),
                                   onDownloadEml: () => handleDownloadEml(email.id),
@@ -6533,6 +6609,7 @@ export default function Dashboard() {
                             isSlaBreach={slaBreachIds.has(Number(email.id))}
                             hoverCategories={categoryCounts}
                             hoverFolders={userFolders}
+                                hoverProjects={projects}
                             hoverCb={{
                               onOpen: () => { setSelectedEmailId(Number(email.id)); setSelectedIds(new Set()); },
                               onReply: () => handleQuickReply(email.id),
@@ -6543,6 +6620,7 @@ export default function Dashboard() {
                               onArchive: () => handleArchive(email.id),
                               onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
                               onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                              onSetProject: (projectId: string) => handleUpdateProject(email.id, projectId),
                               onCopySender: () => handleCopySender(email.id),
                               onCopySubject: () => handleCopySubject(email.id),
                               onDownloadEml: () => handleDownloadEml(email.id),
@@ -6687,6 +6765,7 @@ export default function Dashboard() {
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
                                 hoverCategories={categoryCounts}
                                 hoverFolders={userFolders}
+                                hoverProjects={projects}
                                 hoverCb={{
                                   onOpen: () => { setSelectedEmailId(email.id); setSelectedIds(new Set()); },
                                   onReply: () => handleQuickReply(email.id),
@@ -6697,6 +6776,7 @@ export default function Dashboard() {
                                   onArchive: () => handleArchive(email.id),
                                   onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
                                   onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                                  onSetProject: (projectId: string) => handleUpdateProject(email.id, projectId),
                                   onCopySender: () => handleCopySender(email.id),
                                   onCopySubject: () => handleCopySubject(email.id),
                                   onDownloadEml: () => handleDownloadEml(email.id),
