@@ -8,6 +8,7 @@ import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
   MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
+  FolderKanban, Folder, FolderPlus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,8 @@ import {
   useDetectAppointments,
   useUpdateAppointment,
   getListAppointmentsQueryKey,
+  useListFolders,
+  useAssignEmailsToFolder,
 } from "@workspace/api-client-react";
 
 interface EmailPrivateFields {
@@ -301,6 +304,27 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const detectAppointments = useDetectAppointments();
   const updateAppointment = useUpdateAppointment();
   const [appointmentRunning, setAppointmentRunning] = useState(false);
+
+  // Task #294 — bouton "Déplacer vers dossier" depuis la vue détail mail.
+  // Reproduit le mécanisme du HoverActions / clic droit liste, mais
+  // accessible quand l'utilisateur a ouvert un mail en lecture.
+  const { data: userFoldersList } = useListFolders();
+  const assignToFolderFromDetail = useAssignEmailsToFolder();
+  const [folderMoving, setFolderMoving] = useState(false);
+  const handleMoveToFolderFromDetail = useCallback(async (folderId: string, folderName: string) => {
+    if (!email?.id || folderMoving) return;
+    setFolderMoving(true);
+    try {
+      await assignToFolderFromDetail.mutateAsync({ data: { folderId, emailIds: [email.id] } as any });
+      toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
+      queryClient.invalidateQueries({ predicate: (q) => Array.isArray(q.queryKey) && String(q.queryKey[0] || "").includes("folder") });
+    } catch {
+      toast({ variant: "destructive", title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }) });
+    } finally {
+      setFolderMoving(false);
+    }
+  }, [email?.id, folderMoving, assignToFolderFromDetail, toast, t, queryClient]);
+
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
   // Task #176 — Marquer un email comme privé (invisible pour les admins org).
