@@ -1,0 +1,41 @@
+D'abord, c'est quoi chaque truc ?
+PWA (ce que tu as déjà)
+C'est ton site web Inboria. L'utilisateur va sur inboria.com dans son navigateur (Chrome, Safari, Edge), se connecte, et utilise l'app. Bonus : Chrome lui propose un bouton « Installer » qui transforme le site en une icône sur son bureau / son téléphone. Quand il clique, ça ouvre Inboria dans une fenêtre propre, sans la barre du navigateur. Ça ressemble à une vraie app, mais c'est ton site web déguisé. C'est ce que fait Gmail sur ordinateur.
+
+App native iOS / Android
+C'est une vraie app que l'utilisateur télécharge depuis l'App Store (iPhone) ou le Play Store (Android). Il tape « Inboria », il clique « Installer », et l'icône arrive sur son téléphone comme Gmail ou WhatsApp. C'est ce à quoi les gens pensent quand ils disent « j'ai téléchargé l'app ».
+
+Electron desktop
+C'est ton site web Inboria emballé dans un fichier .exe (Windows), .dmg (Mac) ou .AppImage (Linux) que l'utilisateur télécharge depuis ton site et installe sur son ordinateur. À l'intérieur, c'est ton site web qui tourne — mais l'utilisateur a l'impression d'avoir un « vrai logiciel » comme Outlook. C'est ce que fait Superhuman, Spark, Slack, Notion.
+
+Maintenant, c'est quoi les frais ?
+Apple Developer — 99 $/an
+La carte d'entrée d'Apple. Sans ça, tu ne peux pas du tout publier sur l'App Store iPhone. Et sur Mac, si tu donnes ton .dmg à quelqu'un sans avoir payé Apple, le Mac affiche « Application non vérifiée, refusée » — c'est très moche, l'utilisateur abandonne.
+
+Google Play Console — 25 $ une fois pour la vie
+La carte d'entrée de Google. Sans ça, tu ne peux pas du tout publier sur le Play Store Android. C'est un paiement unique, pas annuel. C'est ridiculement peu cher.
+
+Certificat Windows — 0 $, 80 $/an ou 300 $/an
+Quand un utilisateur Windows télécharge ton .exe, Windows vérifie « est-ce que ce logiciel est signé par quelqu'un que je connais ? ».
+
+Sans certificat (0 $) → Windows affiche un écran rouge effrayant : « Windows a protégé votre PC, ce logiciel pourrait endommager votre ordinateur ». 80 % des gens abandonnent là.
+Certificat OV (80 $/an) → Windows continue d'afficher le warning au début, mais après que ~3 000 personnes auront téléchargé ton .exe sans problème, Windows commence à te faire confiance et le warning disparaît tout seul.
+Certificat EV (300 $/an) → Windows te fait confiance immédiatement dès le premier téléchargement. Aucun warning, jamais.
+Mac et Linux n'ont pas ce problème de certificat à part Apple.
+
+Qu'est-ce que ça change pour toi concrètement ?
+Choix A — Tout en web (gratuit, ce que tu as déjà)
+
+L'utilisateur va sur inboria.com sur son ordi ou son téléphone. Il peut installer la PWA pour avoir une icône. Aucun App Store, aucun téléchargement. C'est Gmail.
+❌ Risque : tes concurrents (Superhuman, Spark) ont une app sur les stores, pas toi. En B2B email, ça fait « pas sérieux » pour certains acheteurs, et tu rates les gens qui cherchent « email AI » dans l'App Store.
+
+Choix B — Web + apps mobiles natives (124 $ total)
+
+Pareil que A, mais en plus tu es sur l'App Store et le Play Store. Sur ordinateur, l'utilisateur continue d'utiliser le web. C'est aussi ce que fait Gmail.
+✅ Ma recommandation. C'est le meilleur ratio coût / crédibilité.
+
+Choix C — Web + apps mobiles + app desktop (204 $ ou 424 $/an)
+
+Pareil que B, mais en plus l'utilisateur peut télécharger un .exe Windows et un .dmg Mac. C'est Superhuman / Spark / Slack.
+Utile seulement si tu vises des grosses boîtes qui veulent déployer Inboria via leur service informatique.
+
