@@ -4019,15 +4019,19 @@ export default function Dashboard() {
   // pendant le drag — committé à React au mouseup).
   const liveSelectionRef = useRef<Set<number>>(new Set());
 
-  // Doit rester strictement aligné avec le rendu JSX du EmailRow :
-  //   sélectionné  → `bg-primary/[0.10]`, sinon `hover:bg-white/[0.03]`.
+  // On peint en INLINE STYLE (pas en classList) pour que les re-renders
+  // React (re-fetch de queries de polling, compteurs, etc.) ne réécrasent
+  // pas la peinture en réinitialisant `className`. Le style inline a la
+  // priorité sur les classes Tailwind, donc même quand `isSelected` est
+  // encore `false` côté React (avant commit au mouseup), le visuel est
+  // correct. Symétriquement, quand on déselectionne une ligne déjà
+  // sélectionnée côté React, on force `transparent` pour cacher le
+  // `bg-primary/[0.10]` provenant du className.
   const paintRow = useCallback((el: HTMLElement, selected: boolean) => {
     if (selected) {
-      el.classList.add("bg-primary/[0.10]");
-      el.classList.remove("hover:bg-white/[0.03]");
+      el.style.backgroundColor = "hsl(var(--primary) / 0.10)";
     } else {
-      el.classList.remove("bg-primary/[0.10]");
-      el.classList.add("hover:bg-white/[0.03]");
+      el.style.backgroundColor = "transparent";
     }
   }, []);
 
@@ -4123,10 +4127,16 @@ export default function Dashboard() {
       dragStartIdRef.current = null;
       if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
       if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
-      // Commit final à React. La classList a déjà été mutée pendant
-      // le drag, donc le re-render qui suit applique le même visuel
-      // (aucun flash, aucune transition visible).
+      // Commit final à React. On efface l'inline style des rows de la
+      // snapshot AVANT le commit pour que le className React reprenne la
+      // main (et le visuel reste identique parce qu'il aura `isSelected`
+      // à jour). Sinon l'inline style `transparent` resterait collé aux
+      // rows désélectionnées et masquerait toute future sélection
+      // jusqu'au prochain unmount.
       if (wasDragging && didDrag) {
+        for (const el of dragElsSnapshotRef.current) {
+          el.style.backgroundColor = "";
+        }
         setSelectedIds(new Set(liveSelectionRef.current));
       }
       setTimeout(() => { didDragRef.current = false; }, 0);
