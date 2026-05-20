@@ -257,7 +257,8 @@
       "urgentPlural": "तत्काल",
       "mediumPlural": "मध्यम",
       "lowPlural": "कम",
-      "all": "सभी"
+      "all": "सभी",
+      "allLong": "सभी प्राथमिकताएँ"
     },
     "reply": "उत्तर दें",
     "aiReply": "Inboria उत्तर",
@@ -518,6 +519,17 @@
       "done": "निपटाए गए",
       "slaBreach": "SLA उल्लंघन",
       "snoozed": "स्थगित"
+    },
+    "filtersLabel": "फ़िल्टर",
+    "importance": {
+      "all": "सभी ईमेल",
+      "allLong": "सभी ईमेल"
+    },
+    "date": {
+      "all": "सभी तिथियाँ"
+    },
+    "read": {
+      "all": "सभी"
     }
   },
   "sent": {

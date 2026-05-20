@@ -257,7 +257,8 @@
       "urgentPlural": "紧急邮件",
       "mediumPlural": "中等邮件",
       "lowPlural": "低优先级邮件",
-      "all": "全部"
+      "all": "全部",
+      "allLong": "全部优先级"
     },
     "reply": "回复",
     "aiReply": "Inboria 回复",
@@ -518,6 +519,17 @@
       "done": "已处理",
       "slaBreach": "SLA 已超时",
       "snoozed": "已推迟"
+    },
+    "filtersLabel": "筛选",
+    "importance": {
+      "all": "全部邮件",
+      "allLong": "全部邮件"
+    },
+    "date": {
+      "all": "全部日期"
+    },
+    "read": {
+      "all": "全部"
     }
   },
   "sent": {

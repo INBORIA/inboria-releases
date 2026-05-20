@@ -257,7 +257,8 @@
       "urgentPlural": "Hädad",
       "mediumPlural": "Keskmised",
       "lowPlural": "Madala",
-      "all": "Kõik"
+      "all": "Kõik",
+      "allLong": "Kõik prioriteedid"
     },
     "reply": "Vasta",
     "aiReply": "Vastus Inboria",
@@ -518,6 +519,17 @@
       "done": "Töödeldud",
       "slaBreach": "SLA ületatud",
       "snoozed": "Edasi lükatud"
+    },
+    "filtersLabel": "Filtrid",
+    "importance": {
+      "all": "Kõik kirjad",
+      "allLong": "Kõik kirjad"
+    },
+    "date": {
+      "all": "Kõik kuupäevad"
+    },
+    "read": {
+      "all": "Kõik"
     }
   },
   "sent": {

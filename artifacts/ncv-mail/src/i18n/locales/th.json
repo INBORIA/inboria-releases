@@ -257,7 +257,8 @@
       "urgentPlural": "เร่งด่วน",
       "mediumPlural": "ปานกลาง",
       "lowPlural": "ต่ำ",
-      "all": "ทั้งหมด"
+      "all": "ทั้งหมด",
+      "allLong": "ความสำคัญทั้งหมด"
     },
     "reply": "ตอบกลับ",
     "aiReply": "ตอบกลับ Inboria",
@@ -518,6 +519,17 @@
       "done": "ดำเนินการแล้ว",
       "slaBreach": "เกิน SLA",
       "snoozed": "เลื่อนไว้"
+    },
+    "filtersLabel": "ตัวกรอง",
+    "importance": {
+      "all": "อีเมลทั้งหมด",
+      "allLong": "อีเมลทั้งหมด"
+    },
+    "date": {
+      "all": "วันที่ทั้งหมด"
+    },
+    "read": {
+      "all": "ทั้งหมด"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "Срочные",
       "mediumPlural": "Средние",
       "lowPlural": "Низкие",
-      "all": "Все"
+      "all": "Все",
+      "allLong": "Все приоритеты"
     },
     "reply": "Ответить",
     "aiReply": "Ответ Inboria",
@@ -518,6 +519,17 @@
       "done": "Обработаны",
       "slaBreach": "Просрочен SLA",
       "snoozed": "Отложены"
+    },
+    "filtersLabel": "Фильтры",
+    "importance": {
+      "all": "Все письма",
+      "allLong": "Все письма"
+    },
+    "date": {
+      "all": "Все даты"
+    },
+    "read": {
+      "all": "Все"
     }
   },
   "sent": {

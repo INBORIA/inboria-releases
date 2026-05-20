@@ -257,7 +257,8 @@
       "urgentPlural": "Kiireelliset",
       "mediumPlural": "Keskitasoiset",
       "lowPlural": "Matalat",
-      "all": "Kaikki"
+      "all": "Kaikki",
+      "allLong": "Kaikki prioriteetit"
     },
     "reply": "Vastaa",
     "aiReply": "Vastaus Inboria",
@@ -518,6 +519,17 @@
       "done": "Käsitelty",
       "slaBreach": "SLA ylitetty",
       "snoozed": "Lykätyt"
+    },
+    "filtersLabel": "Suodattimet",
+    "importance": {
+      "all": "Kaikki sähköpostit",
+      "allLong": "Kaikki sähköpostit"
+    },
+    "date": {
+      "all": "Kaikki päivämäärät"
+    },
+    "read": {
+      "all": "Kaikki"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "Pilne",
       "mediumPlural": "Średnie",
       "lowPlural": "Niskie",
-      "all": "Wszystkie"
+      "all": "Wszystkie",
+      "allLong": "Wszystkie priorytety"
     },
     "reply": "Odpowiedz",
     "aiReply": "Odpowiedź Inboria",
@@ -518,6 +519,17 @@
       "done": "Obsłużone",
       "slaBreach": "Naruszenie SLA",
       "snoozed": "Odłożone"
+    },
+    "filtersLabel": "Filtry",
+    "importance": {
+      "all": "Wszystkie e-maile",
+      "allLong": "Wszystkie e-maile"
+    },
+    "date": {
+      "all": "Wszystkie daty"
+    },
+    "read": {
+      "all": "Wszystkie"
     }
   },
   "sent": {

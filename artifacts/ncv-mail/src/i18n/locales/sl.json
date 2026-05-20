@@ -257,7 +257,8 @@
       "urgentPlural": "Nujni",
       "mediumPlural": "Srednji",
       "lowPlural": "Nizki",
-      "all": "Vse"
+      "all": "Vse",
+      "allLong": "Vse prioritete"
     },
     "reply": "Odgovori",
     "aiReply": "Odgovor Inboria",
@@ -518,6 +519,17 @@
       "done": "Obdelani",
       "slaBreach": "Prekoračen SLA",
       "snoozed": "Preloženi"
+    },
+    "filtersLabel": "Filtri",
+    "importance": {
+      "all": "Vsa e-pošta",
+      "allLong": "Vsa e-pošta"
+    },
+    "date": {
+      "all": "Vsi datumi"
+    },
+    "read": {
+      "all": "Vsi"
     }
   },
   "sent": {

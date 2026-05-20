@@ -257,7 +257,8 @@
       "urgentPlural": "عاجلون",
       "mediumPlural": "معتدلون",
       "lowPlural": "منخفضون",
-      "all": "الكل"
+      "all": "الكل",
+      "allLong": "كل الأولويات"
     },
     "reply": "رد",
     "aiReply": "رد عبر Inboria",
@@ -518,6 +519,17 @@
       "done": "تمت المعالجة",
       "slaBreach": "تجاوز SLA",
       "snoozed": "مؤجلة"
+    },
+    "filtersLabel": "عوامل التصفية",
+    "importance": {
+      "all": "كل الرسائل",
+      "allLong": "كل الرسائل"
+    },
+    "date": {
+      "all": "كل التواريخ"
+    },
+    "read": {
+      "all": "الكل"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "Mendesak",
       "mediumPlural": "Sedang",
       "lowPlural": "Rendah",
-      "all": "Semua"
+      "all": "Semua",
+      "allLong": "Semua prioritas"
     },
     "reply": "Balas",
     "aiReply": "Balasan Inboria",
@@ -518,6 +519,17 @@
       "done": "Sudah diproses",
       "slaBreach": "SLA terlampaui",
       "snoozed": "Ditunda"
+    },
+    "filtersLabel": "Filter",
+    "importance": {
+      "all": "Semua email",
+      "allLong": "Semua email"
+    },
+    "date": {
+      "all": "Semua tanggal"
+    },
+    "read": {
+      "all": "Semua"
     }
   },
   "sent": {

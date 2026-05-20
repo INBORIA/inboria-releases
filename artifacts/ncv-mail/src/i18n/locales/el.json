@@ -257,7 +257,8 @@
       "urgentPlural": "Επείγοντα",
       "mediumPlural": "Μέσα",
       "lowPlural": "Χαμηλά",
-      "all": "Όλα"
+      "all": "Όλα",
+      "allLong": "Όλες οι προτεραιότητες"
     },
     "reply": "Απαντήστε",
     "aiReply": "Απάντηση Inboria",
@@ -518,6 +519,17 @@
       "done": "Ολοκληρωμένα",
       "slaBreach": "Υπέρβαση SLA",
       "snoozed": "Σε αναβολή"
+    },
+    "filtersLabel": "Φίλτρα",
+    "importance": {
+      "all": "Όλα τα μηνύματα",
+      "allLong": "Όλα τα μηνύματα"
+    },
+    "date": {
+      "all": "Όλες οι ημερομηνίες"
+    },
+    "read": {
+      "all": "Όλα"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "Haster",
       "mediumPlural": "Middel",
       "lowPlural": "Lav",
-      "all": "Alle"
+      "all": "Alle",
+      "allLong": "Alle prioriteter"
     },
     "reply": "Svar",
     "aiReply": "Svar Inboria",
@@ -518,6 +519,17 @@
       "done": "Behandlede",
       "slaBreach": "SLA overskredet",
       "snoozed": "Udsat"
+    },
+    "filtersLabel": "Filtre",
+    "importance": {
+      "all": "Alle e-mails",
+      "allLong": "Alle e-mails"
+    },
+    "date": {
+      "all": "Alle datoer"
+    },
+    "read": {
+      "all": "Alle"
     }
   },
   "sent": {

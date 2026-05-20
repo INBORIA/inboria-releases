@@ -257,7 +257,8 @@
       "urgentPlural": "Urgentní",
       "mediumPlural": "Střední",
       "lowPlural": "Nízké",
-      "all": "Vše"
+      "all": "Vše",
+      "allLong": "Všechny priority"
     },
     "reply": "Odpovědět",
     "aiReply": "Odpověď Inboria",
@@ -518,6 +519,17 @@
       "done": "Zpracované",
       "slaBreach": "Překročené SLA",
       "snoozed": "Odložené"
+    },
+    "filtersLabel": "Filtry",
+    "importance": {
+      "all": "Všechny e-maily",
+      "allLong": "Všechny e-maily"
+    },
+    "date": {
+      "all": "Všechna data"
+    },
+    "read": {
+      "all": "Vše"
     }
   },
   "sent": {

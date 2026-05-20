@@ -257,7 +257,8 @@
       "urgentPlural": "Tábhachtaí",
       "mediumPlural": "Meán",
       "lowPlural": "Íseal",
-      "all": "Gach ceann"
+      "all": "Gach ceann",
+      "allLong": "Gach tosaíocht"
     },
     "reply": "Freagair",
     "aiReply": "Freagra Inboria",
@@ -518,6 +519,17 @@
       "done": "Láimhseáilte",
       "slaBreach": "Sárú SLA",
       "snoozed": "Curtha siar"
+    },
+    "filtersLabel": "Scagairí",
+    "importance": {
+      "all": "Gach ríomhphost",
+      "allLong": "Gach ríomhphost"
+    },
+    "date": {
+      "all": "Gach dáta"
+    },
+    "read": {
+      "all": "Uile"
     }
   },
   "sent": {

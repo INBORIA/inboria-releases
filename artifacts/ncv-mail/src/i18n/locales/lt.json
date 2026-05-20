@@ -257,7 +257,8 @@
       "urgentPlural": "Skubūs",
       "mediumPlural": "Vidutiniai",
       "lowPlural": "Žemi",
-      "all": "Visi"
+      "all": "Visi",
+      "allLong": "Visi prioritetai"
     },
     "reply": "Atsakyti",
     "aiReply": "Atsakymas Inboria",
@@ -518,6 +519,17 @@
       "done": "Atlikti",
       "slaBreach": "SLA viršytas",
       "snoozed": "Atidėti"
+    },
+    "filtersLabel": "Filtrai",
+    "importance": {
+      "all": "Visi laiškai",
+      "allLong": "Visi laiškai"
+    },
+    "date": {
+      "all": "Visos datos"
+    },
+    "read": {
+      "all": "Visi"
     }
   },
   "sent": {

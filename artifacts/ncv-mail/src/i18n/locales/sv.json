@@ -257,7 +257,8 @@
       "urgentPlural": "Brådskande",
       "mediumPlural": "Mellan",
       "lowPlural": "Låg",
-      "all": "Alla"
+      "all": "Alla",
+      "allLong": "Alla prioriteringar"
     },
     "reply": "Svara",
     "aiReply": "Svar Inboria",
@@ -518,6 +519,17 @@
       "done": "Behandlade",
       "slaBreach": "SLA överskridet",
       "snoozed": "Senarelagda"
+    },
+    "filtersLabel": "Filter",
+    "importance": {
+      "all": "Alla e-postmeddelanden",
+      "allLong": "Alla e-postmeddelanden"
+    },
+    "date": {
+      "all": "Alla datum"
+    },
+    "read": {
+      "all": "Alla"
     }
   },
   "sent": {

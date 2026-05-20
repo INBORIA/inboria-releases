@@ -257,7 +257,8 @@
       "urgentPlural": "Penting",
       "mediumPlural": "Sederhana",
       "lowPlural": "Rendah",
-      "all": "Semua"
+      "all": "Semua",
+      "allLong": "Semua keutamaan"
     },
     "reply": "Balas",
     "aiReply": "Jawapan Inboria",
@@ -518,6 +519,17 @@
       "done": "Telah diproses",
       "slaBreach": "SLA dilampaui",
       "snoozed": "Ditangguh"
+    },
+    "filtersLabel": "Penapis",
+    "importance": {
+      "all": "Semua e-mel",
+      "allLong": "Semua e-mel"
+    },
+    "date": {
+      "all": "Semua tarikh"
+    },
+    "read": {
+      "all": "Semua"
     }
   },
   "sent": {

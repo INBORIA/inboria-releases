@@ -257,7 +257,8 @@
       "urgentPlural": "緊急の",
       "mediumPlural": "中程度の",
       "lowPlural": "低い",
-      "all": "すべて"
+      "all": "すべて",
+      "allLong": "すべての優先度"
     },
     "reply": "返信",
     "aiReply": "Inboriaへの返信",
@@ -518,6 +519,17 @@
       "done": "処理済み",
       "slaBreach": "SLA超過",
       "snoozed": "延期"
+    },
+    "filtersLabel": "フィルター",
+    "importance": {
+      "all": "すべてのメール",
+      "allLong": "すべてのメール"
+    },
+    "date": {
+      "all": "すべての日付"
+    },
+    "read": {
+      "all": "すべて"
     }
   },
   "sent": {

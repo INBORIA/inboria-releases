@@ -257,7 +257,8 @@
       "urgentPlural": "Urgentes",
       "mediumPlural": "Medios",
       "lowPlural": "Bajos",
-      "all": "Todos"
+      "all": "Todos",
+      "allLong": "Todas las prioridades"
     },
     "reply": "Responder",
     "aiReply": "Respuesta de Inboria",
@@ -518,6 +519,17 @@
       "done": "Tratados",
       "slaBreach": "SLA vencido",
       "snoozed": "Aplazados"
+    },
+    "filtersLabel": "Filtros",
+    "importance": {
+      "all": "Todos los correos",
+      "allLong": "Todos los correos"
+    },
+    "date": {
+      "all": "Todas las fechas"
+    },
+    "read": {
+      "all": "Todos"
     }
   },
   "sent": {

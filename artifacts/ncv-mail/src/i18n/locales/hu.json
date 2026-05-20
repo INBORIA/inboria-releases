@@ -257,7 +257,8 @@
       "urgentPlural": "Sürgősek",
       "mediumPlural": "Közepesek",
       "lowPlural": "Alacsonyak",
-      "all": "Összes"
+      "all": "Összes",
+      "allLong": "Összes prioritás"
     },
     "reply": "Válasz",
     "aiReply": "Inboria válasz",
@@ -518,6 +519,17 @@
       "done": "Feldolgozva",
       "slaBreach": "SLA túllépés",
       "snoozed": "Elhalasztva"
+    },
+    "filtersLabel": "Szűrők",
+    "importance": {
+      "all": "Összes e-mail",
+      "allLong": "Összes e-mail"
+    },
+    "date": {
+      "all": "Összes dátum"
+    },
+    "read": {
+      "all": "Összes"
     }
   },
   "sent": {

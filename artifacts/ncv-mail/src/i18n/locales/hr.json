@@ -257,7 +257,8 @@
       "urgentPlural": "Hitni",
       "mediumPlural": "Srednji",
       "lowPlural": "Niski",
-      "all": "Sve"
+      "all": "Sve",
+      "allLong": "Svi prioriteti"
     },
     "reply": "Odgovori",
     "aiReply": "Odgovor Inboria",
@@ -518,6 +519,17 @@
       "done": "Obrađeno",
       "slaBreach": "Prekoračen SLA",
       "snoozed": "Odgođeno"
+    },
+    "filtersLabel": "Filtri",
+    "importance": {
+      "all": "Sva e-pošta",
+      "allLong": "Sva e-pošta"
+    },
+    "date": {
+      "all": "Svi datumi"
+    },
+    "read": {
+      "all": "Sve"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "Хитни",
       "mediumPlural": "Просечни",
       "lowPlural": "Ниски",
-      "all": "Све"
+      "all": "Све",
+      "allLong": "Сви приоритети"
     },
     "reply": "Одговори",
     "aiReply": "Одговор на Inboria",
@@ -518,6 +519,17 @@
       "done": "Обрађени",
       "slaBreach": "Прекорачење СЛА",
       "snoozed": "Одложени"
+    },
+    "filtersLabel": "Филтери",
+    "importance": {
+      "all": "Сви мејлови",
+      "allLong": "Сви мејлови"
+    },
+    "date": {
+      "all": "Сви датуми"
+    },
+    "read": {
+      "all": "Сви"
     }
   },
   "sent": {

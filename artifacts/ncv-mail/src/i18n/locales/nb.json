@@ -257,7 +257,8 @@
       "urgentPlural": "Haster",
       "mediumPlural": "Moderat",
       "lowPlural": "Lav",
-      "all": "Alle"
+      "all": "Alle",
+      "allLong": "Alle prioriteringer"
     },
     "reply": "Svar",
     "aiReply": "Svar Inboria",
@@ -518,6 +519,17 @@
       "done": "Behandlede",
       "slaBreach": "SLA overskredet",
       "snoozed": "Utsatt"
+    },
+    "filtersLabel": "Filtre",
+    "importance": {
+      "all": "Alle e-poster",
+      "allLong": "Alle e-poster"
+    },
+    "date": {
+      "all": "Alle datoer"
+    },
+    "read": {
+      "all": "Alle"
     }
   },
   "sent": {

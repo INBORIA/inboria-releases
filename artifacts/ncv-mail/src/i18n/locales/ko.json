@@ -257,7 +257,8 @@
       "urgentPlural": "긴급한",
       "mediumPlural": "중간인",
       "lowPlural": "낮은",
-      "all": "전체"
+      "all": "전체",
+      "allLong": "모든 우선순위"
     },
     "reply": "답장하기",
     "aiReply": "Inboria 답변",
@@ -518,6 +519,17 @@
       "done": "처리됨",
       "slaBreach": "SLA 초과",
       "snoozed": "보류됨"
+    },
+    "filtersLabel": "필터",
+    "importance": {
+      "all": "모든 메일",
+      "allLong": "모든 메일"
+    },
+    "date": {
+      "all": "모든 날짜"
+    },
+    "read": {
+      "all": "전체"
     }
   },
   "sent": {

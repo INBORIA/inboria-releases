@@ -257,7 +257,8 @@
       "urgentPlural": "Urgents",
       "mediumPlural": "Mitjans",
       "lowPlural": "Bajos",
-      "all": "Totes"
+      "all": "Totes",
+      "allLong": "Totes les prioritats"
     },
     "reply": "Respondre",
     "aiReply": "Resposta Inboria",
@@ -518,6 +519,17 @@
       "done": "Tractats",
       "slaBreach": "SLA superat",
       "snoozed": "Ajornats"
+    },
+    "filtersLabel": "Filtres",
+    "importance": {
+      "all": "Tots els correus",
+      "allLong": "Tots els correus"
+    },
+    "date": {
+      "all": "Totes les dates"
+    },
+    "read": {
+      "all": "Tots"
     }
   },
   "sent": {

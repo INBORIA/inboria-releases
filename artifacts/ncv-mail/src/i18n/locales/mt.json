@@ -257,7 +257,8 @@
       "urgentPlural": "Urgenti",
       "mediumPlural": "Medi",
       "lowPlural": "Baxxi",
-      "all": "Kollha"
+      "all": "Kollha",
+      "allLong": "Il-prijoritajiet kollha"
     },
     "reply": "Iwieġeb",
     "aiReply": "Risposta Inboria",
@@ -518,6 +519,17 @@
       "done": "Ipproċessati",
       "slaBreach": "SLA maqbuż",
       "snoozed": "Posposti"
+    },
+    "filtersLabel": "Filtri",
+    "importance": {
+      "all": "L-emails kollha",
+      "allLong": "L-emails kollha"
+    },
+    "date": {
+      "all": "Id-dati kollha"
+    },
+    "read": {
+      "all": "Kollha"
     }
   },
   "sent": {

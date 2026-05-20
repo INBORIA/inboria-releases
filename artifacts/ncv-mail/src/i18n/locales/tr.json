@@ -257,7 +257,8 @@
       "urgentPlural": "Acelesi olanlar",
       "mediumPlural": "Orta öncelikli",
       "lowPlural": "Düşük öncelikli",
-      "all": "Tümü"
+      "all": "Tümü",
+      "allLong": "Tüm öncelikler"
     },
     "reply": "Yanıtla",
     "aiReply": "Inboria Yanıtı",
@@ -518,6 +519,17 @@
       "done": "İşlenmiş",
       "slaBreach": "SLA aşıldı",
       "snoozed": "Ertelenmiş"
+    },
+    "filtersLabel": "Filtreler",
+    "importance": {
+      "all": "Tüm e-postalar",
+      "allLong": "Tüm e-postalar"
+    },
+    "date": {
+      "all": "Tüm tarihler"
+    },
+    "read": {
+      "all": "Tümü"
     }
   },
   "sent": {

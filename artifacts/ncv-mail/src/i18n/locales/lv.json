@@ -257,7 +257,8 @@
       "urgentPlural": "Steidzami",
       "mediumPlural": "Vidēji",
       "lowPlural": "Zemi",
-      "all": "Visi"
+      "all": "Visi",
+      "allLong": "Visas prioritātes"
     },
     "reply": "Atbildēt",
     "aiReply": "Atbilde Inboria",
@@ -518,6 +519,17 @@
       "done": "Apstrādāti",
       "slaBreach": "SLA pārsniegts",
       "snoozed": "Atlikti"
+    },
+    "filtersLabel": "Filtri",
+    "importance": {
+      "all": "Visi e-pasti",
+      "allLong": "Visi e-pasti"
+    },
+    "date": {
+      "all": "Visi datumi"
+    },
+    "read": {
+      "all": "Visi"
     }
   },
   "sent": {

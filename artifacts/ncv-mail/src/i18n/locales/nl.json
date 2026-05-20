@@ -257,7 +257,8 @@
       "urgentPlural": "Dringend",
       "mediumPlural": "Gemiddeld",
       "lowPlural": "Laag",
-      "all": "Alle"
+      "all": "Alle",
+      "allLong": "Alle prioriteiten"
     },
     "reply": "Antwoorden",
     "aiReply": "Inboria-antwoord",
@@ -518,6 +519,17 @@
       "done": "Afgehandeld",
       "slaBreach": "SLA overschreden",
       "snoozed": "Uitgesteld"
+    },
+    "filtersLabel": "Filters",
+    "importance": {
+      "all": "Alle e-mails",
+      "allLong": "Alle e-mails"
+    },
+    "date": {
+      "all": "Alle datums"
+    },
+    "read": {
+      "all": "Alle"
     }
   },
   "sent": {

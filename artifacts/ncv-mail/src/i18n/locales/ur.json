@@ -257,7 +257,8 @@
       "urgentPlural": "فوری",
       "mediumPlural": "درمیانے",
       "lowPlural": "کم",
-      "all": "سب"
+      "all": "سب",
+      "allLong": "تمام ترجیحات"
     },
     "reply": "جواب دیں",
     "aiReply": "Inboria کا جواب",
@@ -518,6 +519,17 @@
       "done": "حل شدہ",
       "slaBreach": "SLA کی خلاف ورزی",
       "snoozed": "ملتوی"
+    },
+    "filtersLabel": "فلٹرز",
+    "importance": {
+      "all": "تمام ای میلز",
+      "allLong": "تمام ای میلز"
+    },
+    "date": {
+      "all": "تمام تواریخ"
+    },
+    "read": {
+      "all": "سب"
     }
   },
   "sent": {

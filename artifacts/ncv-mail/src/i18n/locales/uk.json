@@ -257,7 +257,8 @@
       "urgentPlural": "Термінові",
       "mediumPlural": "Середні",
       "lowPlural": "Низькі",
-      "all": "Усі"
+      "all": "Усі",
+      "allLong": "Усі пріоритети"
     },
     "reply": "Відповісти",
     "aiReply": "Відповідь Inboria",
@@ -518,6 +519,17 @@
       "done": "Оброблені",
       "slaBreach": "Порушення SLA",
       "snoozed": "Відкладені"
+    },
+    "filtersLabel": "Фільтри",
+    "importance": {
+      "all": "Усі листи",
+      "allLong": "Усі листи"
+    },
+    "date": {
+      "all": "Усі дати"
+    },
+    "read": {
+      "all": "Усі"
     }
   },
   "sent": {

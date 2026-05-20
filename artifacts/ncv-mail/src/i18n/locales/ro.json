@@ -257,7 +257,8 @@
       "urgentPlural": "Urgente",
       "mediumPlural": "Mijlocii",
       "lowPlural": "Scăzute",
-      "all": "Toate"
+      "all": "Toate",
+      "allLong": "Toate prioritățile"
     },
     "reply": "Răspundeți",
     "aiReply": "Răspuns Inboria",
@@ -518,6 +519,17 @@
       "done": "Tratate",
       "slaBreach": "SLA depășit",
       "snoozed": "Amânate"
+    },
+    "filtersLabel": "Filtre",
+    "importance": {
+      "all": "Toate e-mailurile",
+      "allLong": "Toate e-mailurile"
+    },
+    "date": {
+      "all": "Toate datele"
+    },
+    "read": {
+      "all": "Toate"
     }
   },
   "sent": {

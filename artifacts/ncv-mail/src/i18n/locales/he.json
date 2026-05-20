@@ -257,7 +257,8 @@
       "urgentPlural": "דחופים",
       "mediumPlural": "בינוניים",
       "lowPlural": "נמוכים",
-      "all": "הכול"
+      "all": "הכול",
+      "allLong": "כל העדיפויות"
     },
     "reply": "ענה",
     "aiReply": "תגובה מ-Inboria",
@@ -518,6 +519,17 @@
       "done": "טופלו",
       "slaBreach": "חריגת SLA",
       "snoozed": "נדחו"
+    },
+    "filtersLabel": "מסננים",
+    "importance": {
+      "all": "כל הדוא״ל",
+      "allLong": "כל הדוא״ל"
+    },
+    "date": {
+      "all": "כל התאריכים"
+    },
+    "read": {
+      "all": "הכול"
     }
   },
   "sent": {

@@ -257,7 +257,8 @@
       "urgentPlural": "បន្ទាន់",
       "mediumPlural": "មធ្យម",
       "lowPlural": "ទាប",
-      "all": "ទាំងអស់"
+      "all": "ទាំងអស់",
+      "allLong": "អាទិភាពទាំងអស់"
     },
     "reply": "ឆ្លើយតប",
     "aiReply": "ឆ្លើយតប Inboria",
@@ -518,6 +519,17 @@
       "done": "បានដោះស្រាយ",
       "slaBreach": "លើស SLA",
       "snoozed": "បានពន្យារ"
+    },
+    "filtersLabel": "តម្រង",
+    "importance": {
+      "all": "អ៊ីមែលទាំងអស់",
+      "allLong": "អ៊ីមែលទាំងអស់"
+    },
+    "date": {
+      "all": "កាលបរិច្ឆេទទាំងអស់"
+    },
+    "read": {
+      "all": "ទាំងអស់"
     }
   },
   "sent": {

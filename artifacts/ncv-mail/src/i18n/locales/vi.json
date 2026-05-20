@@ -257,7 +257,8 @@
       "urgentPlural": "Khẩn cấp",
       "mediumPlural": "Trung bình",
       "lowPlural": "Thấp",
-      "all": "Tất cả"
+      "all": "Tất cả",
+      "allLong": "Tất cả mức ưu tiên"
     },
     "reply": "Trả lời",
     "aiReply": "Phản hồi Inboria",
@@ -518,6 +519,17 @@
       "done": "Đã xử lý",
       "slaBreach": "Vượt SLA",
       "snoozed": "Đã hoãn"
+    },
+    "filtersLabel": "Bộ lọc",
+    "importance": {
+      "all": "Tất cả thư",
+      "allLong": "Tất cả thư"
+    },
+    "date": {
+      "all": "Tất cả ngày"
+    },
+    "read": {
+      "all": "Tất cả"
     }
   },
   "sent": {

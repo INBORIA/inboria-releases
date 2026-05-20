@@ -274,7 +274,8 @@
       "low": "Faible",
       "urgentPlural": "Urgents",
       "mediumPlural": "Moyens",
-      "lowPlural": "Faibles"
+      "lowPlural": "Faibles",
+      "allLong": "Toutes les priorités"
     },
     "reply": "Répondre",
     "aiReply": "Réponse Inboria",
@@ -534,6 +535,17 @@
       "done": "Traités",
       "slaBreach": "SLA dépassé",
       "snoozed": "Reportés"
+    },
+    "filtersLabel": "Filtres",
+    "importance": {
+      "all": "Tous les mails",
+      "allLong": "Tous les mails"
+    },
+    "date": {
+      "all": "Toutes les dates"
+    },
+    "read": {
+      "all": "Tous"
     }
   },
   "sent": {
