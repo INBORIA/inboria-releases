@@ -3994,13 +3994,12 @@ export default function Dashboard() {
     return () => document.removeEventListener("mousedown", handler);
   }, [selectedIds.size > 0]);
 
-  // Drag-select avec bypass React pour la performance :
-  //  - pendant le drag, on mute directement les classes CSS des rows
-  //    (paintRow) sans passer par setSelectedIds → 0 re-render React
-  //    sur 100+ EmailRow à chaque mousemove (cause principale du lag).
-  //  - on commit le résultat final à React uniquement au mouseup.
-  //  - plage ASYMÉTRIQUE : ancre incluse si curseur ≥ ancre, exclue sinon
-  //    (drag UP past ancre fait basculer le « premier » mail hors).
+  // Drag-select : pattern recopié de indesirables.tsx (qui fonctionne
+  // parfaitement selon retour utilisateur). setSelectedIds à chaque move
+  // avec snapshot id→index O(1) + throttle rAF + skip si hover id
+  // inchangé. Plage symétrique [lo,hi] = a<b ? [a,b] : [b,a] avec garde
+  // `a !== b` côté add (curseur sur l'ancre = aucune addition tant que
+  // le curseur n'a pas bougé sur une autre row).
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
@@ -4012,22 +4011,8 @@ export default function Dashboard() {
   const lastMouseYRef = useRef(0);
   const lastMouseXRef = useRef(0);
   const dragIdsSnapshotRef = useRef<number[]>([]);
-  const dragElsSnapshotRef = useRef<HTMLElement[]>([]);
   const dragIdIndexRef = useRef<Map<number, number>>(new Map());
   const lastHoverIdRef = useRef<number | null>(null);
-  // Set des IDs actuellement peints comme sélectionnés (source de vérité
-  // pendant le drag — committé à React au mouseup).
-  const liveSelectionRef = useRef<Set<number>>(new Set());
-
-  // On peint via DATA-ATTRIBUTE (et règles CSS !important dans index.css).
-  // Les re-renders React ne touchent jamais aux data-attributes absents
-  // du JSX, donc même quand `isSelected` côté React est encore stale
-  // (avant commit au mouseup), notre peinture tient. Plus solide que
-  // classList (que React réécrase) ou inline style (que `:hover` peut
-  // overrider sur certains rows).
-  const paintRow = useCallback((el: HTMLElement, selected: boolean) => {
-    el.dataset.dragPaint = selected ? "on" : "off";
-  }, []);
 
   const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -4051,35 +4036,17 @@ export default function Dashboard() {
       lastHoverIdRef.current = id;
       const idx = dragIdIndexRef.current;
       const ids = dragIdsSnapshotRef.current;
-      const els = dragElsSnapshotRef.current;
       const a = idx.get(dragStartIdRef.current) ?? -1;
       const b = idx.get(id) ?? -1;
       if (a < 0 || b < 0) return;
-      // Plage asymétrique : si curseur AU-DESSUS de l'ancre, on EXCLUT
-      // l'ancre de la plage (le « premier » mail bascule hors quand on
-      // remonte au-dessus). Si curseur sur ou en-dessous, ancre incluse.
-      let lo: number, hi: number;
-      if (b >= a) { lo = a; hi = b; }
-      else { lo = b; hi = a - 1; }
-      // Calcul de la sélection désirée (sans toucher à React).
-      const desired = new Set(preSelectRef.current);
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const next = new Set(preSelectRef.current);
       if (anchorWasSelectedRef.current) {
-        for (let i = lo; i <= hi; i++) desired.delete(ids[i]);
-      } else {
-        for (let i = lo; i <= hi; i++) desired.add(ids[i]);
+        for (let i = lo; i <= hi; i++) next.delete(ids[i]);
+      } else if (a !== b) {
+        for (let i = lo; i <= hi; i++) next.add(ids[i]);
       }
-      // Diff vs live state, mute classList uniquement sur les rows qui
-      // changent. 0 setSelectedIds → 0 re-render React pendant le drag.
-      const live = liveSelectionRef.current;
-      for (let i = 0; i < ids.length; i++) {
-        const rid = ids[i];
-        const shouldBe = desired.has(rid);
-        const isNow = live.has(rid);
-        if (shouldBe === isNow) continue;
-        if (shouldBe) live.add(rid); else live.delete(rid);
-        const el = els[i];
-        if (el) paintRow(el, shouldBe);
-      }
+      setSelectedIds(next);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -4115,24 +4082,10 @@ export default function Dashboard() {
     };
 
     const handleMouseUp = () => {
-      const wasDragging = isDraggingRef.current;
-      const didDrag = didDragRef.current;
       isDraggingRef.current = false;
       dragStartIdRef.current = null;
       if (autoScrollRaf.current !== 0) { cancelAnimationFrame(autoScrollRaf.current); autoScrollRaf.current = 0; }
       if (moveRaf.current !== 0) { cancelAnimationFrame(moveRaf.current); moveRaf.current = 0; }
-      // Commit final à React. On efface l'inline style des rows de la
-      // snapshot AVANT le commit pour que le className React reprenne la
-      // main (et le visuel reste identique parce qu'il aura `isSelected`
-      // à jour). Sinon l'inline style `transparent` resterait collé aux
-      // rows désélectionnées et masquerait toute future sélection
-      // jusqu'au prochain unmount.
-      if (wasDragging && didDrag) {
-        for (const el of dragElsSnapshotRef.current) {
-          delete el.dataset.dragPaint;
-        }
-        setSelectedIds(new Set(liveSelectionRef.current));
-      }
       setTimeout(() => { didDragRef.current = false; }, 0);
     };
 
@@ -4186,21 +4139,15 @@ export default function Dashboard() {
     const cur = selectedIdsRef.current;
     anchorWasSelectedRef.current = cur.has(id);
     preSelectRef.current = additive ? new Set(cur) : new Set<number>();
-    // La live-selection initiale = sélection pré-existante (preSelect).
-    // Pendant le drag, processMove mute classList + ce Set en sync.
-    // Au mouseup, on committe ce Set à React.
-    liveSelectionRef.current = new Set(preSelectRef.current);
-    // Snapshot ordre courant des ids visibles ET de leurs éléments DOM.
+    // Snapshot ordre courant des ids visibles (depuis le DOM).
     const rows = document.querySelectorAll<HTMLElement>("[data-row-id]");
     const ids: number[] = [];
-    const els: HTMLElement[] = [];
     const idx = new Map<number, number>();
     rows.forEach((r, i) => {
       const v = Number(r.dataset.rowId);
-      if (Number.isFinite(v)) { ids.push(v); els.push(r); idx.set(v, i); }
+      if (Number.isFinite(v)) { ids.push(v); idx.set(v, i); }
     });
     dragIdsSnapshotRef.current = ids;
-    dragElsSnapshotRef.current = els;
     dragIdIndexRef.current = idx;
   }, []);
 

@@ -444,19 +444,6 @@ html[data-ncv-theme="light"] [data-inboria-chat-panel] .text-cyan-400 { color: #
 html[data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-800.text-zinc-100,
 html[data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-800.text-zinc-300 { background-color: #f0f0ec !important; color: #111827 !important; }
 
-/* Drag-select sur les listes mails : on peint via data-attribute (au lieu
-   de classList qui se fait écraser au prochain re-render React). !important
-   pour battre la classe `bg-primary/[0.10]` (sélection committée) et le
-   `hover:bg-white/[0.03]`. Cf. dashboard/index.tsx paintRow. */
-[data-row-id][data-drag-paint="on"],
-[data-row-id][data-drag-paint="on"]:hover {
-  background-color: hsl(var(--primary) / 0.10) !important;
-}
-[data-row-id][data-drag-paint="off"],
-[data-row-id][data-drag-paint="off"]:hover {
-  background-color: transparent !important;
-}
-
 @layer base {
   * {
     @apply border-border;
