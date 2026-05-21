@@ -28,6 +28,7 @@ import {
   getListFoldersQueryKey,
 } from "@workspace/api-client-react";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { useQuery } from "@tanstack/react-query";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import type { UploadedFile } from "@/components/FileAttachInput";
@@ -550,8 +551,10 @@ export default function Envoyes() {
           </div>
         ) : (
           <>
-            <div className="space-y-1">
-              {sentEmails.map((email) => {
+            <VirtualizedMailList
+              items={sentEmails}
+              keyExtractor={(email) => email.id}
+              renderRow={(email) => {
                 const isReply = !!email.replyToEmailId;
                 const isSelected = selectedIds.has(email.id);
                 const openedCount = (email as any).openedCount as number | undefined;
@@ -656,8 +659,8 @@ export default function Envoyes() {
                     />
                   </div>
                 );
-              })}
-            </div>
+              }}
+            />
             {hasMore && (
               <div className="flex items-center justify-center py-4 mt-3">
                 <button

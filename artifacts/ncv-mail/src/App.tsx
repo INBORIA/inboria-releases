@@ -1,5 +1,5 @@
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
 import { getGetProfileQueryKey, useGetMyOrganisation, getGetMyOrganisationQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,9 +9,11 @@ import { setAuthTokenGetter } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/lib/supabase";
+import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 import { CookieBanner } from "@/components/cookie-banner";
 
+// Eager (auth flow critique + landings rentables au premier paint)
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import VerifierEmail from "@/pages/verifier-email";
@@ -20,51 +22,64 @@ import MotDePasseOublie from "@/pages/mot-de-passe-oublie";
 import ResetPassword from "@/pages/reset-password";
 import AcceptInvite from "@/pages/accept-invite";
 import Dashboard from "@/pages/dashboard/index";
-import Archives from "@/pages/dashboard/archives";
-import MesDossiers from "@/pages/dashboard/dossiers";
-import Indesirables from "@/pages/dashboard/indesirables";
-import Corbeille from "@/pages/dashboard/corbeille";
-import Envoyes from "@/pages/dashboard/envoyes";
-import Reportes from "@/pages/dashboard/reportes";
-import Suivi from "@/pages/dashboard/suivi";
-import Programmes from "@/pages/dashboard/programmes";
-import BilanQuotidien from "@/pages/dashboard/bilan";
-import Taches from "@/pages/dashboard/taches";
-import Relances from "@/pages/dashboard/relances";
-import Classement from "@/pages/dashboard/classement";
-import Parametres from "@/pages/dashboard/parametres";
-import Templates from "@/pages/dashboard/templates";
-import Regles from "@/pages/dashboard/regles";
-import ParametresSla from "@/pages/dashboard/parametres-sla";
-import ParametresApi from "@/pages/dashboard/parametres-api";
-import ParametresWebhooks from "@/pages/dashboard/parametres-webhooks";
-import ParametresIntegrations from "@/pages/dashboard/parametres-integrations";
-import ParametresMonCompte from "@/pages/dashboard/parametres-mon-compte";
-import ParametresCalendriers from "@/pages/dashboard/parametres-calendriers";
-import ParametresViePrivee from "@/pages/dashboard/parametres-vie-privee";
-import ParametresCrm from "@/pages/dashboard/parametres-crm";
-import ParametresDeveloppeurs from "@/pages/dashboard/parametres-developpeurs";
-import ParametresAdministration from "@/pages/dashboard/parametres-administration";
-import Abonnement from "@/pages/dashboard/abonnement";
-import Projets from "@/pages/dashboard/projets";
-import Contacts from "@/pages/dashboard/contacts";
-import Equipe from "@/pages/dashboard/equipe";
-import AdminIndex from "@/pages/dashboard/admin";
-import AdminWaitlist from "@/pages/dashboard/admin/waitlist";
-import AdminAbonnes from "@/pages/dashboard/admin/abonnes";
-import TeamActivite from "@/pages/dashboard/team-activite";
-import Agenda from "@/pages/dashboard/agenda";
-
 import Accueil from "@/pages/marketing/accueil";
-import Fonctionnalites from "@/pages/marketing/fonctionnalites";
-import Entreprise from "@/pages/marketing/entreprise";
-import ClassementMarketing from "@/pages/marketing/classement";
-import IntelligenceArtificielle from "@/pages/marketing/intelligence-artificielle";
-import CRM from "@/pages/marketing/crm";
-import Tarifs from "@/pages/marketing/tarifs";
-import MentionsLegales from "@/pages/marketing/mentions-legales";
-import Confidentialite from "@/pages/marketing/confidentialite";
-import Conditions from "@/pages/marketing/conditions";
+
+// Lazy (code-split par page — chargement à la navigation pour réduire le
+// bundle initial de ~200-400 ko gzip selon la page visitée)
+const Archives = lazy(() => import("@/pages/dashboard/archives"));
+const MesDossiers = lazy(() => import("@/pages/dashboard/dossiers"));
+const Indesirables = lazy(() => import("@/pages/dashboard/indesirables"));
+const Corbeille = lazy(() => import("@/pages/dashboard/corbeille"));
+const Envoyes = lazy(() => import("@/pages/dashboard/envoyes"));
+const Reportes = lazy(() => import("@/pages/dashboard/reportes"));
+const Suivi = lazy(() => import("@/pages/dashboard/suivi"));
+const Programmes = lazy(() => import("@/pages/dashboard/programmes"));
+const BilanQuotidien = lazy(() => import("@/pages/dashboard/bilan"));
+const Taches = lazy(() => import("@/pages/dashboard/taches"));
+const Relances = lazy(() => import("@/pages/dashboard/relances"));
+const Classement = lazy(() => import("@/pages/dashboard/classement"));
+const Parametres = lazy(() => import("@/pages/dashboard/parametres"));
+const Templates = lazy(() => import("@/pages/dashboard/templates"));
+const Regles = lazy(() => import("@/pages/dashboard/regles"));
+const ParametresSla = lazy(() => import("@/pages/dashboard/parametres-sla"));
+const ParametresApi = lazy(() => import("@/pages/dashboard/parametres-api"));
+const ParametresWebhooks = lazy(() => import("@/pages/dashboard/parametres-webhooks"));
+const ParametresIntegrations = lazy(() => import("@/pages/dashboard/parametres-integrations"));
+const ParametresMonCompte = lazy(() => import("@/pages/dashboard/parametres-mon-compte"));
+const ParametresCalendriers = lazy(() => import("@/pages/dashboard/parametres-calendriers"));
+const ParametresViePrivee = lazy(() => import("@/pages/dashboard/parametres-vie-privee"));
+const ParametresCrm = lazy(() => import("@/pages/dashboard/parametres-crm"));
+const ParametresDeveloppeurs = lazy(() => import("@/pages/dashboard/parametres-developpeurs"));
+const ParametresAdministration = lazy(() => import("@/pages/dashboard/parametres-administration"));
+const Abonnement = lazy(() => import("@/pages/dashboard/abonnement"));
+const Projets = lazy(() => import("@/pages/dashboard/projets"));
+const Contacts = lazy(() => import("@/pages/dashboard/contacts"));
+const Equipe = lazy(() => import("@/pages/dashboard/equipe"));
+const AdminIndex = lazy(() => import("@/pages/dashboard/admin"));
+const AdminWaitlist = lazy(() => import("@/pages/dashboard/admin/waitlist"));
+const AdminAbonnes = lazy(() => import("@/pages/dashboard/admin/abonnes"));
+const TeamActivite = lazy(() => import("@/pages/dashboard/team-activite"));
+const Agenda = lazy(() => import("@/pages/dashboard/agenda"));
+
+const Fonctionnalites = lazy(() => import("@/pages/marketing/fonctionnalites"));
+const Entreprise = lazy(() => import("@/pages/marketing/entreprise"));
+const ClassementMarketing = lazy(() => import("@/pages/marketing/classement"));
+const IntelligenceArtificielle = lazy(() => import("@/pages/marketing/intelligence-artificielle"));
+const CRM = lazy(() => import("@/pages/marketing/crm"));
+const Tarifs = lazy(() => import("@/pages/marketing/tarifs"));
+const MentionsLegales = lazy(() => import("@/pages/marketing/mentions-legales"));
+const Confidentialite = lazy(() => import("@/pages/marketing/confidentialite"));
+const Conditions = lazy(() => import("@/pages/marketing/conditions"));
+
+// Fallback Suspense — simple spinner centré, jamais une page blanche. Court
+// (50-150ms) donc pas la peine d'un skeleton complet.
+function RouteLoadingFallback() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+    </div>
+  );
+}
 
 let _clearingSession = false;
 let _consecutiveAuthFailures = 0;
@@ -224,6 +239,7 @@ function Router() {
   const fullyAuthed = !!session && mfaState === "ok";
 
   return (
+    <Suspense fallback={<RouteLoadingFallback />}>
     <Switch>
       <Route path="/" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Accueil />} />
       <Route path="/fonctionnalites" component={Fonctionnalites} />
@@ -288,6 +304,7 @@ function Router() {
       <Route path="/dashboard/admin/abonnes" component={() => <ProtectedRoute component={AdminAbonnes} />} />
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
