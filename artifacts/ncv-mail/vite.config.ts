@@ -175,6 +175,32 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // CRITIQUE : forcer les libs à state partagé (React Context) dans un
+        // chunk vendor unique pour éviter la duplication entre chunks lazy.
+        // Sans ça, Radix Dialog/Popover/Tooltip peut être bundlé deux fois
+        // (main + chunk lazy), créant deux instances de Context React et
+        // cassant l'erreur "DialogTitle must be used within Dialog" au
+        // premier rendu d'un Dialog depuis une page lazy.
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("@radix-ui/")) return "vendor-radix";
+            if (id.includes("@tanstack/")) return "vendor-tanstack";
+            if (id.includes("/wouter/") || id.includes("/wouter@")) return "vendor-wouter";
+            if (
+              id.includes("/react/") ||
+              id.includes("/react-dom/") ||
+              id.includes("/scheduler/") ||
+              id.includes("/react@") ||
+              id.includes("/react-dom@")
+            ) {
+              return "vendor-react";
+            }
+          }
+        },
+      },
+    },
   },
   server: {
     port,
