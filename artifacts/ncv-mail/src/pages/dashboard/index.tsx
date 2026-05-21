@@ -5846,16 +5846,33 @@ export default function Dashboard() {
               <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
             </Button>
             {isComposeOpen && (
-              <div
-                role="dialog"
-                aria-modal="false"
-                aria-label={t("inbox.composeAria", "Rédiger un email")}
-                className={`fixed z-50 bg-card border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 ${
-                  isComposeFullscreen
-                    ? "inset-0"
-                    : "top-0 right-0 bottom-0 w-full sm:w-[640px] max-w-[100vw] border-l"
-                }`}
+              // Wrappé dans <Dialog modal={false}> Radix root : ne rend rien
+              // visuellement (pas de Portal/Overlay/Content) mais fournit le
+              // Context Radix dont <DialogTitle> et <DialogHeader> à
+              // l'intérieur de ComposeDialogBody ont besoin. Sans ce wrapper,
+              // DialogTitle throw "must be used within Dialog" car le panneau
+              // coulissant Superhuman-style est un <div role="dialog"> HTML
+              // pur (pas de DialogProvider).
+              <Dialog
+                open
+                modal={false}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    setIsComposeOpen(false);
+                    setIsComposeFullscreen(false);
+                  }
+                }}
               >
+                <div
+                  role="dialog"
+                  aria-modal="false"
+                  aria-label={t("inbox.composeAria", "Rédiger un email")}
+                  className={`fixed z-50 bg-card border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 ${
+                    isComposeFullscreen
+                      ? "inset-0"
+                      : "top-0 right-0 bottom-0 w-full sm:w-[640px] max-w-[100vw] border-l"
+                  }`}
+                >
                 <ComposeDialogBody
                   isFullscreen={isComposeFullscreen}
                   setIsFullscreen={setIsComposeFullscreen}
@@ -5882,7 +5899,8 @@ export default function Dashboard() {
                   initialSubject={composePrefill?.subject}
                   initialBody={composePrefill?.body}
                 />
-              </div>
+                </div>
+              </Dialog>
             )}
             {/* Barre flottante du brouillon minimisé — bas à droite, ne
                 couvre pas la liste de mails. Clic = restaure le composer
