@@ -1,0 +1,23 @@
+A.	Question légitime. Honnêtement : risque réel mais maîtrisable. Voici le détail par chantier :
+B.	Risques par phase + mitigations
+C.	Phase	D.	Risque réel	E.	Mitigation
+F.	Optimistic UI	G.	🟢 Très faible — pattern React Query éprouvé. Pire cas : un rollback qui flashe à l'écran si backend KO.	H.	Test sur 1 mutation (archive) d'abord, valider, puis dupliquer.
+I.	Lazy routes	J.	🟢 Faible — risque = flash blanc 100ms entre routes si fallback mal placé.	K.	Suspense fallback = skeleton existant, jamais blanc.
+L.	Virtualisation	M.	🔴 Le plus risqué — index.tsx fait 6903 lignes, la sélection multiple Cmd+clic / Shift+clic / raccourcis j/k peuvent casser si les rows hors viewport disparaissent du DOM.	N.	Extraire d'abord en composant isolé, tester sur Envoyés (page plus simple), puis brancher sur Réception en dernier.
+O.	Web Worker	P.	🟢 Très faible — fallback sync inchangé si worker pas dispo, ne touche que le parsing HTML lourd (>50ko).	Q.	Feature-flag : if (window.Worker && html.length > 50_000).
+R.	Audit re-renders	S.	🟡 Moyen — React.memo mal placé peut casser des updates (props qui changent par référence sans comparateur custom).	T.	Mesurer avant/après chaque memo, garder le profiler ouvert.
+U.	Garde-fous prévus dans la task
+V.	Phase 6 = validation finale obligatoire : typecheck + restart workflow + test manuel des 4 pages + 3 mutations
+W.	Rollback possible à chaque phase via checkpoint Replit (chaque phase = un checkpoint)
+X.	Pas de refonte — index.tsx reste en place, on l'optimise sans le réécrire
+Y.	Pas de changement backend — uniquement frontend
+Z.	Phase par phase — si une phase casse, on s'arrête avant la suivante
+AA.	Mon engagement concret
+BB.	Je peux travailler phase par phase, avec ton OK entre chaque :
+CC.	Optimistic UI seul → tu testes → OK → suivant
+DD.	Lazy routes → tu testes → OK → suivant
+EE.	Virtualisation (la plus risquée) → on commence par Envoyés (1 page) → tu valides → on étend
+FF.	Web Worker → tu testes une newsletter lourde → OK
+GG.	Audit re-renders → mesure avant/après visible
+HH.	Si une étape casse quoi que ce soit, on rollback cette étape uniquement.
+II.	→ Préfères-tu que je découpe la task #307 en 5 tasks séparées (une par phase, validable indépendamment) ou garder le combo unique avec checkpoints internes ?

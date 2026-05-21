@@ -3857,17 +3857,27 @@ export default function Dashboard() {
   };
   const handleBulkAssignProject = async (emailIds: number[], projectId: string) => {
     // Bulk : on enchaîne handleUpdateProject sur chaque mail (pas de bulk endpoint
-    // côté backend, parité avec handleBulkCategory). Optimiste minimaliste.
+    // côté backend, parité avec handleBulkCategory). Optimistic : on update
+    // toutes les lignes d'un coup, rollback si au moins un appel échoue.
+    const previousEmails = accumulatedEmails;
+    const idSet = new Set(emailIds);
+    setAccumulatedEmails((prev) => prev.map((e: any) => idSet.has(e.id) ? { ...e, projectId } : e));
+    let anyError = false;
     for (const id of emailIds) {
       await new Promise<void>((resolve) => {
         updateEmail.mutate(
           { id, data: { projectId } as any },
-          { onSuccess: () => resolve(), onError: () => resolve() },
+          { onSuccess: () => resolve(), onError: () => { anyError = true; resolve(); } },
         );
       });
     }
+    if (anyError) {
+      setAccumulatedEmails(previousEmails);
+      toast({ variant: "destructive", title: t("common.error") });
+    } else {
+      toast({ title: t("inbox.projectUpdated") });
+    }
     invalidateAll();
-    toast({ title: t("inbox.projectUpdated") });
   };
   const { data: userFolders } = useListFolders();
   const assignToFolderMut = useAssignEmailsToFolder();
@@ -4371,16 +4381,24 @@ export default function Dashboard() {
   const handleBulkAction = (action: "delete" | "archive" | "read") => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
+    // Optimistic : pour delete/archive on retire les lignes de la liste
+    // immédiatement ; pour read on bascule le status. Rollback si erreur.
+    const previousEmails = accumulatedEmails;
+    const previousSelected = selectedEmailId;
+    const previousSelectedIds = selectedIds;
+    const idSet = new Set(ids);
+    if (action === "delete" || action === "archive") {
+      setAccumulatedEmails((prev) => prev.filter((e: any) => !idSet.has(e.id)));
+      if (selectedEmailId !== null && idSet.has(selectedEmailId)) setSelectedEmailId(null);
+      setSelectedIds(new Set());
+    } else {
+      setAccumulatedEmails((prev) => prev.map((e: any) => idSet.has(e.id) ? { ...e, status: "read" } : e));
+    }
     bulkUpdateMut.mutate(
       { data: { ids, action } },
       {
         onSuccess: (result) => {
-          if (action !== "read") {
-            setSelectedIds(new Set());
-          }
           if (action === "read") {
-            const idSet = new Set(ids);
-            setAccumulatedEmails((prev) => prev.map((e) => idSet.has(e.id) ? { ...e, status: "read" } : e));
             queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
             queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
           } else {
@@ -4390,6 +4408,11 @@ export default function Dashboard() {
           toast({ title: labels[action] });
         },
         onError: () => {
+          setAccumulatedEmails(previousEmails);
+          if (action === "delete" || action === "archive") {
+            if (previousSelected !== null && idSet.has(previousSelected)) setSelectedEmailId(previousSelected);
+            setSelectedIds(previousSelectedIds);
+          }
           toast({ variant: "destructive", title: t("common.error") });
         },
       }
@@ -4587,12 +4610,19 @@ export default function Dashboard() {
   };
 
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    const previousEmails = accumulatedEmails;
+    const nextCatId = categoryId ? Number(categoryId) : null;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === id ? { ...e, categoryId: nextCatId } : e));
     updateEmail.mutate(
-      { id, data: { categoryId: categoryId ? Number(categoryId) : null } },
+      { id, data: { categoryId: nextCatId } },
       {
         onSuccess: () => {
           invalidateAll();
           toast({ title: t("inbox.categoryUpdated", "Catégorie mise à jour"), description: categoryName });
+        },
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       },
     );
@@ -4770,6 +4800,8 @@ export default function Dashboard() {
   }, [activeEmails, selectedEmailId, routeLocation]);
 
   const handleUpdatePriority = (id: number, priority: string) => {
+    const previousEmails = accumulatedEmails;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === id ? { ...e, priority } : e));
     updateEmail.mutate(
       { id, data: { priority } as any },
       {
@@ -4777,35 +4809,55 @@ export default function Dashboard() {
           invalidateAll();
           toast({ title: t("inbox.priorityChanged") });
         },
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
+        },
       }
     );
   };
 
   const handleUpdateCategory = (id: number, categoryId: string) => {
+    const previousEmails = accumulatedEmails;
+    const nextCatId = categoryId === "none" ? null : parseInt(categoryId);
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === id ? { ...e, categoryId: nextCatId } : e));
     updateEmail.mutate(
-      { id, data: { categoryId: categoryId === "none" ? null : parseInt(categoryId) } },
+      { id, data: { categoryId: nextCatId } },
       {
         onSuccess: () => {
           invalidateAll();
           toast({ title: t("inbox.categoryUpdated") });
+        },
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       }
     );
   };
 
   const handleUpdateProject = (id: number, projectId: string) => {
+    const previousEmails = accumulatedEmails;
+    const nextProjectId = projectId === "none" ? null : projectId;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === id ? { ...e, projectId: nextProjectId } : e));
     updateEmail.mutate(
-      { id, data: { projectId: projectId === "none" ? null : projectId } as any },
+      { id, data: { projectId: nextProjectId } as any },
       {
         onSuccess: () => {
           invalidateAll();
           toast({ title: t("inbox.projectUpdated") });
+        },
+        onError: (e: any) => {
+          setAccumulatedEmails(previousEmails);
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       }
     );
   };
 
   const handleAssign = (emailId: number, userId: string) => {
+    const previousEmails = accumulatedEmails;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === emailId ? { ...e, assignedToUserId: userId } : e));
     assignEmailMut.mutate(
       { emailId, data: { assignTo: userId } },
       {
@@ -4814,6 +4866,7 @@ export default function Dashboard() {
           toast({ title: t("inbox.assignSuccess"), description: `${(result as any).assignedToName || ""}` });
         },
         onError: () => {
+          setAccumulatedEmails(previousEmails);
           toast({ variant: "destructive", title: t("common.error") });
         },
       }
@@ -4821,6 +4874,8 @@ export default function Dashboard() {
   };
 
   const handleUnassign = (emailId: number) => {
+    const previousEmails = accumulatedEmails;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === emailId ? { ...e, assignedToUserId: null } : e));
     unassignEmailMut.mutate(
       { emailId },
       {
@@ -4829,6 +4884,7 @@ export default function Dashboard() {
           toast({ title: t("inbox.unassignSuccess") });
         },
         onError: () => {
+          setAccumulatedEmails(previousEmails);
           toast({ variant: "destructive", title: t("common.error") });
         },
       }
@@ -5058,11 +5114,15 @@ export default function Dashboard() {
   const handleAssignInboxEmail = async (emailId: number, assignTo: string) => {
     if (!assignTo) return;
     setAssigningInboxEmailId(null);
+    // Optimistic : on bascule l'assignation locale immédiatement.
+    const previousEmails = accumulatedEmails;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === emailId ? { ...e, assignedToUserId: assignTo } : e));
     try {
       await assignEmailMut.mutateAsync({ emailId, data: { assignTo } });
       queryClient.invalidateQueries();
       toast({ title: t("sharedMailboxes.assignSuccess") });
     } catch (e: any) {
+      setAccumulatedEmails(previousEmails);
       toast({
         variant: "destructive",
         title: e?.response?.data?.error || t("sharedMailboxes.assignError"),
