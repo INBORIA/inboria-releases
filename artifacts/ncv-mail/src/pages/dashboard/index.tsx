@@ -377,15 +377,9 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
 
   return (
     <>
-      {/* HTML sémantique brut (pas Radix DialogHeader/DialogTitle) — ce body
-          est aussi monté dans le panneau coulissant Superhuman-style de la
-          Réception qui n'est PAS un Radix Dialog, donc DialogTitle Radix y
-          throw "must be used within Dialog". Pour les cas vrai Radix Dialog
-          (MailPageHeader, brouillons réduits), l'a11y est assurée via un
-          VisuallyHidden DialogTitle ajouté en parallèle dans le DialogContent. */}
-      <header className="px-5 pt-4 pb-2 pr-4 flex flex-row items-center justify-between gap-2 border-b border-border min-w-0">
-        <h2 className="text-white text-[14px] font-semibold leading-none tracking-tight min-w-0 truncate">{t("inbox.composeTitle")}</h2>
-        <div className="flex items-center gap-1 shrink-0">
+      <DialogHeader className="px-5 pt-4 pb-2 pr-4 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
+        <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
+        <div className="flex items-center gap-1">
           {onMinimize && (
             <button
               type="button"
@@ -419,7 +413,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
             </button>
           )}
         </div>
-      </header>
+      </DialogHeader>
       <div className="space-y-3 p-5 overflow-y-auto flex-1">
         {connections.length > 1 && (
           <div>
