@@ -383,9 +383,9 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
           throw "must be used within Dialog". Pour les cas vrai Radix Dialog
           (MailPageHeader, brouillons réduits), l'a11y est assurée via un
           VisuallyHidden DialogTitle ajouté en parallèle dans le DialogContent. */}
-      <header className="px-5 pt-4 pb-2 pr-4 flex flex-row items-center justify-between gap-2 border-b border-border">
-        <h2 className="text-white text-[14px] font-semibold leading-none tracking-tight">{t("inbox.composeTitle")}</h2>
-        <div className="flex items-center gap-1">
+      <header className="px-5 pt-4 pb-2 pr-4 flex flex-row items-center justify-between gap-2 border-b border-border min-w-0">
+        <h2 className="text-white text-[14px] font-semibold leading-none tracking-tight min-w-0 truncate">{t("inbox.composeTitle")}</h2>
+        <div className="flex items-center gap-1 shrink-0">
           {onMinimize && (
             <button
               type="button"
