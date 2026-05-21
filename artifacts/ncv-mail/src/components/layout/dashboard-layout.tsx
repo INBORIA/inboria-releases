@@ -2,7 +2,14 @@ import {
   useGetProfile,
   useGetMyOrganisation,
   useGetOrganisationMembers,
+  listEmails,
+  listScheduledEmails,
+  listFolders,
+  getListEmailsQueryKey,
+  getListScheduledEmailsQueryKey,
+  getListFoldersQueryKey,
 } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -62,6 +69,41 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   const { t } = useTranslation();
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
+  const queryClient = useQueryClient();
+  // Prefetch au hover sidebar (style Superhuman) : dès que la souris survole
+  // un lien de la sidebar, on précharge la query correspondante. Au clic, la
+  // page s'affiche instantanément (cache déjà chaud). staleTime 30s évite de
+  // refetcher en boucle si l'utilisateur survole plusieurs fois.
+  const prefetchByHref: Record<string, () => Promise<unknown>> = {
+    "/dashboard": () =>
+      queryClient.prefetchQuery({
+        queryKey: getListEmailsQueryKey(),
+        queryFn: ({ signal }) => listEmails(undefined as any, { signal } as any),
+        staleTime: 30_000,
+      }),
+    "/dashboard/envoyes": () =>
+      queryClient.prefetchQuery({
+        queryKey: getListEmailsQueryKey({ status: "sent" as any, limit: 50, page: 1 } as any),
+        queryFn: ({ signal }) => listEmails({ status: "sent" as any, limit: 50, page: 1 } as any, { signal } as any),
+        staleTime: 30_000,
+      }),
+    "/dashboard/programmes": () =>
+      queryClient.prefetchQuery({
+        queryKey: getListScheduledEmailsQueryKey(),
+        queryFn: ({ signal }) => listScheduledEmails({ signal } as any),
+        staleTime: 30_000,
+      }),
+    "/dashboard/dossiers": () =>
+      queryClient.prefetchQuery({
+        queryKey: getListFoldersQueryKey(),
+        queryFn: ({ signal }) => listFolders({ signal } as any),
+        staleTime: 30_000,
+      }),
+  };
+  const handlePrefetchSidebar = (href: string) => {
+    const fn = prefetchByHref[href];
+    if (fn) fn().catch(() => { /* silencieux : le clic refetchera au besoin */ });
+  };
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
@@ -288,6 +330,8 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               )}
               title={collapsed ? item.name : undefined}
               aria-label={collapsed ? item.name : undefined}
+              onMouseEnter={() => handlePrefetchSidebar(item.href)}
+              onFocus={() => handlePrefetchSidebar(item.href)}
               onClick={() => {
                 setMobileMenuOpen(false);
                 if (location === item.href) {
