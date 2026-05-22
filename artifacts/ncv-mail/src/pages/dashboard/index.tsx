@@ -3270,8 +3270,13 @@ export default function Dashboard() {
   // Étape 5 — la section CATÉGORIES de la sidebar droite est repliable.
   // L'état est mémorisé en localStorage pour rester stable entre les visites.
   const [categoriesCollapsed, setCategoriesCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("ncv.categoriesCollapsed") === "1";
+    // Par défaut REPLIÉ (fermé). On déplie seulement si l'utilisateur a
+    // explicitement enregistré "0" en localStorage (= il a cliqué pour
+    // déplier). Sinon (clé absente OU "1"), on reste replié. Évite que la
+    // section Catégories soit ouverte par défaut au premier lancement / en
+    // navigation privée / en DEV où le localStorage est souvent vide.
+    if (typeof window === "undefined") return true;
+    return window.localStorage.getItem("ncv.categoriesCollapsed") !== "0";
   });
   useEffect(() => {
     if (typeof window !== "undefined") {

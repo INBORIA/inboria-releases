@@ -999,7 +999,7 @@ async function saveAttachmentsMeta(
           "Prefer": "return=minimal",
         },
         body: JSON.stringify(rows),
-        timeoutMs: 20_000,
+        timeoutMs: 45_000,
       });
       if (!resp.ok) {
         const errText = await resp.text();
@@ -1060,7 +1060,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
             q: "in:inbox",
             pageToken,
           }),
-          20_000,
+          45_000,
           "Gmail messages.list (first sync)",
         );
         const msgs = page.messages || [];
@@ -1082,7 +1082,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
           maxResults: 50,
           q: "is:inbox newer_than:2d",
         }),
-        20_000,
+        45_000,
         "Gmail messages.list",
       );
       for (const m of messageList.messages || []) collectedMessages.push(m);
@@ -1097,7 +1097,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
     for (const msg of collectedMessages) {
       const { data: fullMsg } = await withTimeout(
         gmail.users.messages.get({ userId: "me", id: msg.id!, format: "full" }),
-        20_000,
+        45_000,
         "Gmail messages.get",
       );
 
@@ -1167,7 +1167,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
         try {
           const { data: fullMsg } = await withTimeout(
             gmail.users.messages.get({ userId: "me", id: gmailMsgId, format: "full" }),
-            20_000,
+            45_000,
             "Gmail messages.get (body backfill)",
           );
           const htmlBody = extractGmailBody(fullMsg.payload) || "";
@@ -1215,7 +1215,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
             try {
               const { data: fullMsg } = await withTimeout(
                 gmail.users.messages.get({ userId: "me", id: gmailMsgId, format: "full" }),
-                20_000,
+                45_000,
                 "Gmail messages.get (attachments backfill)",
               );
               const gmailAttachments = extractGmailAttachments(fullMsg.payload);
@@ -1266,7 +1266,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
             grant_type: "refresh_token",
             scope: "Mail.Read offline_access",
           }),
-          timeoutMs: 20_000,
+          timeoutMs: 45_000,
         }
       );
 
@@ -1317,7 +1317,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     while (nextUrl && collected.length < (isFirstOutlookSync ? FIRST_SYNC_TARGET : PAGE_SIZE)) {
       const response: any = await fetchWithTimeout(nextUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
-        timeoutMs: 20_000,
+        timeoutMs: 45_000,
       });
       if (!response.ok) {
         const msg = `Outlook Graph API error: ${response.status} ${response.statusText}`;
