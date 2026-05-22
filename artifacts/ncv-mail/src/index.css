@@ -204,10 +204,27 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
   --accent-foreground: 222 23% 14%;
 }
 
-/* Toggle de thème (light/dark) : swap atomique, géré côté JS dans
-   `useNcvTheme`. Pas de View Transitions ni de transition CSS globale —
-   les overlays !important du mode clair Inboria empêchent une
-   interpolation propre et créent un basculement visible. */
+/* Toggle de thème (light/dark) : circular reveal façon macOS / Notion.
+   Le hook `useNcvTheme` ajoute la classe `ncv-theme-reveal` sur <html>
+   + 3 variables CSS (--ncv-reveal-x/y/r = origine du clic + rayon max),
+   puis appelle startViewTransition(). On désactive le crossfade par
+   défaut et on anime un clip-path circulaire qui s'étend depuis
+   l'origine sur le snapshot NEW (l'OLD reste statique en dessous). */
+html.ncv-theme-reveal::view-transition-old(root) {
+  animation: none;
+}
+html.ncv-theme-reveal::view-transition-new(root) {
+  animation: ncv-reveal-clip 460ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  mix-blend-mode: normal;
+}
+@keyframes ncv-reveal-clip {
+  from {
+    clip-path: circle(0 at var(--ncv-reveal-x) var(--ncv-reveal-y));
+  }
+  to {
+    clip-path: circle(var(--ncv-reveal-r) at var(--ncv-reveal-x) var(--ncv-reveal-y));
+  }
+}
 
 /* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
    excludes the floating Inboria help / context menu widgets — per task,

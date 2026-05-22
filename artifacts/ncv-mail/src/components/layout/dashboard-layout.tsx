@@ -498,7 +498,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           <div className="h-16 shrink-0 border-b border-[#1f2937] px-3 flex items-center justify-center gap-1.5">
             <button
               type="button"
-              onClick={toggleNcvTheme}
+              onClick={(e) => toggleNcvTheme(e)}
               className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
               title={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
               aria-label={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
@@ -561,7 +561,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
             <div className={cn("flex items-center gap-2", rightSidebar && "md:hidden")}>
               <button
                 type="button"
-                onClick={toggleNcvTheme}
+                onClick={(e) => toggleNcvTheme(e)}
                 className="inline-flex items-center justify-center h-8 w-8 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
                 title={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
                 aria-label={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
