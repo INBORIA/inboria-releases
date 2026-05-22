@@ -608,7 +608,7 @@ export function EmailComments({
               ref={textareaRef}
               value={newComment}
               onChange={(e) => { onCommentChange(e.target.value); broadcastTyping(); }}
-              placeholder={t("comments.placeholderMention")}
+              placeholder={t("comments.placeholderSimple", { defaultValue: "Entrez votre message…" })}
               className="h-14 bg-background border-border text-white text-[12px] resize-none flex-1"
               onKeyDown={(e) => {
                 if (e.key === "Escape") { setShowSuggest(false); return; }
