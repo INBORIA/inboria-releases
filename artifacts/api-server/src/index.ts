@@ -12,6 +12,8 @@ import { startSlaWorker } from "./services/sla";
 import { startWebhookDispatcher } from "./services/webhooks";
 import { startMeetingFollowupWorker } from "./services/meeting-followup-worker";
 import { startAppointmentReminderWorker } from "./services/appointment-reminder-worker";
+import { startTaskDueWorker } from "./services/task-due-worker";
+import { startAutomationRuleDigestWorker } from "./services/automation-rule-digest-worker";
 
 async function ensureEmailsUniqueIndex() {
   try {
@@ -716,6 +718,8 @@ app.listen(port, (err) => {
   startCrmSyncScheduler();
   startMeetingFollowupWorker();
   startAppointmentReminderWorker();
+  startTaskDueWorker();
+  startAutomationRuleDigestWorker();
   startHarnessCron();
 });
 

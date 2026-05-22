@@ -207,7 +207,7 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       const prevCopy = unassignNotifCopy(prevLang, assignerName, subjectText);
       createNotification({
         userId: previousAssignee,
-        type: "email_assigned",
+        type: "email_unassigned",
         title: prevCopy.title,
         message: prevCopy.message,
         emailId,
@@ -329,7 +329,7 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
         const copy = unassignNotifCopy(prevLang, actorName, subj?.subject || "Sans sujet");
         createNotification({
           userId: previousAssignee,
-          type: "email_assigned",
+          type: "email_unassigned",
           title: copy.title,
           message: copy.message,
           emailId,

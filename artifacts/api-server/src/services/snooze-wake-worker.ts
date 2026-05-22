@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
+import { createNotification } from "../lib/activity";
 
 const POLL_INTERVAL_MS = 60_000;
 const MAX_BATCH = 100;
@@ -11,11 +12,9 @@ async function tick(): Promise<void> {
   runningTick = true;
   try {
     const nowIso = new Date().toISOString();
-    // Wake any due snoozed email regardless of current status — the snooze decision is
-    // independent of read/archived state. snooze_woken_at IS NULL prevents repeats.
     const { data: due, error } = await supabaseAdmin
       .from("emails")
-      .select("id")
+      .select("id, user_id, subject, sender")
       .not("snoozed_until", "is", null)
       .lte("snoozed_until", nowIso)
       .is("snooze_woken_at", null)
@@ -35,6 +34,23 @@ async function tick(): Promise<void> {
       .in("id", ids);
     if (updErr) {
       logger.warn({ error: updErr.message }, "[snooze-wake] update error");
+      return;
+    }
+
+    for (const email of due) {
+      const uid = (email as any).user_id;
+      if (!uid) continue;
+      const senderShort = String((email as any).sender || "").replace(/<[^>]+>/g, "").trim();
+      const subj = String((email as any).subject || "Sans sujet").slice(0, 60);
+      const title = senderShort
+        ? `Snooze terminé : ${senderShort.slice(0, 40)} — ${subj}`
+        : `Snooze terminé : ${subj}`;
+      createNotification({
+        userId: uid,
+        type: "snooze_expired",
+        title,
+        emailId: (email as any).id,
+      }).catch(() => {});
     }
   } catch (e: any) {
     logger.warn({ error: e?.message }, "[snooze-wake] tick error");

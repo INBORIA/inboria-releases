@@ -801,6 +801,36 @@ export async function saveEmailWithTriage(
     logger.warn({ err: e?.message, emailId: inserted.id }, "[auto-sync] reply-notif failed (continuing)");
   }
 
+  // Notif équipe : nouveau mail dans une boîte partagée, encore non assigné.
+  // Best-effort, non bloquant. Ne notifie que les membres actifs de la boîte
+  // (RLS via shared_mailbox_members.user_id). Le mail est forcément
+  // unassigned ici puisqu'on est juste après l'insert auto-sync.
+  try {
+    if (sharedMailboxId) {
+      const { data: members } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("user_id")
+        .eq("shared_mailbox_id", sharedMailboxId);
+      if (members && members.length > 0) {
+        const senderShort = String(sender || "").replace(/<[^>]+>/g, "").trim() || String(sender || "");
+        const subj = subject || "Sans sujet";
+        for (const m of members) {
+          const uid = (m as any).user_id;
+          if (!uid) continue;
+          createNotification({
+            userId: uid,
+            type: "shared_mailbox_new_unassigned",
+            title: `${senderShort.slice(0, 40)} — ${subj.slice(0, 60)}`,
+            message: triage.summary?.slice(0, 200) || undefined,
+            emailId: inserted.id,
+          }).catch(() => {});
+        }
+      }
+    }
+  } catch (e: any) {
+    logger.warn({ err: e?.message, emailId: inserted.id }, "[auto-sync] shared-mb-notif failed (continuing)");
+  }
+
   // Task #294 — auto-classement dans les « Mes dossiers » de l'utilisateur.
   // Best-effort, jamais bloquant pour la sync. Skip pour les mails forceSpam
   // (déjà retournés plus haut). Les dossiers sont strictement privés

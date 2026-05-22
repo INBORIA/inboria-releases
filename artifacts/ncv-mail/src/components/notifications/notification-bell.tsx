@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, AlertCircle, MessageSquare, UserPlus, X } from "lucide-react";
+import { Bell, AlertCircle, MessageSquare, UserPlus, UserMinus, X, Mail, Clock, CheckSquare, Zap } from "lucide-react";
 import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -44,6 +44,16 @@ export function NotificationBell() {
       setOpen(false);
       return;
     }
+    if (notif.type === "automation_rule_digest") {
+      setLocation("/dashboard/parametres/regles");
+      setOpen(false);
+      return;
+    }
+    if (notif.type === "task_due" && !notif.emailId) {
+      setLocation("/dashboard/taches");
+      setOpen(false);
+      return;
+    }
     if (notif.emailId) {
       setLocation(`/dashboard/email/${notif.emailId}`);
       setOpen(false);
@@ -54,11 +64,26 @@ export function NotificationBell() {
     if (type === "connection_disconnected") {
       return <AlertCircle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />;
     }
-    if (type === "commented") {
+    if (type === "commented" || type === "comment_added" || type === "comment_mention") {
       return <MessageSquare className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
     }
-    if (type === "assigned") {
+    if (type === "assigned" || type === "email_assigned") {
       return <UserPlus className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "email_unassigned") {
+      return <UserMinus className="h-3.5 w-3.5 text-[#8b95a7] shrink-0 mt-0.5" />;
+    }
+    if (type === "shared_mailbox_new_unassigned") {
+      return <Mail className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "snooze_expired") {
+      return <Clock className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "task_due") {
+      return <CheckSquare className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "automation_rule_digest") {
+      return <Zap className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
     }
     return null;
   };

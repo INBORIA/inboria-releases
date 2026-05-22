@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { AlertCircle, MessageSquare, UserPlus, Bell, Info, Mail, Send, Calendar, AlertTriangle, Sparkles } from "lucide-react";
+import { AlertCircle, MessageSquare, UserPlus, UserMinus, Bell, Info, Mail, Send, Calendar, AlertTriangle, Sparkles, Clock, CheckSquare, Zap } from "lucide-react";
 
 type NotifType =
   | "assigned"
@@ -32,11 +32,20 @@ type Notif = {
 
 type FilterKey = "all" | "unread" | "mails" | "agenda" | "inboria" | "team" | "system";
 
-const SYSTEM_TYPES = new Set(["sla_breach", "connection_disconnected", "send_failed"]);
-const MAIL_TYPES = new Set(["email_reply_received", "send_failed"]);
+const SYSTEM_TYPES = new Set(["sla_breach", "connection_disconnected", "send_failed", "automation_rule_digest"]);
+const MAIL_TYPES = new Set(["email_reply_received", "send_failed", "snooze_expired", "shared_mailbox_new_unassigned"]);
 const INBORIA_TYPES = new Set(["followup_suggestions_digest"]);
-const AGENDA_TYPES = new Set(["appointment_imminent"]);
-const TEAM_TYPES = new Set(["assigned", "commented", "sla_breach"]);
+const AGENDA_TYPES = new Set(["appointment_imminent", "task_due"]);
+const TEAM_TYPES = new Set([
+  "assigned",
+  "commented",
+  "sla_breach",
+  "email_assigned",
+  "email_unassigned",
+  "comment_added",
+  "comment_mention",
+  "shared_mailbox_new_unassigned",
+]);
 
 function stripAptTag(title: string): string {
   return title.replace(/^\[apt:[^\]]+\]\s*/, "");
@@ -56,11 +65,16 @@ function getIcon(type: NotifType) {
   if (type === "connection_disconnected") return AlertCircle;
   if (type === "send_failed") return AlertTriangle;
   if (type === "sla_breach") return Info;
-  if (type === "commented") return MessageSquare;
-  if (type === "assigned") return UserPlus;
+  if (type === "commented" || type === "comment_added" || type === "comment_mention") return MessageSquare;
+  if (type === "assigned" || type === "email_assigned") return UserPlus;
+  if (type === "email_unassigned") return UserMinus;
   if (type === "email_reply_received") return Mail;
+  if (type === "shared_mailbox_new_unassigned") return Mail;
   if (type === "appointment_imminent") return Calendar;
   if (type === "followup_suggestions_digest") return Sparkles;
+  if (type === "snooze_expired") return Clock;
+  if (type === "task_due") return CheckSquare;
+  if (type === "automation_rule_digest") return Zap;
   return Bell;
 }
 
@@ -134,6 +148,19 @@ export default function NotificationsPage() {
     }
     if (n.type === "followup_suggestions_digest") {
       setLocation("/dashboard/taches");
+      return;
+    }
+    if (n.type === "automation_rule_digest") {
+      setLocation("/dashboard/parametres/regles");
+      return;
+    }
+    if (n.type === "task_due") {
+      const m = n.title.match(/^\[task:([^\]]+)\]/);
+      if (n.emailId) {
+        setLocation(`/dashboard/email/${n.emailId}`);
+      } else {
+        setLocation(m ? `/dashboard/taches?openTask=${encodeURIComponent(m[1] as string)}` : "/dashboard/taches");
+      }
       return;
     }
     if (n.emailId) {
