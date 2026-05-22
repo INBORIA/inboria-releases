@@ -21,6 +21,7 @@ import {
   Check,
   Loader2,
   User,
+  Users,
   AtSign,
   Mail,
   ChevronDown,
@@ -100,7 +101,22 @@ export function EmailComments({
 
   const [showSuggest, setShowSuggest] = useState(false);
   const [suggestQuery, setSuggestQuery] = useState("");
+  const [recipients, setRecipients] = useState<Set<string>>(new Set());
+  const [showRecipients, setShowRecipients] = useState(false);
+  const [recipientFilter, setRecipientFilter] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const recipientPanelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!showRecipients) return;
+    function onClickOutside(e: MouseEvent) {
+      if (recipientPanelRef.current && !recipientPanelRef.current.contains(e.target as Node)) {
+        setShowRecipients(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [showRecipients]);
 
   const langKey = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateLocale = dateFnsLocales[langKey] || fr;
@@ -179,9 +195,10 @@ export function EmailComments({
     if (!newComment.trim()) return;
     setAdding(true);
     try {
-      const cited = Array.from(new Set(
-        Array.from(newComment.matchAll(/@([0-9a-fA-F-]{36})/g)).map((m) => m[1])
-      ));
+      const cited = Array.from(new Set([
+        ...Array.from(newComment.matchAll(/@([0-9a-fA-F-]{36})/g)).map((m) => m[1]),
+        ...Array.from(recipients),
+      ]));
       const res = await fetch(`${baseUrl()}/api/emails/${emailId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
@@ -193,6 +210,8 @@ export function EmailComments({
       }
       setNewComment("");
       setMentionedIds([]);
+      setRecipients(new Set());
+      setRecipientFilter("");
       invalidate();
     } catch (e: any) {
       toast({ title: e?.message || t("common.error"), variant: "destructive" });
@@ -561,6 +580,29 @@ export function EmailComments({
         ) : null}
 
         <div className="relative">
+          {recipients.size > 0 && (
+            <div className="flex flex-wrap gap-1 mb-1.5">
+              {Array.from(recipients).map((uid) => {
+                const m = memberLookup[uid];
+                const label = m?.fullName || m?.email || uid.slice(0, 6);
+                return (
+                  <span
+                    key={uid}
+                    className="inline-flex items-center gap-1 text-[10px] bg-primary/15 border border-primary/30 text-primary rounded px-1.5 py-0.5"
+                  >
+                    {label}
+                    <button
+                      type="button"
+                      onClick={() => setRecipients((prev) => { const n = new Set(prev); n.delete(uid); return n; })}
+                      className="hover:text-white"
+                    >
+                      <X className="w-2.5 h-2.5" />
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
           <div className="flex gap-2">
             <Textarea
               ref={textareaRef}
@@ -576,10 +618,126 @@ export function EmailComments({
                 }
               }}
             />
-            <Button size="sm" className="h-14 px-3" disabled={!newComment.trim() || adding} onClick={handleAdd}>
-              {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-            </Button>
+            <div className="flex flex-col gap-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-[26px] px-2 text-[10px] gap-1 relative"
+                onClick={() => setShowRecipients((v) => !v)}
+                data-testid="button-pick-recipients"
+                title={t("comments.recipientsPick", { defaultValue: "Destinataires de la note" })}
+              >
+                <Users className="w-3 h-3" />
+                <span className="hidden sm:inline">
+                  {t("comments.recipients", { defaultValue: "Destinataires" })}
+                </span>
+                {recipients.size > 0 && (
+                  <span className="ml-0.5 inline-flex items-center justify-center min-w-[14px] h-[14px] text-[9px] font-semibold bg-primary text-primary-foreground rounded-full px-1">
+                    {recipients.size}
+                  </span>
+                )}
+              </Button>
+              <Button
+                size="sm"
+                className="h-[26px] px-2"
+                disabled={!newComment.trim() || adding}
+                onClick={handleAdd}
+              >
+                {adding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+              </Button>
+            </div>
           </div>
+          {showRecipients && (
+            <div
+              ref={recipientPanelRef}
+              className="absolute right-0 bottom-full mb-1 z-30 bg-card border border-border rounded-md shadow-lg w-72 max-h-72 flex flex-col"
+            >
+              <div className="flex items-center justify-between px-2.5 py-2 border-b border-border">
+                <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] flex items-center gap-1.5">
+                  <Users className="w-3 h-3" />
+                  {t("comments.recipientsPick", { defaultValue: "Destinataires de la note" })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRecipients(false)}
+                  className="text-[#b8c5d6] hover:text-white"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              <div className="px-2 py-1.5 border-b border-border">
+                <input
+                  type="text"
+                  value={recipientFilter}
+                  onChange={(e) => setRecipientFilter(e.target.value)}
+                  placeholder={t("comments.recipientsFilter", { defaultValue: "Rechercher un membre…" })}
+                  className="w-full h-7 bg-background border border-border rounded px-2 text-[11px] text-white placeholder:text-[#7a8699] focus:outline-none focus:border-primary/50"
+                  autoFocus
+                />
+              </div>
+              <div className="flex-1 overflow-y-auto py-1">
+                {(() => {
+                  const q = recipientFilter.toLowerCase().trim();
+                  const list = orgMembers
+                    .filter((mb) => mb.userId !== currentUserId)
+                    .filter((mb) => {
+                      if (!q) return true;
+                      return (mb.fullName || "").toLowerCase().includes(q) || (mb.email || "").toLowerCase().includes(q);
+                    });
+                  if (list.length === 0) {
+                    return (
+                      <div className="px-3 py-4 text-[11px] text-[#b8c5d6] text-center">
+                        {t("comments.recipientsEmpty", { defaultValue: "Aucun membre" })}
+                      </div>
+                    );
+                  }
+                  return list.map((m) => {
+                    const checked = recipients.has(m.userId);
+                    return (
+                      <label
+                        key={m.userId}
+                        className="flex items-center gap-2 px-2.5 py-1.5 hover:bg-background cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => setRecipients((prev) => {
+                            const n = new Set(prev);
+                            if (n.has(m.userId)) n.delete(m.userId); else n.add(m.userId);
+                            return n;
+                          })}
+                          className="w-3.5 h-3.5 accent-primary cursor-pointer"
+                        />
+                        <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                          <span className="text-[9px] font-semibold text-primary">
+                            {(m.fullName || m.email || "?").trim().charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[11px] text-white truncate">{m.fullName || m.email}</div>
+                          {m.fullName && m.email && <div className="text-[10px] text-[#b8c5d6] truncate">{m.email}</div>}
+                        </div>
+                      </label>
+                    );
+                  });
+                })()}
+              </div>
+              <div className="flex items-center justify-between px-2.5 py-1.5 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setRecipients(new Set())}
+                  disabled={recipients.size === 0}
+                  className="text-[10px] text-[#b8c5d6] hover:text-white disabled:opacity-40"
+                >
+                  {t("comments.recipientsClear", { defaultValue: "Vider" })}
+                </button>
+                <span className="text-[10px] text-[#b8c5d6]">
+                  {t("comments.recipientsSelected", { defaultValue: "{{count}} sélectionné(s)", count: recipients.size })}
+                </span>
+              </div>
+            </div>
+          )}
           {showSuggest && filteredMembers.length > 0 && (
             <div className="absolute left-0 bottom-full mb-1 z-30 bg-card border border-border rounded shadow-lg w-64 max-h-56 overflow-y-auto">
               <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] px-2 pt-1.5 flex items-center gap-1">
