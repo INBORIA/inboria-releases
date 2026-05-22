@@ -204,16 +204,19 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
   --accent-foreground: 222 23% 14%;
 }
 
-/* Smooth color transitions when toggling. Scoped tightly to background &
-   color & border-color & fill so we don't animate transforms / layout. */
-/* View-Transitions API : crossfade global premium au toggle. */
+/* View-Transitions API : swap instantané au toggle de thème.
+   Le crossfade par défaut laisse les deux snapshots superposés à opacité
+   partielle pendant ~280ms, ce qui laisse saigner le fond du <html>
+   (blanc en clair / noir en sombre) à travers bordures, gouttières de
+   scrollbar et gaps → impression de "lignes blanches/noires" qui
+   flashent. On désactive l'animation : la bascule est atomique. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 280ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation: none !important;
+  mix-blend-mode: normal;
 }
-::view-transition-old(root) { z-index: 1; }
-::view-transition-new(root) { z-index: 2; }
+::view-transition-old(root) { opacity: 0; }
+::view-transition-new(root) { opacity: 1; }
 
 /* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
    excludes the floating Inboria help / context menu widgets — per task,
