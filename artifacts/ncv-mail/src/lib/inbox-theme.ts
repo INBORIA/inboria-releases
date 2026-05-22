@@ -78,10 +78,18 @@ export function useNcvTheme(): { theme: NcvTheme; toggle: () => void; setTheme: 
         window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
       } catch {}
     };
-    // Pas de startViewTransition : la machinerie de snapshots crée toujours
-    // un micro-basculement visible (snapshot old → swap → DOM réel). Une
-    // mise à jour directe du DOM en une seule frame est plus propre.
+    // Pas de View Transitions API (snapshots → micro-basculement visible).
+    // À la place : on flag <html> avec `ncv-theme-transitioning` pendant
+    // ~300ms ; le CSS de index.css applique alors une transition douce
+    // (background/color/border/fill) à TOUS les éléments, puis on retire
+    // la classe pour ne plus pénaliser les interactions normales.
+    const root = typeof document !== "undefined" ? document.documentElement : null;
+    if (!root) { apply(); return; }
+    root.classList.add("ncv-theme-transitioning");
     apply();
+    window.setTimeout(() => {
+      root.classList.remove("ncv-theme-transitioning");
+    }, 320);
   }, []);
 
   const toggle = useCallback(() => {
