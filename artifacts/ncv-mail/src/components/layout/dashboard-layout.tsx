@@ -220,9 +220,11 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
-    ...(["pro", "business"].includes((user as any).plan)
-      ? [{ name: t("sidebar.notifications", "Notifications"), href: "/dashboard/notifications", icon: Bell }]
-      : []),
+    // Notifications retiré de la sidebar — sera remplacé par une cloche
+    // 🔔 en topbar avec popover (badge non-lues + accès rapide aux 10
+    // dernières alertes sans changer de page). La page
+    // /dashboard/notifications reste accessible directement par URL en
+    // tant qu'historique de fond.
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
     // Note (task #286 / refonte sidebar) : « Activité équipe » a été
     // renommé « Assignés » et déplacé dans la barre d'onglets de la
