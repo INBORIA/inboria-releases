@@ -536,6 +536,8 @@ export default function Envoyes() {
         currentTab="envoyes"
         searchValue={headerSearch}
         onSearchChange={setHeaderSearch}
+        showReadingPaneToggle={false}
+        showHeaderCollapseToggle={false}
       />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
