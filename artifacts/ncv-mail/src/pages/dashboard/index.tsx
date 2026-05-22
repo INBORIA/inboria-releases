@@ -403,10 +403,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
           {onClose && (
             <button
               type="button"
-              onClick={() => {
-                if (body && body.trim() && !window.confirm(t("inbox.composeDiscardConfirm", "Abandonner ce brouillon ?"))) return;
-                onClose();
-              }}
+              onClick={() => onClose()}
               className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04]"
               aria-label={t("inbox.close", "Fermer")}
             >
@@ -5887,15 +5884,6 @@ export default function Dashboard() {
                     setIsComposeFullscreen(false);
                     setComposePrefill(null);
                     setMinimizedDraft(null);
-                  }}
-                  onMinimize={(draft) => {
-                    // On garde le brouillon en mémoire, on ferme le panneau
-                    // sans rien perdre. La barre flottante en bas à droite
-                    // permet de reprendre.
-                    setMinimizedDraft(draft);
-                    setIsComposeOpen(false);
-                    setIsComposeFullscreen(false);
-                    setComposePrefill(null);
                   }}
                   initialTo={composePrefill?.to}
                   initialSubject={composePrefill?.subject}
