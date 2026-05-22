@@ -71,25 +71,16 @@ export function useNcvTheme(): { theme: NcvTheme; toggle: () => void; setTheme: 
   }, []);
 
   const setTheme = useCallback((t: NcvTheme) => {
-    const apply = () => {
-      setThemeState(t);
-      applyToDom(t);
-      try {
-        window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
-      } catch {}
-    };
-    // Pas de View Transitions API (snapshots → micro-basculement visible).
-    // À la place : on flag <html> avec `ncv-theme-transitioning` pendant
-    // ~300ms ; le CSS de index.css applique alors une transition douce
-    // (background/color/border/fill) à TOUS les éléments, puis on retire
-    // la classe pour ne plus pénaliser les interactions normales.
-    const root = typeof document !== "undefined" ? document.documentElement : null;
-    if (!root) { apply(); return; }
-    root.classList.add("ncv-theme-transitioning");
-    apply();
-    window.setTimeout(() => {
-      root.classList.remove("ncv-theme-transitioning");
-    }, 320);
+    // Swap atomique : on change l'attribut <html data-ncv-theme="...">
+    // en une seule frame, sans View Transitions ni transition CSS
+    // globale (toutes deux produisent un basculement visible parce que
+    // les overlays !important du mode clair Inboria ne s'interpolent
+    // pas proprement avec les autres règles).
+    setThemeState(t);
+    applyToDom(t);
+    try {
+      window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
+    } catch {}
   }, []);
 
   const toggle = useCallback(() => {

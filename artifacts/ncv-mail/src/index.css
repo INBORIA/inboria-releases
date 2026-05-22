@@ -204,23 +204,10 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
   --accent-foreground: 222 23% 14%;
 }
 
-/* Toggle de thème (light/dark) : transition douce et locale.
-   Le hook `useNcvTheme` ajoute la classe `ncv-theme-transitioning` sur
-   <html> juste avant de changer l'attribut `data-ncv-theme`, puis la
-   retire ~320ms après. Pendant cette fenêtre, on autorise un fondu sur
-   background/color/border/fill UNIQUEMENT — pas sur transform/opacity/
-   layout — pour éviter d'animer involontairement d'autres effets. */
-html.ncv-theme-transitioning,
-html.ncv-theme-transitioning *,
-html.ncv-theme-transitioning *::before,
-html.ncv-theme-transitioning *::after {
-  transition: background-color 260ms ease,
-              color 260ms ease,
-              border-color 260ms ease,
-              fill 260ms ease,
-              stroke 260ms ease,
-              box-shadow 260ms ease !important;
-}
+/* Toggle de thème (light/dark) : swap atomique, géré côté JS dans
+   `useNcvTheme`. Pas de View Transitions ni de transition CSS globale —
+   les overlays !important du mode clair Inboria empêchent une
+   interpolation propre et créent un basculement visible. */
 
 /* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
    excludes the floating Inboria help / context menu widgets — per task,
