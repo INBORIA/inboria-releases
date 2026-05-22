@@ -33,6 +33,8 @@ import {
   ExternalLink,
   Check,
   Video,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -514,6 +516,17 @@ export default function Agenda() {
   const [selectedSuggestionIds, setSelectedSuggestionIds] = useState<Set<string>>(new Set());
   const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [suggestionsCollapsed, setSuggestionsCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("agenda.suggestionsCollapsed") === "1";
+  });
+  const toggleSuggestionsCollapsed = () => {
+    setSuggestionsCollapsed((v) => {
+      const next = !v;
+      try { window.localStorage.setItem("agenda.suggestionsCollapsed", next ? "1" : "0"); } catch {}
+      return next;
+    });
+  };
   const dragRef = useRef<{ startIdx: number; startId: string; mode: "add" | "remove"; base: Set<string>; moved: boolean } | null>(null);
   const [, forceRender] = useState(0);
 
@@ -1226,48 +1239,62 @@ export default function Agenda() {
         )}
 
         {suggestions.length > 0 && (
-          <div className="bg-card border border-border rounded-lg p-3 mb-4">
-            <div className="flex items-center justify-between mb-2 gap-2 h-7">
+          <div className={`bg-card border border-border rounded-lg ${suggestionsCollapsed ? "p-2" : "p-3"} mb-4`}>
+            <div className={`flex items-center justify-between gap-2 h-7 ${suggestionsCollapsed ? "" : "mb-2"}`}>
               <h3 className="text-[12px] font-semibold text-primary flex items-center gap-1.5 whitespace-nowrap">
                 <Sparkles className="w-3.5 h-3.5" />
                 {t("agenda.suggestionsDetected", { count: suggestions.length })}
               </h3>
               <div className="flex items-center gap-2">
-                <label className="flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer select-none" data-testid="suggestion-select-all">
-                  <Checkbox
-                    checked={allSelected ? true : someSelected ? "indeterminate" : false}
-                    onCheckedChange={toggleSelectAll}
-                    aria-label={t("agenda.selectAll", "Tout sélectionner")}
-                  />
-                  {selectedSuggestionIds.size > 0
-                    ? t("agenda.selectedCount", { count: selectedSuggestionIds.size })
-                    : t("agenda.selectAll", "Tout sélectionner")}
-                </label>
-                {selectedSuggestionIds.size > 0 && (
+                {!suggestionsCollapsed && (
                   <>
-                    <Button
-                      size="sm"
-                      className="h-6 text-[10px] px-2 whitespace-nowrap"
-                      disabled={bulkBusy}
-                      onClick={() => handleBulkConfirm(Array.from(selectedSuggestionIds))}
-                      data-testid="suggestion-bulk-confirm"
-                    >
-                      {t("agenda.confirmSelected", "Confirmer la sélection")}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-6 text-[10px] px-2 whitespace-nowrap text-foreground"
-                      disabled={bulkBusy}
-                      onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
-                      data-testid="suggestion-bulk-dismiss"
-                    >
-                      {t("agenda.dismissSelected", "Ignorer la sélection")}
-                    </Button>
+                    <label className="flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer select-none" data-testid="suggestion-select-all">
+                      <Checkbox
+                        checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label={t("agenda.selectAll", "Tout sélectionner")}
+                      />
+                      {selectedSuggestionIds.size > 0
+                        ? t("agenda.selectedCount", { count: selectedSuggestionIds.size })
+                        : t("agenda.selectAll", "Tout sélectionner")}
+                    </label>
+                    {selectedSuggestionIds.size > 0 && (
+                      <>
+                        <Button
+                          size="sm"
+                          className="h-6 text-[10px] px-2 whitespace-nowrap"
+                          disabled={bulkBusy}
+                          onClick={() => handleBulkConfirm(Array.from(selectedSuggestionIds))}
+                          data-testid="suggestion-bulk-confirm"
+                        >
+                          {t("agenda.confirmSelected", "Confirmer la sélection")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 text-[10px] px-2 whitespace-nowrap text-foreground"
+                          disabled={bulkBusy}
+                          onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
+                          data-testid="suggestion-bulk-dismiss"
+                        >
+                          {t("agenda.dismissSelected", "Ignorer la sélection")}
+                        </Button>
+                      </>
+                    )}
                   </>
                 )}
+                <button
+                  type="button"
+                  onClick={toggleSuggestionsCollapsed}
+                  className="inline-flex items-center justify-center h-6 w-6 rounded text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+                  aria-label={suggestionsCollapsed ? t("agenda.expandSuggestions", "Afficher les suggestions") : t("agenda.collapseSuggestions", "Masquer les suggestions")}
+                  title={suggestionsCollapsed ? t("agenda.expandSuggestions", "Afficher les suggestions") : t("agenda.collapseSuggestions", "Masquer les suggestions")}
+                >
+                  {suggestionsCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+                </button>
               </div>
             </div>
+            {!suggestionsCollapsed && (
             <div className="space-y-1.5">
               {suggestions.map((apt, idx) => {
                 const isSelected = selectedSuggestionIds.has(apt.id);
@@ -1344,6 +1371,7 @@ export default function Agenda() {
                 );
               })}
             </div>
+            )}
           </div>
         )}
 
