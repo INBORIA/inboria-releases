@@ -63,6 +63,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SupportChatWidget } from "@/components/SupportChatWidget";
 import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { InboriaChatButton } from "@/components/inboria-chat/InboriaChatButton";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 
 export function DashboardLayout({ children, rightSidebar }: { children: React.ReactNode; rightSidebar?: React.ReactNode }) {
@@ -549,6 +550,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           <div className="flex items-center flex-wrap md:flex-nowrap justify-between md:justify-end gap-1 sm:gap-2 w-full md:w-auto md:shrink-0">
             <div className="shrink-0"><InboriaChatButton /></div>
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="shrink-0"><NotificationBell /></div>
             <div className="block"><AutopilotIndicator /></div>
             <button
               type="button"
