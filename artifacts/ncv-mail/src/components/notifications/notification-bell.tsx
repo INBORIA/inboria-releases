@@ -259,7 +259,7 @@ export function NotificationBell() {
           />
           <div
             ref={panelRef}
-            className="fixed top-0 right-0 h-screen w-[380px] max-md:w-full bg-[#0f141b] border-l border-[#1f2937] z-[100] shadow-2xl flex flex-col animate-in slide-in-from-right duration-200"
+            className="fixed top-0 right-0 h-screen w-[460px] max-md:w-full bg-[#0f141b] border-l border-[#1f2937] z-[100] shadow-2xl flex flex-col animate-in slide-in-from-right duration-200"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12 border-b border-[#1f2937] shrink-0">
@@ -289,7 +289,7 @@ export function NotificationBell() {
             </div>
 
             {/* Filter pills */}
-            <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1f2937] shrink-0 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1f2937] shrink-0 flex-wrap">
               {FILTER_PILLS.map((p) => (
                 <button
                   key={p.key}
