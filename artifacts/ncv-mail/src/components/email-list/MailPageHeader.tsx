@@ -552,10 +552,16 @@ function MailPageHeaderImpl({
           </DialogTrigger>
           <DialogContent
             aria-describedby={undefined}
+            // [&>button.absolute]:hidden — cache le X auto de shadcn
+            // (DialogPrimitive.Close en absolute top-right ajouté par
+            // notre wrapper components/ui/dialog.tsx). Le composer a
+            // déjà son propre X dans ComposeDialogBody, avec confirm
+            // "Abandonner ce brouillon ?".
             className={
-              isComposeFullscreen
+              (isComposeFullscreen
                 ? "bg-card border-border w-screen max-w-none h-screen sm:rounded-none p-0 flex flex-col"
-                : "bg-card border-border w-[95vw] sm:max-w-3xl p-0 flex flex-col max-h-[90vh]"
+                : "bg-card border-border w-[95vw] sm:max-w-3xl p-0 flex flex-col max-h-[90vh]")
+              + " [&>button.absolute]:hidden"
             }
           >
             {isComposeOpen && (
