@@ -2578,6 +2578,14 @@ export type MarkNotificationRead200 = {
   success?: boolean;
 };
 
+export type MarkNotificationUnread200 = {
+  success?: boolean;
+};
+
+export type DeleteNotification200 = {
+  success?: boolean;
+};
+
 export type MarkAllNotificationsRead200 = {
   success?: boolean;
 };

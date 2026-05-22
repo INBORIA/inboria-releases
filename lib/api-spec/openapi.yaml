@@ -2525,6 +2525,50 @@ paths:
                   success:
                     type: boolean
 
+  /notifications/{id}/unread:
+    patch:
+      operationId: markNotificationUnread
+      tags: [notifications]
+      summary: Mark a notification as unread
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Marked as unread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /notifications/{id}:
+    delete:
+      operationId: deleteNotification
+      tags: [notifications]
+      summary: Delete a notification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /notifications/mark-all-read:
     post:
       operationId: markAllNotificationsRead

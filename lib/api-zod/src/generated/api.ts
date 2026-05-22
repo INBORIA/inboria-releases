@@ -2672,6 +2672,28 @@ export const MarkNotificationReadResponse = zod.object({
 });
 
 /**
+ * @summary Mark a notification as unread
+ */
+export const MarkNotificationUnreadParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const MarkNotificationUnreadResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Delete a notification
+ */
+export const DeleteNotificationParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteNotificationResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Mark all notifications as read
  */
 export const MarkAllNotificationsReadResponse = zod.object({

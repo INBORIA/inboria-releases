@@ -81,6 +81,44 @@ router.patch("/notifications/:id/read", requireAuth, async (req, res): Promise<v
   }
 });
 
+router.patch("/notifications/:id/unread", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { error } = await supabaseAdmin
+      .from("notifications")
+      .update({ read: false })
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Erreur" });
+  }
+});
+
+router.delete("/notifications/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { error } = await supabaseAdmin
+      .from("notifications")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Erreur" });
+  }
+});
+
 router.post("/notifications/mark-all-read", requireAuth, async (req, res): Promise<void> => {
   try {
     await supabaseAdmin
