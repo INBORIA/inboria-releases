@@ -5138,6 +5138,23 @@ export default function Dashboard() {
   // Menu contextuel rendu via fonction pour être utilisable dans les deux
   // branches (vue liste ET vue mail ouvert).
   const renderContextMenu = () => contextMenu && (
+    <>
+      {/* Overlay transparent plein écran : intercepte hovers/clics sur les
+          éléments du dashboard pendant que le menu est ouvert. Clic =
+          ferme le menu (UX classique des menus contextuels). z-index
+          juste sous le menu. */}
+      <div
+        data-context-menu
+        className="fixed inset-0 z-[9998]"
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          closeContextMenu();
+        }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          closeContextMenu();
+        }}
+      />
     <div
       ref={contextMenuRef}
       data-context-menu
@@ -5370,6 +5387,7 @@ export default function Dashboard() {
         )}
       </div>
     </div>
+    </>
   );
 
   if (selectedEmail && !readingPaneEnabled) {
