@@ -1,0 +1,36 @@
+#310 - Perf 3/5 — Virtualisation listes mails
+What & Why
+Vérifié : 0 occurrence de react-window / virtuoso / @tanstack/react-virtual. Quand un utilisateur a 500+ mails dans Réception, le DOM contient 500 nodes → scroll laggy, mémoire élevée, jank visible. Objectif : virtualiser TOUTES les listes mails (Réception + 10 autres pages) pour garantir scroll 60fps fluide même avec 5000 mails.
+
+Done looks like
+DOM contient max ~30 EmailRow visibles même avec 5000 mails dans le dataset.
+Scroll fluide à 60fps (DevTools Performance tab : 0 frames perdues sur scroll continu de 3 secondes).
+Sélection multiple (Cmd+clic, Shift+clic), raccourcis clavier (j/k navigation, gA select all, etc.) continuent de fonctionner même quand les rows ciblées sont hors viewport.
+Composant <VirtualizedMailList> extrait dans components/email-list/, réutilisable sur toutes les pages mails.
+Hauteur de row constante 52 px (cf. convention replit.md) préservée.
+Branché sur les 11 pages mails : Réception, Envoyés, Programmés, Reportés, Tâches, Archives, Indésirables, Corbeille, Partagées, Assignés, Mes dossiers.
+Aucune régression visuelle (header sticky, séparateurs, sélection, hover, clic droit, drag-drop fonctionnent).
+Workflow restart + typecheck vert.
+Out of scope
+Optimistic UI, lazy routes, web worker, audit re-renders (autres tasks).
+Listes hors mails (Contacts, Templates, Règles, etc.) — pas concernées.
+Steps
+Choisir entre @tanstack/react-virtual (bas niveau, marche sur hauteurs fixes 52 px) ou react-virtuoso (haut niveau, DX plus simple) selon facilité d'intégration dans index.tsx (6903 lignes).
+Tester d'abord l'extraction sur Envoyés (page plus simple) — valider visuellement et fonctionnellement avant d'attaquer Réception.
+Extraire en composant partagé <VirtualizedMailList items renderRow keyExtractor> réutilisable.
+Brancher sur Réception (la plus complexe à cause des 6903 lignes), puis sur les 9 autres pages mails.
+Vérifier que la sélection multiple Cmd/Shift + clic et les raccourcis j/k fonctionnent malgré la virtualisation (gérer les refs sur les rows hors viewport).
+Test manuel : créer un compte avec 1000+ mails synthétiques → scroll 60fps, mémoire stable.
+Restart workflow + typecheck.
+Relevant files
+artifacts/ncv-mail/src/pages/dashboard/index.tsx
+artifacts/ncv-mail/src/pages/dashboard/envoyes.tsx
+artifacts/ncv-mail/src/pages/dashboard/programmes.tsx
+artifacts/ncv-mail/src/pages/dashboard/dossiers.tsx
+artifacts/ncv-mail/src/pages/dashboard/reportes.tsx
+artifacts/ncv-mail/src/pages/dashboard/taches.tsx
+artifacts/ncv-mail/src/pages/dashboard/archives.tsx
+artifacts/ncv-mail/src/pages/dashboard/indesirables.tsx
+artifacts/ncv-mail/src/pages/dashboard/corbeille.tsx
+artifacts/ncv-mail/src/components/email-list/EmailRowSkeleton.tsx
+artifacts/ncv-mail/package.json

@@ -1,0 +1,34 @@
+#308 - Perf 1/5 — Optimistic UI sur toutes les mutations mails
+What & Why
+Aujourd'hui aucune mutation React Query du codebase n'utilise onMutate (vérifié : 0 occurrence). Archive, snooze, delete, mark-read, star, move-to-folder, assign attendent toutes la réponse 200 du backend avant de mettre à jour l'UI → latence perçue 200-500ms par action.
+
+Objectif : rendre TOUTES les actions visiblement instantanées (l'UI répond avant le serveur), avec rollback automatique propre si erreur backend. C'est le levier de ressenti #1 pour atteindre le niveau Superhuman.
+
+Done looks like
+Toutes les mutations qui modifient une liste affichée mettent à jour l'UI immédiatement au clic, sans attendre la réponse backend.
+Si le backend renvoie une erreur, l'UI rollback automatiquement à l'état précédent + toast d'erreur discret.
+Sur DevTools throttling « Slow 3G » (2-3s de latence simulée), les actions paraissent toujours instantanées.
+Pattern unifié onMutate + cancelQueries + snapshot + setQueryData + onError (rollback) + onSettled (invalidate) appliqué partout.
+Aucune régression fonctionnelle : tous les flux existants marchent.
+Workflow artifacts/ncv-mail: web redémarré, pnpm --filter @workspace/ncv-mail run typecheck vert.
+Out of scope
+Tout le reste du combo perf (lazy routes, virtualisation, web worker, audit re-renders) — voir tasks suivantes.
+Modification backend.
+Nouvelles features UX.
+Steps
+Recenser toutes les mutations React Query du frontend qui modifient une liste affichée à l'écran (archive, snooze, delete, mark-read/unread, star/unstar, move-to-folder, assign/unassign, mark-spam, restore-from-trash, send-now, cancel-schedule, snooze-cancel, follow-up-resolve, etc.).
+Pour chaque mutation, implémenter le pattern complet onMutate (cancel + snapshot + update optimiste), onError (rollback depuis snapshot + toast), onSettled (invalidation propre).
+Tester sur 1 mutation pilote (archive) d'abord — valider visuellement réseau lent — puis dupliquer le pattern sur les autres.
+Vérifier qu'aucune des mutations existantes n'est cassée (compose, drag-drop, raccourcis clavier).
+Restart workflow + typecheck.
+Relevant files
+artifacts/ncv-mail/src/pages/dashboard/index.tsx
+artifacts/ncv-mail/src/pages/dashboard/envoyes.tsx
+artifacts/ncv-mail/src/pages/dashboard/programmes.tsx
+artifacts/ncv-mail/src/pages/dashboard/reportes.tsx
+artifacts/ncv-mail/src/pages/dashboard/taches.tsx
+artifacts/ncv-mail/src/pages/dashboard/archives.tsx
+artifacts/ncv-mail/src/pages/dashboard/indesirables.tsx
+artifacts/ncv-mail/src/pages/dashboard/corbeille.tsx
+artifacts/ncv-mail/src/pages/dashboard/dossiers.tsx
+artifacts/ncv-mail/src/components/email-detail/EmailDetail.tsx

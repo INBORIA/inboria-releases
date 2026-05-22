@@ -1,0 +1,121 @@
+
+
+AI
+
+App Developement
+
+
+Invite
+
+Republish
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Library
+
+File tree
+Search
+
+New
+Apps
+NCV Mail
+NCV Mail
+Website
+
+Documents
+NCV Mail — Descriptif complet de l'application
+Text
+
+Plan complet V2 — Organisation & Collaboration Business
+Text
+
+NCV Mail — Descriptif complet de l'application
+Text
+
+Audit rentabilité Inboria — rév. 3 (pire cas + système crédits)
+Text
+
+Audit rentabilité Inboria — rev. 4 (Markdown)
+Text
+
+Audit rentabilité Inboria — rev. 4 (TXT)
+Text
+
+Audit de rentabilité Inboria — Révision 5
+Text
+
+Rapport d'audit Inboria — 22 avril 2026
+Text
+
+Note d’accompagnement et synthèse détaillée — Inboria
+Text
+
+Images
+Logo Inboria (à uploader dans Notion comme icône)
+Logo Inboria (à uploader dans Notion comme icône)
+Image
+
+Logo Inboria officiel (à uploader dans Notion)
+Logo Inboria officiel (à uploader dans Notion)
+Image
+
+Icône Inboria 512×512 (à uploader dans Notion)
+Icône Inboria 512×512 (à uploader dans Notion)
+Image
+
+Screenshot horodaté de ton app dev (homepage Inboria)
+Screenshot horodaté de ton app dev (homepage Inboria)
+Image
+
+Nouveau favicon Inboria - aperçu
+Nouveau favicon Inboria - aperçu
+Image
+
+
+Agent
+4
+
+
+
+
+#309 - Perf 2/5 — Lazy routes (code splitting par page)
+What & Why
+Vérifié : 0 occurrence de React.lazy / Suspense dans App.tsx. Toutes les pages secondaires sont actuellement dans le bundle initial → premier chargement traîne 300-800 ko inutiles. Objectif : ne charger que Réception au premier paint, charger les autres pages à la volée au moment où l'utilisateur y navigue.
+
+Done looks like
+Toutes les routes sauf dashboard/index.tsx (Réception, landing) sont en React.lazy() + <Suspense fallback={skeleton}>.
+Bundle initial réduit d'au moins 200 ko gzip (mesuré avant/après via vite-bundle-visualizer ou équivalent ajouté en devDependency temporaire).
+Lighthouse desktop sur /dashboard : score performance ≥ score actuel + amélioration sur First Contentful Paint et Time To Interactive.
+Aucun flash blanc visible entre navigations (le Suspense fallback est un skeleton, jamais une page blanche).
+Aucune régression fonctionnelle : toutes les routes accessibles, deep links marchent, raccourcis clavier marchent.
+Workflow restart + typecheck vert.
+Out of scope
+Optimistic UI, virtualisation, web worker, audit re-renders (autres tasks).
+Refonte du routing (wouter reste, on n'introduit pas React Router).
+Steps
+Mesurer le bundle initial actuel (pnpm build + analyse visualizer) pour avoir une baseline chiffrée.
+Convertir tous les imports de pages secondaires dans le fichier de routing en lazy(() => import('./pages/...')).
+Wrapper le <Switch> (wouter) dans un <Suspense fallback={<RouteLoadingSkeleton />}> avec un skeleton générique non-jankant.
+Garder dashboard/index.tsx (Réception, landing par défaut) NON-lazy.
+Re-mesurer le bundle, documenter le gain dans la PR.
+Restart workflow + typecheck + test manuel de navigation sur 10+ routes.
+Relevant files
+artifacts/ncv-mail/src/App.tsx
+artifacts/ncv-mail/src/pages/dashboard/index.tsx
+artifacts/ncv-mail/src/components/email-list/EmailRowSkeleton.tsx
+artifacts/ncv-mail/vite.config.ts
+artifacts/ncv-mail/package.json
