@@ -66,6 +66,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { extractEmailAddress } from "@/lib/utils";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 
 function daysSince(iso: string | null | undefined): number {
   if (!iso) return 0;
@@ -648,7 +649,10 @@ export default function Relances() {
             </div>
           ) : (
             <div className="rounded-lg border border-border/40 overflow-hidden bg-white/[0.01]">
-              {aiList.map((f: any) => {
+              <VirtualizedMailList
+                items={aiList}
+                keyExtractor={(f: any) => f.id}
+                renderRow={(f: any) => {
                 const email = f.emails || {};
                 const sentAt = email.created_at || email.createdAt || null;
                 const days = daysSince(sentAt);
@@ -775,7 +779,8 @@ export default function Relances() {
                     )}
                   </div>
                 );
-              })}
+              }}
+              />
             </div>
           )}
         </section>
