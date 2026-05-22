@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ChevronRight,
@@ -49,7 +49,7 @@ export type HoverActionsCb = {
 // dashboard/index.tsx pour pouvoir être réutilisé tel quel sur Envoyés
 // (parité 1:1 demandée par l'utilisateur). Ne modifie pas la sémantique
 // d'origine : mêmes icônes, mêmes popovers, mêmes raccourcis.
-export function HoverActions({
+function HoverActionsImpl({
   isUnread,
   categoryCounts,
   userFolders,
@@ -186,3 +186,5 @@ export function HoverActions({
     </div>
   );
 }
+
+export const HoverActions = memo(HoverActionsImpl);

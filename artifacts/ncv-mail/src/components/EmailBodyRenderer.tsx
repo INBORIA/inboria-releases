@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo, type ReactNode } from "react";
+import { memo, useRef, useEffect, useState, useMemo, type ReactNode } from "react";
 import { cleanEmailBody, isHtmlContent, isHeavyBody } from "@/lib/clean-email-body";
 import { cleanEmailBodyAsync } from "@/lib/email-parser-client";
 
@@ -109,7 +109,7 @@ function findScrollParent(el: HTMLElement | null): HTMLElement | Window {
   return window;
 }
 
-export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererProps) {
+function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const initialHeight = useMemo(() => readCachedHeight(emailId) ?? 200, [emailId]);
   const [iframeHeight, setIframeHeight] = useState(initialHeight);
@@ -418,3 +418,5 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
     />
   );
 }
+
+export const EmailBodyRenderer = memo(EmailBodyRendererImpl);

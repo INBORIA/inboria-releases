@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -130,7 +130,7 @@ function useDebounce<T>(value: T, delay = 300): T {
   return debounced;
 }
 
-export function MailPageHeader({
+function MailPageHeaderImpl({
   currentTab,
   searchValue,
   onSearchChange,
@@ -1096,3 +1096,5 @@ export function MailPageHeader({
     </div>
   );
 }
+
+export const MailPageHeader = memo(MailPageHeaderImpl);
