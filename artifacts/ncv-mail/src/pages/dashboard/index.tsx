@@ -100,6 +100,7 @@ import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/he
 
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { EmailRowSkeleton } from "@/components/email-list/EmailRowSkeleton";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-list/SearchAutocomplete";
 
 // Bag de callbacks pour la barre d'actions au survol — toutes les actions
@@ -6555,7 +6556,10 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div>
-                          {visible.map((email: any) => {
+                          <VirtualizedMailList
+                            items={visible}
+                            keyExtractor={(e: any) => e.id}
+                            renderRow={(email: any) => {
                             const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
                             return (
                               <EmailRow
@@ -6597,7 +6601,8 @@ export default function Dashboard() {
                                 }}
                               />
                             );
-                          })}
+                          }}
+                          />
                           {hasMore && (
                             <div className="flex items-center justify-center py-4">
                               <button
@@ -6670,7 +6675,10 @@ export default function Dashboard() {
                        (HoverActions : Reply / Forward / Snooze / Archive /
                        Delete / Catégorie / Move to folder / Block sender). */
                     <div>
-                      {sharedEmailsList.map((email: any) => {
+                      <VirtualizedMailList
+                        items={sharedEmailsList}
+                        keyExtractor={(e: any) => e.id}
+                        renderRow={(email: any) => {
                         const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
                         return (
                           <EmailRow
@@ -6712,7 +6720,8 @@ export default function Dashboard() {
                             }}
                           />
                         );
-                      })}
+                      }}
+                      />
                       {sharedHasMore && (
                         <div className="flex items-center justify-center py-4">
                           <button

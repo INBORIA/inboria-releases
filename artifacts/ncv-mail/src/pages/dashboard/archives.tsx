@@ -58,6 +58,7 @@ import type { PaginatedEmails, Email } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useToast } from "@/hooks/use-toast";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { extractEmailAddress } from "@/lib/utils";
 
 const categoryColors = [
@@ -495,7 +496,10 @@ export default function Archives() {
                 <p className="text-[12px] text-[#b8c5d6]">{t("inbox.noEmails")}</p>
               </div>
             ) : (
-              selectedEmails.map((email: any) => {
+              <VirtualizedMailList
+                items={selectedEmails}
+                keyExtractor={(e: any) => e.id}
+                renderRow={(email: any) => {
                 const isSelected = selectedIds.has(email.id);
                 const isUnread = email.status === "non_lu" || email.isRead === false || email.unread === true;
                 return (
@@ -587,7 +591,8 @@ export default function Archives() {
                     />
                   </div>
                 );
-              })
+              }}
+              />
             )}
           </div>
           {selectionMode && (

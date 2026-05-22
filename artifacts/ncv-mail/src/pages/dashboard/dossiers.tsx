@@ -82,6 +82,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import { formatMailDate } from "@/lib/format-mail-date";
 import { useToast } from "@/hooks/use-toast";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 
 type DraftFolder = {
   name: string;
@@ -543,7 +544,10 @@ export default function MesDossiers() {
             </div>
           ) : (
             <div>
-              {emails.map((email: Email) => {
+              <VirtualizedMailList
+                items={emails}
+                keyExtractor={(e: Email) => e.id}
+                renderRow={(email: Email) => {
                 const isUnread = email.status === "non_lu";
                 const categoryLabel = email.categoryName;
                 return (
@@ -605,7 +609,8 @@ export default function MesDossiers() {
                     />
                   </div>
                 );
-              })}
+              }}
+              />
             </div>
           )}
         </div>

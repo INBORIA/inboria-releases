@@ -23,6 +23,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -413,7 +414,10 @@ export default function Corbeille() {
         ) : (
           <>
             <div ref={listContainerRef}>
-              {emails.map((email: any) => {
+              <VirtualizedMailList
+                items={emails}
+                keyExtractor={(e: any) => e.id}
+                renderRow={(email: any) => {
                 const isSelected = selectedIds.has(email.id);
                 return (
                   <div
@@ -520,7 +524,8 @@ export default function Corbeille() {
                     </span>
                   </div>
                 );
-              })}
+              }}
+              />
             </div>
           </>
         )}

@@ -28,6 +28,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -656,7 +657,10 @@ export default function Indesirables() {
             )}
 
             <div>
-              {visible.map((email: any) => {
+              <VirtualizedMailList
+                items={visible}
+                keyExtractor={(e: any) => e.id}
+                renderRow={(email: any) => {
                 const risk = getRisk(email);
                 const isSelected = selectedIds.has(email.id);
                 return (
@@ -775,7 +779,8 @@ export default function Indesirables() {
                     </span>
                   </div>
                 );
-              })}
+              }}
+              />
             </div>
           </>
         )}

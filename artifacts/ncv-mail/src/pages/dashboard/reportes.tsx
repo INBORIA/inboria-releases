@@ -74,6 +74,7 @@ import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 
 export default function Reportes() {
@@ -561,7 +562,10 @@ export default function Reportes() {
         ) : (
           <>
             <div className="space-y-1">
-              {snoozedEmails.map((email) => {
+              <VirtualizedMailList
+                items={snoozedEmails}
+                keyExtractor={(e: any) => e.id}
+                renderRow={(email: any) => {
                 const isSelected = selectedIds.has(email.id);
                 const snoozedUntilStr = (email as any).snoozedUntil as string | undefined;
                 const snoozedUntilTitle = snoozedUntilStr
@@ -662,7 +666,8 @@ export default function Reportes() {
                     />
                   </div>
                 );
-              })}
+              }}
+              />
             </div>
             {hasMore && (
               <div className="flex items-center justify-center py-4 mt-3">
