@@ -99,7 +99,7 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id, shared_mailbox_id, assigned_to")
+      .select("id, user_id, shared_mailbox_id, assigned_to, subject")
       .eq("id", emailId)
       .single();
 
@@ -158,12 +158,16 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
     const commenterName = profile?.full_name || await getUserName(req.userId!);
     const orgId = await getOrgIdForUser(req.userId!);
 
+    const rawSubject = (email.subject || "").trim();
+    const subjectLabel = rawSubject ? `« ${rawSubject.slice(0, 60)}${rawSubject.length > 60 ? "…" : ""} »` : "(sans objet)";
+    const noteExtract = body.trim().replace(/\s+/g, " ").slice(0, 120);
+
     if (email.user_id !== req.userId!) {
       createNotification({
         userId: email.user_id,
         type: "comment_added",
-        title: "Nouveau commentaire",
-        message: `${commenterName} a commenté un email: "${body.trim().slice(0, 80)}"`,
+        title: `Nouveau commentaire — ${subjectLabel}`,
+        message: `${commenterName} : "${noteExtract}"`,
         emailId,
         triggeredBy: req.userId!,
       });
@@ -173,8 +177,8 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       createNotification({
         userId: email.assigned_to,
         type: "comment_added",
-        title: "Nouveau commentaire",
-        message: `${commenterName} a commenté un email qui vous est assigné`,
+        title: `Nouveau commentaire — ${subjectLabel}`,
+        message: `${commenterName} : "${noteExtract}"`,
         emailId,
         triggeredBy: req.userId!,
       });
@@ -182,12 +186,12 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
 
     // Notify mentioned users
     for (const mUid of validatedMentions) {
-      if (mUid === req.userId!) continue;
+      if (mUid === req.userId! || mUid === email.user_id || mUid === email.assigned_to) continue;
       createNotification({
         userId: mUid,
         type: "comment_mention",
-        title: "Vous avez été mentionné",
-        message: `${commenterName} : "${body.trim().slice(0, 80)}"`,
+        title: `Vous avez été mentionné — ${subjectLabel}`,
+        message: `${commenterName} : "${noteExtract}"`,
         emailId,
         triggeredBy: req.userId!,
       });
