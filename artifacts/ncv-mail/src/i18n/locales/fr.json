@@ -2136,11 +2136,13 @@
   "notificationsPage": {
     "counter": "{{unread}} non lues · {{total}} au total",
     "system": "Système",
+    "sourceAgenda": "Agenda",
     "filters": {
       "all": "Tout",
       "unread": "Non lues",
-      "mentions": "Commentaires",
-      "assignations": "Assignations",
+      "mails": "Mails",
+      "agenda": "Agenda",
+      "inboria": "Inboria",
       "team": "Équipe",
       "system": "Système"
     }

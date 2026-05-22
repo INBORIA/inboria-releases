@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { recordAutopilotEvent } from "./autopilot-events";
+import { createNotification } from "../lib/activity";
 
 const DEFAULT_DELAY_DAYS = 5;
 const MAX_PER_USER_PER_RUN = 25;
@@ -247,6 +248,18 @@ export async function detectForUser(
     eventType: "follow_up_detected",
     title: `${inserts.length} relance(s) suggérée(s)`,
     metadata: { count: inserts.length, delayDays },
+  }).catch(() => {});
+
+  // Notification Pro/Business : digest des relances détectées par Inboria
+  // sur ce cycle. Une seule notif agrégée par run (peu importe le nombre),
+  // titre adaptatif selon le volume.
+  createNotification({
+    userId,
+    type: "followup_suggestions_digest",
+    title: inserts.length === 1
+      ? "Inboria a détecté 1 relance à faire"
+      : `Inboria a détecté ${inserts.length} relances à faire`,
+    message: `Sur ${candidates.length} mail(s) en attente de réponse depuis ${delayDays} jour(s).`,
   }).catch(() => {});
 
   return { created: inserts.length, scanned: candidates.length };

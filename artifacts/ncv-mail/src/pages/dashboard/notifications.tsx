@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { AlertCircle, MessageSquare, UserPlus, Bell, Info } from "lucide-react";
+import { AlertCircle, MessageSquare, UserPlus, Bell, Info, Mail, Send, Calendar, AlertTriangle, Sparkles } from "lucide-react";
 
 type NotifType =
   | "assigned"
@@ -30,13 +30,23 @@ type Notif = {
   createdAt: string;
 };
 
-type FilterKey = "all" | "unread" | "mentions" | "assignations" | "team" | "system";
+type FilterKey = "all" | "unread" | "mails" | "agenda" | "inboria" | "team" | "system";
+
+const SYSTEM_TYPES = new Set(["sla_breach", "connection_disconnected", "send_failed"]);
+const MAIL_TYPES = new Set(["email_reply_received", "send_failed"]);
+const INBORIA_TYPES = new Set(["followup_suggestions_digest"]);
+const AGENDA_TYPES = new Set(["appointment_imminent"]);
+const TEAM_TYPES = new Set(["assigned", "commented", "sla_breach"]);
+
+function stripAptTag(title: string): string {
+  return title.replace(/^\[apt:[^\]]+\]\s*/, "");
+}
 
 function getInitial(notif: Notif): string {
   if (notif.triggeredByName && notif.triggeredByName.trim().length > 0) {
     return notif.triggeredByName.trim().charAt(0).toUpperCase();
   }
-  if (notif.type === "sla_breach" || notif.type === "connection_disconnected") {
+  if (SYSTEM_TYPES.has(notif.type) || AGENDA_TYPES.has(notif.type) || INBORIA_TYPES.has(notif.type)) {
     return "i";
   }
   return "•";
@@ -44,19 +54,24 @@ function getInitial(notif: Notif): string {
 
 function getIcon(type: NotifType) {
   if (type === "connection_disconnected") return AlertCircle;
+  if (type === "send_failed") return AlertTriangle;
   if (type === "sla_breach") return Info;
   if (type === "commented") return MessageSquare;
   if (type === "assigned") return UserPlus;
+  if (type === "email_reply_received") return Mail;
+  if (type === "appointment_imminent") return Calendar;
+  if (type === "followup_suggestions_digest") return Sparkles;
   return Bell;
 }
 
 function matchesFilter(n: Notif, filter: FilterKey): boolean {
   if (filter === "all") return true;
   if (filter === "unread") return !n.read;
-  if (filter === "mentions") return n.type === "commented";
-  if (filter === "assignations") return n.type === "assigned";
-  if (filter === "team") return n.type === "assigned" || n.type === "commented" || n.type === "sla_breach";
-  if (filter === "system") return n.type === "connection_disconnected" || n.type === "sla_breach";
+  if (filter === "mails") return MAIL_TYPES.has(n.type);
+  if (filter === "agenda") return AGENDA_TYPES.has(n.type);
+  if (filter === "inboria") return INBORIA_TYPES.has(n.type);
+  if (filter === "team") return TEAM_TYPES.has(n.type);
+  if (filter === "system") return SYSTEM_TYPES.has(n.type);
   return true;
 }
 
@@ -111,6 +126,14 @@ export default function NotificationsPage() {
       setLocation("/dashboard/parametres");
       return;
     }
+    if (n.type === "appointment_imminent") {
+      setLocation("/dashboard/agenda");
+      return;
+    }
+    if (n.type === "followup_suggestions_digest") {
+      setLocation("/dashboard/taches");
+      return;
+    }
     if (n.emailId) {
       setLocation(`/dashboard/email/${n.emailId}`);
     }
@@ -133,8 +156,9 @@ export default function NotificationsPage() {
   const filters: Array<{ key: FilterKey; label: string }> = [
     { key: "all", label: t("notificationsPage.filters.all", "Tout") },
     { key: "unread", label: t("notificationsPage.filters.unread", "Non lues") },
-    { key: "mentions", label: t("notificationsPage.filters.mentions", "Commentaires") },
-    { key: "assignations", label: t("notificationsPage.filters.assignations", "Assignations") },
+    { key: "mails", label: t("notificationsPage.filters.mails", "Mails") },
+    { key: "agenda", label: t("notificationsPage.filters.agenda", "Agenda") },
+    { key: "inboria", label: t("notificationsPage.filters.inboria", "Inboria") },
     { key: "team", label: t("notificationsPage.filters.team", "Équipe") },
     { key: "system", label: t("notificationsPage.filters.system", "Système") },
   ];
@@ -188,8 +212,14 @@ export default function NotificationsPage() {
           <ul role="list">
             {filtered.map((n) => {
               const Icon = getIcon(n.type);
-              const isSystem = n.type === "sla_breach" || n.type === "connection_disconnected";
-              const sourceLabel = n.triggeredByName?.trim() || t("notificationsPage.system", "Système");
+              const isSystem = SYSTEM_TYPES.has(n.type) || AGENDA_TYPES.has(n.type) || INBORIA_TYPES.has(n.type);
+              const sourceLabel = n.triggeredByName?.trim()
+                || (INBORIA_TYPES.has(n.type)
+                  ? "Inboria"
+                  : AGENDA_TYPES.has(n.type)
+                    ? t("notificationsPage.sourceAgenda", "Agenda")
+                    : t("notificationsPage.system", "Système"));
+              const displayTitle = n.type === "appointment_imminent" ? stripAptTag(n.title) : n.title;
               return (
                 <li
                   key={n.id}
@@ -228,7 +258,7 @@ export default function NotificationsPage() {
                         !n.read ? "text-white" : "text-[#7a8290]",
                       )}
                     >
-                      {n.title}
+                      {displayTitle}
                     </span>
                     {n.message && (
                       <span

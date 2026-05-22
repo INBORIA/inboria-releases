@@ -13,6 +13,7 @@ import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 import { syncImapJunk, syncOutlookJunk, type JunkEmailPayload } from "./junk-sync";
 import { recordAutopilotEvent } from "./autopilot-events";
+import { createNotification } from "../lib/activity";
 import { hasJunkColumns } from "../lib/schema-flags";
 import { getUserAiLang, summaryLangInstruction } from "./ai-lang";
 import {
@@ -764,6 +765,40 @@ export async function saveEmailWithTriage(
 
   if (forceSpam) {
     return inserted.id;
+  }
+
+  // Notification Pro/Business : réponse reçue à un mail que j'ai envoyé.
+  // Best-effort, non bloquant. Matche In-Reply-To / References vs
+  // provider_message_id de mes mails sent (lookback 30j).
+  try {
+    if (headers) {
+      const refs = collectThreadMessageIds(headers as any);
+      if (refs.length > 0) {
+        const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
+        const { data: original } = await supabaseAdmin
+          .from("emails")
+          .select("id, subject, recipient")
+          .eq("user_id", userId)
+          .eq("status", "sent")
+          .gte("created_at", since)
+          .in("provider_message_id", refs)
+          .limit(1)
+          .maybeSingle();
+        if (original) {
+          const senderShort = (sender || "").replace(/<[^>]+>/g, "").trim() || sender;
+          const subj = (original as any).subject || subject || "";
+          createNotification({
+            userId,
+            type: "email_reply_received",
+            title: `${senderShort} a répondu à « ${subj.slice(0, 60)} »`,
+            message: triage.summary?.slice(0, 200) || undefined,
+            emailId: inserted.id,
+          }).catch(() => {});
+        }
+      }
+    }
+  } catch (e: any) {
+    logger.warn({ err: e?.message, emailId: inserted.id }, "[auto-sync] reply-notif failed (continuing)");
   }
 
   // Task #294 — auto-classement dans les « Mes dossiers » de l'utilisateur.

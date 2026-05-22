@@ -2144,11 +2144,13 @@
   "notificationsPage": {
     "counter": "{{unread}} unread · {{total}} total",
     "system": "System",
+    "sourceAgenda": "Calendar",
     "filters": {
       "all": "All",
       "unread": "Unread",
-      "mentions": "Comments",
-      "assignations": "Assignments",
+      "mails": "Mail",
+      "agenda": "Calendar",
+      "inboria": "Inboria",
       "team": "Team",
       "system": "System"
     }

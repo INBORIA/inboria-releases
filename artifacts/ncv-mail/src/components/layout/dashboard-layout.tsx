@@ -220,7 +220,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
-    ...((user as any).plan === "business"
+    ...(["pro", "business"].includes((user as any).plan)
       ? [{ name: t("sidebar.notifications", "Notifications"), href: "/dashboard/notifications", icon: Bell }]
       : []),
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },

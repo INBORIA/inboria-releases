@@ -11,6 +11,7 @@ import { getEmailOAuthRedirectUri } from "./lib/urls";
 import { startSlaWorker } from "./services/sla";
 import { startWebhookDispatcher } from "./services/webhooks";
 import { startMeetingFollowupWorker } from "./services/meeting-followup-worker";
+import { startAppointmentReminderWorker } from "./services/appointment-reminder-worker";
 
 async function ensureEmailsUniqueIndex() {
   try {
@@ -714,6 +715,7 @@ app.listen(port, (err) => {
   startWebhookDispatcher();
   startCrmSyncScheduler();
   startMeetingFollowupWorker();
+  startAppointmentReminderWorker();
   startHarnessCron();
 });
 

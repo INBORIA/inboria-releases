@@ -1693,6 +1693,21 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     res.json({ success: true, emailId: sentEmail?.id, appointmentId, from: fromAddress });
   } catch (err: any) {
     console.error("Send email error:", err);
+    // Notification Pro/Business : envoi échoué (panne provider, token expiré,
+    // pj corrompue…). Best-effort, ne doit jamais masquer l'erreur 500.
+    try {
+      const { createNotification } = await import("../lib/activity");
+      const toStr = typeof (req.body as any)?.to === "string"
+        ? (req.body as any).to
+        : Array.isArray((req.body as any)?.to) ? (req.body as any).to.join(", ") : "destinataire";
+      const subj = typeof (req.body as any)?.subject === "string" ? (req.body as any).subject : "";
+      createNotification({
+        userId: req.userId!,
+        type: "send_failed",
+        title: `Échec d'envoi à ${String(toStr).slice(0, 80)}`,
+        message: `« ${String(subj).slice(0, 80)} » — ${(err.message || "Erreur inconnue").slice(0, 200)}`,
+      }).catch(() => {});
+    } catch { /* notif optional */ }
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });
   } finally {
     if (uploadIds.length > 0) {
