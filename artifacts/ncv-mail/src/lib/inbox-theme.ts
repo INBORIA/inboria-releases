@@ -78,14 +78,10 @@ export function useNcvTheme(): { theme: NcvTheme; toggle: () => void; setTheme: 
         window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
       } catch {}
     };
-    const doc = typeof document !== "undefined" ? (document as any) : null;
-    if (doc && typeof doc.startViewTransition === "function") {
-      doc.startViewTransition(() => {
-        apply();
-      });
-    } else {
-      apply();
-    }
+    // Pas de startViewTransition : la machinerie de snapshots crée toujours
+    // un micro-basculement visible (snapshot old → swap → DOM réel). Une
+    // mise à jour directe du DOM en une seule frame est plus propre.
+    apply();
   }, []);
 
   const toggle = useCallback(() => {
