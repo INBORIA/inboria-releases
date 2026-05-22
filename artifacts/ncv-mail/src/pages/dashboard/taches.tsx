@@ -633,6 +633,41 @@ export default function Taches() {
   };
 
   const rawTaskList = (tasks as any[]) || [];
+
+  // Deep-link: ?openTask=<id> — vient des notifs task_due (cf. notification-bell
+  // + pages/dashboard/notifications). Si le mail rattaché existe, le handler
+  // route déjà vers /dashboard/email/<emailId>. Sinon, on atterrit ici : ouvre
+  // le panneau détail de la tâche + scroll + highlight bref, puis on nettoie
+  // l'URL pour éviter de re-déclencher au prochain rerender. Cherche dans
+  // rawTaskList (avant scope filter) pour que ça marche même si la tâche n'est
+  // pas dans le scope courant.
+  const openTaskHandledRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!rawTaskList.length) return;
+    const sp = new URLSearchParams(window.location.search);
+    const wantedId = sp.get("openTask");
+    if (!wantedId || openTaskHandledRef.current === wantedId) return;
+    const target = rawTaskList.find((tk: any) => String(tk.id) === wantedId);
+    if (!target) return;
+    openTaskHandledRef.current = wantedId;
+    setEmailDetailTask(target);
+    setShowComments(false);
+    // Clean URL (keep pathname + hash).
+    sp.delete("openTask");
+    const qs = sp.toString();
+    const newUrl = window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash;
+    window.history.replaceState({}, "", newUrl);
+    // Scroll + pulse highlight après prochain paint.
+    requestAnimationFrame(() => {
+      const row = document.querySelector(`[data-row-id="${CSS.escape(String(target.id))}"]`) as HTMLElement | null;
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        row.classList.add("ring-1", "ring-primary/60");
+        setTimeout(() => row.classList.remove("ring-1", "ring-primary/60"), 1600);
+      }
+    });
+  }, [rawTaskList]);
+
   const taskList = scope === "team"
     ? rawTaskList.filter((tk: any) => tk.assignedToUserId && tk.assignedToUserId !== currentUserId)
     : rawTaskList;
