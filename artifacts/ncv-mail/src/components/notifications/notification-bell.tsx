@@ -176,7 +176,7 @@ export function NotificationBell() {
     if (notif.type === "task_due") {
       const m = String(notif.title || "").match(/^\[task:([^\]]+)\]/);
       if (notif.emailId) {
-        setLocation(`/dashboard/email/${notif.emailId}`);
+        setLocation(`/dashboard?emailId=${notif.emailId}`);
       } else {
         setLocation(m ? `/dashboard/taches?openTask=${encodeURIComponent(m[1])}` : "/dashboard/taches");
       }
@@ -187,7 +187,7 @@ export function NotificationBell() {
       return;
     }
     if (notif.emailId) {
-      setLocation(`/dashboard/email/${notif.emailId}`);
+      setLocation(`/dashboard?emailId=${notif.emailId}`);
     }
   };
 

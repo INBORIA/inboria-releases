@@ -157,14 +157,14 @@ export default function NotificationsPage() {
     if (n.type === "task_due") {
       const m = n.title.match(/^\[task:([^\]]+)\]/);
       if (n.emailId) {
-        setLocation(`/dashboard/email/${n.emailId}`);
+        setLocation(`/dashboard?emailId=${n.emailId}`);
       } else {
         setLocation(m ? `/dashboard/taches?openTask=${encodeURIComponent(m[1] as string)}` : "/dashboard/taches");
       }
       return;
     }
     if (n.emailId) {
-      setLocation(`/dashboard/email/${n.emailId}`);
+      setLocation(`/dashboard?emailId=${n.emailId}`);
     }
   };
 
