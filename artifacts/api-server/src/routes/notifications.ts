@@ -1,8 +1,47 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { createNotification } from "../lib/activity";
 
 const router: IRouter = Router();
+
+// Seed 4 notifications de démo (1 par nouveau type Phase 2) pour le user
+// courant. Permet de vérifier visuellement la page sans attendre les events
+// réels (reply / send_failed / RDV imminent / cycle relance).
+router.post("/notifications/demo-seed", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    await Promise.all([
+      createNotification({
+        userId,
+        type: "email_reply_received",
+        title: "Camille Dupont a répondu à « Proposition tarifaire Q3 »",
+        message: "Bonjour, merci pour votre retour. C'est validé de notre côté…",
+      }),
+      createNotification({
+        userId,
+        type: "send_failed",
+        title: "Échec d'envoi à client@example.com",
+        message: "« Relance facture #2026-0431 » — token Outlook expiré, reconnectez la boîte.",
+      }),
+      createNotification({
+        userId,
+        type: "followup_suggestions_digest",
+        title: "Inboria a détecté 3 relances à faire",
+        message: "Sur 12 mail(s) en attente de réponse depuis 5 jour(s).",
+      }),
+      createNotification({
+        userId,
+        type: "appointment_imminent",
+        title: "[apt:demo-1] Point hebdo équipe à 14:30 (dans 12 min)",
+        message: "Démarre à 14:30 — Salle de réunion / Meet",
+      }),
+    ]);
+    res.json({ ok: true, count: 4 });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "seed failed" });
+  }
+});
 
 router.get("/notifications", requireAuth, async (req, res): Promise<void> => {
   try {
