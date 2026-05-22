@@ -60,9 +60,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SupportChatWidget } from "@/components/SupportChatWidget";
-import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { InboriaChatButton } from "@/components/inboria-chat/InboriaChatButton";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 
 export function DashboardLayout({ children, rightSidebar }: { children: React.ReactNode; rightSidebar?: React.ReactNode }) {
@@ -493,7 +493,6 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
       {rightSidebar && (
         <aside className="hidden md:flex md:fixed md:inset-y-0 md:right-0 md:w-[260px] flex-col bg-sidebar border-l border-[#1f2937] z-30">
           <div className="h-16 shrink-0 border-b border-[#1f2937] px-3 flex items-center justify-center gap-1.5">
-            <NotificationBell />
             <button
               type="button"
               onClick={toggleNcvTheme}
@@ -557,7 +556,6 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               {mailHeaderCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
             </button>
             <div className={cn("flex items-center gap-2", rightSidebar && "md:hidden")}>
-              <NotificationBell />
               <button
                 type="button"
                 onClick={toggleNcvTheme}
