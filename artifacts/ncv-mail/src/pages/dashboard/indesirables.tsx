@@ -23,6 +23,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download, Check } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -165,9 +166,11 @@ export default function Indesirables() {
 
   const handleRestore = (id: number) => {
     const desc = describeEmail(id);
+    // Task #308 — optimiste : le mail quitte les Indésirables instantanément.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     restore.mutate({ id }, {
       onSuccess: () => {
-        if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
         toast({
           title: t("junk.restored"),
@@ -183,19 +186,27 @@ export default function Indesirables() {
           ) as any,
         });
       },
-      onError: () => toast({ title: t("common.error"), description: desc, variant: "destructive" }),
+      onError: () => {
+        rollback();
+        toast({ title: t("common.error"), description: desc, variant: "destructive" });
+      },
     });
   };
 
   const handleDelete = (id: number) => {
     const desc = describeEmail(id);
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     permDelete.mutate({ id }, {
       onSuccess: () => {
-        if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
         toast({ title: t("junk.deleted"), description: desc });
       },
-      onError: () => toast({ title: t("common.error"), description: desc, variant: "destructive" }),
+      onError: () => {
+        rollback();
+        toast({ title: t("common.error"), description: desc, variant: "destructive" });
+      },
     });
   };
 

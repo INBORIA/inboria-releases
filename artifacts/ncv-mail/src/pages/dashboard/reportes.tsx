@@ -76,6 +76,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 
 export default function Reportes() {
   useEnableLightTheme();
@@ -420,6 +421,9 @@ export default function Reportes() {
     } else {
       date = new Date(Date.now() + hours * 60 * 60 * 1000);
     }
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     snoozeMut.mutate(
       { id, data: { snoozeUntil: date.toISOString() } as any },
       {
@@ -427,18 +431,28 @@ export default function Reportes() {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label });
         },
-        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
       },
     );
   };
 
   const handleArchiveOne = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     updateEmail.mutate(
       { id, data: { status: "archived" } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("inbox.archived", "Archivé") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
         },
       },
     );
@@ -468,10 +482,17 @@ export default function Reportes() {
   };
 
   const handleDeleteOne = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     deleteEmail.mutate({ id }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
         toast({ title: t("inbox.emailDeleted") });
+      },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la suppression" });
       },
     });
   };
@@ -884,13 +905,27 @@ function SnoozedEmailDetailView({
     updateEmail.mutate({ id, data: { status: "read" } }, { onSuccess: invalidateAll });
   };
   const handleArchive = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    onBack();
     updateEmail.mutate({ id, data: { status: "archived" } }, {
-      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailArchived") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.emailArchived") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
+      },
     });
   };
   const handleDelete = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    onBack();
     deleteEmail.mutate({ id }, {
-      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailDeleted") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.emailDeleted") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la suppression" });
+      },
     });
   };
   const handleUpdatePriority = (id: number, priority: string) => {

@@ -5,6 +5,7 @@ import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import {
   useListEmails,
   useListCategories,
@@ -235,14 +236,28 @@ export default function Archives() {
   };
 
   const handleRestore = (id: number) => {
+    // Task #308 — optimiste : disparaît de la liste Archives instantanément.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     updateEmail.mutate({ id, data: { status: "non_lu" } }, {
-      onSuccess: () => { setSelectedEmailId(null); invalidateAll(); toast({ title: t("archives.restored") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("archives.restored") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la restauration" });
+      },
     });
   };
 
   const handleDelete = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     deleteEmail.mutate({ id }, {
-      onSuccess: () => { setSelectedEmailId(null); invalidateAll(); toast({ title: t("archives.emailDeleted") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("archives.emailDeleted") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la suppression" });
+      },
     });
   };
 

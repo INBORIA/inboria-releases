@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import {
   useListEmails,
@@ -89,24 +90,34 @@ export default function Corbeille() {
   };
 
   const handleRestore = (id: number) => {
+    // Task #308 — optimiste : le mail quitte la Corbeille instantanément.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     restore.mutate({ id }, {
       onSuccess: () => {
-        if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
         toast({ title: t("trash.restored") });
       },
-      onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      onError: () => {
+        rollback();
+        toast({ title: t("common.error"), variant: "destructive" });
+      },
     });
   };
 
   const handleDelete = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     permDelete.mutate({ id }, {
       onSuccess: () => {
-        if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
         toast({ title: t("trash.deleted") });
       },
-      onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      onError: () => {
+        rollback();
+        toast({ title: t("common.error"), variant: "destructive" });
+      },
     });
   };
 

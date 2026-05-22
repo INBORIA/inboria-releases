@@ -75,6 +75,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 
 export default function Envoyes() {
   useEnableLightTheme();
@@ -410,6 +411,10 @@ export default function Envoyes() {
     } else {
       date = new Date(Date.now() + hours * 60 * 60 * 1000);
     }
+    // Task #308 — optimiste : le mail reporté quitte instantanément
+    // la liste Envoyés. Rollback automatique si le serveur refuse.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     snoozeMut.mutate(
       { id, data: { snoozeUntil: date.toISOString() } as any },
       {
@@ -417,18 +422,28 @@ export default function Envoyes() {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label });
         },
-        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
       },
     );
   };
 
   const handleArchiveOne = (id: number) => {
+    // Task #308 — optimiste : disparition immédiate, rollback si erreur.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     updateEmail.mutate(
       { id, data: { status: "archived" } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("inbox.archived", "Archivé") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
         },
       },
     );
@@ -458,10 +473,17 @@ export default function Envoyes() {
   };
 
   const handleDeleteOne = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     deleteEmail.mutate({ id }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
         toast({ title: t("inbox.emailDeleted") });
+      },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la suppression" });
       },
     });
   };
@@ -876,13 +898,28 @@ function SentEmailDetailView({
     updateEmail.mutate({ id, data: { status: "read" } }, { onSuccess: invalidateAll });
   };
   const handleArchive = (id: number) => {
+    // Task #308 — optimiste : retour à la liste immédiat + suppression
+    // du mail du cache, rollback si le serveur refuse.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    onBack();
     updateEmail.mutate({ id, data: { status: "archived" } }, {
-      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailArchived") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.emailArchived") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
+      },
     });
   };
   const handleDelete = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(queryClient, id);
+    onBack();
     deleteEmail.mutate({ id }, {
-      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailDeleted") }); },
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.emailDeleted") }); },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: e?.message || "Échec de la suppression" });
+      },
     });
   };
   const handleUpdatePriority = (id: number, priority: string) => {

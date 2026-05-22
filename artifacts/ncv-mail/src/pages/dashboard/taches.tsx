@@ -47,6 +47,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useTranslation } from "react-i18next";
 import { downloadExport } from "@/lib/export-utils";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
@@ -363,16 +364,33 @@ export default function Taches() {
     if (hours === 24) { date = new Date(); date.setDate(date.getDate() + 1); date.setHours(9,0,0,0); }
     else if (hours === 168) { date = new Date(); const day = date.getDay(); const diff = (8 - day) % 7 || 7; date.setDate(date.getDate() + diff); date.setHours(9,0,0,0); }
     else { date = new Date(Date.now() + hours * 3600 * 1000); }
+    // Task #308 — optimiste sur les listes de mails (la tâche elle-même
+    // ne disparaît pas — c'est seulement le mail source qui est snoozé).
+    const rollback = removeEmailOptimistic(queryClient, emailId);
     snoozeEmailMut.mutate(
       { id: emailId, data: { snoozeUntil: date.toISOString() } as any },
-      { onSuccess: () => { invalidateEmailLists(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); }, onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }) },
+      {
+        onSuccess: () => { invalidateEmailLists(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
+      },
     );
   };
 
   const handleEmailArchive = (emailId: number) => {
+    // Task #308 — optimiste sur les listes de mails.
+    const rollback = removeEmailOptimistic(queryClient, emailId);
     updateEmailMut.mutate(
       { id: emailId, data: { status: "archived" } as any },
-      { onSuccess: () => { invalidateEmailLists(); toast({ title: t("inbox.archived", "Archivé") }); } },
+      {
+        onSuccess: () => { invalidateEmailLists(); toast({ title: t("inbox.archived", "Archivé") }); },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
+        },
+      },
     );
   };
 

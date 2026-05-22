@@ -4,6 +4,7 @@ import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import {
   useListFolders,
   useCreateFolder,
@@ -359,19 +360,32 @@ export default function MesDossiers() {
     if (hours === 24) { date = new Date(); date.setDate(date.getDate() + 1); date.setHours(9, 0, 0, 0); }
     else if (hours === 168) { date = new Date(); const day = date.getDay(); const diff = (8 - day) % 7 || 7; date.setDate(date.getDate() + diff); date.setHours(9, 0, 0, 0); }
     else { date = new Date(Date.now() + hours * 60 * 60 * 1000); }
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(qc, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     snoozeMut.mutate(
       { id, data: { snoozeUntil: date.toISOString() } as any },
       {
         onSuccess: () => { invalidateFolderEmails(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); },
-        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
       },
     );
   };
   const handleArchiveOne = (id: number) => {
+    // Task #308 — optimiste.
+    const rollback = removeEmailOptimistic(qc, id);
+    if (selectedEmailId === id) setSelectedEmailId(null);
     updateEmail.mutate(
       { id, data: { status: "archived" } as any },
       {
         onSuccess: () => { invalidateFolderEmails(); toast({ title: t("inbox.archived", "Archivé") }); },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec de l'archivage" });
+        },
       },
     );
   };
