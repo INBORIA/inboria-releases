@@ -114,22 +114,61 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       return;
     }
 
-    // Validate mentions: must be uuid strings, must be members of the same org
+    // Validate mentions: UUIDs from the autocomplete + loose @name/@email typed manually.
     const incomingMentions: string[] = Array.isArray(mentions)
       ? mentions.filter((m: any) => typeof m === "string" && /^[0-9a-f-]{36}$/i.test(m))
       : [];
+    // Loose mentions: @word patterns in body that are NOT already UUIDs.
+    const looseTokens: string[] = Array.from(
+      new Set(
+        Array.from(body.matchAll(/(?:^|\s)@([\p{L}0-9._-]{2,40})/gu))
+          .map((m) => m[1].toLowerCase())
+          .filter((tok) => !/^[0-9a-f-]{36}$/i.test(tok)),
+      ),
+    );
     let validatedMentions: string[] = [];
-    if (incomingMentions.length > 0) {
-      const orgIdAuthor = await getOrgIdForUser(req.userId!);
-      if (orgIdAuthor) {
-        const { data: members } = await supabaseAdmin
-          .from("organisation_members")
-          .select("user_id")
-          .eq("organisation_id", orgIdAuthor)
-          .eq("status", "active")
-          .in("user_id", incomingMentions);
-        validatedMentions = (members || []).map((m: any) => m.user_id);
+    const orgIdAuthor = await getOrgIdForUser(req.userId!);
+    if (orgIdAuthor && (incomingMentions.length > 0 || looseTokens.length > 0)) {
+      const { data: memberRows } = await supabaseAdmin
+        .from("organisation_members")
+        .select("user_id, profiles:profiles!organisation_members_user_id_fkey(id, full_name, email)")
+        .eq("organisation_id", orgIdAuthor)
+        .eq("status", "active");
+      const memberIds = new Set<string>((memberRows || []).map((r: any) => r.user_id));
+      for (const uid of incomingMentions) {
+        if (memberIds.has(uid)) validatedMentions.push(uid);
       }
+      if (looseTokens.length > 0) {
+        for (const row of memberRows || []) {
+          const prof: any = (row as any).profiles;
+          if (!prof) continue;
+          const uid: string = (row as any).user_id;
+          if (validatedMentions.includes(uid)) continue;
+          if (uid === req.userId!) continue;
+          const fullName = String(prof.full_name || "").toLowerCase().trim();
+          const email = String(prof.email || "").toLowerCase().trim();
+          const localPart = email.split("@")[0] || "";
+          const firstName = fullName.split(/\s+/)[0] || "";
+          const lastName = fullName.split(/\s+/).slice(-1)[0] || "";
+          const initials = fullName.split(/\s+/).filter(Boolean).map((p) => p[0]).join("");
+          for (const tok of looseTokens) {
+            if (
+              tok === firstName ||
+              tok === lastName ||
+              tok === localPart ||
+              tok === email ||
+              tok === initials ||
+              (firstName && firstName.startsWith(tok) && tok.length >= 2) ||
+              (lastName && lastName.startsWith(tok) && tok.length >= 3) ||
+              (localPart && localPart.startsWith(tok) && tok.length >= 2)
+            ) {
+              validatedMentions.push(uid);
+              break;
+            }
+          }
+        }
+      }
+      validatedMentions = Array.from(new Set(validatedMentions));
     }
 
     const { data: comment, error } = await supabaseAdmin
