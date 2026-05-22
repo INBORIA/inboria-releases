@@ -289,6 +289,28 @@ export default function Agenda() {
     });
   }, [rawAppointments, projectFilter]);
 
+  // Deep-link depuis une notification `appointment_imminent` :
+  // /dashboard/agenda?openApt=<id> → on ouvre la fiche RDV dès que
+  // la liste est chargée, puis on nettoie l'URL pour ne pas ré-ouvrir
+  // au prochain rendu.
+  const openedAptIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const want = params.get("openApt");
+    if (!want || openedAptIdRef.current === want) return;
+    const list = (rawAppointments as Appointment[]) || [];
+    if (list.length === 0) return;
+    const apt = list.find((a) => String((a as any).id) === want);
+    if (!apt) return;
+    openedAptIdRef.current = want;
+    setSelectedAppointment(apt);
+    params.delete("openApt");
+    const qs = params.toString();
+    const newUrl = window.location.pathname + (qs ? `?${qs}` : "");
+    window.history.replaceState({}, "", newUrl);
+  }, [rawAppointments]);
+
   const projectsWithAppointments = useMemo(() => {
     const ids = new Set<string>();
     let hasUnassigned = false;

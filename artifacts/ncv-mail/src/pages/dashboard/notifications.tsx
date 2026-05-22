@@ -127,7 +127,9 @@ export default function NotificationsPage() {
       return;
     }
     if (n.type === "appointment_imminent") {
-      setLocation("/dashboard/agenda");
+      const m = n.title.match(/^\[apt:([^\]]+)\]/);
+      const aptId = m ? m[1] : null;
+      setLocation(aptId ? `/dashboard/agenda?openApt=${encodeURIComponent(aptId)}` : "/dashboard/agenda");
       return;
     }
     if (n.type === "followup_suggestions_digest") {
