@@ -508,8 +508,10 @@ export function EmailComments({
                   <span className="absolute -left-[19px] top-3 w-3 h-3 rounded-full bg-primary border-2 border-card" />
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-                        <User className="w-3 h-3 text-primary" />
+                      <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                        <span className="text-[10px] font-semibold text-primary">
+                          {(comment.authorName || "?").trim().charAt(0).toUpperCase()}
+                        </span>
                       </div>
                       <span className="text-[11px] font-medium text-white">
                         {comment.authorName || t("comments.anonymous")}
