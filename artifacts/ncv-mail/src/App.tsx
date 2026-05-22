@@ -28,6 +28,7 @@ import Accueil from "@/pages/marketing/accueil";
 // bundle initial de ~200-400 ko gzip selon la page visitée)
 const Archives = lazy(() => import("@/pages/dashboard/archives"));
 const MesDossiers = lazy(() => import("@/pages/dashboard/dossiers"));
+const NotificationsPage = lazy(() => import("@/pages/dashboard/notifications"));
 const Indesirables = lazy(() => import("@/pages/dashboard/indesirables"));
 const Corbeille = lazy(() => import("@/pages/dashboard/corbeille"));
 const Envoyes = lazy(() => import("@/pages/dashboard/envoyes"));
@@ -272,6 +273,7 @@ function Router() {
       <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Reportes} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/dossiers" component={() => <ProtectedRoute component={MesDossiers} />} />
+      <Route path="/dashboard/notifications" component={() => <ProtectedRoute component={NotificationsPage} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
       <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />

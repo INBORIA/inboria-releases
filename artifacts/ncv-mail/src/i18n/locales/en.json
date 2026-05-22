@@ -2141,6 +2141,18 @@
     "hoursAgo": "{{count}}h ago",
     "daysAgo": "{{count}}d ago"
   },
+  "notificationsPage": {
+    "counter": "{{unread}} unread · {{total}} total",
+    "system": "System",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "mentions": "Comments",
+      "assignations": "Assignments",
+      "team": "Team",
+      "system": "System"
+    }
+  },
   "comments": {
     "title": "Internal notes",
     "placeholder": "Enter your message (use @ to mention)…",

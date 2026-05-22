@@ -2133,6 +2133,18 @@
     "hoursAgo": "il y a {{count}}h",
     "daysAgo": "il y a {{count}}j"
   },
+  "notificationsPage": {
+    "counter": "{{unread}} non lues · {{total}} au total",
+    "system": "Système",
+    "filters": {
+      "all": "Tout",
+      "unread": "Non lues",
+      "mentions": "Commentaires",
+      "assignations": "Assignations",
+      "team": "Équipe",
+      "system": "Système"
+    }
+  },
   "comments": {
     "title": "Notes internes",
     "placeholder": "Entrez votre message (utilisez @ pour mentionner)…",
