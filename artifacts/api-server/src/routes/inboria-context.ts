@@ -227,6 +227,100 @@ const STRICT_LANG_RETRY_PROMPTS: Record<string, string> = {
   km: "សំខាន់៖ បានរកឃើញការប្រែប្រួលភាសា។ ចម្លើយមុនរបស់អ្នកមិនមែនជាភាសាខ្មែរទេ ខណៈដែលអ្នកប្រើបានសរសេរជាភាសាខ្មែរ។ សូមសរសេរវាឡើងវិញទាំងស្រុងជាភាសាខ្មែរ (លោក/លោកស្រី + សូម)។ រក្សាខ្លឹមសារពិតដដែល។",
 };
 
+// Task #313 — langue figée sur l'UI.
+// Le client envoie `uiLang` (i18n.language : "fr", "en", "zh-TW"…). On
+// normalise → code interne, puis on construit un langSteer DÉTERMINISTE
+// au lieu de détecter la langue du message tapé (qui dérivait souvent,
+// ex : « Do you know Walther Ghislain » tapé en EN → réponse FR).
+//
+// 43 langues UI supportées (cf. artifacts/ncv-mail/src/i18n/locales/).
+// Conventions de formalité reprises des notes utilisateur dans replit.md.
+type LangDef = { name: string; formality: string };
+const LANG_NAMES: Record<string, LangDef> = {
+  fr: { name: "français", formality: "vouvoiement de politesse" },
+  en: { name: "English", formality: "formal 'you'" },
+  es: { name: "español", formality: "usted formal" },
+  de: { name: "Deutsch", formality: "Sie/Ihnen formell" },
+  nl: { name: "Nederlands", formality: "formeel u" },
+  it: { name: "italiano", formality: "Lei formale" },
+  pt: { name: "português", formality: "você/o senhor formal" },
+  pl: { name: "polski", formality: "forma Pan/Pani" },
+  ro: { name: "română", formality: "dumneavoastră formal" },
+  tr: { name: "Türkçe", formality: "resmi siz" },
+  ja: { name: "日本語", formality: "敬語（です/ます調）" },
+  zh: { name: "简体中文", formality: "正式 您 + 请 (中国大陆习惯)" },
+  "zh-TW": { name: "繁體中文", formality: "正式 您 + 請 (台灣慣用：設定/電郵/登入/帳戶/軟體/應用程式/網路，NEVER 簡體)" },
+  ko: { name: "한국어", formality: "합쇼체/하십시오체" },
+  he: { name: "עברית", formality: "עברית מודרנית, טון עסקי, ללא ניקוד" },
+  ar: { name: "العربية", formality: "الفصحى الرسمية" },
+  ru: { name: "русский", formality: "формальное Вы/Вас/Ваш + пожалуйста" },
+  th: { name: "ไทย", formality: "ใช้ ท่าน + โปรด/กรุณา" },
+  hi: { name: "हिन्दी", formality: "आप + कृपया" },
+  km: { name: "ភាសាខ្មែរ", formality: "លោក/លោកស្រី + សូម" },
+  vi: { name: "tiếng Việt", formality: "Quý khách/Quý vị, formal" },
+  id: { name: "Bahasa Indonesia", formality: "Bahasa baku Anda + silakan/mohon" },
+  ms: { name: "Bahasa Melayu", formality: "Bahasa baku anda + sila/mohon" },
+  el: { name: "Ελληνικά", formality: "πληθυντικός ευγενείας εσείς/σας" },
+  uk: { name: "українська", formality: "формальне Ви/Вас (з великої літери)" },
+  et: { name: "eesti", formality: "Teie/Teid (suure tähega)" },
+  lt: { name: "lietuvių", formality: "Jūs/Jūsų (didžiąja) + prašome" },
+  sr: { name: "српски (ћирилица)", formality: "Ви/Вас/Ваш (великим словом) + молимо — ЋИРИЛИЦА ОБАВЕЗНО, НИКАДА латиница" },
+  hr: { name: "hrvatski", formality: "Vi/Vas/Vaš (velikim slovom) + molimo — latinica obavezno, ijekavica" },
+  sk: { name: "slovenčina", formality: "vykanie Vy/Vás/Vám/Váš (veľkým písmenom) + prosím" },
+  sl: { name: "slovenščina", formality: "vikanje Vi/Vas/Vam/Vaš (z veliko) + prosimo" },
+  lv: { name: "latviešu", formality: "Jūs/Jums/Jūsu (ar lielo) + lūdzu" },
+  mt: { name: "Malti", formality: "Inti/Tagħkom (b'ittra kapitali) + jekk jogħġobkom" },
+  bg: { name: "български", formality: "Вие/Вас/Ви/Ваш (с главна) + моля" },
+  nb: { name: "norsk bokmål", formality: "standard du/deg/din + vennligst (Bokmål only, NEVER Nynorsk)" },
+  ca: { name: "català", formality: "Vostè (3a persona) + 2a plural -eu (feu/escriviu/seleccioneu) + si us plau" },
+  ga: { name: "Gaeilge", formality: "sibh + bhur + le do thoil/le bhur dtoil" },
+  ur: { name: "اردو", formality: "آپ (aap, 2pl polite) + براہ کرم — Perso-Arabic Nastaliq ONLY" },
+  hu: { name: "magyar", formality: "formal Ön/önözés" },
+  cs: { name: "čeština", formality: "formal vykání/Vy" },
+  sv: { name: "svenska", formality: "du-tilltal (modern Swedish standard)" },
+  da: { name: "dansk", formality: "du-tiltale (modern Danish standard)" },
+  fi: { name: "suomi", formality: "te-muoto kohtelias" },
+};
+
+// Normalise un code UI brut (i18n.language) vers la clé interne LANG_NAMES.
+// Cas particulier : "zh-TW" est préservé (Traditional Chinese vs zh
+// Simplified) ; tous les autres "xx-YY" tombent sur "xx".
+function normalizeUiLang(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  // zh-TW : insensible à la casse, preserve la forme canonique.
+  if (/^zh[-_]tw$/i.test(trimmed)) return "zh-TW";
+  const base = trimmed.toLowerCase().split(/[-_]/)[0]!;
+  if (base in LANG_NAMES) return base;
+  return null;
+}
+
+// Construit le langSteer (consigne system prompt) à partir d'un code UI
+// normalisé. Format identique à detectLangSteer mais SANS détection :
+// la langue est fixée par l'UI, point final.
+function buildLangSteerFromCode(code: string | null): string | null {
+  if (!code) return null;
+  const def = LANG_NAMES[code];
+  if (!def) return null;
+  return `CRITICAL — FIXED REPLY LANGUAGE = ${def.name}. The user's UI language selector is set to ${def.name}. You MUST write your ENTIRE answer in ${def.name} (${def.formality}). NEVER use any other language, NEVER mirror the language the user typed in, NEVER switch language because emails or attachments contain foreign words (names, addresses, signatures in other languages). Single language only: ${def.name}. Same rule applies to introductory sentences of YAML cards (inboria-meeting, inboria-hold-meeting, inboria-draft…) — only the YAML KEYS (emailId, to, subject, startAt…) stay in English.`;
+}
+
+// Mapping uiLangCode → clé STRICT_LANG_RETRY_PROMPTS (retry drift).
+// Les 19 langues du retry strict couvrent les usages principaux ; pour les
+// 24 autres langues UI (bg, ca, cs, da, el, et, fi, ga, hr, hu, id, lt, lv,
+// ms, mt, nb, sk, sl, sr, sv, uk, ur, vi), on skip le retry mais le
+// langSteer déterministe en system prompt suffit en pratique (gpt-4o et
+// gpt-4o-mini suivent bien une consigne langue explicite en l'absence
+// de détection contradictoire).
+function uiLangToRetryKey(code: string | null): string | null {
+  if (!code) return null;
+  if (code in STRICT_LANG_RETRY_PROMPTS) return code;
+  // zh-TW → zh (le retry prompt parle de 您+请, valide pour TC aussi).
+  if (code === "zh-TW") return "zh";
+  return null;
+}
+
 function extractContactEmails(text: string, limit = 2): string[] {
   if (!text) return [];
   const matches = String(text).toLowerCase().match(EMAIL_IN_TEXT_REGEX) || [];
@@ -436,6 +530,10 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       typeof req.body?.currentRoute === "string"
         ? String(req.body.currentRoute).slice(0, 200)
         : "";
+    // Task #313 — langue figée sur l'UI. Source de vérité = sélecteur de
+    // langue de l'app, plus la détection sur le message tapé (qui dérivait
+    // régulièrement). Si absent ou invalide → fallback détection + profil.
+    const uiLangCode = normalizeUiLang(req.body?.uiLang);
     // Strip past assistant hallucinations about appointment conflicts so the
     // model can't propagate them across turns. The model sometimes invents
     // "vous avez déjà un rendez-vous le X à H" — once it appears in history,
@@ -2728,7 +2826,10 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     };
     const lastUserMsgForLang = [...cleanMessages].reverse().find((m) => m.role === "user");
     const lastUserTextForLang = typeof lastUserMsgForLang?.content === "string" ? lastUserMsgForLang.content : "";
-    const langSteer = detectLangSteer(lastUserTextForLang);
+    // Task #313 — langue figée sur l'UI : si `uiLang` envoyé par le client,
+    // on construit un steer DÉTERMINISTE depuis cette langue, sans toucher
+    // au contenu du message. Sinon, fallback historique vers la détection.
+    const langSteer = buildLangSteerFromCode(uiLangCode) ?? detectLangSteer(lastUserTextForLang);
     // Fix langue miroir (T43/T46/T50/T51) — TRIPLE injection :
     // (1) en tête, avant le system prompt FR de ~5000 tokens (sinon le
     //     modèle est totalement amorcé en français)
@@ -3122,7 +3223,11 @@ REGLE SPECIFIQUE — questions sur un coequipier :
         typeof rawProfileLang === "string" && STRICT_LANG_RETRY_PROMPTS[rawProfileLang]
           ? rawProfileLang
           : "fr";
-      const expectedLang = detectedLang || profileLang;
+      // Task #313 — priorité absolue à la langue UI (déterministe). On
+      // retombe sur la détection puis le profil uniquement si le client
+      // n'a pas envoyé `uiLang` (anciens clients, contextes hors UI).
+      const uiRetryKey = uiLangToRetryKey(uiLangCode);
+      const expectedLang = uiRetryKey || detectedLang || profileLang;
       const actualLang = detectLangCode(reply);
       if (
         expectedLang &&

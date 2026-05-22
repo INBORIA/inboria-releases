@@ -1363,7 +1363,7 @@ const HoldMultiMeetingCard = memo(function HoldMultiMeetingCard({
 });
 
 export function InboriaChatButton() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { session } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -1536,6 +1536,18 @@ export function InboriaChatButton() {
           body.currentEmailId = eidNum;
         }
         body.currentRoute = url.pathname || "";
+      } catch {
+        // best-effort, no-op
+      }
+      // Task #313 — langue figée sur l'UI. On envoie systématiquement la
+      // langue active du sélecteur i18n (i18n.language, ex: "fr", "en",
+      // "zh-TW") pour que le backend force la réponse dans cette langue,
+      // au lieu de tenter de détecter la langue du message tapé (qui
+      // dérivait régulièrement, ex: « Do you know Walther Ghislain »
+      // tapé en EN → réponse FR).
+      try {
+        const lng = (i18n?.language || "").trim();
+        if (lng) body.uiLang = lng;
       } catch {
         // best-effort, no-op
       }
