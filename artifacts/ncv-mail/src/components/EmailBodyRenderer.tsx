@@ -1,188 +1,39 @@
 import { useRef, useEffect, useState, useMemo, type ReactNode } from "react";
+import { cleanEmailBody, isHtmlContent, isHeavyBody } from "@/lib/clean-email-body";
+import { cleanEmailBodyAsync } from "@/lib/email-parser-client";
 
 function isHtml(text: string): boolean {
-  return /<\/?[a-z][\s\S]*>/i.test(text);
+  return isHtmlContent(text);
 }
 
-function hasMimeArtifacts(text: string): boolean {
-  return /------=_Part_/i.test(text) ||
-    /Content-Type:\s*text\//i.test(text) ||
-    /Content-Transfer-Encoding:\s*(quoted-printable|base64)/i.test(text) ||
-    /^MIME-Version:/im.test(text) ||
-    /boundary=/i.test(text);
-}
+// --- Hook : décharge le parsing/decoding lourd sur un Web Worker ---
+// Fast path synchrone si body court & HTML déjà propre. Sinon, on poste au
+// worker pour ne pas bloquer le main thread (parsing MIME, base64, etc).
+function useCleanedEmailBody(body: string | null | undefined): string {
+  const raw = body || "";
+  const heavy = isHeavyBody(raw);
 
-function decodeQuotedPrintable(text: string): string {
-  return text
-    .replace(/=\r?\n/g, "")
-    .replace(/= /g, "")
-    .replace(/=([0-9A-Fa-f]{2})/g, (_, hex: string) => {
-      const code = parseInt(hex, 16);
-      return String.fromCharCode(code);
+  const fastSync = useMemo(
+    () => (heavy ? "" : cleanEmailBody(raw)),
+    [raw, heavy]
+  );
+  const [cleaned, setCleaned] = useState<string>(fastSync);
+
+  useEffect(() => {
+    if (!heavy) {
+      setCleaned(cleanEmailBody(raw));
+      return;
+    }
+    let cancelled = false;
+    cleanEmailBodyAsync(raw).then((result) => {
+      if (!cancelled) setCleaned(result);
     });
-}
-
-function decodeBase64Content(text: string): string {
-  try {
-    return atob(text.replace(/\s/g, ""));
-  } catch {
-    return text;
-  }
-}
-
-function decodeUtf8Bytes(text: string): string {
-  try {
-    const bytes: number[] = [];
-    for (let i = 0; i < text.length; i++) {
-      const code = text.charCodeAt(i);
-      if (code < 256) {
-        bytes.push(code);
-      } else {
-        return text;
-      }
-    }
-    return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
-  } catch {
-    return text;
-  }
-}
-
-function extractMimePart(raw: string): string {
-  const boundaryMatch = raw.match(/boundary="?([^"\s;]+)"?/i);
-  if (!boundaryMatch) {
-    const ctMatch = raw.match(/Content-Type:\s*text\/(html|plain)[^]*?(?:\r?\n\r?\n)([\s\S]*)/i);
-    if (ctMatch) {
-      const encoding = raw.match(/Content-Transfer-Encoding:\s*(\S+)/i)?.[1]?.toLowerCase();
-      let content = ctMatch[2];
-      if (encoding === "quoted-printable") {
-        content = decodeQuotedPrintable(content);
-        content = decodeUtf8Bytes(content);
-      } else if (encoding === "base64") {
-        content = decodeBase64Content(content);
-      }
-      return content.trim();
-    }
-    return "";
-  }
-
-  const boundary = boundaryMatch[1];
-  const parts = raw.split(new RegExp(`--${boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, "g"));
-
-  let htmlPart = "";
-  let textPart = "";
-
-  for (const part of parts) {
-    if (part.trim() === "--" || !part.trim()) continue;
-
-    const ctypeMatch = part.match(/Content-Type:\s*text\/(html|plain)\b/i);
-    if (!ctypeMatch) {
-      const nestedBoundary = part.match(/boundary="?([^"\s;]+)"?/i);
-      if (nestedBoundary) {
-        const nested = extractMimePart(part);
-        if (nested) return nested;
-      }
-      continue;
-    }
-
-    const type = ctypeMatch[1].toLowerCase();
-    const encoding = part.match(/Content-Transfer-Encoding:\s*(\S+)/i)?.[1]?.toLowerCase();
-
-    const headerEnd = part.search(/\r?\n\r?\n/);
-    if (headerEnd === -1) continue;
-    let content = part.slice(headerEnd).replace(/^\r?\n\r?\n/, "");
-
-    content = content.replace(/--\s*$/, "").trim();
-
-    if (encoding === "quoted-printable") {
-      content = decodeQuotedPrintable(content);
-      content = decodeUtf8Bytes(content);
-    } else if (encoding === "base64") {
-      content = decodeBase64Content(content);
-    }
-
-    if (type === "html" && content.trim()) {
-      htmlPart = content.trim();
-    } else if (type === "plain" && content.trim()) {
-      textPart = content.trim();
-    }
-  }
-
-  return htmlPart || textPart;
-}
-
-function cleanPlainText(text: string): string {
-  let cleaned = text;
-
-  cleaned = cleaned.replace(/https?:\/\/[^\s)>\]]{80,}/g, "[lien]");
-  cleaned = cleaned.replace(/(\[lien\]\s*){3,}/g, "[lien]\n");
-  cleaned = cleaned.replace(/^[-_=]{3,}\s*$/gm, "---");
-  cleaned = cleaned.replace(/\b[A-Za-z0-9+/=]{60,}\b/g, "");
-
-  for (let i = 0; i < 5; i++) {
-    const before = cleaned;
-    cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;|&#x[0-9a-f]+;)/gi, (match) => {
-      const el = document.createElement("span");
-      el.innerHTML = match;
-      return el.textContent || match;
-    });
-    if (cleaned === before) break;
-  }
-
-  cleaned = cleaned.replace(/(Se désabonner|Unsubscribe|Manage notification|View online|Voir en ligne)\s*:?\s*(https?:\/\/\S+|\[lien\])/gi, "");
-
-  cleaned = cleaned.replace(/\n{4,}/g, "\n\n\n");
-  cleaned = cleaned.trim();
+    return () => { cancelled = true; };
+  }, [raw, heavy]);
 
   return cleaned;
 }
 
-function fixDoubleEncodedEntities(input: string): string {
-  let result = input;
-  for (let i = 0; i < 5; i++) {
-    const before = result;
-    result = result
-      .replace(/&amp;#x([0-9a-f]+);/gi, "&#x$1;")
-      .replace(/&amp;#(\d+);/g, "&#$1;")
-      .replace(/&amp;(amp|lt|gt|quot|apos|nbsp);/gi, "&$1;");
-    if (result === before) break;
-  }
-  return result;
-}
-
-export function cleanEmailBody(raw: string): string {
-  if (!raw) return "";
-
-  if (isHtml(raw) && !raw.trimStart().startsWith("Content-Type:") && !raw.trimStart().startsWith("MIME-Version:")) {
-    return fixDoubleEncodedEntities(raw);
-  }
-
-  if (hasMimeArtifacts(raw)) {
-    const extracted = extractMimePart(raw);
-    if (extracted) {
-      if (isHtml(extracted)) return extracted;
-      return cleanPlainText(extracted);
-    }
-    let fallback = raw;
-    fallback = fallback.replace(/------=_Part_[^\s]*/g, "");
-    fallback = fallback.replace(/Content-Type:\s*[^\r\n]*/gi, "");
-    fallback = fallback.replace(/Content-Transfer-Encoding:\s*\S+/gi, "");
-    fallback = fallback.replace(/Content-Disposition:\s*\S+/gi, "");
-    fallback = fallback.replace(/MIME-Version:\s*[\d.]+/gi, "");
-    fallback = fallback.replace(/boundary="?[^\s"]*"?/gi, "");
-    fallback = fallback.replace(/--\s*$/g, "");
-    fallback = decodeQuotedPrintable(fallback);
-    fallback = decodeUtf8Bytes(fallback);
-    fallback = fallback.replace(/\s{3,}/g, "\n\n");
-    fallback = fallback.trim();
-    return cleanPlainText(fallback);
-  }
-
-  if (!isHtml(raw)) {
-    return cleanPlainText(raw);
-  }
-
-  return raw;
-}
 
 function htmlToReadableText(html: string): string {
   try {
@@ -265,7 +116,7 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
   const heightRef = useRef(initialHeight);
   const [renderFailed, setRenderFailed] = useState(false);
 
-  const content = useMemo(() => cleanEmailBody(body || ""), [body]);
+  const content = useCleanedEmailBody(body);
   const html = isHtml(content);
   const fallbackText = useMemo(
     () => (html ? htmlToReadableText(content) : content),
