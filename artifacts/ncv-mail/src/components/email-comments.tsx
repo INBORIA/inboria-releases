@@ -761,10 +761,11 @@ export function EmailComments({
               ))}
             </div>
           )}
-          <p className="text-[9px] text-[#b8c5d6] mt-1">
-            {t("comments.ctrlEnter")} · {t("comments.mentionHint")}
-            {mentionedIds.length > 0 && <span className="ml-2 text-primary">· {mentionedIds.length} @</span>}
-          </p>
+          {mentionedIds.length > 0 && (
+            <p className="text-[9px] text-primary mt-1">
+              · {mentionedIds.length} @
+            </p>
+          )}
         </div>
         </>)}
       </div>
