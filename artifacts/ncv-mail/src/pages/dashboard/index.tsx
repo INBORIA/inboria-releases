@@ -5852,16 +5852,12 @@ export default function Dashboard() {
               <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
             </Button>
             {isComposeOpen && (
-              // Wrappé dans <Dialog modal={false}> Radix root : ne rend rien
-              // visuellement (pas de Portal/Overlay/Content) mais fournit le
-              // Context Radix dont <DialogTitle> et <DialogHeader> à
-              // l'intérieur de ComposeDialogBody ont besoin. Sans ce wrapper,
-              // DialogTitle throw "must be used within Dialog" car le panneau
-              // coulissant Superhuman-style est un <div role="dialog"> HTML
-              // pur (pas de DialogProvider).
+              // Composer centré (DialogContent shadcn). Le X auto de shadcn
+              // est caché via [&>button.absolute]:hidden car ComposeDialogBody
+              // rend son propre header avec X (confirm "Abandonner ?") +
+              // Maximize + Minimize.
               <Dialog
                 open
-                modal={false}
                 onOpenChange={(open) => {
                   if (!open) {
                     setIsComposeOpen(false);
@@ -5869,15 +5865,15 @@ export default function Dashboard() {
                   }
                 }}
               >
-                <div
-                  role="dialog"
-                  aria-modal="false"
+                <DialogContent
+                  aria-describedby={undefined}
                   aria-label={t("inbox.composeAria", "Rédiger un email")}
-                  className={`fixed z-50 bg-card border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 ${
-                    isComposeFullscreen
-                      ? "inset-0"
-                      : "top-0 right-0 bottom-0 w-full sm:w-[640px] max-w-[100vw] border-l"
-                  }`}
+                  className={
+                    (isComposeFullscreen
+                      ? "bg-card border-border w-screen max-w-none h-screen sm:rounded-none p-0 flex flex-col"
+                      : "bg-card border-border w-[95vw] sm:max-w-3xl p-0 flex flex-col max-h-[90vh]")
+                    + " [&>button.absolute]:hidden"
+                  }
                 >
                 <ComposeDialogBody
                   isFullscreen={isComposeFullscreen}
@@ -5905,7 +5901,7 @@ export default function Dashboard() {
                   initialSubject={composePrefill?.subject}
                   initialBody={composePrefill?.body}
                 />
-                </div>
+                </DialogContent>
               </Dialog>
             )}
             {/* Barre flottante du brouillon minimisé — bas à droite, ne

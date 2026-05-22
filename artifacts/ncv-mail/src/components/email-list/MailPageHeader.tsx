@@ -572,6 +572,10 @@ function MailPageHeaderImpl({
                 projects={(projects as Project[] | undefined) ?? []}
                 isPending={sendEmailMut.isPending}
                 onSend={handleComposeSend}
+                onClose={() => {
+                  setIsComposeOpen(false);
+                  setIsComposeFullscreen(false);
+                }}
               />
             )}
           </DialogContent>
