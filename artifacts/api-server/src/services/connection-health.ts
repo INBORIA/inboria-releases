@@ -33,6 +33,31 @@ export function sanitizeErrorMessage(raw: string): string {
   return cleaned;
 }
 
+/**
+ * Détecte les erreurs qui ne reflètent PAS une vraie déconnexion du compte
+ * (token révoqué, mot de passe changé, OAuth invalid_grant, 401/403…) mais
+ * juste un incident réseau transitoire (Gmail API qui timeout, IMAP qui
+ * répond lent, etc.). On ne doit pas les incrémenter dans
+ * `consecutive_failures` sinon après quelques cycles de sync l'API marque
+ * le compte "déconnecté" et envoie un mail à l'utilisateur alors que la
+ * connexion est saine. Vrais disconnects = pris ailleurs (token-refresh
+ * phase, 401/403 explicites).
+ */
+function isTransientNetworkError(rawMessage: string): boolean {
+  const m = rawMessage.toLowerCase();
+  return (
+    m.includes("timeout after") ||
+    m.includes("etimedout") ||
+    m.includes("econnreset") ||
+    m.includes("econnrefused") ||
+    m.includes("enotfound") ||
+    m.includes("socket hang up") ||
+    m.includes("network socket disconnected") ||
+    m.includes("aborterror") ||
+    m.includes("request aborted")
+  );
+}
+
 export async function markConnectionFailure(
   connId: string,
   phase: SyncPhase,
@@ -42,6 +67,16 @@ export async function markConnectionFailure(
   const rawMessage =
     err instanceof Error ? err.message : typeof err === "string" ? err : JSON.stringify(err ?? "unknown");
   const message = sanitizeErrorMessage(`[${phase}] ${rawMessage}`);
+
+  // Erreur réseau transitoire (ex: "Gmail messages.list timeout after
+  // 20000ms") → on log mais on n'incrémente PAS le compteur, sinon une
+  // série de timeouts API non-OAuth (réseau lent, Gmail down 5 min, etc.)
+  // finit par envoyer un mail "compte déconnecté" alors qu'aucun token
+  // n'est invalide. La phase `token-refresh` reste comptée (vraie OAuth).
+  if (phase !== "token-refresh" && isTransientNetworkError(rawMessage)) {
+    log.warn({ rawMessage }, "Transient network error — NOT counted as connection failure");
+    return;
+  }
 
   try {
     const { error: rpcErr } = await supabaseAdmin.rpc("increment_connection_failure", {
