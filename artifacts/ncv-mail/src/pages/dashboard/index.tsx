@@ -5801,7 +5801,7 @@ export default function Dashboard() {
                   }
                 }}
                 placeholder={t("inbox.searchPlaceholder")}
-                className="pl-8 pr-16 bg-[#0d1218] border-[#1f2630] text-white placeholder:text-[#8b95a7]/70 h-9 text-[13px] rounded-md"
+                className="pl-8 pr-16 bg-card border-border text-foreground placeholder:text-muted-foreground h-9 text-[13px] rounded-md"
               />
               {searchInput && (
                 <button
