@@ -197,7 +197,7 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
 
   --border: 220 15% 91%;          /* #e5e7ec */
   --input: 220 15% 91%;
-  --ring: 222 83% 53%;            /* bleu franc (Tailwind blue-600 #2563eb)
+  --ring: 222 80% 42%;            /* bleu franc (Tailwind blue-600 #2563eb)
                                      — l'indigo 243 75% 59% lisait trop
                                      « mauve » en mode clair. */
 
@@ -208,11 +208,11 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
   --sidebar: 0 0% 100%;
   --sidebar-foreground: 222 23% 14%;
   --sidebar-border: 220 15% 91%;
-  --sidebar-primary: 222 83% 53%;  /* idem ring : bleu franc */
+  --sidebar-primary: 222 80% 42%;  /* idem ring : bleu franc */
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 213 95% 95%;   /* bleu 8% (Tailwind blue-100) */
-  --sidebar-accent-foreground: 222 83% 35%;  /* bleu profond */
-  --sidebar-ring: 222 83% 53%;
+  --sidebar-accent-foreground: 222 80% 28%;  /* bleu profond */
+  --sidebar-ring: 222 80% 42%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 23% 14%;
@@ -282,7 +282,7 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#172033\]:hove
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#1a2235\]:hover:not(.fixed),
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#141c2b\]:hover:not(.fixed),
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-\[\#161b22\]:hover:not(.fixed) { background-color: #f0f0ec !important; }
-html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\]:not(.fixed) { background-color: rgba(37, 99, 235, 0.10) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\]:not(.fixed) { background-color: rgba(29, 78, 216, 0.12) !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#222a35\]:not(.fixed) { background-color: #eef0f3 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0d1117\]:not(.fixed) { background-color: #fbfbfa !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0f1620\]:not(.fixed) { background-color: #ffffff !important; }
