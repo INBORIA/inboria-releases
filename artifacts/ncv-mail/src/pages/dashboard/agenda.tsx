@@ -1490,12 +1490,12 @@ export default function Agenda() {
                   {k === "all"
                     ? t("agenda.filterAll", "Tous")
                     : k === "external"
-                      ? t("agenda.filterExternal", "Avec client")
-                      : t("agenda.filterInternal", "Internes")}
+                      ? t("agenda.filterExternal", "Client")
+                      : t("agenda.filterInternal", "Interne")}
                 </button>
               ))}
             </div>
-            <Button onClick={() => openCreateForm(undefined, undefined, true)} size="sm" variant="outline" className="h-8 text-[12px]">
+            <Button onClick={() => openCreateForm(undefined, undefined, true)} size="sm" className="h-8 text-[12px]">
               <Plus className="w-3 h-3 mr-1.5" />
               {t("agenda.newInternalAppointment", "RDV interne")}
             </Button>
