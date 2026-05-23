@@ -1416,4 +1416,218 @@ router.delete(
   },
 );
 
+// ---------------------------------------------------------------------------
+// Notes internes RDV (Business). Commentaires visibles uniquement par le
+// owner + les co-organisateurs internes. Jamais envoyées au client.
+// Notif type appointment_internal_comment. Migration manuelle :
+// 2026_05_23_appointment_internal_notes.sql.
+// ---------------------------------------------------------------------------
+
+async function getApptParticipantsForNotes(
+  appointmentId: string,
+): Promise<{ ownerId: string | null; orgId: string | null; participantIds: string[]; title: string }> {
+  const { data: appt } = await supabaseAdmin
+    .from("appointments")
+    .select("user_id, title")
+    .eq("id", appointmentId)
+    .maybeSingle();
+  if (!appt) return { ownerId: null, orgId: null, participantIds: [], title: "RDV" };
+  const ownerId = (appt as { user_id: string }).user_id;
+  const orgId = await getOrgIdForUser(ownerId);
+  const { data: coorgs } = await supabaseAdmin
+    .from("appointment_coorganizers")
+    .select("user_id")
+    .eq("appointment_id", appointmentId);
+  const participantIds = Array.from(
+    new Set<string>([
+      ownerId,
+      ...((coorgs || []) as Array<{ user_id: string }>).map((r) => r.user_id),
+    ].filter(Boolean)),
+  );
+  return {
+    ownerId,
+    orgId,
+    participantIds,
+    title: (appt as { title: string | null }).title || "RDV",
+  };
+}
+
+router.get(
+  "/appointments/:id/internal-notes",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const ctx = await getApptParticipantsForNotes(id);
+      if (!ctx.ownerId) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      // Accès = owner OU co-org OU autre membre de la même orga (lecture
+      // ouverte au sein de l'organisation, écriture restreinte plus bas).
+      const myOrg = await getOrgIdForUser(req.userId!);
+      if (!myOrg || myOrg !== ctx.orgId) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const { data: rows } = await supabaseAdmin
+        .from("appointment_internal_notes")
+        .select("id, user_id, body, created_at, updated_at")
+        .eq("appointment_id", id)
+        .order("created_at", { ascending: false });
+      const list = (rows || []) as Array<{
+        id: number;
+        user_id: string;
+        body: string;
+        created_at: string;
+        updated_at: string | null;
+      }>;
+      const userIds = Array.from(new Set(list.map((r) => r.user_id)));
+      const nameMap = new Map<string, string>();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", userIds);
+        for (const p of (profiles || []) as Array<{ id: string; full_name: string | null }>) {
+          nameMap.set(p.id, p.full_name || "");
+        }
+      }
+      res.json(
+        list.map((r) => ({
+          id: r.id,
+          userId: r.user_id,
+          authorName: nameMap.get(r.user_id) || "",
+          body: r.body,
+          createdAt: r.created_at,
+          updatedAt: r.updated_at,
+        })),
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "notes_list_failed";
+      req.log?.error?.({ err: msg }, "[appointments] internal notes list failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+router.post(
+  "/appointments/:id/internal-notes",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const body = String((req.body as { body?: string } | undefined)?.body || "").trim();
+      if (!body) {
+        res.status(400).json({ error: "body required" });
+        return;
+      }
+      if (body.length > 4000) {
+        res.status(400).json({ error: "body too long (max 4000)" });
+        return;
+      }
+      const ctx = await getApptParticipantsForNotes(id);
+      if (!ctx.ownerId || !ctx.orgId) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      const myOrg = await getOrgIdForUser(req.userId!);
+      if (!myOrg || myOrg !== ctx.orgId) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      // Écriture limitée au owner + co-orgs (les autres membres de l'orga
+      // peuvent lire mais pas commenter, pour éviter le spam).
+      if (!ctx.participantIds.includes(req.userId!)) {
+        res.status(403).json({ error: "Only organizer/co-organizers can comment" });
+        return;
+      }
+      const { data: inserted, error } = await supabaseAdmin
+        .from("appointment_internal_notes")
+        .insert({
+          appointment_id: id,
+          user_id: req.userId,
+          organisation_id: myOrg,
+          body,
+        })
+        .select("id, created_at")
+        .maybeSingle();
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      // Notif appointment_internal_comment vers tous les autres participants.
+      try {
+        const authorName = await getUserName(req.userId!);
+        const preview = body.length > 80 ? body.slice(0, 80) + "…" : body;
+        const targets = ctx.participantIds.filter((uid) => uid !== req.userId);
+        for (const uid of targets) {
+          await createNotification({
+            userId: uid,
+            type: "appointment_internal_comment",
+            title: `${authorName} a commenté « ${ctx.title} »`,
+            message: preview,
+            triggeredBy: req.userId,
+          });
+        }
+      } catch (e) {
+        req.log?.warn?.(
+          { err: (e as Error).message, appointmentId: id },
+          "[appointments] internal note notify failed",
+        );
+      }
+      res.status(201).json({
+        id: (inserted as { id: number } | null)?.id,
+        createdAt: (inserted as { created_at: string } | null)?.created_at,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "note_add_failed";
+      req.log?.error?.({ err: msg }, "[appointments] internal note add failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+router.delete(
+  "/appointments/:id/internal-notes/:noteId",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const noteId = Number(req.params["noteId"]);
+      if (!Number.isFinite(noteId)) {
+        res.status(400).json({ error: "invalid noteId" });
+        return;
+      }
+      const { data: note } = await supabaseAdmin
+        .from("appointment_internal_notes")
+        .select("id, user_id, appointment_id")
+        .eq("id", noteId)
+        .eq("appointment_id", id)
+        .maybeSingle();
+      if (!note) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      const noteRow = note as { user_id: string; appointment_id: string };
+      const ctx = await getApptParticipantsForNotes(id);
+      // L'auteur peut supprimer sa propre note ; le owner peut supprimer
+      // n'importe quelle note du RDV (modération).
+      if (noteRow.user_id !== req.userId && ctx.ownerId !== req.userId) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      await supabaseAdmin
+        .from("appointment_internal_notes")
+        .delete()
+        .eq("id", noteId);
+      res.json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "note_remove_failed";
+      req.log?.error?.({ err: msg }, "[appointments] internal note remove failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
 export default router;

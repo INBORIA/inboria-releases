@@ -39,6 +39,8 @@ import {
   ChevronDown,
   ChevronUp,
   UserPlus,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -158,6 +160,81 @@ export default function Agenda() {
       toast({ title: t("agenda.coorgAddError", "Erreur ajout co-organisateur"), description: (e as Error).message, variant: "destructive" });
     }
   };
+  // ---- Notes internes RDV (Business) — Phase 3 --------------------------
+  type InternalNote = { id: number; userId: string; authorName: string; body: string; createdAt: string };
+  const [notes, setNotes] = useState<InternalNote[]>([]);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [noteDraft, setNoteDraft] = useState("");
+  const [noteSubmitting, setNoteSubmitting] = useState(false);
+  const reloadNotes = async (apptId: string) => {
+    try {
+      setNotesLoading(true);
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${apptId}/internal-notes`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      );
+      if (!res.ok) { setNotes([]); return; }
+      const data = (await res.json()) as InternalNote[];
+      setNotes(Array.isArray(data) ? data : []);
+    } catch {
+      setNotes([]);
+    } finally {
+      setNotesLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedAppointment?.id && isBusiness) {
+      void reloadNotes(selectedAppointment.id);
+    } else {
+      setNotes([]);
+      setNoteDraft("");
+    }
+  }, [selectedAppointment?.id, isBusiness]);
+  const submitNote = async () => {
+    const body = noteDraft.trim();
+    if (!body || !selectedAppointment?.id) return;
+    try {
+      setNoteSubmitting(true);
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/internal-notes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ body }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.text();
+        toast({ title: t("agenda.noteError", "Erreur ajout note"), description: err, variant: "destructive" });
+        return;
+      }
+      setNoteDraft("");
+      await reloadNotes(selectedAppointment.id);
+    } finally {
+      setNoteSubmitting(false);
+    }
+  };
+  const deleteNote = async (noteId: number) => {
+    if (!selectedAppointment?.id) return;
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/internal-notes/${noteId}`,
+        { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      );
+      if (!res.ok) return;
+      await reloadNotes(selectedAppointment.id);
+    } catch { /* noop */ }
+  };
+
   const removeCoorg = async (userId: string) => {
     if (!selectedAppointment?.id) return;
     try {
@@ -1989,6 +2066,93 @@ export default function Agenda() {
                         ));
                       })()}
                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* Notes internes RDV (Business) — Phase 3 */}
+              {isBusiness && (
+                <div className="mb-4 border-t border-border pt-3">
+                  <div className="flex items-center gap-2 text-[11px] font-medium text-foreground mb-2">
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    {t("agenda.internalNotes", "Notes internes")}
+                    {notes.length > 0 && (
+                      <span className="text-[10px] text-muted-foreground">({notes.length})</span>
+                    )}
+                  </div>
+                  {/* Composer (owner + co-orgs uniquement) */}
+                  {(selectedAppointment.userId === currentUserId
+                    || (selectedAppointment as { user_id?: string }).user_id === currentUserId
+                    || coorgs.some((c) => c.userId === currentUserId)) && (
+                    <div className="flex items-end gap-2 mb-2">
+                      <Textarea
+                        value={noteDraft}
+                        onChange={(e) => setNoteDraft(e.target.value)}
+                        placeholder={t("agenda.notePlaceholder", "Note interne (visible uniquement par toi et tes co-organisateurs)…") as string}
+                        className="text-[11px] min-h-[44px] flex-1"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                            e.preventDefault();
+                            void submitNote();
+                          }
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        className="h-7 text-[11px] shrink-0"
+                        disabled={noteSubmitting || !noteDraft.trim()}
+                        onClick={() => void submitNote()}
+                      >
+                        {noteSubmitting ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Send className="w-3 h-3" />
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {notesLoading && (
+                    <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      {t("common.loading", "Chargement…")}
+                    </div>
+                  )}
+                  {!notesLoading && notes.length === 0 && (
+                    <p className="text-[11px] text-muted-foreground">
+                      {t("agenda.notesEmpty", "Aucune note. Les notes restent internes — jamais envoyées au client.")}
+                    </p>
+                  )}
+                  {notes.length > 0 && (
+                    <ul className="space-y-2 max-h-48 overflow-y-auto">
+                      {notes.map((n) => (
+                        <li key={n.id} className="bg-background border border-border rounded p-2">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="w-4 h-4 rounded-full bg-primary/15 border border-primary/30 text-primary text-[9px] font-semibold flex items-center justify-center shrink-0">
+                                {(n.authorName || "?").slice(0, 1).toUpperCase()}
+                              </span>
+                              <span className="text-[11px] text-foreground truncate">{n.authorName || n.userId}</span>
+                              <span className="text-[10px] text-muted-foreground shrink-0">
+                                {format(parseISO(n.createdAt), "d MMM HH:mm", { locale })}
+                              </span>
+                            </div>
+                            {(n.userId === currentUserId
+                              || selectedAppointment.userId === currentUserId
+                              || (selectedAppointment as { user_id?: string }).user_id === currentUserId) && (
+                              <button
+                                type="button"
+                                onClick={() => void deleteNote(n.id)}
+                                className="text-muted-foreground hover:text-destructive shrink-0"
+                                title={t("common.remove", "Retirer") as string}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-foreground whitespace-pre-wrap break-words">{n.body}</p>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
               )}
