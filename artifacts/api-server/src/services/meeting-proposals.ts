@@ -70,13 +70,34 @@ async function notifyOwnerClientReply(
       refused: `${title}${slotLabel ? ` — ${slotLabel}` : ""}`,
       counter_proposed: `${title}${slotLabel ? ` — nouveau créneau : ${slotLabel}` : ""}`,
     }[kind];
-    await createNotification({
-      userId,
+    const notifPayload = {
       type: `appointment_client_${kind}`,
       title: titleByKind,
       message: messageByKind,
       emailId: emailId ?? appt?.email_id ?? undefined,
-    });
+    };
+    await createNotification({ userId, ...notifPayload });
+
+    // Propage la notif aux co-organisateurs internes (Business uniquement —
+    // canEmitNotification ne gate pas ce type côté Solo/Pro mais l'invitation
+    // co-org est elle-même Business-only donc la table reste vide en Solo).
+    try {
+      const { data: coorgs } = await supabaseAdmin
+        .from("appointment_coorganizers")
+        .select("user_id")
+        .eq("appointment_id", appointmentId);
+      const targets = ((coorgs || []) as Array<{ user_id: string }>)
+        .map((r) => r.user_id)
+        .filter((uid) => uid && uid !== userId);
+      for (const uid of targets) {
+        await createNotification({ userId: uid, ...notifPayload });
+      }
+    } catch (e) {
+      logger.warn(
+        { appointmentId, err: (e as Error).message },
+        "[meeting-proposals] coorg notify propagation failed",
+      );
+    }
   } catch (e) {
     logger.warn(
       { userId, appointmentId, kind, err: (e as Error).message },

@@ -20,6 +20,7 @@ import {
   remindParticipant,
   updateParticipantStatus,
 } from "../services/multi-meeting";
+import { createNotification, getOrgIdForUser, getUserName } from "../lib/activity";
 
 const isoDateTime = z
   .string()
@@ -1228,5 +1229,191 @@ router.post("/appointments/replay-transactional-confirms", requireAuth, async (r
     res.status(500).json({ error: msg });
   }
 });
+
+// ---------------------------------------------------------------------------
+// Co-organisateurs internes (Business). Permet d'inviter d'autres membres de
+// l'organisation à recevoir les notifs RDV (client a confirmé/refusé/contre-
+// proposé, rappel imminent) sans être destinataires du mail côté client.
+// Cf. .local/tasks/notif-matrix-plans.md + migration
+// 2026_05_23_appointment_coorganizers.sql (à appliquer manuellement).
+// ---------------------------------------------------------------------------
+
+router.get(
+  "/appointments/:id/coorganizers",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select("user_id")
+        .eq("id", id)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      const ownerId = (appt as { user_id: string }).user_id;
+      const myOrg = await getOrgIdForUser(req.userId!);
+      const ownerOrg = await getOrgIdForUser(ownerId);
+      if (!myOrg || !ownerOrg || myOrg !== ownerOrg) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      const { data: rows } = await supabaseAdmin
+        .from("appointment_coorganizers")
+        .select("id, user_id, added_at, added_by")
+        .eq("appointment_id", id);
+      const list = (rows || []) as Array<{
+        id: number;
+        user_id: string;
+        added_at: string;
+        added_by: string | null;
+      }>;
+      const userIds = list.map((r) => r.user_id);
+      const profMap = new Map<string, string>();
+      const emailMap = new Map<string, string>();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", userIds);
+        for (const p of (profiles || []) as Array<{ id: string; full_name: string | null }>) {
+          profMap.set(p.id, p.full_name || "");
+        }
+        for (const uid of userIds) {
+          try {
+            const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
+            emailMap.set(uid, u.user?.email || "");
+          } catch {
+            /* noop */
+          }
+        }
+      }
+      res.json(
+        list.map((r) => ({
+          id: r.id,
+          userId: r.user_id,
+          fullName: profMap.get(r.user_id) || "",
+          email: emailMap.get(r.user_id) || "",
+          addedAt: r.added_at,
+          addedBy: r.added_by,
+        })),
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "coorg_list_failed";
+      req.log?.error?.({ err: msg }, "[appointments] coorg list failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+router.post(
+  "/appointments/:id/coorganizers",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const inviteeId = String((req.body as { userId?: string } | undefined)?.userId || "");
+      if (!inviteeId) {
+        res.status(400).json({ error: "userId required" });
+        return;
+      }
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select("user_id, title")
+        .eq("id", id)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      const apptRow = appt as { user_id: string; title: string | null };
+      if (apptRow.user_id !== req.userId) {
+        res.status(403).json({ error: "Only the owner can add co-organizers" });
+        return;
+      }
+      if (inviteeId === apptRow.user_id) {
+        res.status(400).json({ error: "Owner is already organizer" });
+        return;
+      }
+      const myOrg = await getOrgIdForUser(req.userId!);
+      const inviteeOrg = await getOrgIdForUser(inviteeId);
+      if (!myOrg || !inviteeOrg || myOrg !== inviteeOrg) {
+        res.status(403).json({ error: "Not in same organisation" });
+        return;
+      }
+      const { error } = await supabaseAdmin
+        .from("appointment_coorganizers")
+        .insert({
+          appointment_id: id,
+          user_id: inviteeId,
+          organisation_id: myOrg,
+          added_by: req.userId,
+        });
+      if (error && !/duplicate|unique/i.test(error.message)) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      try {
+        const adderName = await getUserName(req.userId!);
+        const title = apptRow.title || "RDV";
+        await createNotification({
+          userId: inviteeId,
+          type: "appointment_co_invited",
+          title: `${adderName} t'a invité comme co-organisateur`,
+          message: title,
+          triggeredBy: req.userId,
+        });
+      } catch (e) {
+        req.log?.warn?.(
+          { err: (e as Error).message, inviteeId, appointmentId: id },
+          "[appointments] coorg notify failed",
+        );
+      }
+      res.status(201).json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "coorg_add_failed";
+      req.log?.error?.({ err: msg }, "[appointments] coorg add failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+router.delete(
+  "/appointments/:id/coorganizers/:userId",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const id = String(req.params["id"]);
+      const targetUserId = String(req.params["userId"]);
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select("user_id")
+        .eq("id", id)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "Not found" });
+        return;
+      }
+      const ownerId = (appt as { user_id: string }).user_id;
+      // Owner peut retirer n'importe qui ; un co-org peut se retirer lui-même.
+      if (ownerId !== req.userId && targetUserId !== req.userId) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      await supabaseAdmin
+        .from("appointment_coorganizers")
+        .delete()
+        .eq("appointment_id", id)
+        .eq("user_id", targetUserId);
+      res.json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "coorg_remove_failed";
+      req.log?.error?.({ err: msg }, "[appointments] coorg remove failed");
+      res.status(500).json({ error: msg });
+    }
+  },
+);
 
 export default router;

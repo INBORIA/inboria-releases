@@ -8,6 +8,9 @@ import {
   useDetectAppointments,
   useListProjects,
   getListAppointmentsQueryKey,
+  useGetProfile,
+  useGetMyOrganisation,
+  useGetOrganisationMembers,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -35,6 +38,7 @@ import {
   Video,
   ChevronDown,
   ChevronUp,
+  UserPlus,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -80,6 +84,99 @@ export default function Agenda() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+
+  // ---- Co-organisateurs internes (Business) — Phase 2 ---------------------
+  type Coorg = { id: number; userId: string; fullName: string; email: string };
+  const [coorgs, setCoorgs] = useState<Coorg[]>([]);
+  const [coorgLoading, setCoorgLoading] = useState(false);
+  const [coorgPickerOpen, setCoorgPickerOpen] = useState(false);
+  const { data: meProfile } = useGetProfile();
+  const { data: myOrg } = useGetMyOrganisation();
+  const { data: orgMembersList } = useGetOrganisationMembers(
+    { query: { enabled: !!(myOrg as { id?: string } | undefined)?.id } as never } as never,
+  );
+  const isBusiness = (meProfile as { plan?: string } | undefined)?.plan === "business";
+  const currentUserId = (meProfile as { id?: string; userId?: string } | undefined)?.id
+    || (meProfile as { id?: string; userId?: string } | undefined)?.userId
+    || null;
+  const reloadCoorgs = async (apptId: string) => {
+    try {
+      setCoorgLoading(true);
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${apptId}/coorganizers`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      );
+      if (!res.ok) {
+        setCoorgs([]);
+        return;
+      }
+      const data = (await res.json()) as Coorg[];
+      setCoorgs(Array.isArray(data) ? data : []);
+    } catch {
+      setCoorgs([]);
+    } finally {
+      setCoorgLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (selectedAppointment?.id && isBusiness) {
+      void reloadCoorgs(selectedAppointment.id);
+    } else {
+      setCoorgs([]);
+      setCoorgPickerOpen(false);
+    }
+  }, [selectedAppointment?.id, isBusiness]);
+  const addCoorg = async (userId: string) => {
+    if (!selectedAppointment?.id) return;
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/coorganizers`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ userId }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.text();
+        toast({ title: t("agenda.coorgAddError", "Erreur ajout co-organisateur"), description: err, variant: "destructive" });
+        return;
+      }
+      setCoorgPickerOpen(false);
+      await reloadCoorgs(selectedAppointment.id);
+      toast({ title: t("agenda.coorgAdded", "Co-organisateur ajouté") });
+    } catch (e) {
+      toast({ title: t("agenda.coorgAddError", "Erreur ajout co-organisateur"), description: (e as Error).message, variant: "destructive" });
+    }
+  };
+  const removeCoorg = async (userId: string) => {
+    if (!selectedAppointment?.id) return;
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/coorganizers/${userId}`,
+        { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      );
+      if (!res.ok) {
+        toast({ title: t("agenda.coorgRemoveError", "Erreur retrait"), variant: "destructive" });
+        return;
+      }
+      await reloadCoorgs(selectedAppointment.id);
+    } catch (e) {
+      toast({ title: t("agenda.coorgRemoveError", "Erreur retrait"), description: (e as Error).message, variant: "destructive" });
+    }
+  };
   const [projectFilter, setProjectFilter] = useState<Set<string>>(new Set());
 
   const [formTitle, setFormTitle] = useState("");
@@ -1797,6 +1894,104 @@ export default function Agenda() {
                   </div>
                 )}
               </div>
+
+              {/* Co-organisateurs internes (Business) — Phase 2 */}
+              {isBusiness && (
+                <div className="mb-4 border-t border-border pt-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 text-[11px] font-medium text-foreground">
+                      <UserPlus className="w-3.5 h-3.5" />
+                      {t("agenda.coorganizers", "Co-organisateurs internes")}
+                      {coorgs.length > 0 && (
+                        <span className="text-[10px] text-muted-foreground">({coorgs.length})</span>
+                      )}
+                    </div>
+                    {(selectedAppointment.userId === currentUserId || (selectedAppointment as { user_id?: string }).user_id === currentUserId) && (
+                      <button
+                        type="button"
+                        onClick={() => setCoorgPickerOpen((v) => !v)}
+                        className="text-[11px] text-primary hover:text-primary/80"
+                      >
+                        {coorgPickerOpen ? t("common.cancel", "Annuler") : t("agenda.coorgAdd", "+ Ajouter")}
+                      </button>
+                    )}
+                  </div>
+                  {coorgLoading && (
+                    <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      {t("common.loading", "Chargement…")}
+                    </div>
+                  )}
+                  {!coorgLoading && coorgs.length === 0 && !coorgPickerOpen && (
+                    <p className="text-[11px] text-muted-foreground">
+                      {t("agenda.coorgEmpty", "Aucun co-organisateur. Invite un collègue pour qu'il reçoive les notifs RDV (confirmations, refus, contre-propositions, rappels).")}
+                    </p>
+                  )}
+                  {coorgs.length > 0 && (
+                    <ul className="space-y-1">
+                      {coorgs.map((c) => (
+                        <li
+                          key={c.id}
+                          className="flex items-center justify-between bg-background border border-border rounded px-2 py-1"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                              {(c.fullName || c.email || "?").slice(0, 1).toUpperCase()}
+                            </span>
+                            <span className="text-[11px] text-foreground truncate">{c.fullName || c.email || c.userId}</span>
+                            {c.email && c.fullName && (
+                              <span className="text-[10px] text-muted-foreground truncate">{c.email}</span>
+                            )}
+                          </div>
+                          {(selectedAppointment.userId === currentUserId || (selectedAppointment as { user_id?: string }).user_id === currentUserId || c.userId === currentUserId) && (
+                            <button
+                              type="button"
+                              onClick={() => removeCoorg(c.userId)}
+                              className="text-muted-foreground hover:text-destructive shrink-0"
+                              title={t("common.remove", "Retirer") as string}
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {coorgPickerOpen && (
+                    <div className="mt-2 border border-border rounded bg-background max-h-40 overflow-y-auto">
+                      {(() => {
+                        const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string; status: string }>)
+                          .filter((m) => m.status === "active" || !m.status)
+                          .filter((m) => m.userId && m.userId !== currentUserId)
+                          .filter((m) => !coorgs.some((c) => c.userId === m.userId));
+                        if (members.length === 0) {
+                          return (
+                            <div className="text-[11px] text-muted-foreground p-2">
+                              {t("agenda.coorgNoCandidate", "Aucun membre disponible.")}
+                            </div>
+                          );
+                        }
+                        return members.map((m) => (
+                          <button
+                            key={m.userId}
+                            type="button"
+                            onClick={() => addCoorg(m.userId)}
+                            className="w-full text-left px-2 py-1.5 text-[11px] hover:bg-white/[0.04] flex items-center gap-2"
+                          >
+                            <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                              {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
+                            </span>
+                            <span className="truncate">{m.fullName || m.email}</span>
+                            {m.email && m.fullName && (
+                              <span className="text-[10px] text-muted-foreground truncate">{m.email}</span>
+                            )}
+                          </button>
+                        ));
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="flex gap-2 flex-wrap">
                 {selectedAppointment.status === "counter_proposed" ? (
