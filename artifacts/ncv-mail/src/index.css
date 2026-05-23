@@ -289,6 +289,24 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d2d7e0\] { color: 
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\] { color: #4b5563 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#3b4250\] { color: #3b4250 !important; }
 
+/* Task #314 — Mail rows (Réception / Envoyés / Programmés / Mes dossiers).
+   Alignement Gmail / Outlook / Superhuman : un mail LU garde un texte foncé,
+   on baisse seulement le poids (font-normal). Les gris pâles #7a8290 et
+   #5a6270 utilisés pour le sender / sujet / extrait des mails lus passaient
+   sous le seuil de contraste AA en mode clair. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#7a8290\] { color: #1f2937 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#5a6270\] { color: #5f6368 !important; }
+/* Bouton catégorie d'une ligne mail (text-[#6b7280]) — déjà OK en valeur,
+   mais on uniformise au gris moyen Outlook. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7280\] { color: #5f6368 !important; }
+
+/* Lignes de séparation entre mails — style Outlook visible.
+   En sombre, border-border/40 = 40% sur #1f2630 → quasi invisible mais
+   acceptable. En clair, --border vaut #e5e7ec → à 40% = #f2f3f5 quasi
+   blanc sur fond blanc, totalement invisible. On force une bordure opaque
+   plus marquée style Outlook (#d2d0ce, contraste ≈ 1.5:1 sur #ffffff). */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-border\/40 { border-color: #d2d0ce !important; }
+
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2630\],
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2937\],
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#2a3441\],
