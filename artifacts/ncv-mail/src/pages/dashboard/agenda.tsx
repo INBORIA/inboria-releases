@@ -2475,7 +2475,7 @@ export default function Agenda() {
                     onChange={(e) => setFormInternal(e.target.checked)}
                     className="w-3.5 h-3.5 accent-primary"
                   />
-                  <span>{t("agenda.internalAppointment", "RDV interne (équipe, sans client externe)")}</span>
+                  <span>{t("agenda.internalAppointment", "RDV interne")}</span>
                 </label>
 
                 {!formInternal ? (
