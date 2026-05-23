@@ -151,8 +151,8 @@
   --mail-text-faint: #5a6270;
   --mail-text-meta: #6b7280;
   --mail-text-meta-hover: #b8c5d6;
-  --mail-border: hsl(217 25% 18% / 0.4);
-  --mail-border-hover: hsl(217 25% 18% / 0.4);
+  --mail-border: #2f3845;
+  --mail-border-hover: #3d4a5e;
   --mail-summary-text: #b8c5d6;
 
   --sidebar-primary-border: hsl(var(--sidebar-primary));
