@@ -592,7 +592,7 @@ export default function Envoyes() {
                     key={email.id}
                     data-email-row
                     title={openedTitle}
-                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-[color:var(--mail-border)] hover:border-b-[color:var(--mail-border-hover)] transition-colors ${
                       isSelected
                         ? "border-l-primary bg-primary/[0.10]"
                         : "border-l-transparent hover:bg-white/[0.03]"
@@ -647,7 +647,7 @@ export default function Envoyes() {
                         {email.recipient || t("sent.unknownRecipient")}
                       </span>
                       {isReply && (
-                        <span className="text-[10px] text-[#8b95a7] shrink-0" title={t("sent.reply")}>
+                        <span className="text-[10px] text-[color:var(--mail-text-muted)] shrink-0" title={t("sent.reply")}>
                           ↩
                         </span>
                       )}
@@ -659,16 +659,16 @@ export default function Envoyes() {
                         {email.subject}
                       </span>
                       {email.summary && (
-                        <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                        <span className="text-[13px] truncate text-[color:var(--mail-text-muted)]">— {email.summary}</span>
                       )}
                     </div>
 
                     {/* Indicateurs + date */}
                     <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
                       {(email as any).attachmentCount > 0 && (
-                        <Paperclip className="w-3 h-3 text-[#8b95a7]" />
+                        <Paperclip className="w-3 h-3 text-[color:var(--mail-text-muted)]" />
                       )}
-                      <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+                      <span className="text-[11px] tabular-nums text-[color:var(--mail-text-muted)] w-12 text-right whitespace-nowrap hidden sm:inline">
                         {email.createdAt ? formatMailDate(email.createdAt, dateFnsLocale) : ""}
                       </span>
                     </div>

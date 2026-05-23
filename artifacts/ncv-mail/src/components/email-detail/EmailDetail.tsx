@@ -494,11 +494,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const contactEmail = (email.senderEmail || extractEmailAddress(email.sender) || "").trim();
                       const labelDom = (
                         <>
-                          <div className="text-[13px] font-medium" style={{ color: "#ffffff" }}>
+                          <div className="text-[13px] font-medium text-white">
                             {email.sender}
                           </div>
                           {email.senderEmail && email.senderEmail !== email.sender && (
-                            <div className="text-[11px]" style={{ color: "#b8c5d6" }}>
+                            <div className="text-[11px] text-[color:var(--mail-summary-text)]">
                               {email.senderEmail}
                             </div>
                           )}
@@ -520,7 +520,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     })()}
                   </div>
                 </div>
-                <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
+                <span className="text-[10px] text-[color:var(--mail-summary-text)] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: dateFnsLocale })}
                 </span>
@@ -539,22 +539,22 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 if (recipients.length === 0) return null;
                 return (
                   <div className="flex items-start gap-1.5 mb-2 flex-wrap">
-                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mt-0.5">À</span>
+                    <span className="text-[10px] uppercase tracking-wider text-[color:var(--mail-summary-text)] font-medium mt-0.5">À</span>
                     {recipients.map((r, i) => (
                       <span key={r.email} className="inline-flex items-center">
                         <span
-                          className="text-[11px] text-[#b8c5d6]"
+                          className="text-[11px] text-[color:var(--mail-summary-text)]"
                           data-testid={`link-contact-recipient-${r.email}`}
                         >
                           {r.name}
                         </span>
-                        {i < recipients.length - 1 && <span className="text-[11px] text-[#b8c5d6] mx-0.5">,</span>}
+                        {i < recipients.length - 1 && <span className="text-[11px] text-[color:var(--mail-summary-text)] mx-0.5">,</span>}
                       </span>
                     ))}
                   </div>
                 );
               })()}
-              <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mb-1">{t("inbox.subjectLabel")}</div>
+              <div className="text-[10px] uppercase tracking-wider text-[color:var(--mail-summary-text)] font-medium mb-1">{t("inbox.subjectLabel")}</div>
               <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
               {(() => {
                 const sn = (email as any).snoozedUntil;
@@ -590,7 +590,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   <Sparkles className="w-3 h-3 text-primary" />
                   <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                 </div>
-                <p className="text-[12px] text-[#b8c5d6] leading-relaxed">{email.summary}</p>
+                <p className="text-[12px] text-[color:var(--mail-summary-text)] leading-relaxed">{email.summary}</p>
               </div>
             )}
 

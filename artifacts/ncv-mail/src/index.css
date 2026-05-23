@@ -133,6 +133,28 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
+  /* ---------------------------------------------------------------------
+   * Mail-context semantic colors (Task #314).
+   *
+   * Variables sémantiques utilisées par les lignes de mails (Réception,
+   * Envoyés, Programmés, Mes dossiers…) et par le panneau lecture mail.
+   * Les valeurs DARK ci-dessous reproduisent EXACTEMENT les hex
+   * historiquement hardcodés dans EmailRow / EmailDetail
+   * (#7a8290, #8b95a7, #5a6270, #6b7280, #b8c5d6 + border-border/40
+   * = hsl(217 25% 18% / 0.4)). Le mode sombre reste donc strictement
+   * inchangé après bascule des composants vers ces variables.
+   * Le mode clair est défini plus bas sous
+   * html[data-ncv-theme="light"] (palette Outlook-like AA).
+   * ------------------------------------------------------------------- */
+  --mail-text-read: #7a8290;
+  --mail-text-muted: #8b95a7;
+  --mail-text-faint: #5a6270;
+  --mail-text-meta: #6b7280;
+  --mail-text-meta-hover: #b8c5d6;
+  --mail-border: hsl(217 25% 18% / 0.4);
+  --mail-border-hover: hsl(217 25% 18% / 0.4);
+  --mail-summary-text: #b8c5d6;
+
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border: hsl(var(--sidebar-accent));
@@ -202,6 +224,19 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
 
   --accent: 30 14% 96%;
   --accent-foreground: 222 23% 14%;
+
+  /* Task #314 — palette Outlook-like AA pour le contexte mail en mode clair.
+     Texte des mails LUS quasi-noir (juste plus léger en font-normal côté
+     composant), extraits/métadonnées en gris moyen lisible, séparateurs
+     bien visibles. */
+  --mail-text-read: #1f2937;
+  --mail-text-muted: #5f6368;
+  --mail-text-faint: #6b7280;
+  --mail-text-meta: #5f6368;
+  --mail-text-meta-hover: #0f172a;
+  --mail-border: #d2d0ce;
+  --mail-border-hover: #b8b6b3;
+  --mail-summary-text: #334155;
 }
 
 /* Toggle de thème (light/dark) : circular reveal façon macOS / Notion.

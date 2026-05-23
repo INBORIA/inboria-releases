@@ -568,7 +568,7 @@ export default function MesDossiers() {
                   <div
                     key={email.id}
                     data-email-row
-                    className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-border/40 transition-colors hover:bg-white/[0.03]"
+                    className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-[color:var(--mail-border)] hover:border-b-[color:var(--mail-border-hover)] transition-colors hover:bg-white/[0.03]"
                     onClick={() => setSelectedEmailId(email.id)}
                     onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
@@ -581,23 +581,23 @@ export default function MesDossiers() {
 
                     {/* Expéditeur */}
                     <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
-                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[color:var(--mail-text-read)] font-normal"}`}>
                         {email.sender}
                       </span>
                     </div>
 
                     {/* Sujet — extrait — catégorie */}
                     <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[color:var(--mail-text-read)] font-normal"}`}>
                         {email.subject}
                       </span>
                       {email.summary && (
-                        <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>
+                        <span className={`text-[13px] truncate ${isUnread ? "text-[color:var(--mail-text-muted)]" : "text-[color:var(--mail-text-faint)]"}`}>
                           — {email.summary}
                         </span>
                       )}
                       {categoryLabel && (
-                        <span className="text-[11px] lowercase shrink-0 text-[#6b7280]">
+                        <span className="text-[11px] lowercase shrink-0 text-[color:var(--mail-text-meta)]">
                           {categoryLabel}
                         </span>
                       )}
@@ -606,9 +606,9 @@ export default function MesDossiers() {
                     {/* Indicateurs + date */}
                     <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
                       {(email.attachmentCount ?? 0) > 0 && (
-                        <Paperclip className="w-3 h-3 text-[#8b95a7]" />
+                        <Paperclip className="w-3 h-3 text-[color:var(--mail-text-muted)]" />
                       )}
-                      <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+                      <span className="text-[11px] tabular-nums text-[color:var(--mail-text-muted)] w-12 text-right whitespace-nowrap hidden sm:inline">
                         {formatMailDate(email.createdAt, dateFnsLocale)}
                       </span>
                     </div>
