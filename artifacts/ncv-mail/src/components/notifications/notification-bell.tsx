@@ -16,7 +16,7 @@ export function NotificationBell() {
   });
   const { data: notifications, refetch: refetchNotifs } = useGetNotifications(
     { limit: 20 },
-    { query: { enabled: open } as any }
+    { query: { refetchInterval: 30000, staleTime: 10000, placeholderData: (prev: any) => prev } as any }
   );
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
