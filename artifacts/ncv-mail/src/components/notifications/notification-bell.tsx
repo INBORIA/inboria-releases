@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Bell, AlertCircle, MessageSquare, UserPlus, UserMinus, X, Mail, Clock, CheckSquare, Zap } from "lucide-react";
-import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@workspace/api-client-react";
+import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, useDeleteNotification } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,14 @@ export function NotificationBell() {
   );
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
+  const deleteNotif = useDeleteNotification();
+
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    deleteNotif.mutate({ id }, {
+      onSuccess: () => { refetchCount(); refetchNotifs(); },
+    });
+  };
 
   const unreadCount = (unreadData as any)?.count || 0;
 
@@ -148,11 +156,11 @@ export function NotificationBell() {
               </div>
             ) : (
               (notifications as any[]).map((n: any) => (
-                <button
+                <div
                   key={n.id}
                   onClick={() => handleClick(n)}
                   className={cn(
-                    "w-full text-left px-3 py-2.5 border-b border-[#1f2937]/50 hover:bg-white/[0.03] transition-colors",
+                    "group relative w-full text-left px-3 py-2.5 border-b border-[#1f2937]/50 hover:bg-white/[0.03] transition-colors cursor-pointer",
                     !n.read && "bg-primary/5"
                   )}
                 >
@@ -161,7 +169,7 @@ export function NotificationBell() {
                     {!n.read && !renderIcon(n.type) && (
                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                     )}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pr-5">
                       <p className={cn("text-[11px] font-medium truncate", n.type === "connection_disconnected" ? "text-red-300" : "text-white")}>{n.title}</p>
                       {n.message && (
                         <p className="text-[10px] text-[#b8c5d6] mt-0.5 line-clamp-2">{n.message}</p>
@@ -169,7 +177,14 @@ export function NotificationBell() {
                       <p className="text-[9px] text-[#b8c5d6]/70 mt-1">{formatTime(n.createdAt)}</p>
                     </div>
                   </div>
-                </button>
+                  <button
+                    onClick={(e) => handleDelete(e, n.id)}
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 rounded p-0.5 text-white/40 hover:bg-white/10 hover:text-white transition"
+                    aria-label={t("common.delete", "Supprimer")}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
               ))
             )}
           </div>
