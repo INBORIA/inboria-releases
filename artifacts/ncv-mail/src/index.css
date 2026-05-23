@@ -343,6 +343,10 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7280\] { color: 
    blanc sur fond blanc, totalement invisible. On force une bordure opaque
    plus marquée style Outlook (#d2d0ce, contraste ≈ 1.5:1 sur #ffffff). */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-border\/40 { border-color: #d2d0ce !important; }
+/* Idem en sombre — par défaut --border = #1f2630 à 40% rend quasi
+   invisible sur #0b0d10. On force une bordure opaque plus marquée
+   (style Outlook dark, contraste ≈ 2:1 sur le fond). */
+html[data-ncv-page="inbox"][data-ncv-theme="dark"] .border-border\/40 { border-color: #2f3845 !important; }
 
 /* Task #314 bis — Textes en bleu : sur fond blanc, les bleus Tailwind 300-400
    et l'indigo --primary à 59% de lightness rendent autour de 3:1, sous le
