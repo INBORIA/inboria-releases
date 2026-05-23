@@ -1,5 +1,30 @@
 import { supabaseAdmin } from "./supabase";
 
+const BUSINESS_ONLY_NOTIFICATION_TYPES = new Set([
+  "appointment_co_invited",
+  "appointment_internal_comment",
+  "shared_mailbox_sla_imminent",
+  "org_member_joined",
+  "org_quota_ai_warning",
+  "org_quota_ai_critical",
+]);
+
+export async function canEmitNotification(
+  userId: string,
+  type: string,
+): Promise<boolean> {
+  if (!BUSINESS_ONLY_NOTIFICATION_TYPES.has(type)) return true;
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("plan")
+    .eq("id", userId)
+    .maybeSingle();
+  const plan = String(
+    (profile as { plan?: string } | null)?.plan || "",
+  ).toLowerCase();
+  return plan === "business";
+}
+
 export async function createNotification(params: {
   userId: string;
   type: string;
@@ -10,6 +35,8 @@ export async function createNotification(params: {
 }) {
   try {
     if (params.userId === params.triggeredBy) return;
+
+    if (!(await canEmitNotification(params.userId, params.type))) return;
 
     await supabaseAdmin.from("notifications").insert({
       user_id: params.userId,

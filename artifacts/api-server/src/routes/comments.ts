@@ -121,9 +121,10 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
     // Loose mentions: @word patterns in body that are NOT already UUIDs.
     const looseTokens: string[] = Array.from(
       new Set(
-        Array.from(body.matchAll(/(?:^|\s)@([\p{L}0-9._-]{2,40})/gu))
-          .map((m) => m[1].toLowerCase())
-          .filter((tok) => !/^[0-9a-f-]{36}$/i.test(tok)),
+        Array.from(body.matchAll(/(?:^|\s)@([\p{L}0-9._-]{2,40})/gu) as IterableIterator<RegExpMatchArray>)
+          .map((m: RegExpMatchArray) => (m[1] || "").toLowerCase())
+          .filter((tok: string) => tok.length > 0)
+          .filter((tok: string) => !/^[0-9a-f-]{36}$/i.test(tok)),
       ),
     );
     let validatedMentions: string[] = [];

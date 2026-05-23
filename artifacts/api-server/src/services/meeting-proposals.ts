@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { consumeAiCredits } from "./credits";
+import { createNotification } from "../lib/activity";
 import { generateJitsiUrl, pushAppointmentToProvider } from "./calendar-sync";
 import {
   getActiveCalendarAccountsForUser,
@@ -14,6 +15,75 @@ import {
 
 const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
 const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
+
+/**
+ * Notifie l'owner du RDV qu'un client a confirmé / refusé / contre-proposé un
+ * créneau. Best-effort, jamais bloquant. Type émis :
+ *  - appointment_client_confirmed
+ *  - appointment_client_refused
+ *  - appointment_client_counter_proposed
+ */
+async function notifyOwnerClientReply(
+  userId: string,
+  appointmentId: string,
+  kind: "confirmed" | "refused" | "counter_proposed",
+  emailId?: number | null,
+): Promise<void> {
+  try {
+    const { data } = await supabaseAdmin
+      .from("appointments")
+      .select("title, proposal_recipient, start_at, counter_start_at, email_id")
+      .eq("id", appointmentId)
+      .maybeSingle();
+    const appt = (data as {
+      title: string | null;
+      proposal_recipient: string | null;
+      start_at: string | null;
+      counter_start_at: string | null;
+      email_id: number | null;
+    } | null) || null;
+    const who = (appt?.proposal_recipient || "Le contact").trim();
+    const title = (appt?.title || "RDV").trim();
+    const startIso =
+      kind === "counter_proposed"
+        ? appt?.counter_start_at || appt?.start_at
+        : appt?.start_at;
+    let slotLabel = "";
+    if (startIso) {
+      try {
+        slotLabel = new Date(startIso).toLocaleString("fr-FR", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } catch { /* noop */ }
+    }
+    const titleByKind = {
+      confirmed: `${who} a confirmé le RDV`,
+      refused: `${who} a refusé le RDV`,
+      counter_proposed: `${who} a proposé un autre créneau`,
+    }[kind];
+    const messageByKind = {
+      confirmed: `${title}${slotLabel ? ` — ${slotLabel}` : ""}`,
+      refused: `${title}${slotLabel ? ` — ${slotLabel}` : ""}`,
+      counter_proposed: `${title}${slotLabel ? ` — nouveau créneau : ${slotLabel}` : ""}`,
+    }[kind];
+    await createNotification({
+      userId,
+      type: `appointment_client_${kind}`,
+      title: titleByKind,
+      message: messageByKind,
+      emailId: emailId ?? appt?.email_id ?? undefined,
+    });
+  } catch (e) {
+    logger.warn(
+      { userId, appointmentId, kind, err: (e as Error).message },
+      "[meeting-proposals] notify owner failed",
+    );
+  }
+}
 
 /**
  * Vérifie qu'un créneau (start, end) est libre sur tous les calendriers
@@ -904,6 +974,12 @@ export async function classifyMeetingReply(
         };
         await supabaseAdmin.from("appointments").update(update).eq("id", appointmentId).eq("user_id", userId);
         logger.info({ userId, appointmentId, decision, fastPath: true }, "[meeting-proposals] reply classified (heuristic)");
+        await notifyOwnerClientReply(
+          userId,
+          appointmentId,
+          looksAccept ? "confirmed" : "refused",
+          responseEmailId,
+        );
         return;
       }
     }
@@ -1456,6 +1532,7 @@ ${cleanBody}
           .in("id", siblingIds)
           .eq("user_id", userId);
       }
+      await notifyOwnerClientReply(userId, winner.id, "confirmed", responseEmailId);
     } else if (decision === "decline_all") {
       await supabaseAdmin
         .from("appointments")
@@ -1468,6 +1545,9 @@ ${cleanBody}
         })
         .in("id", groupIds)
         .eq("user_id", userId);
+      if (groupIds[0]) {
+        await notifyOwnerClientReply(userId, groupIds[0], "refused", responseEmailId);
+      }
     } else if (decision === "counter") {
       // Spec : tous les créneaux du groupe → cancelled, puis on insère 1
       // nouvelle ligne dédiée counter_proposed (créneau alternatif proposé
@@ -1544,6 +1624,14 @@ ${cleanBody}
             { userId, groupIds, newApptId: inserted?.[0]?.id, counterStart: parsed.counterStartAt },
             "[meeting-proposals] counter: new counter_proposed inserted",
           );
+          if (inserted?.[0]?.id) {
+            await notifyOwnerClientReply(
+              userId,
+              String(inserted[0].id),
+              "counter_proposed",
+              responseEmailId,
+            );
+          }
         }
       } else {
         logger.warn(
@@ -1870,6 +1958,7 @@ async function tryConfirmByTransactional(
       },
       "[meeting-proposals] RDV confirmed via transactional mail (sender+date+keyword)",
     );
+    await notifyOwnerClientReply(userId, String(cand.id), "confirmed", emailId);
   }
 
   if (matched === 0 && ambiguous === 0) {

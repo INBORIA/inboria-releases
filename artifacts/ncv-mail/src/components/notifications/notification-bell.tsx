@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, AlertCircle, MessageSquare, UserPlus, UserMinus, X, Mail, Clock, CheckSquare, Zap } from "lucide-react";
+import { Bell, AlertCircle, MessageSquare, UserPlus, UserMinus, X, Mail, Clock, CheckSquare, Zap, CalendarCheck, CalendarX, CalendarClock } from "lucide-react";
 import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead, useDeleteNotification } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -92,6 +92,18 @@ export function NotificationBell() {
     }
     if (type === "automation_rule_digest") {
       return <Zap className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "appointment_imminent" || type === "appointment_co_invited" || type === "appointment_internal_comment") {
+      return <CalendarClock className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "appointment_client_confirmed") {
+      return <CalendarCheck className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />;
+    }
+    if (type === "appointment_client_refused") {
+      return <CalendarX className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />;
+    }
+    if (type === "appointment_client_counter_proposed") {
+      return <CalendarClock className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" />;
     }
     return null;
   };
