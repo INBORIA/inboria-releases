@@ -690,6 +690,22 @@ export default function Agenda() {
       ? new Date(formEndAt)
       : new Date(startDate.getTime() + (parseInt(formDuration) || 30) * 60000);
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || endDate <= startDate) return;
+    // Flush du chip pas encore validé : si l'utilisateur a tapé un email
+    // mais n'a pas appuyé sur Entrée/virgule pour le convertir en chip,
+    // on l'ajoute quand même à formParticipants pour qu'il soit envoyé.
+    let participantsCsv = formParticipants;
+    if (!formInternal && participantsInput.trim()) {
+      const pending = participantsInput.trim();
+      const existing = participantsCsv
+        ? participantsCsv.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+      if (!existing.includes(pending)) {
+        existing.push(pending);
+        participantsCsv = existing.join(", ");
+        setFormParticipants(participantsCsv);
+        setParticipantsInput("");
+      }
+    }
     const payload = {
       title: formTitle,
       description: formDescription || undefined,
@@ -707,7 +723,7 @@ export default function Agenda() {
               .filter(Boolean) as string[];
             return emails.length > 0 ? emails.join(", ") : undefined;
           })()
-        : (formParticipants || undefined),
+        : (participantsCsv || undefined),
       emailId: formEmailId,
       calendarAccountId: formCalendarAccountId || undefined,
       videoProvider: formVideoProvider,
