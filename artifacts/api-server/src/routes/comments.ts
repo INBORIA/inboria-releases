@@ -129,20 +129,38 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
     let validatedMentions: string[] = [];
     const orgIdAuthor = await getOrgIdForUser(req.userId!);
     if (orgIdAuthor && (incomingMentions.length > 0 || looseTokens.length > 0)) {
-      const { data: memberRows } = await supabaseAdmin
+      const { data: memberRowsRaw, error: memberErr } = await supabaseAdmin
         .from("organisation_members")
-        .select("user_id, profiles:profiles!organisation_members_user_id_fkey(id, full_name, email)")
+        .select("user_id")
         .eq("organisation_id", orgIdAuthor)
         .eq("status", "active");
-      const memberIds = new Set<string>((memberRows || []).map((r: any) => r.user_id));
+      if (memberErr) {
+        req.log.error({ err: memberErr, orgIdAuthor }, "comments: failed to load organisation_members");
+      }
+      const memberIds = new Set<string>((memberRowsRaw || []).map((r: any) => r.user_id));
+      const memberRows: Array<{ user_id: string; profiles: { id: string; full_name: string | null; email: string | null } | null }> = [];
+      if (memberIds.size > 0) {
+        const { data: profilesRows, error: profErr } = await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name, email")
+          .in("id", Array.from(memberIds));
+        if (profErr) {
+          req.log.error({ err: profErr }, "comments: failed to load profiles for mention resolution");
+        }
+        const profileById = new Map<string, any>((profilesRows || []).map((p: any) => [p.id, p]));
+        for (const r of memberRowsRaw || []) {
+          const uid: string = (r as any).user_id;
+          memberRows.push({ user_id: uid, profiles: profileById.get(uid) || null });
+        }
+      }
       for (const uid of incomingMentions) {
-        if (memberIds.has(uid)) validatedMentions.push(uid);
+        if (memberIds.has(uid) && uid !== req.userId!) validatedMentions.push(uid);
       }
       if (looseTokens.length > 0) {
-        for (const row of memberRows || []) {
-          const prof: any = (row as any).profiles;
+        for (const row of memberRows) {
+          const prof: any = row.profiles;
           if (!prof) continue;
-          const uid: string = (row as any).user_id;
+          const uid: string = row.user_id;
           if (validatedMentions.includes(uid)) continue;
           if (uid === req.userId!) continue;
           const fullName = String(prof.full_name || "").toLowerCase().trim();

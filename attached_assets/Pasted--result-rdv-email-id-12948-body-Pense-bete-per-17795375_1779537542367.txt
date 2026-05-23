@@ -1,0 +1,59 @@
+[
+  {
+    "result": {
+      "rdv_email": {
+        "id": 12948,
+        "body": "Pense-bete personnel : RDV banque mercredi 15h. Apporter justificatifs.\n\n<!-- inboria-seed-richard v1 -->",
+        "sender": "Richard Martin <jj.neybergh@xchangesuite.com>",
+        "status": "lu",
+        "sent_at": null,
+        "subject": "RDV banque mercredi 15h",
+        "summary": null,
+        "user_id": "1d04a551-2164-412b-bed0-1b772982b62d",
+        "priority": "faible",
+        "opened_at": null,
+        "recipient": "Richard Martin <jj.neybergh@xchangesuite.com>",
+        "claimed_at": null,
+        "claimed_by": null,
+        "created_at": "2026-04-16T12:25:00+00:00",
+        "handled_at": null,
+        "handled_by": null,
+        "is_private": true,
+        "project_id": null,
+        "assigned_at": null,
+        "assigned_to": "1d04a551-2164-412b-bed0-1b772982b62d",
+        "category_id": null,
+        "external_id": "seed:richard:private:05",
+        "spam_source": null,
+        "opened_count": 0,
+        "snoozed_until": null,
+        "snooze_woken_at": null,
+        "reply_to_email_id": null,
+        "scheduled_send_at": null,
+        "shared_mailbox_id": "6c04623f-51f7-412b-9822-b63f4bcf7a4d",
+        "tracking_pixel_id": null,
+        "provider_message_id": null,
+        "inboria_processed_at": "2026-05-14T19:59:02.554+00:00",
+        "scheduled_send_error": null,
+        "embeddings_indexed_at": "2026-05-14T19:39:12.616+00:00",
+        "scheduled_connection_id": null,
+        "scheduled_attachment_ids": null
+      },
+      "rdv_comments": null,
+      "orgas_jean_exact": [
+        {
+          "organisation_id": "b5782793-d028-4b4c-af8d-1b95bffef418",
+          "status": "active",
+          "role": "admin"
+        }
+      ],
+      "orgas_richard_exact": [
+        {
+          "organisation_id": "b5782793-d028-4b4c-af8d-1b95bffef418",
+          "status": "active",
+          "role": "member"
+        }
+      ]
+    }
+  }
+]
