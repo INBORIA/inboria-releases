@@ -272,6 +272,13 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
           ? null
           : videoUrl || null;
 
+    // Statut par défaut intelligent : un RDV avec des participants externes
+    // (= RDV client non marqué "interne") part en "pending" tant que personne
+    // n'a confirmé. Sans participants, ou RDV interne d'équipe → "confirmed".
+    // Évite d'afficher "Confirmé" alors qu'aucun invité n'a répondu.
+    const hasParticipants = !!(participants && participants.trim());
+    const defaultStatus = hasParticipants && !internal ? "pending" : "confirmed";
+
     const { data, error } = await supabaseAdmin
       .from("appointments")
       .insert({
@@ -290,6 +297,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         video_provider: effVideoProvider === "none" ? null : effVideoProvider,
         video_url: initialVideoUrl,
         internal: internal || false,
+        status: defaultStatus,
       })
       .select("*, projects(id, name, reference, color)")
       .single();

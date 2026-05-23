@@ -812,7 +812,7 @@ export default function Agenda() {
       return;
     }
     updateAppointment.mutate(
-      { id, data: { confirmed: true } },
+      { id, data: { confirmed: true, status: "confirmed" } },
       {
         onSuccess: () => {
           toast({ title: t("agenda.appointmentConfirmed") });
@@ -2378,9 +2378,9 @@ export default function Agenda() {
                   </>
                 ) : (
                   <>
-                    {selectedAppointment.confirmed === false && (
+                    {(selectedAppointment.confirmed === false || selectedAppointment.status === "pending") && (
                       <Button size="sm" className="h-7 text-[11px]" onClick={() => { handleConfirm(selectedAppointment.id); setSelectedAppointment(null); }}>
-                        {t("agenda.confirmAppointment")}
+                        {t("agenda.markConfirmed", "Marquer confirmé")}
                       </Button>
                     )}
                     <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => openEditForm(selectedAppointment)}>
