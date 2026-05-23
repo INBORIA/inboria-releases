@@ -56,6 +56,7 @@ const createAppointmentSchema = z.object({
   videoProvider: videoProviderSchema.optional().nullable(),
   videoUrl: z.string().url().max(2000).optional().nullable(),
   internal: z.boolean().optional(),
+  status: z.enum(["confirmed", "pending"]).optional(),
 }).refine((b) => Date.parse(b.endAt) >= Date.parse(b.startAt), {
   message: "endAt must be after startAt",
   path: ["endAt"],
@@ -239,7 +240,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
     const {
       title, description, location, startAt, endAt, allDay, emailId, projectId,
       reminderMinutes, participants, calendarAccountId, videoProvider, videoUrl,
-      internal,
+      internal, status: explicitStatus,
     } = parsed.data;
 
     if (calendarAccountId) {
@@ -278,6 +279,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
     // Évite d'afficher "Confirmé" alors qu'aucun invité n'a répondu.
     const hasParticipants = !!(participants && participants.trim());
     const defaultStatus = hasParticipants && !internal ? "pending" : "confirmed";
+    const finalStatus = explicitStatus ?? defaultStatus;
 
     const { data, error } = await supabaseAdmin
       .from("appointments")
@@ -297,7 +299,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         video_provider: effVideoProvider === "none" ? null : effVideoProvider,
         video_url: initialVideoUrl,
         internal: internal || false,
-        status: defaultStatus,
+        status: finalStatus,
       })
       .select("*, projects(id, name, reference, color)")
       .single();

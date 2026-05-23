@@ -266,6 +266,7 @@ export default function Agenda() {
   const [formAllDay, setFormAllDay] = useState(false);
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
+  const [formStatus, setFormStatus] = useState<"confirmed" | "pending">("confirmed");
   const [formParticipants, setFormParticipants] = useState("");
   const [formInternal, setFormInternal] = useState(false);
   // RDV interne — sélection multi-membres de l'organisation. On stocke les
@@ -606,6 +607,7 @@ export default function Agenda() {
     setFormAllDay(false);
     setFormProjectId("");
     setFormReminder("30");
+    setFormStatus("confirmed");
     setFormParticipants("");
     setFormInternal(false);
     setFormInternalMemberIds([]);
@@ -663,6 +665,7 @@ export default function Agenda() {
     setFormAllDay(apt.allDay || false);
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
+    setFormStatus((apt.status === "pending" ? "pending" : "confirmed"));
     setFormParticipants(apt.participants || "");
     const isInternalApt = ((apt as any).internal as boolean) ?? false;
     setFormInternal(isInternalApt);
@@ -728,6 +731,7 @@ export default function Agenda() {
       calendarAccountId: formCalendarAccountId || undefined,
       videoProvider: formVideoProvider,
       internal: formInternal,
+      status: formStatus,
     };
 
     const extractError = (err: any): string => {
@@ -2540,6 +2544,17 @@ export default function Agenda() {
                       <option value="15">{t("agenda.reminderMinutes", { minutes: 15 })}</option>
                       <option value="30">{t("agenda.reminderMinutes", { minutes: 30 })}</option>
                       <option value="60">{t("agenda.reminderMinutes", { minutes: 60 })}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.statusLabel", "Statut")}</label>
+                    <select
+                      value={formStatus}
+                      onChange={(e) => setFormStatus(e.target.value as "confirmed" | "pending")}
+                      className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground"
+                    >
+                      <option value="confirmed">{t("agenda.statusConfirmedShort", "Confirmé")}</option>
+                      <option value="pending">{t("agenda.statusPendingShort", "En attente")}</option>
                     </select>
                   </div>
                 </div>
