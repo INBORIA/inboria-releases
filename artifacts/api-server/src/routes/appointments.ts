@@ -55,6 +55,7 @@ const createAppointmentSchema = z.object({
   calendarAccountId: z.string().uuid().optional().nullable(),
   videoProvider: videoProviderSchema.optional().nullable(),
   videoUrl: z.string().url().max(2000).optional().nullable(),
+  internal: z.boolean().optional(),
 }).refine((b) => Date.parse(b.endAt) >= Date.parse(b.startAt), {
   message: "endAt must be after startAt",
   path: ["endAt"],
@@ -76,6 +77,7 @@ const updateAppointmentSchema = z.object({
   calendarAccountId: z.string().uuid().optional().nullable(),
   videoProvider: videoProviderSchema.optional().nullable(),
   videoUrl: z.string().url().max(2000).optional().nullable(),
+  internal: z.boolean().optional(),
 });
 
 const router: IRouter = Router();
@@ -116,6 +118,7 @@ function mapAppointment(row: any) {
     videoProvider: row.video_provider ?? null,
     videoUrl: row.video_url ?? null,
     videoJoinUrl: row.video_join_url ?? null,
+    internal: row.internal ?? false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     projects: row.projects,
@@ -236,6 +239,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
     const {
       title, description, location, startAt, endAt, allDay, emailId, projectId,
       reminderMinutes, participants, calendarAccountId, videoProvider, videoUrl,
+      internal,
     } = parsed.data;
 
     if (calendarAccountId) {
@@ -285,6 +289,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         calendar_account_id: calendarAccountId || null,
         video_provider: effVideoProvider === "none" ? null : effVideoProvider,
         video_url: initialVideoUrl,
+        internal: internal || false,
       })
       .select("*, projects(id, name, reference, color)")
       .single();
@@ -465,6 +470,14 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       }
     }
     if (body.participants !== undefined) updates.participants = body.participants || null;
+    if (body.internal !== undefined) {
+      updates.internal = body.internal;
+      // Si on bascule un RDV existant en interne, on purge automatiquement les
+      // participants externes pour éviter qu'ils restent attachés au RDV équipe.
+      if (body.internal === true && body.participants === undefined) {
+        updates.participants = null;
+      }
+    }
     if (body.videoProvider !== undefined || providerChangedByFallback) {
       // Persister la valeur EFFECTIVE (post-fallback), pas la valeur brute,
       // sinon on enregistrerait "meet" alors que l'on a basculé en Jitsi.

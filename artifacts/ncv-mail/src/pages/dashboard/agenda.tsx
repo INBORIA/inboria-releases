@@ -267,6 +267,12 @@ export default function Agenda() {
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
   const [formParticipants, setFormParticipants] = useState("");
+  const [formInternal, setFormInternal] = useState(false);
+  const [sourceFilter, setSourceFilter] = useState<"all" | "external" | "internal">(() => {
+    if (typeof window === "undefined") return "all";
+    const v = window.localStorage.getItem("inboria.agenda.sourceFilter");
+    return v === "external" || v === "internal" ? v : "all";
+  });
   const [formEmailId, setFormEmailId] = useState<number | undefined>(undefined);
   const [formCalendarAccountId, setFormCalendarAccountId] = useState<string>("");
   type VideoProv = "none" | "jitsi" | "meet" | "teams";
@@ -454,14 +460,24 @@ export default function Agenda() {
 
 
   const appointments = useMemo(() => {
-    const list = rawAppointments as Appointment[];
+    let list = rawAppointments as Appointment[];
+    if (sourceFilter === "internal") {
+      list = list.filter((a) => (a as any).internal === true);
+    } else if (sourceFilter === "external") {
+      list = list.filter((a) => !(a as any).internal);
+    }
     if (projectFilter.size === 0) return list;
     return list.filter((apt) => {
       const pid = apt.projectId ? String(apt.projectId) : "";
       if (!pid) return projectFilter.has("__none__");
       return projectFilter.has(pid);
     });
-  }, [rawAppointments, projectFilter]);
+  }, [rawAppointments, projectFilter, sourceFilter]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("inboria.agenda.sourceFilter", sourceFilter);
+  }, [sourceFilter]);
 
   // Deep-link depuis une notification `appointment_imminent` :
   // /dashboard/agenda?openApt=<id> → on ouvre la fiche RDV dès que
@@ -526,6 +542,7 @@ export default function Agenda() {
     setFormProjectId("");
     setFormReminder("30");
     setFormParticipants("");
+    setFormInternal(false);
     setFormEmailId(undefined);
     setFormCalendarAccountId(calendarAccounts[0]?.id || "");
     setFormVideoProvider("none");
@@ -535,8 +552,12 @@ export default function Agenda() {
     setShowForm(false);
   };
 
-  const openCreateForm = (date?: Date, endDate?: Date) => {
+  const openCreateForm = (date?: Date, endDate?: Date, internal: boolean = false) => {
     resetForm();
+    if (internal) {
+      setFormInternal(true);
+      setFormVideoProvider("none");
+    }
     if (date) {
       setFormStartAt(format(date, "yyyy-MM-dd'T'HH:mm"));
       if (endDate) {
@@ -576,6 +597,7 @@ export default function Agenda() {
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
     setFormParticipants(apt.participants || "");
+    setFormInternal(((apt as any).internal as boolean) ?? false);
     setFormCalendarAccountId((apt as Appointment).calendarAccountId || "");
     setFormVideoProvider(((apt as Appointment).videoProvider as VideoProv | null) || "none");
     setShowForm(true);
@@ -599,10 +621,11 @@ export default function Agenda() {
       allDay: formAllDay,
       projectId: formProjectId ? parseInt(formProjectId) : undefined,
       reminderMinutes: parseInt(formReminder) || 30,
-      participants: formParticipants || undefined,
+      participants: formInternal ? undefined : (formParticipants || undefined),
       emailId: formEmailId,
       calendarAccountId: formCalendarAccountId || undefined,
       videoProvider: formVideoProvider,
+      internal: formInternal,
     };
 
     const extractError = (err: any): string => {
@@ -1349,6 +1372,30 @@ export default function Agenda() {
             <Button onClick={handleExport} size="sm" variant="outline" className="h-8 text-[12px]">
               <Download className="w-3 h-3 mr-1.5" />
               {t("agenda.exportCSV")}
+            </Button>
+            <div className="flex items-center gap-0.5 rounded-md border border-border bg-background/40 p-0.5">
+              {(["all", "external", "internal"] as const).map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => setSourceFilter(k)}
+                  className={`h-7 px-2 text-[11px] rounded-sm transition-colors ${
+                    sourceFilter === k
+                      ? "bg-primary/15 text-primary font-medium"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+                  }`}
+                >
+                  {k === "all"
+                    ? t("agenda.filterAll", "Tous")
+                    : k === "external"
+                      ? t("agenda.filterExternal", "Avec client")
+                      : t("agenda.filterInternal", "Internes")}
+                </button>
+              ))}
+            </div>
+            <Button onClick={() => openCreateForm(undefined, undefined, true)} size="sm" variant="outline" className="h-8 text-[12px]">
+              <Plus className="w-3 h-3 mr-1.5" />
+              {t("agenda.newInternalAppointment", "RDV interne")}
             </Button>
             <Button onClick={() => openCreateForm()} size="sm" className="h-8 text-[12px]">
               <Plus className="w-3 h-3 mr-1.5" />
@@ -2395,15 +2442,27 @@ export default function Agenda() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.participants")}</label>
-                  <Input
-                    value={formParticipants}
-                    onChange={(e) => setFormParticipants(e.target.value)}
-                    placeholder={t("agenda.participantsPlaceholder")}
-                    className="h-8 text-[12px]"
+                <label className="flex items-center gap-2 text-[12px] text-foreground cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={formInternal}
+                    onChange={(e) => setFormInternal(e.target.checked)}
+                    className="w-3.5 h-3.5 accent-primary"
                   />
-                </div>
+                  <span>{t("agenda.internalAppointment", "RDV interne (équipe, sans client externe)")}</span>
+                </label>
+
+                {!formInternal && (
+                  <div>
+                    <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.participants")}</label>
+                    <Input
+                      value={formParticipants}
+                      onChange={(e) => setFormParticipants(e.target.value)}
+                      placeholder={t("agenda.participantsPlaceholder")}
+                      className="h-8 text-[12px]"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="text-[11px] text-muted-foreground mb-1 block">
