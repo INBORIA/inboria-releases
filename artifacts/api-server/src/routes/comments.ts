@@ -128,6 +128,14 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
     );
     let validatedMentions: string[] = [];
     const orgIdAuthor = await getOrgIdForUser(req.userId!);
+    req.log.info({
+      emailId,
+      userId: req.userId,
+      rawMentions: mentions,
+      incomingMentions,
+      looseTokens,
+      orgIdAuthor,
+    }, "comments: mention resolution start");
     if (orgIdAuthor && (incomingMentions.length > 0 || looseTokens.length > 0)) {
       const { data: memberRowsRaw, error: memberErr } = await supabaseAdmin
         .from("organisation_members")
