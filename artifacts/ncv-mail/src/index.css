@@ -307,6 +307,34 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7280\] { color: 
    plus marquée style Outlook (#d2d0ce, contraste ≈ 1.5:1 sur #ffffff). */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-border\/40 { border-color: #d2d0ce !important; }
 
+/* Task #314 bis — Textes en bleu : sur fond blanc, les bleus Tailwind 300-400
+   et l'indigo --primary à 59% de lightness rendent autour de 3:1, sous le
+   seuil AA pour du texte normal. On fonce d'un cran pour atteindre 4.5:1+
+   tout en gardant la même teinte. */
+/* Bloc d'override pour --primary en clair : descend de 59% → 48% de
+   lightness (#4F46E5 → #3730a3), inchangé en valeur dominante mais lisible
+   sur fond blanc, et toujours cohérent avec l'indigo du logo Inboria.
+   Réécrit la ligne `--primary: 243 75% 59%` plus haut. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] {
+  --primary: 243 65% 52%;            /* #3b35c5 ≈ indigo-700, AAA sur blanc */
+  --sidebar-primary: 243 65% 52%;
+  --ring: 243 65% 52%;
+}
+/* Tailwind colors palette utilisée en accent — remap vers la variante 700
+   en mode clair pour préserver le contraste. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-blue-300,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-blue-400 { color: #1d4ed8 !important; }   /* blue-700 */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-indigo-400 { color: #4338ca !important; } /* indigo-700 */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-sky-300,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-sky-400 { color: #0369a1 !important; }   /* sky-700 */
+/* Cyan : on garde la teinte mais on fonce sensiblement (cyan-700).
+   Exception déjà gérée plus haut pour `[data-testid="inboria-chat-button"]`
+   où le « ia » du logo doit rester en #00a7f5 — la spécificité de ce
+   sélecteur plus précis l'emporte naturellement. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-cyan-200,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-cyan-300,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-cyan-400 { color: #0e7490 !important; }   /* cyan-700 */
+
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2630\],
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2937\],
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#2a3441\],
