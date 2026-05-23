@@ -346,15 +346,10 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-border\/40 { border-
    et l'indigo --primary à 59% de lightness rendent autour de 3:1, sous le
    seuil AA pour du texte normal. On fonce d'un cran pour atteindre 4.5:1+
    tout en gardant la même teinte. */
-/* Bloc d'override pour --primary en clair : descend de 59% → 48% de
-   lightness (#4F46E5 → #3730a3), inchangé en valeur dominante mais lisible
-   sur fond blanc, et toujours cohérent avec l'indigo du logo Inboria.
-   Réécrit la ligne `--primary: 243 75% 59%` plus haut. */
-html[data-ncv-page="inbox"][data-ncv-theme="light"] {
-  --primary: 243 65% 52%;            /* #3b35c5 ≈ indigo-700, AAA sur blanc */
-  --sidebar-primary: 243 65% 52%;
-  --ring: 243 65% 52%;
-}
+/* NB : on NE touche PAS `--primary` en mode clair. Foncer la lightness fait
+   virer l'indigo vers du mauve (perçu par l'utilisateur), et `--primary`
+   pilote la couleur de marque Inboria (boutons, focus rings, badges). On
+   se limite aux classes Tailwind ci-dessous, plus ciblées. */
 /* Tailwind colors palette utilisée en accent — remap vers la variante 700
    en mode clair pour préserver le contraste. */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-blue-300,
