@@ -268,6 +268,11 @@ export default function Agenda() {
   const [formReminder, setFormReminder] = useState("30");
   const [formParticipants, setFormParticipants] = useState("");
   const [formInternal, setFormInternal] = useState(false);
+  // RDV interne — sélection multi-membres de l'organisation. On stocke les
+  // userId ; à la soumission on les transforme en emails joints (`a@x, b@y`)
+  // pour réutiliser la colonne `participants` existante côté backend.
+  const [formInternalMemberIds, setFormInternalMemberIds] = useState<string[]>([]);
+  const [formInternalPickerOpen, setFormInternalPickerOpen] = useState(false);
   const [sourceFilter, setSourceFilter] = useState<"all" | "external" | "internal">(() => {
     if (typeof window === "undefined") return "all";
     const v = window.localStorage.getItem("inboria.agenda.sourceFilter");
@@ -543,6 +548,8 @@ export default function Agenda() {
     setFormReminder("30");
     setFormParticipants("");
     setFormInternal(false);
+    setFormInternalMemberIds([]);
+    setFormInternalPickerOpen(false);
     setFormEmailId(undefined);
     setFormCalendarAccountId(calendarAccounts[0]?.id || "");
     setFormVideoProvider("none");
@@ -597,7 +604,18 @@ export default function Agenda() {
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
     setFormParticipants(apt.participants || "");
-    setFormInternal(((apt as any).internal as boolean) ?? false);
+    const isInternalApt = ((apt as any).internal as boolean) ?? false;
+    setFormInternal(isInternalApt);
+    // Si on édite un RDV interne, on essaie de retrouver les userId des
+    // membres à partir des emails déjà enregistrés dans `participants`.
+    if (isInternalApt && apt.participants) {
+      const emails = String(apt.participants).split(/[,;]/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+      const members = (orgMembersList || []) as Array<{ userId: string; email: string }>;
+      const ids = emails.map((em) => members.find((m) => m.email?.toLowerCase() === em)?.userId).filter(Boolean) as string[];
+      setFormInternalMemberIds(ids);
+    } else {
+      setFormInternalMemberIds([]);
+    }
     setFormCalendarAccountId((apt as Appointment).calendarAccountId || "");
     setFormVideoProvider(((apt as Appointment).videoProvider as VideoProv | null) || "none");
     setShowForm(true);
@@ -621,7 +639,15 @@ export default function Agenda() {
       allDay: formAllDay,
       projectId: formProjectId ? parseInt(formProjectId) : undefined,
       reminderMinutes: parseInt(formReminder) || 30,
-      participants: formInternal ? undefined : (formParticipants || undefined),
+      participants: formInternal
+        ? (() => {
+            const members = (orgMembersList || []) as Array<{ userId: string; email: string }>;
+            const emails = formInternalMemberIds
+              .map((id) => members.find((m) => m.userId === id)?.email)
+              .filter(Boolean) as string[];
+            return emails.length > 0 ? emails.join(", ") : undefined;
+          })()
+        : (formParticipants || undefined),
       emailId: formEmailId,
       calendarAccountId: formCalendarAccountId || undefined,
       videoProvider: formVideoProvider,
@@ -2452,7 +2478,7 @@ export default function Agenda() {
                   <span>{t("agenda.internalAppointment", "RDV interne (équipe, sans client externe)")}</span>
                 </label>
 
-                {!formInternal && (
+                {!formInternal ? (
                   <div>
                     <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.participants")}</label>
                     <Input
@@ -2461,6 +2487,94 @@ export default function Agenda() {
                       placeholder={t("agenda.participantsPlaceholder")}
                       className="h-8 text-[12px]"
                     />
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] text-muted-foreground">
+                        {t("agenda.internalMembers", "Membres de l'équipe invités")}
+                        {formInternalMemberIds.length > 0 && (
+                          <span className="ml-1 text-[10px]">({formInternalMemberIds.length})</span>
+                        )}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setFormInternalPickerOpen((v) => !v)}
+                        className="text-[11px] text-primary hover:text-primary/80"
+                      >
+                        {formInternalPickerOpen ? t("common.cancel", "Annuler") : t("agenda.coorgAdd", "+ Ajouter")}
+                      </button>
+                    </div>
+                    {formInternalMemberIds.length === 0 && !formInternalPickerOpen && (
+                      <p className="text-[11px] text-muted-foreground">
+                        {t("agenda.internalMembersEmpty", "Aucun membre invité. Clique « + Ajouter » pour choisir tes collègues.")}
+                      </p>
+                    )}
+                    {formInternalMemberIds.length > 0 && (
+                      <ul className="space-y-1 mb-1">
+                        {formInternalMemberIds.map((id) => {
+                          const m = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string }>).find((x) => x.userId === id);
+                          if (!m) return null;
+                          return (
+                            <li key={id} className="flex items-center justify-between bg-background border border-border rounded px-2 py-1">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                                  {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
+                                </span>
+                                <span className="text-[11px] text-foreground truncate">{m.fullName || m.email}</span>
+                                {m.email && m.fullName && (
+                                  <span className="text-[10px] text-muted-foreground truncate">{m.email}</span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setFormInternalMemberIds((prev) => prev.filter((x) => x !== id))}
+                                className="text-muted-foreground hover:text-destructive shrink-0"
+                                title={t("common.remove", "Retirer") as string}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    {formInternalPickerOpen && (
+                      <div className="border border-border rounded bg-background max-h-40 overflow-y-auto">
+                        {(() => {
+                          const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string; status: string }>)
+                            .filter((m) => m.status === "active" || !m.status)
+                            .filter((m) => m.userId && m.userId !== currentUserId)
+                            .filter((m) => !formInternalMemberIds.includes(m.userId));
+                          if (members.length === 0) {
+                            return (
+                              <div className="text-[11px] text-muted-foreground p-2">
+                                {t("agenda.coorgNoCandidate", "Aucun membre disponible.")}
+                              </div>
+                            );
+                          }
+                          return members.map((m) => (
+                            <button
+                              key={m.userId}
+                              type="button"
+                              onClick={() => {
+                                setFormInternalMemberIds((prev) => [...prev, m.userId]);
+                                setFormInternalPickerOpen(false);
+                              }}
+                              className="w-full text-left px-2 py-1.5 text-[11px] hover:bg-white/[0.04] flex items-center gap-2"
+                            >
+                              <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                                {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
+                              </span>
+                              <span className="truncate">{m.fullName || m.email}</span>
+                              {m.email && m.fullName && (
+                                <span className="text-[10px] text-muted-foreground truncate">{m.email}</span>
+                              )}
+                            </button>
+                          ));
+                        })()}
+                      </div>
+                    )}
                   </div>
                 )}
 
