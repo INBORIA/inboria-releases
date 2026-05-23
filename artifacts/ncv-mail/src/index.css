@@ -346,7 +346,11 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-border\/40 { border-
 /* Idem en sombre — par défaut --border = #1f2630 à 40% rend quasi
    invisible sur #0b0d10. On force une bordure opaque plus marquée
    (style Outlook dark, contraste ≈ 2:1 sur le fond). */
-html[data-ncv-page="inbox"][data-ncv-theme="dark"] .border-border\/40 { border-color: #2f3845 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="dark"] .border-border\/40 { border-color: #4a5568 !important; }
+/* Fallback : si data-ncv-theme n'est pas posé (cas pages mail non-inbox
+   sans pre-paint script ou avant hydratation), on cible également l'absence
+   de l'attribut light. */
+html[data-ncv-page="inbox"]:not([data-ncv-theme="light"]) .border-border\/40 { border-color: #4a5568 !important; }
 
 /* Task #314 bis — Textes en bleu : sur fond blanc, les bleus Tailwind 300-400
    et l'indigo --primary à 59% de lightness rendent autour de 3:1, sous le
