@@ -273,6 +273,66 @@ export default function Agenda() {
   // pour réutiliser la colonne `participants` existante côté backend.
   const [formInternalMemberIds, setFormInternalMemberIds] = useState<string[]>([]);
   const [formInternalPickerOpen, setFormInternalPickerOpen] = useState(false);
+  // Chip+autocomplete pour les participants externes (style Outlook /
+  // Superhuman). `formParticipants` reste la source de vérité (chaîne
+  // `a@x, b@y`) — on dérive les chips en parsant à l'affichage, et on
+  // ré-écrit la chaîne quand on ajoute/retire un chip.
+  const [participantsInput, setParticipantsInput] = useState("");
+  const [participantsSuggestions, setParticipantsSuggestions] = useState<Array<{ email: string; displayName: string }>>([]);
+  const [participantsSuggestOpen, setParticipantsSuggestOpen] = useState(false);
+  const [participantsLoading, setParticipantsLoading] = useState(false);
+  // Liste des chips actuels (emails déjà ajoutés) — dérivée de la chaîne.
+  const participantChips = useMemo(() => {
+    return (formParticipants || "")
+      .split(/[,;\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }, [formParticipants]);
+  const addParticipantChip = (raw: string) => {
+    const v = raw.trim().replace(/[,;]+$/, "");
+    if (!v) return;
+    if (participantChips.includes(v)) return;
+    const next = [...participantChips, v].join(", ");
+    setFormParticipants(next);
+    setParticipantsInput("");
+    setParticipantsSuggestOpen(false);
+  };
+  const removeParticipantChip = (em: string) => {
+    const next = participantChips.filter((c) => c !== em).join(", ");
+    setFormParticipants(next);
+  };
+  // Recherche debounced via /api/contacts/search dès qu'on tape >= 1 char.
+  useEffect(() => {
+    const q = participantsInput.trim();
+    if (q.length < 1) { setParticipantsSuggestions([]); return; }
+    const h = setTimeout(async () => {
+      setParticipantsLoading(true);
+      try {
+        const { supabase } = await import("@/lib/supabase");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        const r = await fetch(
+          `${import.meta.env.BASE_URL}api/contacts/search?q=${encodeURIComponent(q)}&limit=8`,
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+        );
+        const j = await r.json().catch(() => ({}));
+        const list = (j?.results || j || []) as Array<{ email: string; displayName?: string }>;
+        setParticipantsSuggestions(
+          list
+            .filter((x) => x && x.email)
+            .filter((x) => !participantChips.includes(x.email))
+            .slice(0, 8)
+            .map((x) => ({ email: x.email, displayName: x.displayName || x.email })),
+        );
+        setParticipantsSuggestOpen(true);
+      } catch {
+        setParticipantsSuggestions([]);
+      } finally {
+        setParticipantsLoading(false);
+      }
+    }, 200);
+    return () => clearTimeout(h);
+  }, [participantsInput, participantChips]);
   const [sourceFilter, setSourceFilter] = useState<"all" | "external" | "internal">(() => {
     if (typeof window === "undefined") return "all";
     const v = window.localStorage.getItem("inboria.agenda.sourceFilter");
@@ -2479,14 +2539,81 @@ export default function Agenda() {
                 </label>
 
                 {!formInternal ? (
-                  <div>
+                  <div className="relative">
                     <label className="text-[11px] text-muted-foreground mb-1 block">{t("agenda.participants")}</label>
-                    <Input
-                      value={formParticipants}
-                      onChange={(e) => setFormParticipants(e.target.value)}
-                      placeholder={t("agenda.participantsPlaceholder")}
-                      className="h-8 text-[12px]"
-                    />
+                    <div className="min-h-8 rounded-md border border-border bg-background px-1.5 py-1 flex flex-wrap items-center gap-1">
+                      {participantChips.map((em) => (
+                        <span
+                          key={em}
+                          className="inline-flex items-center gap-1 bg-primary/15 border border-primary/30 text-primary text-[11px] px-1.5 py-0.5 rounded"
+                        >
+                          {em}
+                          <button
+                            type="button"
+                            onClick={() => removeParticipantChip(em)}
+                            className="hover:text-destructive"
+                            title={t("common.remove", "Retirer") as string}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                      <input
+                        value={participantsInput}
+                        onChange={(e) => setParticipantsInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === "," || e.key === ";" || e.key === "Tab") {
+                            if (participantsInput.trim()) {
+                              e.preventDefault();
+                              // Si un suggestion est affiché et l'input matche
+                              // au moins partiellement, on prend le 1er suggestion ;
+                              // sinon on prend la valeur tapée brute (utile pour
+                              // ajouter un email externe pas encore connu).
+                              const first = participantsSuggestions[0];
+                              if (first && first.email.toLowerCase().includes(participantsInput.toLowerCase())) {
+                                addParticipantChip(first.email);
+                              } else {
+                                addParticipantChip(participantsInput);
+                              }
+                            }
+                          } else if (e.key === "Backspace" && !participantsInput && participantChips.length > 0) {
+                            removeParticipantChip(participantChips[participantChips.length - 1]);
+                          } else if (e.key === "Escape") {
+                            setParticipantsSuggestOpen(false);
+                          }
+                        }}
+                        onFocus={() => { if (participantsSuggestions.length > 0) setParticipantsSuggestOpen(true); }}
+                        onBlur={() => { setTimeout(() => setParticipantsSuggestOpen(false), 150); }}
+                        placeholder={participantChips.length === 0 ? (t("agenda.participantsPlaceholder", "Taper un nom ou un email…") as string) : ""}
+                        className="flex-1 min-w-[120px] bg-transparent border-0 outline-none text-[12px] text-foreground placeholder:text-muted-foreground py-0.5"
+                      />
+                    </div>
+                    {participantsSuggestOpen && (participantsSuggestions.length > 0 || participantsLoading) && (
+                      <div className="absolute left-0 right-0 mt-1 z-50 border border-border rounded bg-background shadow-lg max-h-56 overflow-y-auto">
+                        {participantsLoading && (
+                          <div className="text-[11px] text-muted-foreground p-2 flex items-center gap-1">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            {t("common.loading", "Chargement…")}
+                          </div>
+                        )}
+                        {participantsSuggestions.map((s) => (
+                          <button
+                            key={s.email}
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); addParticipantChip(s.email); }}
+                            className="w-full text-left px-2 py-1.5 text-[11px] hover:bg-white/[0.04] flex items-center gap-2"
+                          >
+                            <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                              {(s.displayName || s.email).slice(0, 1).toUpperCase()}
+                            </span>
+                            <span className="truncate">{s.displayName}</span>
+                            {s.displayName !== s.email && (
+                              <span className="text-[10px] text-muted-foreground truncate">{s.email}</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div>
