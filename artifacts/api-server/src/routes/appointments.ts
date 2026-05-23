@@ -13,7 +13,7 @@ import {
   type AppointmentPushPayload,
   type VideoProvider,
 } from "../services/calendar-sync";
-import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail, holdMeeting, holdMeetingMulti, replayTransactionalConfirmsForUser } from "../services/meeting-proposals";
+import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail, holdMeeting, holdMeetingMulti, replayTransactionalConfirmsForUser, sendProposalForExistingAppointment } from "../services/meeting-proposals";
 import {
   proposeMultiMeeting,
   findMultiCommonSlots,
@@ -57,6 +57,10 @@ const createAppointmentSchema = z.object({
   videoUrl: z.string().url().max(2000).optional().nullable(),
   internal: z.boolean().optional(),
   status: z.enum(["confirmed", "pending"]).optional(),
+  internalNote: z.object({
+    body: z.string().trim().min(1).max(4000),
+    recipientUserIds: z.array(z.string().uuid()).max(50).optional(),
+  }).optional().nullable(),
 }).refine((b) => Date.parse(b.endAt) >= Date.parse(b.startAt), {
   message: "endAt must be after startAt",
   path: ["endAt"],
@@ -240,7 +244,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
     const {
       title, description, location, startAt, endAt, allDay, emailId, projectId,
       reminderMinutes, participants, calendarAccountId, videoProvider, videoUrl,
-      internal, status: explicitStatus,
+      internal, status: explicitStatus, internalNote,
     } = parsed.data;
 
     if (calendarAccountId) {
@@ -337,6 +341,151 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         }
       } catch (e: any) {
         req.log?.warn?.({ err: e?.message }, "[appointments] push to provider crashed");
+      }
+    }
+
+    // Task #316 : si le RDV est en "pending" avec au moins un participant
+    // externe (pas un email de l'organisation), on envoie automatiquement le
+    // mail de proposition au 1er destinataire externe via le helper Inboria.
+    // Le helper attache proposal_message_id pour que la réponse soit triée
+    // ensuite par le worker (classifyMeetingReply).
+    if (finalStatus === "pending" && participants && participants.trim()) {
+      try {
+        const emailList = participants
+          .split(/[,;\n]/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const myOrgId = await getOrgIdForUser(req.userId!);
+        let memberEmails = new Set<string>();
+        if (myOrgId) {
+          const { data: members } = await supabaseAdmin
+            .from("organisation_members")
+            .select("user_id, profiles!inner(email)")
+            .eq("organisation_id", myOrgId);
+          for (const m of (members || []) as any[]) {
+            const prof = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
+            const em = prof?.email ? String(prof.email).toLowerCase() : null;
+            if (em) memberEmails.add(em);
+          }
+          // Fallback : si la jointure profiles ne renvoie pas l'email,
+          // on tente email_connections (chaque membre a au moins un compte connecté).
+          if (memberEmails.size === 0) {
+            const { data: memberRows } = await supabaseAdmin
+              .from("organisation_members")
+              .select("user_id")
+              .eq("organisation_id", myOrgId);
+            const uids = (memberRows || []).map((r: any) => r.user_id).filter(Boolean);
+            if (uids.length > 0) {
+              const { data: conns } = await supabaseAdmin
+                .from("email_connections")
+                .select("email_address")
+                .in("user_id", uids);
+              for (const c of (conns || []) as Array<{ email_address: string }>) {
+                if (c.email_address) memberEmails.add(c.email_address.toLowerCase());
+              }
+            }
+          }
+        }
+        const externals = emailList.filter((em) => !memberEmails.has(em.toLowerCase()));
+        if (externals.length > 0) {
+          // Lang : on utilise la lang de l'email source si dispo, sinon "fr".
+          let lang = "fr";
+          if (emailId) {
+            const { data: srcEmail } = await supabaseAdmin
+              .from("emails")
+              .select("language")
+              .eq("id", emailId)
+              .maybeSingle();
+            lang = (srcEmail as { language?: string } | null)?.language || "fr";
+          }
+          // Un seul destinataire externe tracké par RDV (1er externe). Sinon
+          // chaque appel consommerait des crédits IA + l'UPDATE écraserait
+          // proposal_message_id/proposal_recipient/proposal_lang du précédent,
+          // rendant le tri des réponses des autres externes impossible.
+          // Pour plusieurs externes, utiliser /propose-multi.
+          const ext = externals[0]!;
+          const r = await sendProposalForExistingAppointment({
+            userId: req.userId!,
+            appointmentId: data.id,
+            to: ext,
+            lang,
+          });
+          if (!r.ok) {
+            req.log?.warn?.(
+              { err: r.error, to: ext, apptId: data.id },
+              "[appointments] auto-propose failed",
+            );
+          }
+          if (externals.length > 1) {
+            req.log?.info?.(
+              { apptId: data.id, ignored: externals.slice(1) },
+              "[appointments] auto-propose: only 1st external recipient is tracked",
+            );
+          }
+        }
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] auto-propose crashed");
+      }
+    }
+
+    // Task #316 : note interne optionnelle créée en même temps que le RDV.
+    if (internalNote && internalNote.body) {
+      try {
+        const orgId = await getOrgIdForUser(req.userId!);
+        if (orgId) {
+          // Sécurité : intersection systématique avec les membres de l'orga
+          // pour empêcher un user de notifier un UUID externe (cross-tenant).
+          const { data: orgMembers } = await supabaseAdmin
+            .from("organisation_members")
+            .select("user_id")
+            .eq("organisation_id", orgId);
+          const orgMemberIds = new Set(
+            ((orgMembers || []) as Array<{ user_id: string }>).map((m) => m.user_id),
+          );
+          const safeRecipientUserIds = (internalNote.recipientUserIds || []).filter((uid) =>
+            orgMemberIds.has(uid),
+          );
+          const { data: inserted } = await supabaseAdmin
+            .from("appointment_internal_notes")
+            .insert({
+              appointment_id: data.id,
+              user_id: req.userId,
+              organisation_id: orgId,
+              body: internalNote.body,
+              recipient_user_ids: safeRecipientUserIds.length > 0 ? safeRecipientUserIds : null,
+            })
+            .select("id")
+            .maybeSingle();
+          if (inserted) {
+            try {
+              const authorName = await getUserName(req.userId!);
+              const preview = internalNote.body.length > 80
+                ? internalNote.body.slice(0, 80) + "…"
+                : internalNote.body;
+              // Targets : si recipientUserIds explicite (déjà filtré orga),
+              // on cible ceux-là. Sinon, tous les autres membres de l'orga.
+              let targets: string[] = [];
+              if (safeRecipientUserIds.length > 0) {
+                targets = safeRecipientUserIds.filter((uid) => uid !== req.userId);
+              } else {
+                targets = Array.from(orgMemberIds).filter((uid) => uid && uid !== req.userId);
+              }
+              for (const uid of targets) {
+                await createNotification({
+                  userId: uid,
+                  type: "appointment_internal_comment",
+                  title: `${authorName} a commenté « ${data.title || "RDV"} »`,
+                  message: preview,
+                  triggeredBy: req.userId,
+                });
+              }
+            } catch (e: any) {
+              req.log?.warn?.({ err: e?.message }, "[appointments] internal note notify failed (create)");
+            }
+          }
+        }
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] internal note insert failed (create)");
       }
     }
 
@@ -1495,7 +1644,7 @@ router.get(
       }
       const { data: rows } = await supabaseAdmin
         .from("appointment_internal_notes")
-        .select("id, user_id, body, created_at, updated_at")
+        .select("id, user_id, body, created_at, updated_at, recipient_user_ids")
         .eq("appointment_id", id)
         .order("created_at", { ascending: false });
       const list = (rows || []) as Array<{
@@ -1504,6 +1653,7 @@ router.get(
         body: string;
         created_at: string;
         updated_at: string | null;
+        recipient_user_ids: string[] | null;
       }>;
       const userIds = Array.from(new Set(list.map((r) => r.user_id)));
       const nameMap = new Map<string, string>();
@@ -1524,6 +1674,7 @@ router.get(
           body: r.body,
           createdAt: r.created_at,
           updatedAt: r.updated_at,
+          recipientUserIds: r.recipient_user_ids || [],
         })),
       );
     } catch (err) {
@@ -1540,7 +1691,12 @@ router.post(
   async (req, res): Promise<void> => {
     try {
       const id = String(req.params["id"]);
-      const body = String((req.body as { body?: string } | undefined)?.body || "").trim();
+      const reqBody = (req.body as { body?: string; recipientUserIds?: string[] } | undefined) || {};
+      const body = String(reqBody.body || "").trim();
+      const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const recipientUserIds = Array.isArray(reqBody.recipientUserIds)
+        ? reqBody.recipientUserIds.filter((u) => typeof u === "string" && uuidRe.test(u)).slice(0, 50)
+        : [];
       if (!body) {
         res.status(400).json({ error: "body required" });
         return;
@@ -1559,12 +1715,19 @@ router.post(
         res.status(403).json({ error: "Forbidden" });
         return;
       }
-      // Écriture limitée au owner + co-orgs (les autres membres de l'orga
-      // peuvent lire mais pas commenter, pour éviter le spam).
-      if (!ctx.participantIds.includes(req.userId!)) {
-        res.status(403).json({ error: "Only organizer/co-organizers can comment" });
-        return;
-      }
+      // Task #316 : tout membre de l'organisation peut commenter (la
+      // restriction owner-only était trop frustrante en équipe). Le contrôle
+      // d'orga a déjà été fait plus haut (myOrg === ctx.orgId).
+      // Sécurité : intersection systématique des destinataires avec les
+      // membres de l'orga pour empêcher un user de notifier un UUID externe.
+      const { data: orgMembers } = await supabaseAdmin
+        .from("organisation_members")
+        .select("user_id")
+        .eq("organisation_id", myOrg);
+      const orgMemberIds = new Set(
+        ((orgMembers || []) as Array<{ user_id: string }>).map((m) => m.user_id),
+      );
+      const safeRecipientUserIds = recipientUserIds.filter((uid) => orgMemberIds.has(uid));
       const { data: inserted, error } = await supabaseAdmin
         .from("appointment_internal_notes")
         .insert({
@@ -1572,6 +1735,7 @@ router.post(
           user_id: req.userId,
           organisation_id: myOrg,
           body,
+          recipient_user_ids: safeRecipientUserIds.length > 0 ? safeRecipientUserIds : null,
         })
         .select("id, created_at")
         .maybeSingle();
@@ -1579,11 +1743,17 @@ router.post(
         res.status(500).json({ error: error.message });
         return;
       }
-      // Notif appointment_internal_comment vers tous les autres participants.
+      // Notif appointment_internal_comment : ciblée si recipientUserIds
+      // explicite, sinon tous les autres membres de l'orga.
       try {
         const authorName = await getUserName(req.userId!);
         const preview = body.length > 80 ? body.slice(0, 80) + "…" : body;
-        const targets = ctx.participantIds.filter((uid) => uid !== req.userId);
+        let targets: string[] = [];
+        if (safeRecipientUserIds.length > 0) {
+          targets = safeRecipientUserIds.filter((uid) => uid !== req.userId);
+        } else {
+          targets = Array.from(orgMemberIds).filter((uid) => uid && uid !== req.userId);
+        }
         for (const uid of targets) {
           await createNotification({
             userId: uid,

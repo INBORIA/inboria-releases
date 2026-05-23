@@ -892,6 +892,99 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
 }
 
 /**
+ * Task #316 : envoie un mail de proposition pour un RDV DÉJÀ inséré
+ * (créé via POST /api/appointments avec status=pending + participants
+ * externes). Réutilise la génération de body et le tracking proposal_message_id
+ * de proposeMeeting, mais SANS recréer la ligne appointment (évite les
+ * doublons). Best-effort : log + retourne ok=false en cas d'échec, le RDV
+ * reste en base avec status=pending.
+ */
+export async function sendProposalForExistingAppointment(args: {
+  userId: string;
+  appointmentId: string;
+  to: string;
+  contactName?: string | null;
+  lang?: string;
+  fromConnectionId?: string | null;
+}): Promise<{ ok: boolean; error?: string }> {
+  const conn = await resolveSendingConnection(args.userId, args.fromConnectionId);
+  if (!conn) return { ok: false, error: "no_email_connection" };
+
+  const { data: apptRow, error: loadErr } = await supabaseAdmin
+    .from("appointments")
+    .select("id, title, description, location, start_at, end_at, video_provider, video_url, calendar_account_id")
+    .eq("id", args.appointmentId)
+    .eq("user_id", args.userId)
+    .maybeSingle();
+  if (loadErr || !apptRow) return { ok: false, error: loadErr?.message || "not_found" };
+  const appt = apptRow as {
+    id: string;
+    title: string;
+    description: string | null;
+    location: string | null;
+    start_at: string;
+    end_at: string;
+    video_provider: string | null;
+    video_url: string | null;
+    calendar_account_id: string | null;
+  };
+
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("full_name, meeting_reminders_enabled")
+    .eq("id", args.userId)
+    .maybeSingle();
+  const fromName = (profile as { full_name?: string } | null)?.full_name || conn.email_address;
+  const remindersEnabled = (profile as { meeting_reminders_enabled?: boolean } | null)?.meeting_reminders_enabled !== false;
+
+  const billing = await consumeAiCredits(args.userId, "inboria_chat", {
+    source: "meeting-proposal-existing",
+    reason: "POST /appointments status=pending external",
+  });
+  if (!billing.ok) return { ok: false, error: "billing_failed" };
+
+  const proposeArgs: ProposeArgs = {
+    userId: args.userId,
+    to: args.to,
+    contactName: args.contactName || undefined,
+    startAt: appt.start_at,
+    endAt: appt.end_at,
+    subject: appt.title || "Rendez-vous",
+    location: appt.location,
+    description: appt.description,
+    lang: (args.lang || "fr").toLowerCase(),
+    videoProvider: (appt.video_provider as "meet" | "teams" | "jitsi" | null) || "none",
+    fromConnectionId: args.fromConnectionId,
+  };
+  const { subject, body } = await generateProposalEmailBody(proposeArgs, fromName, appt.video_url);
+
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body, fromName);
+  if (!sendRes.ok) {
+    logger.warn(
+      { userId: args.userId, apptId: appt.id, err: sendRes.error },
+      "[meeting-proposals] sendProposalForExisting failed",
+    );
+    return { ok: false, error: sendRes.error || "send_failed" };
+  }
+  await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
+
+  const awaitingReminderAt = remindersEnabled
+    ? new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+    : null;
+  await supabaseAdmin
+    .from("appointments")
+    .update({
+      proposal_message_id: sendRes.messageId || null,
+      proposal_recipient: args.to,
+      proposal_lang: (args.lang || "fr").toLowerCase(),
+      awaiting_reminder_at: awaitingReminderAt,
+    })
+    .eq("id", appt.id);
+
+  return { ok: true };
+}
+
+/**
  * Strippe le texte cité d'une réponse email (Outlook "De: / Envoyé:",
  * Gmail "Le ... a écrit :", chevrons "> ", séparateurs "-----Original Message-----")
  * et convertit le HTML résiduel en texte. Sans ça, le classifier voit le mail

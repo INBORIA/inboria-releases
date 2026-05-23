@@ -87,11 +87,6 @@ export default function Agenda() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
-  // ---- Co-organisateurs internes (Business) — Phase 2 ---------------------
-  type Coorg = { id: number; userId: string; fullName: string; email: string };
-  const [coorgs, setCoorgs] = useState<Coorg[]>([]);
-  const [coorgLoading, setCoorgLoading] = useState(false);
-  const [coorgPickerOpen, setCoorgPickerOpen] = useState(false);
   const { data: meProfile } = useGetProfile();
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembersList } = useGetOrganisationMembers(
@@ -101,70 +96,20 @@ export default function Agenda() {
   const currentUserId = (meProfile as { id?: string; userId?: string } | undefined)?.id
     || (meProfile as { id?: string; userId?: string } | undefined)?.userId
     || null;
-  const reloadCoorgs = async (apptId: string) => {
-    try {
-      setCoorgLoading(true);
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/appointments/${apptId}/coorganizers`,
-        { headers: token ? { Authorization: `Bearer ${token}` } : {} },
-      );
-      if (!res.ok) {
-        setCoorgs([]);
-        return;
-      }
-      const data = (await res.json()) as Coorg[];
-      setCoorgs(Array.isArray(data) ? data : []);
-    } catch {
-      setCoorgs([]);
-    } finally {
-      setCoorgLoading(false);
-    }
+  // ---- Notes internes RDV (Business) — Task #316 ----------------------
+  type InternalNote = {
+    id: number;
+    userId: string;
+    authorName: string;
+    body: string;
+    createdAt: string;
+    recipientUserIds?: string[];
   };
-  useEffect(() => {
-    if (selectedAppointment?.id && isBusiness) {
-      void reloadCoorgs(selectedAppointment.id);
-    } else {
-      setCoorgs([]);
-      setCoorgPickerOpen(false);
-    }
-  }, [selectedAppointment?.id, isBusiness]);
-  const addCoorg = async (userId: string) => {
-    if (!selectedAppointment?.id) return;
-    try {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/coorganizers`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ userId }),
-        },
-      );
-      if (!res.ok) {
-        const err = await res.text();
-        toast({ title: t("agenda.coorgAddError", "Erreur ajout co-organisateur"), description: err, variant: "destructive" });
-        return;
-      }
-      setCoorgPickerOpen(false);
-      await reloadCoorgs(selectedAppointment.id);
-      toast({ title: t("agenda.coorgAdded", "Co-organisateur ajouté") });
-    } catch (e) {
-      toast({ title: t("agenda.coorgAddError", "Erreur ajout co-organisateur"), description: (e as Error).message, variant: "destructive" });
-    }
-  };
-  // ---- Notes internes RDV (Business) — Phase 3 --------------------------
-  type InternalNote = { id: number; userId: string; authorName: string; body: string; createdAt: string };
   const [notes, setNotes] = useState<InternalNote[]>([]);
   const [notesLoading, setNotesLoading] = useState(false);
   const [noteDraft, setNoteDraft] = useState("");
+  const [noteRecipients, setNoteRecipients] = useState<string[]>([]);
+  const [noteRecipientPickerOpen, setNoteRecipientPickerOpen] = useState(false);
   const [noteSubmitting, setNoteSubmitting] = useState(false);
   const reloadNotes = async (apptId: string) => {
     try {
@@ -191,6 +136,8 @@ export default function Agenda() {
     } else {
       setNotes([]);
       setNoteDraft("");
+      setNoteRecipients([]);
+      setNoteRecipientPickerOpen(false);
     }
   }, [selectedAppointment?.id, isBusiness]);
   const submitNote = async () => {
@@ -206,7 +153,10 @@ export default function Agenda() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-          body: JSON.stringify({ body }),
+          body: JSON.stringify({
+            body,
+            recipientUserIds: noteRecipients.length > 0 ? noteRecipients : undefined,
+          }),
         },
       );
       if (!res.ok) {
@@ -215,6 +165,8 @@ export default function Agenda() {
         return;
       }
       setNoteDraft("");
+      setNoteRecipients([]);
+      setNoteRecipientPickerOpen(false);
       await reloadNotes(selectedAppointment.id);
     } finally {
       setNoteSubmitting(false);
@@ -235,25 +187,6 @@ export default function Agenda() {
     } catch { /* noop */ }
   };
 
-  const removeCoorg = async (userId: string) => {
-    if (!selectedAppointment?.id) return;
-    try {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/coorganizers/${userId}`,
-        { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} },
-      );
-      if (!res.ok) {
-        toast({ title: t("agenda.coorgRemoveError", "Erreur retrait"), variant: "destructive" });
-        return;
-      }
-      await reloadCoorgs(selectedAppointment.id);
-    } catch (e) {
-      toast({ title: t("agenda.coorgRemoveError", "Erreur retrait"), description: (e as Error).message, variant: "destructive" });
-    }
-  };
   const [projectFilter, setProjectFilter] = useState<Set<string>>(new Set());
 
   const [formTitle, setFormTitle] = useState("");
@@ -267,6 +200,10 @@ export default function Agenda() {
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
   const [formStatus, setFormStatus] = useState<"confirmed" | "pending">("confirmed");
+  // Task #316 : note interne optionnelle créée en même temps que le RDV.
+  const [formNoteBody, setFormNoteBody] = useState("");
+  const [formNoteRecipients, setFormNoteRecipients] = useState<string[]>([]);
+  const [formNoteRecipientPickerOpen, setFormNoteRecipientPickerOpen] = useState(false);
   const [formParticipants, setFormParticipants] = useState("");
   const [formInternal, setFormInternal] = useState(false);
   // RDV interne — sélection multi-membres de l'organisation. On stocke les
@@ -608,6 +545,9 @@ export default function Agenda() {
     setFormProjectId("");
     setFormReminder("30");
     setFormStatus("confirmed");
+    setFormNoteBody("");
+    setFormNoteRecipients([]);
+    setFormNoteRecipientPickerOpen(false);
     setFormParticipants("");
     setFormInternal(false);
     setFormInternalMemberIds([]);
@@ -732,6 +672,16 @@ export default function Agenda() {
       videoProvider: formVideoProvider,
       internal: formInternal,
       status: formStatus,
+      ...(formNoteBody.trim() && !editingId
+        ? {
+            internalNote: {
+              body: formNoteBody.trim(),
+              ...(formNoteRecipients.length > 0
+                ? { recipientUserIds: formNoteRecipients }
+                : {}),
+            },
+          }
+        : {}),
     };
 
     const extractError = (err: any): string => {
@@ -747,7 +697,7 @@ export default function Agenda() {
 
     if (editingId) {
       updateAppointment.mutate(
-        { id: editingId, data: payload },
+        { id: editingId, data: payload as any },
         {
           onSuccess: () => {
             toast({ title: t("agenda.updated") });
@@ -764,7 +714,7 @@ export default function Agenda() {
       );
     } else {
       createAppointment.mutate(
-        { data: payload },
+        { data: payload as any },
         {
           onSuccess: () => {
             toast({ title: t("agenda.created") });
@@ -816,7 +766,7 @@ export default function Agenda() {
       return;
     }
     updateAppointment.mutate(
-      { id, data: { confirmed: true, status: "confirmed" } },
+      { id, data: { confirmed: true, status: "confirmed" } as any },
       {
         onSuccess: () => {
           toast({ title: t("agenda.appointmentConfirmed") });
@@ -2125,105 +2075,11 @@ export default function Agenda() {
                 )}
               </div>
 
-              {/* Co-organisateurs internes (Business) — Phase 2 */}
-              {isBusiness && (
-                <div className="mb-4 border-t border-border pt-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 text-[11px] font-medium text-foreground">
-                      <UserPlus className="w-3.5 h-3.5" />
-                      {t("agenda.coorganizers", "Co-organisateurs internes")}
-                      {coorgs.length > 0 && (
-                        <span className="text-[10px] text-muted-foreground">({coorgs.length})</span>
-                      )}
-                    </div>
-                    {(selectedAppointment.userId === currentUserId || (selectedAppointment as { user_id?: string }).user_id === currentUserId) && (
-                      <button
-                        type="button"
-                        onClick={() => setCoorgPickerOpen((v) => !v)}
-                        className="text-[11px] text-primary hover:text-primary/80"
-                      >
-                        {coorgPickerOpen ? t("common.cancel", "Annuler") : t("agenda.coorgAdd", "+ Ajouter")}
-                      </button>
-                    )}
-                  </div>
-                  {coorgLoading && (
-                    <div className="text-[11px] text-muted-foreground flex items-center gap-1">
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      {t("common.loading", "Chargement…")}
-                    </div>
-                  )}
-                  {!coorgLoading && coorgs.length === 0 && !coorgPickerOpen && (
-                    <p className="text-[11px] text-muted-foreground">
-                      {t("agenda.coorgEmpty", "Aucun co-organisateur. Invite un collègue pour qu'il reçoive les notifs RDV (confirmations, refus, contre-propositions, rappels).")}
-                    </p>
-                  )}
-                  {coorgs.length > 0 && (
-                    <ul className="space-y-1">
-                      {coorgs.map((c) => (
-                        <li
-                          key={c.id}
-                          className="flex items-center justify-between bg-background border border-border rounded px-2 py-1"
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
-                              {(c.fullName || c.email || "?").slice(0, 1).toUpperCase()}
-                            </span>
-                            <span className="text-[11px] text-foreground truncate">{c.fullName || c.email || c.userId}</span>
-                            {c.email && c.fullName && (
-                              <span className="text-[10px] text-muted-foreground truncate">{c.email}</span>
-                            )}
-                          </div>
-                          {(selectedAppointment.userId === currentUserId || (selectedAppointment as { user_id?: string }).user_id === currentUserId || c.userId === currentUserId) && (
-                            <button
-                              type="button"
-                              onClick={() => removeCoorg(c.userId)}
-                              className="text-muted-foreground hover:text-destructive shrink-0"
-                              title={t("common.remove", "Retirer") as string}
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {coorgPickerOpen && (
-                    <div className="mt-2 border border-border rounded bg-background max-h-40 overflow-y-auto">
-                      {(() => {
-                        const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string; status: string }>)
-                          .filter((m) => m.status === "active" || !m.status)
-                          .filter((m) => m.userId && m.userId !== currentUserId)
-                          .filter((m) => !coorgs.some((c) => c.userId === m.userId));
-                        if (members.length === 0) {
-                          return (
-                            <div className="text-[11px] text-muted-foreground p-2">
-                              {t("agenda.coorgNoCandidate", "Aucun membre disponible.")}
-                            </div>
-                          );
-                        }
-                        return members.map((m) => (
-                          <button
-                            key={m.userId}
-                            type="button"
-                            onClick={() => addCoorg(m.userId)}
-                            className="w-full text-left px-2 py-1.5 text-[11px] hover:bg-white/[0.04] flex items-center gap-2"
-                          >
-                            <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
-                              {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
-                            </span>
-                            <span className="truncate">{m.fullName || m.email}</span>
-                            {m.email && m.fullName && (
-                              <span className="text-[10px] text-muted-foreground truncate">{m.email}</span>
-                            )}
-                          </button>
-                        ));
-                      })()}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Notes internes RDV (Business) — Phase 3 */}
+              {/* Notes internes RDV (Business) — Task #316
+                  Lecture : tous les membres de l'orga.
+                  Écriture : tous les membres de l'orga.
+                  Notif cloche : tous les membres si aucun destinataire choisi,
+                  sinon uniquement les destinataires sélectionnés. */}
               {isBusiness && (
                 <div className="mb-4 border-t border-border pt-3">
                   <div className="flex items-center gap-2 text-[11px] font-medium text-foreground mb-2">
@@ -2233,23 +2089,54 @@ export default function Agenda() {
                       <span className="text-[10px] text-muted-foreground">({notes.length})</span>
                     )}
                   </div>
-                  {/* Composer (owner + co-orgs uniquement) */}
-                  {(selectedAppointment.userId === currentUserId
-                    || (selectedAppointment as { user_id?: string }).user_id === currentUserId
-                    || coorgs.some((c) => c.userId === currentUserId)) && (
-                    <div className="flex items-end gap-2 mb-2">
-                      <Textarea
-                        value={noteDraft}
-                        onChange={(e) => setNoteDraft(e.target.value)}
-                        placeholder={t("agenda.notePlaceholder", "Note interne (visible uniquement par toi et tes co-organisateurs)…") as string}
-                        className="text-[11px] min-h-[44px] flex-1"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                            e.preventDefault();
-                            void submitNote();
-                          }
-                        }}
-                      />
+                  <div className="space-y-2 mb-2">
+                    <Textarea
+                      value={noteDraft}
+                      onChange={(e) => setNoteDraft(e.target.value)}
+                      placeholder={t("agenda.notePlaceholder", "Note interne (visible uniquement par l'équipe, jamais envoyée au client)…") as string}
+                      className="text-[11px] min-h-[44px]"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                          e.preventDefault();
+                          void submitNote();
+                        }
+                      }}
+                    />
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                        <button
+                          type="button"
+                          onClick={() => setNoteRecipientPickerOpen((v) => !v)}
+                          className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 border border-border rounded px-2 py-1"
+                        >
+                          <UserPlus className="w-3 h-3" />
+                          {noteRecipients.length === 0
+                            ? t("agenda.noteAllTeam", "Toute l'équipe")
+                            : t("agenda.noteSelectedCount", "{{count}} destinataire(s)", { count: noteRecipients.length })}
+                        </button>
+                        {noteRecipients.length > 0 && (() => {
+                          const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string }>);
+                          return noteRecipients.map((uid) => {
+                            const m = members.find((x) => x.userId === uid);
+                            const label = (m?.fullName || m?.email || uid).slice(0, 14);
+                            return (
+                              <span
+                                key={uid}
+                                className="inline-flex items-center gap-1 bg-primary/15 border border-primary/30 text-primary text-[10px] px-1.5 py-0.5 rounded"
+                              >
+                                {label}
+                                <button
+                                  type="button"
+                                  onClick={() => setNoteRecipients((prev) => prev.filter((x) => x !== uid))}
+                                  className="hover:text-destructive"
+                                >
+                                  <X className="w-2.5 h-2.5" />
+                                </button>
+                              </span>
+                            );
+                          });
+                        })()}
+                      </div>
                       <Button
                         size="sm"
                         className="h-7 text-[11px] shrink-0"
@@ -2259,11 +2146,59 @@ export default function Agenda() {
                         {noteSubmitting ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
-                          <Send className="w-3 h-3" />
+                          <>
+                            <Send className="w-3 h-3 mr-1" />
+                            {t("common.send", "Envoyer")}
+                          </>
                         )}
                       </Button>
                     </div>
-                  )}
+                    {noteRecipientPickerOpen && (
+                      <div className="border border-border rounded bg-background max-h-40 overflow-y-auto">
+                        {(() => {
+                          const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string; status: string }>)
+                            .filter((m) => m.status === "active" || !m.status)
+                            .filter((m) => m.userId && m.userId !== currentUserId);
+                          if (members.length === 0) {
+                            return (
+                              <div className="text-[11px] text-muted-foreground p-2">
+                                {t("agenda.coorgNoCandidate", "Aucun membre disponible.")}
+                              </div>
+                            );
+                          }
+                          return members.map((m) => {
+                            const selected = noteRecipients.includes(m.userId);
+                            return (
+                              <button
+                                key={m.userId}
+                                type="button"
+                                onClick={() => {
+                                  setNoteRecipients((prev) =>
+                                    selected ? prev.filter((x) => x !== m.userId) : [...prev, m.userId],
+                                  );
+                                }}
+                                className={`w-full text-left px-2 py-1.5 text-[11px] flex items-center gap-2 ${selected ? "bg-primary/10" : "hover:bg-white/[0.04]"}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selected}
+                                  readOnly
+                                  className="w-3 h-3 accent-primary"
+                                />
+                                <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                                  {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
+                                </span>
+                                <span className="truncate">{m.fullName || m.email}</span>
+                                {m.email && m.fullName && (
+                                  <span className="text-[10px] text-muted-foreground truncate">{m.email}</span>
+                                )}
+                              </button>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
+                  </div>
                   {notesLoading && (
                     <div className="text-[11px] text-muted-foreground flex items-center gap-1">
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -2277,34 +2212,48 @@ export default function Agenda() {
                   )}
                   {notes.length > 0 && (
                     <ul className="space-y-2 max-h-48 overflow-y-auto">
-                      {notes.map((n) => (
-                        <li key={n.id} className="bg-background border border-border rounded p-2">
-                          <div className="flex items-center justify-between gap-2 mb-1">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="w-4 h-4 rounded-full bg-primary/15 border border-primary/30 text-primary text-[9px] font-semibold flex items-center justify-center shrink-0">
-                                {(n.authorName || "?").slice(0, 1).toUpperCase()}
-                              </span>
-                              <span className="text-[11px] text-foreground truncate">{n.authorName || n.userId}</span>
-                              <span className="text-[10px] text-muted-foreground shrink-0">
-                                {format(parseISO(n.createdAt), "d MMM HH:mm", { locale })}
-                              </span>
+                      {notes.map((n) => {
+                        const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string }>);
+                        const recipientLabels = (n.recipientUserIds || [])
+                          .map((uid) => {
+                            const m = members.find((x) => x.userId === uid);
+                            return m?.fullName || m?.email || uid.slice(0, 6);
+                          })
+                          .filter(Boolean);
+                        return (
+                          <li key={n.id} className="bg-background border border-border rounded p-2">
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="w-4 h-4 rounded-full bg-primary/15 border border-primary/30 text-primary text-[9px] font-semibold flex items-center justify-center shrink-0">
+                                  {(n.authorName || "?").slice(0, 1).toUpperCase()}
+                                </span>
+                                <span className="text-[11px] text-foreground truncate">{n.authorName || n.userId}</span>
+                                <span className="text-[10px] text-muted-foreground shrink-0">
+                                  {format(parseISO(n.createdAt), "d MMM HH:mm", { locale })}
+                                </span>
+                              </div>
+                              {(n.userId === currentUserId
+                                || selectedAppointment.userId === currentUserId
+                                || (selectedAppointment as { user_id?: string }).user_id === currentUserId) && (
+                                <button
+                                  type="button"
+                                  onClick={() => void deleteNote(n.id)}
+                                  className="text-muted-foreground hover:text-destructive shrink-0"
+                                  title={t("common.remove", "Retirer") as string}
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              )}
                             </div>
-                            {(n.userId === currentUserId
-                              || selectedAppointment.userId === currentUserId
-                              || (selectedAppointment as { user_id?: string }).user_id === currentUserId) && (
-                              <button
-                                type="button"
-                                onClick={() => void deleteNote(n.id)}
-                                className="text-muted-foreground hover:text-destructive shrink-0"
-                                title={t("common.remove", "Retirer") as string}
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
+                            {recipientLabels.length > 0 && (
+                              <div className="text-[10px] text-muted-foreground mb-1 truncate">
+                                {t("agenda.noteRecipientsLabel", "Pour")} : {recipientLabels.join(", ")}
+                              </div>
                             )}
-                          </div>
-                          <p className="text-[11px] text-foreground whitespace-pre-wrap break-words">{n.body}</p>
-                        </li>
-                      ))}
+                            <p className="text-[11px] text-foreground whitespace-pre-wrap break-words">{n.body}</p>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -2556,6 +2505,11 @@ export default function Agenda() {
                       <option value="confirmed">{t("agenda.statusConfirmedShort", "Confirmé")}</option>
                       <option value="pending">{t("agenda.statusPendingShort", "En attente")}</option>
                     </select>
+                    {formStatus === "pending" && !formInternal && (
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {t("agenda.statusPendingHint", "Inboria enverra automatiquement le mail de proposition au client.")}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -2568,6 +2522,102 @@ export default function Agenda() {
                   />
                   <span>{t("agenda.internalAppointment", "RDV interne")}</span>
                 </label>
+
+                {/* Task #316 : note interne à la création — Business uniquement, masqué en édition */}
+                {isBusiness && !editingId && (
+                  <div className="border border-border rounded p-2 bg-background/40 space-y-2">
+                    <label className="text-[11px] text-muted-foreground flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" />
+                      {t("agenda.formInternalNoteLabel", "Note interne (optionnel)")}
+                    </label>
+                    <Textarea
+                      value={formNoteBody}
+                      onChange={(e) => setFormNoteBody(e.target.value)}
+                      placeholder={t("agenda.formInternalNotePlaceholder", "Ex : Client VIP, attention au ton. Jamais envoyée au client.") as string}
+                      className="text-[11px] min-h-[44px]"
+                    />
+                    {formNoteBody.trim() && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => setFormNoteRecipientPickerOpen((v) => !v)}
+                            className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 border border-border rounded px-2 py-1"
+                          >
+                            <UserPlus className="w-3 h-3" />
+                            {formNoteRecipients.length === 0
+                              ? t("agenda.noteAllTeam", "Toute l'équipe")
+                              : t("agenda.noteSelectedCount", "{{count}} destinataire(s)", { count: formNoteRecipients.length })}
+                          </button>
+                          {formNoteRecipients.length > 0 && (() => {
+                            const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string }>);
+                            return formNoteRecipients.map((uid) => {
+                              const m = members.find((x) => x.userId === uid);
+                              const label = (m?.fullName || m?.email || uid).slice(0, 14);
+                              return (
+                                <span
+                                  key={uid}
+                                  className="inline-flex items-center gap-1 bg-primary/15 border border-primary/30 text-primary text-[10px] px-1.5 py-0.5 rounded"
+                                >
+                                  {label}
+                                  <button
+                                    type="button"
+                                    onClick={() => setFormNoteRecipients((prev) => prev.filter((x) => x !== uid))}
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="w-2.5 h-2.5" />
+                                  </button>
+                                </span>
+                              );
+                            });
+                          })()}
+                        </div>
+                        {formNoteRecipientPickerOpen && (
+                          <div className="border border-border rounded bg-background max-h-40 overflow-y-auto">
+                            {(() => {
+                              const members = ((orgMembersList || []) as Array<{ userId: string; fullName: string; email: string; status: string }>)
+                                .filter((m) => m.status === "active" || !m.status)
+                                .filter((m) => m.userId && m.userId !== currentUserId);
+                              if (members.length === 0) {
+                                return (
+                                  <div className="text-[11px] text-muted-foreground p-2">
+                                    {t("agenda.coorgNoCandidate", "Aucun membre disponible.")}
+                                  </div>
+                                );
+                              }
+                              return members.map((m) => {
+                                const selected = formNoteRecipients.includes(m.userId);
+                                return (
+                                  <button
+                                    key={m.userId}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormNoteRecipients((prev) =>
+                                        selected ? prev.filter((x) => x !== m.userId) : [...prev, m.userId],
+                                      );
+                                    }}
+                                    className={`w-full text-left px-2 py-1.5 text-[11px] flex items-center gap-2 ${selected ? "bg-primary/10" : "hover:bg-white/[0.04]"}`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={selected}
+                                      readOnly
+                                      className="w-3 h-3 accent-primary"
+                                    />
+                                    <span className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold flex items-center justify-center shrink-0">
+                                      {(m.fullName || m.email || "?").slice(0, 1).toUpperCase()}
+                                    </span>
+                                    <span className="truncate">{m.fullName || m.email}</span>
+                                  </button>
+                                );
+                              });
+                            })()}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {!formInternal ? (
                   <div className="relative">
