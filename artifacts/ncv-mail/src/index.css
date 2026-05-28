@@ -434,8 +434,12 @@ html[data-ncv-theme="light"] [data-inboria-chat-panel].bg-zinc-950 {
 /* Étape 7 — Menus contextuels (clic droit) sur emails / tâches.
    Ce sont des div .fixed avec couleurs hardcodées, donc l'overlay générique
    (qui exclut .fixed) ne les touche pas. On force tout sous [data-context-menu]
-   en mode clair, indépendamment de data-ncv-page. */
-html[data-ncv-theme="light"] [data-context-menu] {
+   en mode clair, indépendamment de data-ncv-page.
+   IMPORTANT : on cible le menu lui-même via .bg-[#141c2b] (sa couleur de
+   base). PAS le sélecteur générique [data-context-menu] tout court — sinon
+   il match aussi l'overlay transparent fixed inset-0 qui partage cet
+   attribut, le rendant blanc opaque et masquant tous les mails. */
+html[data-ncv-theme="light"] [data-context-menu].bg-\[\#141c2b\] {
   background-color: #ffffff !important;
   border-color: #e5e7ec !important;
   color: #111827 !important;
