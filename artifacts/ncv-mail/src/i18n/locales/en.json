@@ -1078,7 +1078,16 @@
       "merging": "Merging…",
       "mergedToast": "{{count}} email(s) moved to \"{{target}}\"",
       "close": "Close",
-      "detecting": "Scanning…"
+      "detecting": "Scanning…",
+      "clustersTitle": "Exact duplicates",
+      "clustersDesc": "Several categories share the same name — usually created in parallel during triage. One merge collapses them all.",
+      "clusterLine": "{{count}} categories named \"{{name}}\"",
+      "clusterTotalEmails": "{{count}} emails total",
+      "clusterMergeAll": "Merge all into one",
+      "clusterMergeConfirmTitle": "Merge {{count}} \"{{name}}\" categories?",
+      "clusterMergeConfirmDesc": "All emails will be reassigned to a single \"{{name}}\" category (the one with the most emails). The other {{deleted}} copies will be deleted. This cannot be undone.",
+      "clusterMergedToast": "{{count}} email(s) regrouped — {{deleted}} duplicate(s) removed",
+      "pairsTitle": "Similar names (review)"
     },
     "sections": {
       "byPack": "{{name}} pack",

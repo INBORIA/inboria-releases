@@ -110,25 +110,102 @@ export type DuplicatePair<T extends { id: number; name: string }> = {
   similarity: number;
 };
 
-// Compare toutes les paires (i,j) avec i<j et renvoie celles dont le score
-// dépasse le seuil. Tri décroissant par similarité pour proposer en premier
-// les doublons les plus évidents. Complexité O(n²) mais n est petit (max
-// quelques dizaines de catégories par utilisateur en pratique).
-export function findDuplicatePairs<T extends { id: number; name: string }>(
+// Cluster de catégories ayant TOUTES le même nom normalisé (doublons exacts).
+// Apparaît typiquement quand auto-sync triage 100+ emails en parallèle sur
+// la même valeur "Newsletters" : sans contrainte unique en DB, chaque INSERT
+// passe et on se retrouve avec N copies. Au lieu d'afficher C(N,2) paires
+// identiques à 100% (79 copies → 3081 lignes), on émet UN cluster que l'UI
+// résout en une seule fusion massive vers le représentant.
+export type DuplicateCluster<T extends { id: number; name: string }> = {
+  // Représentant (à garder) : celui avec le plus d'emails, puis le plus
+  // petit id pour stabilité. L'appelant peut surcharger via emailCount.
+  representative: T;
+  // Toutes les AUTRES catégories du cluster (à fusionner dans representative).
+  duplicates: T[];
+  // Compte total dans le cluster (= duplicates.length + 1).
+  size: number;
+};
+
+export type DuplicateReport<T extends { id: number; name: string }> = {
+  // Doublons exacts (même nom après normalisation). Un cluster = 1 fusion massive.
+  clusters: DuplicateCluster<T>[];
+  // Paires de noms DIFFÉRENTS mais qui se ressemblent (fautes, variantes…).
+  // Calculées entre représentants seulement → pas de redondance.
+  pairs: DuplicatePair<T>[];
+};
+
+// Détecte doublons exacts (clusters) + paires similaires (noms différents).
+// emailCountOf permet de choisir le meilleur représentant (celui qui contient
+// le plus d'emails — le moins coûteux à conserver). Sans cette fonction, le
+// représentant est le plus petit id.
+export function findDuplicateReport<T extends { id: number; name: string }>(
   categories: ReadonlyArray<T>,
   threshold: number = CATEGORY_SIMILARITY_THRESHOLD,
-): DuplicatePair<T>[] {
+  emailCountOf?: (cat: T) => number,
+): DuplicateReport<T> {
+  // 1) Groupage par nom normalisé.
+  const byNorm = new Map<string, T[]>();
+  for (const c of categories) {
+    const key = normalizeForCompare(c.name) || `__raw:${c.name.trim().toLowerCase()}`;
+    const arr = byNorm.get(key);
+    if (arr) arr.push(c);
+    else byNorm.set(key, [c]);
+  }
+
+  // 2) Pour chaque groupe : choisir représentant, émettre cluster si size >= 2.
+  const clusters: DuplicateCluster<T>[] = [];
+  const representatives: T[] = [];
+  for (const group of byNorm.values()) {
+    // Représentant = max emails, puis min id pour stabilité.
+    const rep = group.reduce((best, cur) => {
+      const bc = emailCountOf ? emailCountOf(best) : 0;
+      const cc = emailCountOf ? emailCountOf(cur) : 0;
+      if (cc > bc) return cur;
+      if (cc < bc) return best;
+      return cur.id < best.id ? cur : best;
+    });
+    representatives.push(rep);
+    if (group.length >= 2) {
+      clusters.push({
+        representative: rep,
+        duplicates: group.filter((c) => c.id !== rep.id),
+        size: group.length,
+      });
+    }
+  }
+  clusters.sort((a, b) => b.size - a.size);
+
+  // 3) Paires similaires entre représentants UNIQUEMENT (évite redondance).
   const pairs: DuplicatePair<T>[] = [];
-  for (let i = 0; i < categories.length; i++) {
-    for (let j = i + 1; j < categories.length; j++) {
-      const ci = categories[i]!;
-      const cj = categories[j]!;
+  for (let i = 0; i < representatives.length; i++) {
+    for (let j = i + 1; j < representatives.length; j++) {
+      const ci = representatives[i]!;
+      const cj = representatives[j]!;
       const score = similarity(ci.name, cj.name);
-      if (score >= threshold) {
+      // < 1 : on exclut les similarity=1 (déjà couverts par les clusters).
+      if (score >= threshold && score < 1) {
         pairs.push({ a: ci, b: cj, similarity: score });
       }
     }
   }
   pairs.sort((x, y) => y.similarity - x.similarity);
-  return pairs;
+
+  return { clusters, pairs };
+}
+
+// Conservé pour compat tests/anciens appels : aplatit le rapport en paires.
+// Chaque cluster est aplati en (size-1) paires (rep ↔ chaque duplicate).
+// Préférer findDuplicateReport pour de nouveaux appels.
+export function findDuplicatePairs<T extends { id: number; name: string }>(
+  categories: ReadonlyArray<T>,
+  threshold: number = CATEGORY_SIMILARITY_THRESHOLD,
+): DuplicatePair<T>[] {
+  const report = findDuplicateReport(categories, threshold);
+  const out: DuplicatePair<T>[] = [];
+  for (const c of report.clusters) {
+    for (const d of c.duplicates) {
+      out.push({ a: c.representative, b: d, similarity: 1 });
+    }
+  }
+  return [...out, ...report.pairs];
 }

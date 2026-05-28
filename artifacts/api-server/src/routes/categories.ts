@@ -4,7 +4,7 @@ import { CreateCategoryBody, UpdateCategoryBody, ApplyPackBody, GeneratePackBody
 import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
-import { findSimilarCategories, findDuplicatePairs } from "../lib/similarity";
+import { findSimilarCategories, findDuplicateReport } from "../lib/similarity";
 import { ensureSystemCategory } from "../lib/system-categories";
 
 // Headers/query params autorisant le bypass volontaire de la détection
@@ -263,15 +263,27 @@ router.get("/categories/duplicates", requireAuth, async (req, res): Promise<void
     }
 
     const enriched = (categories || []).map((c: any) => ({
-      id: c.id,
-      name: c.name,
+      id: c.id as number,
+      name: c.name as string,
       sourcePack: c.source_pack || null,
-      emailCount: c.emails?.[0]?.count || 0,
+      emailCount: (c.emails?.[0]?.count as number) || 0,
     }));
 
-    const pairs = findDuplicatePairs(enriched);
+    const report = findDuplicateReport(
+      enriched,
+      undefined,
+      (cat) => cat.emailCount,
+    );
     res.json({
-      pairs: pairs.map((p) => ({
+      // Clusters de doublons exacts (même nom normalisé) : 1 entrée = N catégories
+      // à fusionner en 1 passe via /categories/merge-cluster. Évite l'explosion
+      // C(N,2) qui produisait 3081 lignes "Newsletters/Newsletters" identiques.
+      clusters: report.clusters.map((c) => ({
+        representative: c.representative,
+        duplicates: c.duplicates,
+        size: c.size,
+      })),
+      pairs: report.pairs.map((p) => ({
         a: p.a,
         b: p.b,
         similarity: p.similarity,
@@ -281,6 +293,115 @@ router.get("/categories/duplicates", requireAuth, async (req, res): Promise<void
     res.status(500).json({ error: "Failed to detect duplicates" });
   }
 });
+
+// Fusionne plusieurs catégories sources dans une cible en UNE seule requête.
+// Cas d'usage : N copies identiques (« Newsletters » ×79) créées par race
+// condition au triage. L'UI propose un seul bouton "Fusionner les 79
+// catégories en une seule" qui appelle cet endpoint avec sourceIds = les 78
+// autres. Tous les emails sont réaffectés à targetId, puis les sources sont
+// supprimées. Atomicité : pas de transaction Postgres via supabase-js, mais
+// l'UPDATE en bulk + DELETE en bulk sont chacun atomiques.
+router.post(
+  "/categories/merge-cluster",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      if (await denyIfNotAdmin(req.userId!, res)) return;
+      const { targetId: rawTarget, sourceIds: rawSources } = req.body ?? {};
+      const targetId = Number(rawTarget);
+      const sourceIds = Array.isArray(rawSources)
+        ? Array.from(new Set(rawSources.map((x: any) => Number(x))))
+            .filter((n) => Number.isFinite(n) && n !== targetId)
+        : [];
+      if (!Number.isFinite(targetId) || sourceIds.length === 0) {
+        res
+          .status(400)
+          .json({ error: "targetId et sourceIds[] (non vide) requis" });
+        return;
+      }
+
+      // Bornes : éviter de bombarder Postgres si quelqu'un envoie 100k ids.
+      if (sourceIds.length > 500) {
+        res.status(400).json({ error: "Trop de sources (max 500)" });
+        return;
+      }
+
+      type CatRow = { id: number; name: string; is_system: boolean | null };
+      const allIds = [targetId, ...sourceIds];
+      const { data: cats, error: lookupError } = await supabaseAdmin
+        .from("categories")
+        .select("id, name, is_system")
+        .eq("user_id", req.userId!)
+        .in("id", allIds)
+        .returns<CatRow[]>();
+
+      if (lookupError) {
+        res.status(500).json({ error: lookupError.message });
+        return;
+      }
+      if (!cats || cats.length !== allIds.length) {
+        res
+          .status(404)
+          .json({ error: "Une ou plusieurs catégories introuvables" });
+        return;
+      }
+
+      const target = cats.find((c) => c.id === targetId);
+      if (!target) {
+        res.status(404).json({ error: "Catégorie cible introuvable" });
+        return;
+      }
+
+      // Aucune ligne système (ni source ni cible) ne peut être touchée.
+      if (cats.some((c) => c.is_system === true)) {
+        res.status(400).json({ error: "system_category_protected" });
+        return;
+      }
+
+      const { count: movedEmails, error: countError } = await supabaseAdmin
+        .from("emails")
+        .select("id", { count: "exact", head: true })
+        .in("category_id", sourceIds)
+        .eq("user_id", req.userId!);
+      if (countError) {
+        res.status(500).json({ error: countError.message });
+        return;
+      }
+
+      const { error: updateError } = await supabaseAdmin
+        .from("emails")
+        .update({ category_id: targetId })
+        .in("category_id", sourceIds)
+        .eq("user_id", req.userId!);
+      if (updateError) {
+        res.status(500).json({ error: updateError.message });
+        return;
+      }
+
+      const { error: deleteError } = await supabaseAdmin
+        .from("categories")
+        .delete()
+        .in("id", sourceIds)
+        .eq("user_id", req.userId!);
+      if (deleteError) {
+        res.status(500).json({ error: deleteError.message });
+        return;
+      }
+
+      res.json({
+        movedEmails: movedEmails || 0,
+        deletedCategoryIds: sourceIds,
+        targetCategoryId: targetId,
+        targetName: target.name,
+        clusterSize: allIds.length,
+      });
+    } catch (err: any) {
+      res
+        .status(500)
+        .json({ error: err?.message || "Failed to merge cluster" });
+    }
+  },
+);
 
 // Fusionne la catégorie source dans la cible : tous les emails liés à la
 // source sont réaffectés à la cible, puis la source est supprimée. Les deux

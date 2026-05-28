@@ -221,6 +221,11 @@ export default function Classement() {
   // ---- Refonte : doublons, fusion, vue inutilisées, modale near-dup ----
   type DuplicateCat = { id: number; name: string; sourcePack: string | null; emailCount: number };
   type DuplicatePair = { a: DuplicateCat; b: DuplicateCat; similarity: number };
+  type DuplicateCluster = {
+    representative: DuplicateCat;
+    duplicates: DuplicateCat[];
+    size: number;
+  };
 
   const [showUnused, setShowUnused] = useState(true);
   const [isCleanupOpen, setIsCleanupOpen] = useState(false);
@@ -228,6 +233,7 @@ export default function Classement() {
     source: DuplicateCat;
     target: DuplicateCat;
   } | null>(null);
+  const [clusterConfirm, setClusterConfirm] = useState<DuplicateCluster | null>(null);
   const [mergeBusy, setMergeBusy] = useState(false);
   const [nearDup, setNearDup] = useState<null | {
     source: "form" | "suggestion";
@@ -243,10 +249,15 @@ export default function Classement() {
   const duplicatesQuery = useQuery({
     queryKey: ["categories", "duplicates"],
     queryFn: () =>
-      customFetch<{ pairs: DuplicatePair[] }>("/api/categories/duplicates"),
+      customFetch<{ clusters?: DuplicateCluster[]; pairs: DuplicatePair[] }>(
+        "/api/categories/duplicates",
+      ),
     staleTime: 10_000,
   });
   const duplicatePairs = duplicatesQuery.data?.pairs ?? [];
+  const duplicateClusters = duplicatesQuery.data?.clusters ?? [];
+  // Compteur affiché dans le bouton : 1 cluster = 1 fusion, 1 paire = 1 fusion.
+  const duplicateTotal = duplicateClusters.length + duplicatePairs.length;
 
   // Set des noms "standards" (= proposés dans les suggestions) toutes langues
   // confondues, pour distinguer les catégories standard des purement manuelles
@@ -423,6 +434,46 @@ export default function Classement() {
         }),
       });
       setMergeConfirm(null);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: t("common.error"),
+        description: t("classification.deleteErrorDesc"),
+      });
+    } finally {
+      setMergeBusy(false);
+    }
+  };
+
+  // Fusion d'un cluster (N catégories homonymes) en une seule passe via le
+  // nouvel endpoint /categories/merge-cluster. Évite N-1 allers-retours et
+  // résout d'un coup les 79 copies « Newsletters » créées par race condition.
+  const doMergeCluster = async (cluster: DuplicateCluster) => {
+    setMergeBusy(true);
+    try {
+      const result = await customFetch<{
+        movedEmails: number;
+        deletedCategoryIds: number[];
+        targetCategoryId: number;
+        targetName: string;
+        clusterSize: number;
+      }>("/api/categories/merge-cluster", {
+        method: "POST",
+        body: JSON.stringify({
+          targetId: cluster.representative.id,
+          sourceIds: cluster.duplicates.map((d) => d.id),
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+      await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+      await duplicatesQuery.refetch();
+      toast({
+        title: t("classification.cleanupDuplicates.clusterMergedToast", {
+          count: result.movedEmails,
+          deleted: result.deletedCategoryIds.length,
+        }),
+      });
+      setClusterConfirm(null);
     } catch {
       toast({
         variant: "destructive",
@@ -771,7 +822,7 @@ export default function Classement() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {isOrgAdmin && duplicatePairs.length > 0 && (
+            {isOrgAdmin && duplicateTotal > 0 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -780,7 +831,7 @@ export default function Classement() {
               >
                 <Combine className="w-3.5 h-3.5" />
                 {t("classification.cleanupDuplicates.buttonCount", {
-                  count: duplicatePairs.length,
+                  count: duplicateTotal,
                 })}
               </Button>
             )}
@@ -1182,13 +1233,13 @@ export default function Classement() {
             )}
           </div>
 
-          {duplicatePairs.length > 0 && (
+          {duplicateTotal > 0 && (
             <div className="mb-4 rounded-lg border border-white/15 bg-white/[0.04] p-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 min-w-0">
                 <Combine className="w-4 h-4 text-white shrink-0" />
                 <p className="text-[12px] text-white/90">
                   {t("classification.cleanupDuplicates.desc", {
-                    count: duplicatePairs.length,
+                    count: duplicateTotal,
                   })}
                 </p>
               </div>
@@ -1714,7 +1765,7 @@ export default function Classement() {
               <p className="text-[13px] text-[#b8c5d6]">
                 {t("classification.cleanupDuplicates.desc")}
               </p>
-              {duplicatePairs.length === 0 ? (
+              {duplicateTotal === 0 ? (
                 <div className="text-center py-8">
                   <Check className="mx-auto h-10 w-10 text-emerald-400/40 mb-2" />
                   <p className="text-[13px] text-[#b8c5d6]">
@@ -1722,7 +1773,70 @@ export default function Classement() {
                   </p>
                 </div>
               ) : (
-                <div className="max-h-96 overflow-y-auto space-y-2 pr-1">
+                <div className="max-h-96 overflow-y-auto space-y-4 pr-1">
+                  {duplicateClusters.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">
+                          {t("classification.cleanupDuplicates.clustersTitle")}
+                        </span>
+                        <span className="text-[11px] text-[#7a8290]">
+                          ({duplicateClusters.length})
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#b8c5d6] -mt-1">
+                        {t("classification.cleanupDuplicates.clustersDesc")}
+                      </p>
+                      {duplicateClusters.map((cluster, idx) => {
+                        const totalEmails =
+                          cluster.representative.emailCount +
+                          cluster.duplicates.reduce((s, d) => s + d.emailCount, 0);
+                        return (
+                          <div
+                            key={`cluster-${idx}`}
+                            className="rounded-md bg-amber-500/[0.06] border border-amber-500/30 p-3"
+                          >
+                            <div className="flex items-center justify-between gap-3 mb-2">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[13px] text-white font-medium truncate">
+                                  {t("classification.cleanupDuplicates.clusterLine", {
+                                    count: cluster.size,
+                                    name: cluster.representative.name,
+                                  })}
+                                </p>
+                                <p className="text-[11px] text-[#b8c5d6] mt-0.5">
+                                  {t("classification.cleanupDuplicates.clusterTotalEmails", {
+                                    count: totalEmails,
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-[11px] h-7 border-amber-400/50 text-amber-100 hover:bg-amber-500/10"
+                              onClick={() => setClusterConfirm(cluster)}
+                            >
+                              <Combine className="w-3 h-3 mr-1" />
+                              {t("classification.cleanupDuplicates.clusterMergeAll")}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {duplicatePairs.length > 0 && duplicateClusters.length > 0 && (
+                    <div className="flex items-center gap-2 pt-2">
+                      <span className="text-[11px] uppercase tracking-wider text-[#b8c5d6] font-semibold">
+                        {t("classification.cleanupDuplicates.pairsTitle")}
+                      </span>
+                      <span className="text-[11px] text-[#7a8290]">
+                        ({duplicatePairs.length})
+                      </span>
+                    </div>
+                  )}
+
                   {duplicatePairs.map((pair: any, idx: number) => (
                     <div
                       key={idx}
@@ -1832,6 +1946,57 @@ export default function Classement() {
                   </>
                 ) : (
                   t("classification.cleanupDuplicates.mergeBtn")
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* === DIALOG MERGE CLUSTER (N catégories homonymes) === */}
+        <AlertDialog
+          open={!!clusterConfirm}
+          onOpenChange={(open) => !open && !mergeBusy && setClusterConfirm(null)}
+        >
+          <AlertDialogContent className="bg-card border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white">
+                {clusterConfirm &&
+                  t("classification.cleanupDuplicates.clusterMergeConfirmTitle", {
+                    count: clusterConfirm.size,
+                    name: clusterConfirm.representative.name,
+                  })}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-[#b8c5d6]">
+                {clusterConfirm &&
+                  t("classification.cleanupDuplicates.clusterMergeConfirmDesc", {
+                    count: clusterConfirm.size,
+                    name: clusterConfirm.representative.name,
+                    deleted: clusterConfirm.duplicates.length,
+                  })}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                disabled={mergeBusy}
+                className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]"
+              >
+                {t("common.cancel")}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (clusterConfirm) void doMergeCluster(clusterConfirm);
+                }}
+                disabled={mergeBusy}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                {mergeBusy ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />
+                    {t("classification.cleanupDuplicates.merging")}
+                  </>
+                ) : (
+                  t("classification.cleanupDuplicates.clusterMergeAll")
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>

@@ -1068,7 +1068,16 @@
       "merging": "Fusion en cours…",
       "mergedToast": "{{count}} email(s) déplacés vers « {{target}} »",
       "close": "Fermer",
-      "detecting": "Analyse en cours…"
+      "detecting": "Analyse en cours…",
+      "clustersTitle": "Doublons exacts",
+      "clustersDesc": "Plusieurs catégories portent le même nom — souvent créées en parallèle au triage. Une seule fusion suffit pour tout regrouper.",
+      "clusterLine": "{{count}} catégories nommées « {{name}} »",
+      "clusterTotalEmails": "{{count}} emails au total",
+      "clusterMergeAll": "Tout fusionner en une seule",
+      "clusterMergeConfirmTitle": "Fusionner les {{count}} catégories « {{name}} » ?",
+      "clusterMergeConfirmDesc": "Tous les emails seront réaffectés à une seule catégorie « {{name}} » (celle qui contient déjà le plus d'emails). Les {{deleted}} autres copies seront supprimées. Action irréversible.",
+      "clusterMergedToast": "{{count}} email(s) regroupés — {{deleted}} doublon(s) supprimé(s)",
+      "pairsTitle": "Noms similaires (à reviewer)"
     },
     "sections": {
       "byPack": "Pack {{name}}",
