@@ -49,7 +49,7 @@
     "dailyBrief": "روزانہ کا جائزہ",
     "tasks": "کام",
     "tasksAndFollowup": "کام اور نگرانی",
-    "projects": "پروجیکٹس",
+    "projects": "ٹیم فولڈرز",
     "classification": "زمرہ جات",
     "settings": "ترتیبات",
     "subscription": "سبسکرپشن",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} ای میل(ز) دوبارہ درجہ بند کی گئی ہیں",
     "priority": "ترجیحات",
     "category": "زمرے",
-    "project": "پروجیکٹ",
+    "project": "ٹیم فولڈر",
     "assignedTo": "تفویض کردہ",
-    "noProject": "کوئی پروجیکٹ نہیں",
+    "noProject": "کوئی ٹیم فولڈر نہیں",
     "notAssigned": "غیر تفویض کردہ",
     "priorities": {
       "urgent": "فوری",
@@ -764,7 +764,7 @@
     "taskCreated": "کام تخلیق ہوا"
   },
   "projects": {
-    "title": "پروجیکٹس",
+    "title": "ٹیم فولڈرز",
     "noProjects": "کوئی پروجیکٹ نہیں",
     "noProjectsDesc": "اپنے ای میلز اور کاموں کو گروپ کرنے کے لیے ایک پروجیکٹ بنائیں۔",
     "addProject": "نیا پروجیکٹ",

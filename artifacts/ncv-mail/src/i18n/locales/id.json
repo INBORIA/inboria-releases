@@ -49,7 +49,7 @@
     "dailyBrief": "Laporan harian",
     "tasks": "Tugas",
     "tasksAndFollowup": "Tugas & Pelacakan",
-    "projects": "Proyek",
+    "projects": "Folder tim",
     "classification": "Kategori",
     "settings": "Pengaturan",
     "subscription": "Langganan",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email yang diklasifikasikan ulang",
     "priority": "Prioritas",
     "category": "Kategori",
-    "project": "Proyek",
+    "project": "Folder tim",
     "assignedTo": "Ditugaskan",
-    "noProject": "Tidak ada proyek",
+    "noProject": "Tidak ada folder tim",
     "notAssigned": "Tidak ditugaskan",
     "priorities": {
       "urgent": "Mendesak",
@@ -764,7 +764,7 @@
     "taskCreated": "Tugas dibuat"
   },
   "projects": {
-    "title": "Proyek",
+    "title": "Folder tim",
     "noProjects": "Tidak ada proyek",
     "noProjectsDesc": "Buat proyek untuk mengelompokkan email dan tugas Anda.",
     "addProject": "Proyek Baru",

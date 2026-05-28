@@ -49,7 +49,7 @@
     "dailyBrief": "Päivittäinen yhteenveto",
     "tasks": "Tehtävät",
     "tasksAndFollowup": "Tehtävät & Seuranta",
-    "projects": "Projektit",
+    "projects": "Tiimikansiot",
     "classification": "Luokat",
     "settings": "Asetukset",
     "subscription": "Tilaukset",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} sähköpostia uudelleenluokiteltu",
     "priority": "Prioriteetti",
     "category": "Kategoriat",
-    "project": "Projekti",
+    "project": "Tiimikansio",
     "assignedTo": "Määrätty",
-    "noProject": "Ei projektia",
+    "noProject": "Ei tiimikansiota",
     "notAssigned": "Ei määrätty",
     "priorities": {
       "urgent": "Kiireellinen",
@@ -764,7 +764,7 @@
     "taskCreated": "Tehtävä luotu"
   },
   "projects": {
-    "title": "Projektit",
+    "title": "Tiimikansiot",
     "noProjects": "Ei projekteja",
     "noProjectsDesc": "Luo projekti yhdistääksesi sähköpostisi ja tehtäväsi.",
     "addProject": "Uusi projekti",

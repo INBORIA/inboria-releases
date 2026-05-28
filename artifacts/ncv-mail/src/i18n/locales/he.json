@@ -49,7 +49,7 @@
     "dailyBrief": "דו״ח יומי",
     "tasks": "משימות",
     "tasksAndFollowup": "משימות & מעקב",
-    "projects": "פרויקטים",
+    "projects": "תיקיות צוות",
     "classification": "קטגוריות",
     "settings": "הגדרות",
     "subscription": "מנוי",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} דוא״ל(ים) ממוין(ים) מחדש",
     "priority": "עדיפות",
     "category": "קטגוריות",
-    "project": "פרויקט",
+    "project": "תיקיית צוות",
     "assignedTo": "מוקצה",
-    "noProject": "אין פרויקט",
+    "noProject": "אין תיקיית צוות",
     "notAssigned": "לא מוקצה",
     "priorities": {
       "urgent": "דחוף",
@@ -764,7 +764,7 @@
     "taskCreated": "משימה נוצרה"
   },
   "projects": {
-    "title": "פרויקטים",
+    "title": "תיקיות צוות",
     "noProjects": "אין פרויקטים",
     "noProjectsDesc": "צור פרויקט כדי לקבץ את הדוא״לים והמשימות שלך.",
     "addProject": "פרויקט חדש",

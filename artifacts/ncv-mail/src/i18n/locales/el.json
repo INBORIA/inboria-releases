@@ -49,7 +49,7 @@
     "dailyBrief": "Ημερήσια αναφορά",
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Παρακολούθηση",
-    "projects": "Έργα",
+    "projects": "Φάκελοι ομάδας",
     "classification": "Κατηγορίες",
     "settings": "Impostazioni",
     "subscription": "Συνδρομή",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(α) επαναταξινομήθηκαν",
     "priority": "Προτεραιότητα",
     "category": "Κατηγορίες",
-    "project": "Έργο",
+    "project": "Φάκελος ομάδας",
     "assignedTo": "Ανατεθειμένο",
-    "noProject": "Κανένα έργο",
+    "noProject": "Χωρίς φάκελο ομάδας",
     "notAssigned": "Μη ανατεθειμένο",
     "priorities": {
       "urgent": "Επείγον",
@@ -764,7 +764,7 @@
     "taskCreated": "Ατζέντα δημιουργημένη"
   },
   "projects": {
-    "title": "Έργα",
+    "title": "Φάκελοι ομάδας",
     "noProjects": "Κανένα έργο",
     "noProjectsDesc": "Δημιουργήστε ένα έργο για να ομαδοποιήσετε τα emails και τις ατζέντες σας.",
     "addProject": "Νέο έργο",

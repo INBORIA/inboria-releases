@@ -49,7 +49,7 @@
     "dailyBrief": "Dnevni pregled",
     "tasks": "Zadaci",
     "tasksAndFollowup": "Zadaci & Praćenje",
-    "projects": "Projekti",
+    "projects": "Timske mape",
     "classification": "Kategorije",
     "settings": "Postavke",
     "subscription": "Pretplata",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-pošta(e) ponovno razvrstano(e)",
     "priority": "Prioritet",
     "category": "Kategorije",
-    "project": "Projekt",
+    "project": "Timska mapa",
     "assignedTo": "Dodijeljeno",
-    "noProject": "Nema projekta",
+    "noProject": "Nema timske mape",
     "notAssigned": "Nije dodijeljeno",
     "priorities": {
       "urgent": "Hitno",
@@ -764,7 +764,7 @@
     "taskCreated": "Zadatak kreiran"
   },
   "projects": {
-    "title": "Projekti",
+    "title": "Timske mape",
     "noProjects": "Nema projekata",
     "noProjectsDesc": "Kreirajte projekt za grupiranje svojih e-pošta i zadataka.",
     "addProject": "Novi projekt",

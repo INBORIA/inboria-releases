@@ -49,7 +49,7 @@
     "dailyBrief": "Щоденний звіт",
     "tasks": "Завдання",
     "tasksAndFollowup": "Завдання та моніторинг",
-    "projects": "Проекти",
+    "projects": "Папки команди",
     "classification": "Категорії",
     "settings": "Налаштування",
     "subscription": "Підписка",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} електронний лист(и) перекласифіковано",
     "priority": "Пріоритет",
     "category": "Категорії",
-    "project": "Проект",
+    "project": "Папка команди",
     "assignedTo": "Призначено",
-    "noProject": "Немає проекту",
+    "noProject": "Без папки команди",
     "notAssigned": "Не призначено",
     "priorities": {
       "urgent": "Терміново",
@@ -764,7 +764,7 @@
     "taskCreated": "Завдання створено"
   },
   "projects": {
-    "title": "Проекти",
+    "title": "Папки команди",
     "noProjects": "Жодного проекту",
     "noProjectsDesc": "Створіть проект для об'єднання Ваших електронних листів та завдань.",
     "addProject": "Новий проект",

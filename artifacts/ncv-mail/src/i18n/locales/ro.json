@@ -49,7 +49,7 @@
     "dailyBrief": "Bilanț zilnic",
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Urmărire",
-    "projects": "Proiecte",
+    "projects": "Foldere echipă",
     "classification": "Categorii",
     "settings": "Impostazioni",
     "subscription": "Abonament",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(uri) reclasificat(e)",
     "priority": "Prioritate",
     "category": "Categorii",
-    "project": "Proiect",
+    "project": "Folder echipă",
     "assignedTo": "Atribuit",
-    "noProject": "Niciun proiect",
+    "noProject": "Fără folder de echipă",
     "notAssigned": "Neatribuit",
     "priorities": {
       "urgent": "Urgent",
@@ -764,7 +764,7 @@
     "taskCreated": "Activitate creată"
   },
   "projects": {
-    "title": "Proiecte",
+    "title": "Foldere echipă",
     "noProjects": "Niciun proiect",
     "noProjectsDesc": "Creați un proiect pentru a grupa emailurile și activitățile dumneavoastră.",
     "addProject": "Proiect nou",

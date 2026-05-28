@@ -49,7 +49,7 @@
     "dailyBrief": "Dnevno poročilo",
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania & Spremljanje",
-    "projects": "Projekti",
+    "projects": "Skupinske mape",
     "classification": "Kategorije",
     "settings": "Nastavitve",
     "subscription": "Naročnina",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-pošt(e) prekategorizirane",
     "priority": "Prioriteta",
     "category": "Kategorije",
-    "project": "Projekt",
+    "project": "Skupinska mapa",
     "assignedTo": "Dodeljeno",
-    "noProject": "Brez projekta",
+    "noProject": "Brez skupinske mape",
     "notAssigned": "Nedodeljeno",
     "priorities": {
       "urgent": "Nujno",
@@ -764,7 +764,7 @@
     "taskCreated": "Zadnja ustvarjena"
   },
   "projects": {
-    "title": "Projekt",
+    "title": "Skupinske mape",
     "noProjects": "Brez projekta",
     "noProjectsDesc": "Ustvarite projekt za združitev vaših e-pošt in zadnj.",
     "addProject": "Nov projekt",

@@ -49,7 +49,7 @@
     "dailyBrief": "Günlük rapor",
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Takip",
-    "projects": "Projeler",
+    "projects": "Ekip klasörleri",
     "classification": "Kategoriler",
     "settings": "Impostazioni",
     "subscription": "Abonelik",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-posta(lar) yeniden sınıflandırıldı",
     "priority": "Öncelik",
     "category": "Kategoriler",
-    "project": "Proje",
+    "project": "Ekip klasörü",
     "assignedTo": "Atandı",
-    "noProject": "Hiçbir proje yok",
+    "noProject": "Ekip klasörü yok",
     "notAssigned": "Atanmamış",
     "priorities": {
       "urgent": "Acelesi var",
@@ -764,7 +764,7 @@
     "taskCreated": "Görev oluşturuldu"
   },
   "projects": {
-    "title": "Projeler",
+    "title": "Ekip klasörleri",
     "noProjects": "Hiç proje yok",
     "noProjectsDesc": "E-postalarınızı ve görevlerinizi gruplamak için bir proje oluşturun.",
     "addProject": "Yeni proje",

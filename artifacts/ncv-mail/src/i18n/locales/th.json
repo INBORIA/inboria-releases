@@ -49,7 +49,7 @@
     "dailyBrief": "รายงานประจำวัน",
     "tasks": "งาน",
     "tasksAndFollowup": "งาน & การติดตาม",
-    "projects": "โครงการ",
+    "projects": "โฟลเดอร์ทีม",
     "classification": "หมวดหมู่",
     "settings": "การตั้งค่า",
     "subscription": "การสมัครสมาชิก",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} อีเมลที่จัดประเภทใหม่",
     "priority": "ความสำคัญ",
     "category": "หมวดหมู่",
-    "project": "โครงการ",
+    "project": "โฟลเดอร์ทีม",
     "assignedTo": "ได้รับมอบหมาย",
-    "noProject": "ไม่มีโครงการ",
+    "noProject": "ไม่มีโฟลเดอร์ทีม",
     "notAssigned": "ไม่ได้รับมอบหมาย",
     "priorities": {
       "urgent": "เร่งด่วน",
@@ -764,7 +764,7 @@
     "taskCreated": "งานถูกสร้าง"
   },
   "projects": {
-    "title": "โครงการ",
+    "title": "โฟลเดอร์ทีม",
     "noProjects": "ไม่มีโครงการ",
     "noProjectsDesc": "สร้างโครงการเพื่อรวมอีเมลและงานของท่าน.",
     "addProject": "โครงการใหม่",

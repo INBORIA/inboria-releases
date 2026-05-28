@@ -49,7 +49,7 @@
     "dailyBrief": "Balanç diari",
     "tasks": "Tarees",
     "tasksAndFollowup": "Tarees i Seguiment",
-    "projects": "Projectes",
+    "projects": "Carpetes d'equip",
     "classification": "Categories",
     "settings": "Configuració",
     "subscription": "Subscripció",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} correu(s) reclassificat(s)",
     "priority": "Prioritat",
     "category": "Categories",
-    "project": "Projecte",
+    "project": "Carpeta d'equip",
     "assignedTo": "Assignat",
-    "noProject": "Cap projecte",
+    "noProject": "Sense carpeta d'equip",
     "notAssigned": "No assignat",
     "priorities": {
       "urgent": "Urgent",
@@ -764,7 +764,7 @@
     "taskCreated": "Tasques creada"
   },
   "projects": {
-    "title": "Projectes",
+    "title": "Carpetes d'equip",
     "noProjects": "Cap projecte",
     "noProjectsDesc": "Creeu un projecte per agrupar els vostres correus electrònics i tasques.",
     "addProject": "Nou projecte",

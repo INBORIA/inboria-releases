@@ -49,7 +49,7 @@
     "dailyBrief": "Дневен отчет",
     "tasks": "Задачи",
     "tasksAndFollowup": "Задачи & Проследяване",
-    "projects": "Проекти",
+    "projects": "Папки на екипа",
     "classification": "Категории",
     "settings": "Настройки",
     "subscription": "Абонамент",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} имейл(и) пренасочен(и)",
     "priority": "Приоритет",
     "category": "Категории",
-    "project": "Проект",
+    "project": "Папка на екипа",
     "assignedTo": "Назначен",
-    "noProject": "Няма проект",
+    "noProject": "Без папка на екипа",
     "notAssigned": "Не е назначен",
     "priorities": {
       "urgent": "Спешен",
@@ -764,7 +764,7 @@
     "taskCreated": "Задача създадена"
   },
   "projects": {
-    "title": "Проекти",
+    "title": "Папки на екипа",
     "noProjects": "Няма проект",
     "noProjectsDesc": "Създайте проект, за да групирате Вашите имейли и задачи.",
     "addProject": "Нов проект",

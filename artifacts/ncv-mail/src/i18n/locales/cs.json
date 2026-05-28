@@ -49,7 +49,7 @@
     "dailyBrief": "Denní zpráva",
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania & Sledování",
-    "projects": "Projekty",
+    "projects": "Týmové složky",
     "classification": "Kategorie",
     "settings": "Nastavení",
     "subscription": "Předplatné",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(y) přeřazen(y)",
     "priority": "Priorita",
     "category": "Kategorie",
-    "project": "Projekt",
+    "project": "Týmová složka",
     "assignedTo": "Přiřazené",
-    "noProject": "Žádný projekt",
+    "noProject": "Žádná týmová složka",
     "notAssigned": "Nepřiřazené",
     "priorities": {
       "urgent": "Urgentní",
@@ -764,7 +764,7 @@
     "taskCreated": "Úkol vytvořen"
   },
   "projects": {
-    "title": "Projekty",
+    "title": "Týmové složky",
     "noProjects": "Žádný projekt",
     "noProjectsDesc": "Vytvořte projekt pro seskupení svých emailů a úkolů.",
     "addProject": "Nový projekt",

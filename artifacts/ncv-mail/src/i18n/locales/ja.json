@@ -49,7 +49,7 @@
     "dailyBrief": "日次レポート",
     "tasks": "タスク",
     "tasksAndFollowup": "タスク & フォローアップ",
-    "projects": "プロジェクト",
+    "projects": "チームフォルダ",
     "classification": "カテゴリー",
     "settings": "設定",
     "subscription": "サブスクリプション",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} 件のメールが再分類されました",
     "priority": "優先度",
     "category": "カテゴリ",
-    "project": "プロジェクト",
+    "project": "チームフォルダ",
     "assignedTo": "割り当て済み",
-    "noProject": "プロジェクトなし",
+    "noProject": "チームフォルダなし",
     "notAssigned": "未割り当て",
     "priorities": {
       "urgent": "緊急",
@@ -764,7 +764,7 @@
     "taskCreated": "タスクが作成されました"
   },
   "projects": {
-    "title": "プロジェクト",
+    "title": "チームフォルダ",
     "noProjects": "プロジェクトはありません",
     "noProjectsDesc": "メールとタスクをまとめるためのプロジェクトを作成してください。",
     "addProject": "新しいプロジェクト",

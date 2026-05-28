@@ -49,7 +49,7 @@
     "dailyBrief": "របាយការណ៍ប្រចាំថ្ងៃ",
     "tasks": "ភារកិច្ច",
     "tasksAndFollowup": "ភារកិច្ច & តាមដាន",
-    "projects": "គម្រោង",
+    "projects": "ថតក្រុម",
     "classification": "ប្រភេទ",
     "settings": "ការកំណត់",
     "subscription": "ការជាវ",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} អ៊ីមែលដែលបានចាត់ថ្នាក់ឡើងវិញ",
     "priority": "អាទិភាព",
     "category": "ប្រភេទ",
-    "project": "គម្រោង",
+    "project": "ថតក្រុម",
     "assignedTo": "បានចាត់តាំង",
-    "noProject": "មិនមានគម្រោង",
+    "noProject": "មិនមានថតក្រុម",
     "notAssigned": "មិនបានចាត់តាំង",
     "priorities": {
       "urgent": "បន្ទាន់",
@@ -764,7 +764,7 @@
     "taskCreated": "ការងារបង្កើតឡើង"
   },
   "projects": {
-    "title": "គម្រោង",
+    "title": "ថតក្រុម",
     "noProjects": "មិនមានគម្រោង",
     "noProjectsDesc": "សូមបង្កើតគម្រោងដើម្បីបញ្ចូលអ៊ីមែលនិងការងាររបស់លោកអ្នក។",
     "addProject": "គម្រោងថ្មី",

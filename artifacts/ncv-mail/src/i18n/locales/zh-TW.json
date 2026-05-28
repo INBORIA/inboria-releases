@@ -49,7 +49,7 @@
     "dailyBrief": "每日報告",
     "tasks": "任務",
     "tasksAndFollowup": "任務與追蹤",
-    "projects": "專案",
+    "projects": "團隊資料夾",
     "classification": "類別",
     "settings": "設定",
     "subscription": "訂閱",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} 封電子郵件已重新分類",
     "priority": "優先級",
     "category": "類別",
-    "project": "專案",
+    "project": "團隊資料夾",
     "assignedTo": "已指派",
-    "noProject": "無專案",
+    "noProject": "無團隊資料夾",
     "notAssigned": "未指派",
     "priorities": {
       "urgent": "緊急",
@@ -764,7 +764,7 @@
     "taskCreated": "任務已創建"
   },
   "projects": {
-    "title": "專案",
+    "title": "團隊資料夾",
     "noProjects": "沒有專案",
     "noProjectsDesc": "創建一個專案以組織您的電子郵件和任務。",
     "addProject": "新專案",

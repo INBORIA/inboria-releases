@@ -49,7 +49,7 @@
     "dailyBrief": "Resoconto giornaliero",
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Monitoraggio",
-    "projects": "Progetti",
+    "projects": "Cartelle del team",
     "classification": "Categorie",
     "settings": "Impostazioni",
     "subscription": "Abbonamento",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(e) riclassificate(e)",
     "priority": "Priorità",
     "category": "Categorie",
-    "project": "Progetto",
+    "project": "Cartella del team",
     "assignedTo": "Assegnato",
-    "noProject": "Nessun progetto",
+    "noProject": "Nessuna cartella del team",
     "notAssigned": "Non assegnato",
     "priorities": {
       "urgent": "Urgente",
@@ -764,7 +764,7 @@
     "taskCreated": "Attività creata"
   },
   "projects": {
-    "title": "Progetti",
+    "title": "Cartelle del team",
     "noProjects": "Nessun progetto",
     "noProjectsDesc": "Crei un progetto per raggruppare le sue email e attività.",
     "addProject": "Nuovo progetto",

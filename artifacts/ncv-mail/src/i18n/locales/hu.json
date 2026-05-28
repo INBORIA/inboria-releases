@@ -49,7 +49,7 @@
     "dailyBrief": "Napi összegzés",
     "tasks": "Feladatok",
     "tasksAndFollowup": "Feladatok & Követés",
-    "projects": "Projektek",
+    "projects": "Csapat mappák",
     "classification": "Kategóriák",
     "settings": "Beállítások",
     "subscription": "Előfizetés",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-mail újrakategorizálva",
     "priority": "Prioritás",
     "category": "Kategóriák",
-    "project": "Projekt",
+    "project": "Csapat mappa",
     "assignedTo": "Hozzárendelve",
-    "noProject": "Nincs projekt",
+    "noProject": "Nincs csapat mappa",
     "notAssigned": "Nincs hozzárendelve",
     "priorities": {
       "urgent": "Sürgős",
@@ -764,7 +764,7 @@
     "taskCreated": "Feladat létrehozva"
   },
   "projects": {
-    "title": "Projektek",
+    "title": "Csapat mappák",
     "noProjects": "Nincs projekt",
     "noProjectsDesc": "Hozzon létre egy projektet az emailek és feladatok csoportosításához.",
     "addProject": "Új projekt",

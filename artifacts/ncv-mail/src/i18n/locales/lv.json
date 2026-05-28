@@ -49,7 +49,7 @@
     "dailyBrief": "Ikdienas pārskats",
     "tasks": "Uzdevumi",
     "tasksAndFollowup": "Uzdevumi & Sekot",
-    "projects": "Projekti",
+    "projects": "Komandas mapes",
     "classification": "Kategorijas",
     "settings": "Iestatījumi",
     "subscription": "Abonements",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-pasts(-i) pārvietots(-i)",
     "priority": "Prioritāte",
     "category": "Kategorijas",
-    "project": "Projekts",
+    "project": "Komandas mape",
     "assignedTo": "Piešķirts",
-    "noProject": "Nav projekta",
+    "noProject": "Nav komandas mapes",
     "notAssigned": "Nepiešķirts",
     "priorities": {
       "urgent": "Steidzami",
@@ -764,7 +764,7 @@
     "taskCreated": "Uzdevums izveidots"
   },
   "projects": {
-    "title": "Projekti",
+    "title": "Komandas mapes",
     "noProjects": "Nav projektu",
     "noProjectsDesc": "Izveidojiet projektu, lai apvienotu Jūsu e-pastus un uzdevumus.",
     "addProject": "Jauns projekts",

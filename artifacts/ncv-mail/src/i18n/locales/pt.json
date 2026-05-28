@@ -49,7 +49,7 @@
     "dailyBrief": "Relatório diário",
     "tasks": "Tarefas",
     "tasksAndFollowup": "Tarefas & Acompanhamento",
-    "projects": "Projetos",
+    "projects": "Pastas da equipe",
     "classification": "Categorias",
     "settings": "Definições",
     "subscription": "Assinatura",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(s) reclassificado(s)",
     "priority": "Prioridade",
     "category": "Categorias",
-    "project": "Projeto",
+    "project": "Pasta da equipe",
     "assignedTo": "Atribuído",
-    "noProject": "Nenhum projeto",
+    "noProject": "Sem pasta da equipe",
     "notAssigned": "Não atribuído",
     "priorities": {
       "urgent": "Urgente",
@@ -764,7 +764,7 @@
     "taskCreated": "Tarefa criada"
   },
   "projects": {
-    "title": "Projetos",
+    "title": "Pastas da equipe",
     "noProjects": "Nenhum projeto",
     "noProjectsDesc": "Crie um projeto para agrupar seus emails e tarefas.",
     "addProject": "Novo projeto",

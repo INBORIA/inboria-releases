@@ -49,7 +49,7 @@
     "dailyBrief": "Igapäevane ülevaade",
     "tasks": "Ülesanded",
     "tasksAndFollowup": "Ülesanded & Jälgimine",
-    "projects": "Projektid",
+    "projects": "Meeskonna kaustad",
     "classification": "Kategooriad",
     "settings": "Seaded",
     "subscription": "Tellimus",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-kirja klassifitseeritud",
     "priority": "Prioriteet",
     "category": "Kategooriad",
-    "project": "Projekt",
+    "project": "Meeskonna kaust",
     "assignedTo": "Määratud",
-    "noProject": "Ei ühtegi projekti",
+    "noProject": "Meeskonna kausta pole",
     "notAssigned": "Määramata",
     "priorities": {
       "urgent": "Hädaolukord",
@@ -764,7 +764,7 @@
     "taskCreated": "Ülesanne loodud"
   },
   "projects": {
-    "title": "Projektid",
+    "title": "Meeskonna kaustad",
     "noProjects": "Ühtegi projekti ei ole",
     "noProjectsDesc": "Looge projekt, et koguda oma e-kirjad ja ülesanded.",
     "addProject": "Uus projekt",

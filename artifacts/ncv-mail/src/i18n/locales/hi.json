@@ -49,7 +49,7 @@
     "dailyBrief": "दैनिक रिपोर्ट",
     "tasks": "कार्य",
     "tasksAndFollowup": "कार्य & अनुसरण",
-    "projects": "परियोजनाएँ",
+    "projects": "टीम फ़ोल्डर",
     "classification": "श्रेणियाँ",
     "settings": "सेटिंग्स",
     "subscription": "सदस्यता",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} ईमेल(ों) को पुनर्वर्गीकृत किया गया",
     "priority": "प्राथमिकता",
     "category": "श्रेणियाँ",
-    "project": "परियोजना",
+    "project": "टीम फ़ोल्डर",
     "assignedTo": "असाइन किया गया",
-    "noProject": "कोई परियोजना नहीं",
+    "noProject": "कोई टीम फ़ोल्डर नहीं",
     "notAssigned": "असाइन नहीं किया गया",
     "priorities": {
       "urgent": "तत्काल",
@@ -764,7 +764,7 @@
     "taskCreated": "कार्य बनाया गया"
   },
   "projects": {
-    "title": "परियोजनाएँ",
+    "title": "टीम फ़ोल्डर",
     "noProjects": "कोई परियोजना नहीं",
     "noProjectsDesc": "अपने ईमेल और कार्यों को समूहित करने के लिए एक परियोजना बनाएं।",
     "addProject": "नई परियोजना",

@@ -49,7 +49,7 @@
     "dailyBrief": "التقرير اليومي",
     "tasks": "المهام",
     "tasksAndFollowup": "المهام والتتبع",
-    "projects": "المشاريع",
+    "projects": "مجلدات الفريق",
     "classification": "الفئات",
     "settings": "الإعدادات",
     "subscription": "الاشتراك",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} بريد إلكتروني(ات) أعيد تصنيفه(ها)",
     "priority": "الأولوية",
     "category": "الفئات",
-    "project": "المشروع",
+    "project": "مجلد الفريق",
     "assignedTo": "مخصص",
-    "noProject": "لا يوجد مشروع",
+    "noProject": "لا يوجد مجلد فريق",
     "notAssigned": "غير مخصص",
     "priorities": {
       "urgent": "عاجل",
@@ -764,7 +764,7 @@
     "taskCreated": "تم إنشاء المهمة"
   },
   "projects": {
-    "title": "المشاريع",
+    "title": "مجلدات الفريق",
     "noProjects": "لا توجد مشاريع",
     "noProjectsDesc": "قم بإنشاء مشروع لتجميع بريدكم الإلكتروني ومهامكم.",
     "addProject": "مشروع جديد",

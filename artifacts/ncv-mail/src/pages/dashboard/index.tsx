@@ -5277,7 +5277,7 @@ export default function Dashboard() {
               <div className="relative">
                 <button onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu} onClick={openProjectSubmenu}
                   className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
-                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })}</span>
+                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un dossier équipe" })}</span>
                   <ChevronRight className="w-3 h-3 opacity-60" />
                 </button>
                 {projectSubmenuOpen && (
@@ -5358,7 +5358,7 @@ export default function Dashboard() {
               <div className="relative">
                 <button onMouseEnter={openProjectSubmenu} onMouseLeave={scheduleCloseProjectSubmenu} onClick={openProjectSubmenu}
                   className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
-                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })} ({selectedIds.size})</span>
+                  <span className="flex items-center gap-2.5"><Briefcase className="w-3.5 h-3.5" />{t("inbox.assignToProject", { defaultValue: "Affecter à un dossier équipe" })} ({selectedIds.size})</span>
                   <ChevronRight className="w-3 h-3 opacity-60" />
                 </button>
                 {projectSubmenuOpen && (

@@ -49,7 +49,7 @@
     "dailyBrief": "Дневни извештај",
     "tasks": "Задатци",
     "tasksAndFollowup": "Задатци & Праћење",
-    "projects": "Пројекти",
+    "projects": "Тимске фасцикле",
     "classification": "Категорије",
     "settings": "Подешавања",
     "subscription": "Чланство",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} имејл(а) преименован(а)",
     "priority": "Приоритет",
     "category": "Категорије",
-    "project": "Пројекат",
+    "project": "Тимска фасцикла",
     "assignedTo": "Додељено",
-    "noProject": "Нема пројекта",
+    "noProject": "Нема тимске фасцикле",
     "notAssigned": "Недодељено",
     "priorities": {
       "urgent": "Хитан",
@@ -764,7 +764,7 @@
     "taskCreated": "Задатак креиран"
   },
   "projects": {
-    "title": "Пројекти",
+    "title": "Тимске фасцикле",
     "noProjects": "Нема пројеката",
     "noProjectsDesc": "Креирајте пројекат да групишете своје имејлове и задатке.",
     "addProject": "Нови пројекат",

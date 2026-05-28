@@ -49,7 +49,7 @@
     "dailyBrief": "Kasdienis ataskaitos",
     "tasks": "Užduotys",
     "tasksAndFollowup": "Užduotys ir sekimas",
-    "projects": "Projektai",
+    "projects": "Komandos aplankai",
     "classification": "Kategorijos",
     "settings": "Nustatymai",
     "subscription": "Prenumerata",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} el. laiškas(-ai) perklasifikuotas(-i)",
     "priority": "Prioritetas",
     "category": "Kategorijos",
-    "project": "Projektas",
+    "project": "Komandos aplankas",
     "assignedTo": "Priskirta",
-    "noProject": "Nėra projekto",
+    "noProject": "Nėra komandos aplanko",
     "notAssigned": "Nepaskirta",
     "priorities": {
       "urgent": "Skubus",
@@ -764,7 +764,7 @@
     "taskCreated": "Užduotis sukurta"
   },
   "projects": {
-    "title": "Projektai",
+    "title": "Komandos aplankai",
     "noProjects": "Nėra projektų",
     "noProjectsDesc": "Sukurkite projektą, kad sugrupuotumėte savo el. laiškus ir užduotis.",
     "addProject": "Naujas projektas",

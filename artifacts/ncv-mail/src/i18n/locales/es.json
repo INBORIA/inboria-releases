@@ -49,7 +49,7 @@
     "dailyBrief": "Resumen diario",
     "tasks": "Tareas",
     "tasksAndFollowup": "Tareas & Seguimiento",
-    "projects": "Proyectos",
+    "projects": "Carpetas de equipo",
     "classification": "Categorías",
     "settings": "Configuraciones",
     "subscription": "Suscripción",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} correo(s) reclasificado(s)",
     "priority": "Prioridad",
     "category": "Categorías",
-    "project": "Proyecto",
+    "project": "Carpeta de equipo",
     "assignedTo": "Asignado a",
-    "noProject": "Sin proyecto",
+    "noProject": "Sin carpeta de equipo",
     "notAssigned": "No asignado",
     "priorities": {
       "urgent": "Urgente",
@@ -774,7 +774,7 @@
     "taskCreated": "Tarea creada"
   },
   "projects": {
-    "title": "Proyectos",
+    "title": "Carpetas de equipo",
     "noProjects": "No hay proyectos",
     "noProjectsDesc": "Crea un proyecto para agrupar tus correos electrónicos y tareas.",
     "addProject": "Nuevo proyecto",

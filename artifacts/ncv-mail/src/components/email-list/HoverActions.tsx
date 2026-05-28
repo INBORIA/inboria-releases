@@ -153,7 +153,7 @@ function HoverActionsImpl({
       )}
       {userProjects && userProjects.length > 0 && cb.onSetProject && (
         <div className="relative">
-          <button className={btn} title={t("inbox.assignToProject", { defaultValue: "Affecter à un projet" })} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "project" ? null : "project"); }}><Briefcase className="w-3.5 h-3.5" /></button>
+          <button className={btn} title={t("inbox.assignToProject", { defaultValue: "Affecter à un dossier équipe" })} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "project" ? null : "project"); }}><Briefcase className="w-3.5 h-3.5" /></button>
           {openMenu === "project" && (
             <div className={`${popover} max-h-[260px] overflow-y-auto`} onMouseDown={stopMD}>
               {userProjects.map((p: any) => (

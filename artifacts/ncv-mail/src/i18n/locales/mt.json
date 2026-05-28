@@ -49,7 +49,7 @@
     "dailyBrief": "Rapport ta' kuljum",
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Segwitu",
-    "projects": "Proġetti",
+    "projects": "Fowlders tat-tim",
     "classification": "Kategoriji",
     "settings": "Impostazzjonijiet",
     "subscription": "Abbonament",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(i) reklassifikati",
     "priority": "Priorità",
     "category": "Kategoriji",
-    "project": "Proġett",
+    "project": "Fowlder tat-tim",
     "assignedTo": "Assegnat",
-    "noProject": "L-ebda proġett",
+    "noProject": "L-ebda fowlder tat-tim",
     "notAssigned": "Mhux assegnat",
     "priorities": {
       "urgent": "Urgenti",
@@ -764,7 +764,7 @@
     "taskCreated": "Attività maħluqa"
   },
   "projects": {
-    "title": "Proġetti",
+    "title": "Fowlders tat-tim",
     "noProjects": "M'hemm l-ebda proġett",
     "noProjectsDesc": "Oħloq proġett biex tiġbor l-emails u l-attivitajiet tagħkom.",
     "addProject": "Proġett ġdid",

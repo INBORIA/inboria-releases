@@ -49,7 +49,7 @@
     "dailyBrief": "Ежедневный отчёт",
     "tasks": "Задачи",
     "tasksAndFollowup": "Задачи и отслеживание",
-    "projects": "Проекты",
+    "projects": "Папки команды",
     "classification": "Категории",
     "settings": "Настройки",
     "subscription": "Подписка",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} электронное письмо(а) переклассифицировано(ы)",
     "priority": "Приоритет",
     "category": "Категории",
-    "project": "Проект",
+    "project": "Папка команды",
     "assignedTo": "Назначено",
-    "noProject": "Нет проекта",
+    "noProject": "Нет папки команды",
     "notAssigned": "Не назначено",
     "priorities": {
       "urgent": "Срочно",
@@ -764,7 +764,7 @@
     "taskCreated": "Задача создана"
   },
   "projects": {
-    "title": "Проекты",
+    "title": "Папки команды",
     "noProjects": "Нет проектов",
     "noProjectsDesc": "Создайте проект, чтобы сгруппировать ваши emails и задачи.",
     "addProject": "Новый проект",

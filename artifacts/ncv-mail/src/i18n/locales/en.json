@@ -49,7 +49,7 @@
     "dailyBrief": "Daily brief",
     "tasks": "Tasks",
     "tasksAndFollowup": "Tasks & Follow-up",
-    "projects": "Projects",
+    "projects": "Team folders",
     "classification": "Categories",
     "settings": "Settings",
     "subscription": "Subscription",
@@ -263,9 +263,9 @@
     "recategorizeSuccess": "{{count}} email(s) recategorized",
     "priority": "Priority",
     "category": "Categories",
-    "project": "Project",
+    "project": "Team folder",
     "assignedTo": "Assigned to",
-    "noProject": "No project",
+    "noProject": "No team folder",
     "notAssigned": "Unassigned",
     "priorities": {
       "urgent": "Urgent",
@@ -790,7 +790,7 @@
     "taskCreated": "Task created"
   },
   "projects": {
-    "title": "Projects",
+    "title": "Team folders",
     "noProjects": "No projects",
     "noProjectsDesc": "Create a project to group your emails and tasks.",
     "addProject": "New project",

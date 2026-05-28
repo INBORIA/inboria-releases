@@ -49,7 +49,7 @@
     "dailyBrief": "Daglig sammanställning",
     "tasks": "Uppgifter",
     "tasksAndFollowup": "Uppgifter & Uppföljning",
-    "projects": "Projekt",
+    "projects": "Teammappar",
     "classification": "Kategorier",
     "settings": "Inställningar",
     "subscription": "Prenumeration",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-postmeddelande(n) omklassificerad(e)",
     "priority": "Prioritet",
     "category": "Kategorier",
-    "project": "Projekt",
+    "project": "Teammapp",
     "assignedTo": "Tilldelad",
-    "noProject": "Inget projekt",
+    "noProject": "Ingen teammapp",
     "notAssigned": "Ej tilldelad",
     "priorities": {
       "urgent": "Brådskande",
@@ -764,7 +764,7 @@
     "taskCreated": "Uppgift skapad"
   },
   "projects": {
-    "title": "Projekt",
+    "title": "Teammappar",
     "noProjects": "Inget projekt",
     "noProjectsDesc": "Skapa ett projekt för att gruppera dina e-postmeddelanden och uppgifter.",
     "addProject": "Nytt projekt",

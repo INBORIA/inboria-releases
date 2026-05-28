@@ -49,7 +49,7 @@
     "dailyBrief": "Daglig rapport",
     "tasks": "Opgaver",
     "tasksAndFollowup": "Opgaver & Opfølgning",
-    "projects": "Projekter",
+    "projects": "Teammapper",
     "classification": "Kategorier",
     "settings": "Indstillinger",
     "subscription": "Abonnement",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-mail(s) genklassificeret(e)",
     "priority": "Prioritet",
     "category": "Kategorier",
-    "project": "Projekt",
+    "project": "Teammappe",
     "assignedTo": "Tildelt",
-    "noProject": "Ingen projekt",
+    "noProject": "Ingen teammappe",
     "notAssigned": "Ikke tildelt",
     "priorities": {
       "urgent": "Haster",
@@ -764,7 +764,7 @@
     "taskCreated": "Opgave oprettet"
   },
   "projects": {
-    "title": "Projekter",
+    "title": "Teammapper",
     "noProjects": "Ingen projekter",
     "noProjectsDesc": "Opret et projekt for at samle dine e-mails og opgaver.",
     "addProject": "Nyt projekt",

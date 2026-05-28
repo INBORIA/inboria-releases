@@ -49,7 +49,7 @@
     "dailyBrief": "Báo cáo hàng ngày",
     "tasks": "Công việc",
     "tasksAndFollowup": "Công việc & Theo dõi",
-    "projects": "Dự án",
+    "projects": "Thư mục nhóm",
     "classification": "Danh mục",
     "settings": "Cài đặt",
     "subscription": "Gói đăng ký",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} email(s) đã được phân loại lại",
     "priority": "Ưu tiên",
     "category": "Danh mục",
-    "project": "Dự án",
+    "project": "Thư mục nhóm",
     "assignedTo": "Được phân công",
-    "noProject": "Không có dự án",
+    "noProject": "Không có thư mục nhóm",
     "notAssigned": "Chưa được phân công",
     "priorities": {
       "urgent": "Khẩn cấp",
@@ -764,7 +764,7 @@
     "taskCreated": "Nhiệm vụ đã được tạo"
   },
   "projects": {
-    "title": "Dự án",
+    "title": "Thư mục nhóm",
     "noProjects": "Không có dự án nào",
     "noProjectsDesc": "Quý khách hãy tạo một dự án để nhóm các email và nhiệm vụ của Quý khách lại với nhau.",
     "addProject": "Dự án mới",

@@ -49,7 +49,7 @@
     "dailyBrief": "Codzienny raport",
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania i Śledzenie",
-    "projects": "Projekty",
+    "projects": "Foldery zespołu",
     "classification": "Kategorie",
     "settings": "Ustawienia",
     "subscription": "Subskrypcja",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-mail(i) przypisany(e)",
     "priority": "Priorytet",
     "category": "Kategorie",
-    "project": "Projekt",
+    "project": "Folder zespołu",
     "assignedTo": "Przypisany",
-    "noProject": "Brak projektu",
+    "noProject": "Brak folderu zespołu",
     "notAssigned": "Nieprzypisany",
     "priorities": {
       "urgent": "Pilne",
@@ -764,7 +764,7 @@
     "taskCreated": "Zadanie utworzone"
   },
   "projects": {
-    "title": "Projekty",
+    "title": "Foldery zespołu",
     "noProjects": "Brak projektu",
     "noProjectsDesc": "Utwórz projekt, aby zgrupować swoje e-maile i zadania.",
     "addProject": "Nowy projekt",

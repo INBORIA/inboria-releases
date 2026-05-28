@@ -49,7 +49,7 @@
     "dailyBrief": "Bliain laethúil",
     "tasks": "Tascanna",
     "tasksAndFollowup": "Tascanna & Súil",
-    "projects": "Tionscadail",
+    "projects": "Fillteáin foirne",
     "classification": "Catagóirí",
     "settings": "Socruithe",
     "subscription": "Conradh",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} ríomhphost(a) athchláraithe",
     "priority": "Tosaíocht",
     "category": "Catagóirí",
-    "project": "Tionscadal",
+    "project": "Fillteán foirne",
     "assignedTo": "Ceangailte",
-    "noProject": "Níl aon tionscadal",
+    "noProject": "Gan fillteán foirne",
     "notAssigned": "Neamhcheangailte",
     "priorities": {
       "urgent": "Tábhachtach",
@@ -764,7 +764,7 @@
     "taskCreated": "Tasc cruthaithe"
   },
   "projects": {
-    "title": "Tionscnaimh",
+    "title": "Fillteáin foirne",
     "noProjects": "Níl aon thionscadal",
     "noProjectsDesc": "Cruthaigh tionscadal chun bhur ríomhphoist agus tascanna a ghrúpáil.",
     "addProject": "Tionscadal nua",

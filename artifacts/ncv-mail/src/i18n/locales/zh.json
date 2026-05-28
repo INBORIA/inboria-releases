@@ -49,7 +49,7 @@
     "dailyBrief": "每日总结",
     "tasks": "任务",
     "tasksAndFollowup": "任务与跟踪",
-    "projects": "项目",
+    "projects": "团队文件夹",
     "classification": "类别",
     "settings": "设置",
     "subscription": "订阅",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} 封邮件已重新分类",
     "priority": "优先级",
     "category": "类别",
-    "project": "项目",
+    "project": "团队文件夹",
     "assignedTo": "已分配",
-    "noProject": "没有项目",
+    "noProject": "无团队文件夹",
     "notAssigned": "未分配",
     "priorities": {
       "urgent": "紧急",
@@ -764,7 +764,7 @@
     "taskCreated": "任务已创建"
   },
   "projects": {
-    "title": "项目",
+    "title": "团队文件夹",
     "noProjects": "没有项目",
     "noProjectsDesc": "创建一个项目以汇总您的邮件和任务。",
     "addProject": "新项目",

@@ -49,7 +49,7 @@
     "dailyBrief": "Denná správa",
     "tasks": "Úlohy",
     "tasksAndFollowup": "Úlohy & Sledovanie",
-    "projects": "Projekt",
+    "projects": "Tímové priečinky",
     "classification": "Kategórie",
     "settings": "Nastavenia",
     "subscription": "Predplatné",
@@ -246,9 +246,9 @@
     "recategorizeSuccess": "{{count}} e-mail(y) zaradené",
     "priority": "Priorita",
     "category": "Kategórie",
-    "project": "Projekt",
+    "project": "Tímový priečinok",
     "assignedTo": "Priradené",
-    "noProject": "Žiadny projekt",
+    "noProject": "Žiadny tímový priečinok",
     "notAssigned": "Nepriradené",
     "priorities": {
       "urgent": "Urgentné",
@@ -764,7 +764,7 @@
     "taskCreated": "Úloha vytvorená"
   },
   "projects": {
-    "title": "Projekty",
+    "title": "Tímové priečinky",
     "noProjects": "Žiadny projekt",
     "noProjectsDesc": "Vytvorte projekt na zoskupenie svojich e-mailov a úloh.",
     "addProject": "Nový projekt",
