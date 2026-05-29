@@ -648,7 +648,7 @@ export default function Relances() {
               </p>
             </div>
           ) : (
-            <div className="rounded-lg border border-border/40 overflow-hidden bg-white/[0.01]">
+            <div className="space-y-0">
               <VirtualizedMailList
                 items={aiList}
                 keyExtractor={(f: any) => f.id}

@@ -838,7 +838,7 @@ export default function Taches() {
                 <p className="text-[12px] text-[#8b95a7]">{t("tasks.noTasksDesc")}</p>
               </div>
             ) : (
-              <div className="rounded-lg border border-[#1f2937] overflow-hidden bg-white/[0.01]">
+              <div className="space-y-0">
                 {filteredTasks.map((task: any) => {
                   const taskStatus = task.status || "todo";
                   const isDone = taskStatus === "done";

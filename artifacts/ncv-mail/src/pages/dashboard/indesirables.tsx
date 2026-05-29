@@ -680,8 +680,8 @@ export default function Indesirables() {
                     data-row-id={email.id}
                     title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${new Date(email.createdAt).toLocaleString()}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
                     className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
-                      risk === "veryHigh" ? "border-l-red-500/70" : risk === "medium" ? "border-l-amber-500/60" : "border-l-transparent"
-                    } ${isSelected ? "bg-primary/[0.10]" : "hover:bg-white/[0.03]"}`}
+                      isSelected ? "border-l-primary bg-primary/[0.10]" : "border-l-transparent hover:bg-white/[0.03]"
+                    }`}
                     onMouseDown={(e) => {
                       if (e.button !== 0) return;
                       isDraggingRef.current = true;
