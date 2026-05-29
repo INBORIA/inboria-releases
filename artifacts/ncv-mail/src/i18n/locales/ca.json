@@ -1288,8 +1288,8 @@
     "seatCount": "Nombre de seients",
     "collaborators": "col·laboradors",
     "collaborator": "col·laborador",
-    "perSeatPerMonth": "És a dir, 21,99€ per seient / mes (mínim 3 seients)",
-    "seatsExample": "Exemple: 3 col·laboradors = 65,97€/mes — modificable en qualsevol moment des del vostre espai.",
+    "perSeatPerMonth": "És a dir, 16,99€ per seient / mes (mínim 3 seients)",
+    "seatsExample": "Exemple: 3 col·laboradors = 50,97€/mes — modificable en qualsevol moment des del vostre espai.",
     "expiredSubscription": "La vostra subscripció ha caducat",
     "trialEndedFull": "La vostra prova gratuïta ha acabat",
     "resubscribe": "Re-subscriviu-vos a un pla de pagament per continuar utilitzant Inboria.",
@@ -1370,12 +1370,12 @@
     "free": "Gratuït",
     "perMonth": "/mes",
     "perSeatMonth": "/seient/mes",
-    "perSeatDetail": "És a dir, 21,99€ per seient/mes",
+    "perSeatDetail": "És a dir, 16,99€ per seient/mes",
     "redirecting": "Redirecció...",
     "start": "Començar",
     "numberOfCollaborators": "Nombre de col·laboradors",
     "total": "Total",
-    "seatsExample": "Exemple: 3 col·laboradors = 65,97€/mes — modificable en qualsevol moment des del vostre espai."
+    "seatsExample": "Exemple: 3 col·laboradors = 50,97€/mes — modificable en qualsevol moment des del vostre espai."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Preparat per transformar la gestió del correu electrònic del vostre equip?",
       "ctaDesc": "Uneix-te als equips que han adoptat l'Inboria per a una col·laboració més fluida i una productivitat multiplicada per deu — arreu del món, en 43 idiomes.",
       "discoverBusiness": "Descobrir el pla Business",
-      "ctaFooter": "Pla Business a partir de 65,97€/mes (3 seients a 21,99€/seient) • Extensible fins a 50 seients • Configuració en 2 minuts",
+      "ctaFooter": "Pla Business a partir de 50,97€/mes (3 seients a 16,99€/seient) • Extensible fins a 50 seients • Configuració en 2 minuts",
       "faqTitle": "Preguntes freqüents",
       "faq1q": "Quants membres puc afegir al meu equip?",
       "faq1a": "El pla Business inclou seients bàsics, i podeu afegir-ne tants com sigui necessari directament des del vostre portal d'abonament. No hi ha cap límit imposat.",
@@ -2320,7 +2320,7 @@
       "subscription": "Subscripció",
       "subscriptionDesc": "Gereu el vostre pla de subscripció Inboria. Compareu les ofertes i passeu a un pla superior.",
       "subscriptionFeatures": [
-        "4 plans: Prova (gratuïta), Solo (9€/mes), Pro (19€/mes), Business (a partir de 65,97€/mes)",
+        "4 plans: Prova (gratuïta), Solo (9€/mes), Pro (19€/mes), Business (a partir de 50,97€/mes)",
         "Prova gratuïta de 100 crèdits IA inclosos",
         "Pagament segur a través de Paddle",
         "Veieu el vostre quota i el vostre consum actual",

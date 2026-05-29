@@ -1288,8 +1288,8 @@
     "seatCount": "Vietu skaits",
     "collaborators": "darbinieki",
     "collaborator": "darbinieks",
-    "perSeatPerMonth": "Tātad 21,99€ par vietu / mēnesī (minimāli 3 vietas)",
-    "seatsExample": "Piemērs: 3 darbinieki = 65,97€/mēnesī — maināms jebkurā laikā no Jūsu profila.",
+    "perSeatPerMonth": "Tātad 16,99€ par vietu / mēnesī (minimāli 3 vietas)",
+    "seatsExample": "Piemērs: 3 darbinieki = 50,97€/mēnesī — maināms jebkurā laikā no Jūsu profila.",
     "expiredSubscription": "Jūsu abonements ir beidzies",
     "trialEndedFull": "Jūsu bezmaksas izmēģinājums ir beidzies",
     "resubscribe": "Pārejat uz maksas plānu, lai turpinātu izmantot Inboria.",
@@ -1370,12 +1370,12 @@
     "free": "Bezmaksas",
     "perMonth": "/mēnesī",
     "perSeatMonth": "/vietā/mēnesī",
-    "perSeatDetail": "Tas ir 21,99€ par vietu/mēnesī",
+    "perSeatDetail": "Tas ir 16,99€ par vietu/mēnesī",
     "redirecting": "Pāradresācija...",
     "start": "Sākt",
     "numberOfCollaborators": "Darbinieku skaits",
     "total": "Kopā",
-    "seatsExample": "Piemērs: 3 darbinieki = 65,97€/mēnesī — maināms jebkurā laikā Jūsu telpā."
+    "seatsExample": "Piemērs: 3 darbinieki = 50,97€/mēnesī — maināms jebkurā laikā Jūsu telpā."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Vai esat gatavi pārveidot Jūsu komandas e-pasta pārvaldību?",
       "ctaDesc": "Pievienojieties Beļģijas un Francijas MVU, kas jau ir pieņēmuši Inboria, lai nodrošinātu plūstošāku sadarbību un palielinātu produktivitāti.",
       "discoverBusiness": "Atklājiet Business plānu",
-      "ctaFooter": "Business plāns sākot no 65,97€/mēnesī (3 vietas par 21,99€/vietu) • Paplašināms līdz 50 vietām • Iestatīšana 2 minūtēs",
+      "ctaFooter": "Business plāns sākot no 50,97€/mēnesī (3 vietas par 16,99€/vietu) • Paplašināms līdz 50 vietām • Iestatīšana 2 minūtēs",
       "faqTitle": "Biežāk uzdotie jautājumi",
       "faq1q": "Cik dalībnieku es varu pievienot savai komandai?",
       "faq1a": "Business plāns ietver pamata vietas, un Jūs varat pievienot tik daudz, cik nepieciešams, tieši no Jūsu abonēšanas portāla. Nav noteikta ierobežojuma.",
@@ -2320,7 +2320,7 @@
       "subscription": "Abonements",
       "subscriptionDesc": "Pārvaldiet savu Inboria abonēšanas plānu. Salīdziniet piedāvājumus un pārejiet uz augstāku plānu.",
       "subscriptionFeatures": [
-        "4 plāni: Izmēģinājums (bez maksas), Solo (9€/mēnesī), Pro (19€/mēnesī), Business (no 65,97€/mēnesī)",
+        "4 plāni: Izmēģinājums (bez maksas), Solo (9€/mēnesī), Pro (19€/mēnesī), Business (no 50,97€/mēnesī)",
         "Bezmaksas izmēģinājums ar 100 IA kredītiem iekļauts",
         "Droša maksājuma veikšana caur Paddle",
         "Skatīt savu kvotu un pašreizējo patēriņu",

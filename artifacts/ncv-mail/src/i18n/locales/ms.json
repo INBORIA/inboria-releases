@@ -1288,8 +1288,8 @@
     "seatCount": "Bilangan tempat duduk",
     "collaborators": "rakan sekerja",
     "collaborator": "rakan sekerja",
-    "perSeatPerMonth": "Iaitu 21,99€ setiap tempat duduk / bulan (minimum 3 tempat duduk)",
-    "seatsExample": "Contoh: 3 rakan sekerja = 65,97€/bulan — boleh diubah pada bila-bila masa dari ruang anda.",
+    "perSeatPerMonth": "Iaitu 16,99€ setiap tempat duduk / bulan (minimum 3 tempat duduk)",
+    "seatsExample": "Contoh: 3 rakan sekerja = 50,97€/bulan — boleh diubah pada bila-bila masa dari ruang anda.",
     "expiredSubscription": "Langganan anda telah tamat",
     "trialEndedFull": "Percubaan percuma anda telah tamat",
     "resubscribe": "Langgan semula kepada pelan berbayar untuk terus menggunakan Inboria.",
@@ -1370,12 +1370,12 @@
     "free": "Percuma",
     "perMonth": "/bulan",
     "perSeatMonth": "/pengguna/bulan",
-    "perSeatDetail": "Iaitu 21,99€ setiap pengguna/bulan",
+    "perSeatDetail": "Iaitu 16,99€ setiap pengguna/bulan",
     "redirecting": "Pengalihan...",
     "start": "Mulakan",
     "numberOfCollaborators": "Jumlah rakan sekerja",
     "total": "Jumlah",
-    "seatsExample": "Contoh: 3 rakan sekerja = 65,97€/bulan — boleh diubah pada bila-bila masa dari ruang anda."
+    "seatsExample": "Contoh: 3 rakan sekerja = 50,97€/bulan — boleh diubah pada bila-bila masa dari ruang anda."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Sedia untuk mengubah pengurusan emel pasukan anda?",
       "ctaDesc": "Sertai pasukan yang telah memilih Inboria untuk kerjasama yang lebih lancar dan produktiviti sepuluh kali ganda — di seluruh dunia, dalam 43 bahasa.",
       "discoverBusiness": "Ketahui lebih lanjut tentang pelan Perniagaan",
-      "ctaFooter": "Pelan Perniagaan bermula dari 65,97€/bulan (3 tempat duduk pada 21,99€/tempat duduk) • Boleh diperluas sehingga 50 tempat duduk • Persediaan dalam 2 minit",
+      "ctaFooter": "Pelan Perniagaan bermula dari 50,97€/bulan (3 tempat duduk pada 16,99€/tempat duduk) • Boleh diperluas sehingga 50 tempat duduk • Persediaan dalam 2 minit",
       "faqTitle": "Soalan lazim",
       "faq1q": "Berapa ramai ahli yang boleh saya tambahkan ke dalam pasukan saya?",
       "faq1a": "Pelan Perniagaan termasuk tempat duduk asas, dan anda boleh menambah sebanyak yang diperlukan terus dari portal langganan anda. Tiada had yang dikenakan.",
@@ -2320,7 +2320,7 @@
       "subscription": "Langganan",
       "subscriptionDesc": "Urus pelan langganan Inboria anda. Bandingkan tawaran dan naik taraf ke pelan yang lebih tinggi.",
       "subscriptionFeatures": [
-        "4 pelan: Percubaan (percuma), Solo (9€/bulan), Pro (19€/bulan), Perniagaan (dari 65,97€/bulan)",
+        "4 pelan: Percubaan (percuma), Solo (9€/bulan), Pro (19€/bulan), Perniagaan (dari 50,97€/bulan)",
         "Percubaan percuma dengan 100 kredit IA termasuk",
         "Pembayaran selamat melalui Paddle",
         "Lihat kuota dan penggunaan semasa anda",

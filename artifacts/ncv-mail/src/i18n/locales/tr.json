@@ -1288,8 +1288,8 @@
     "seatCount": "Koltuk sayısı",
     "collaborators": "çalışanlar",
     "collaborator": "çalışan",
-    "perSeatPerMonth": "Aylık koltuk başına 21,99€ (minimum 3 koltuk)",
-    "seatsExample": "Örnek: 3 çalışan = 65,97€/ay — kişisel alanınızdan istediğiniz zaman değiştirilebilir.",
+    "perSeatPerMonth": "Aylık koltuk başına 16,99€ (minimum 3 koltuk)",
+    "seatsExample": "Örnek: 3 çalışan = 50,97€/ay — kişisel alanınızdan istediğiniz zaman değiştirilebilir.",
     "expiredSubscription": "Aboneliğinizin süresi dolmuş",
     "trialEndedFull": "Ücretsiz denemeniz sona erdi",
     "resubscribe": "Inboria'yı kullanmaya devam etmek için ücretli bir plana yeniden abone olun.",
@@ -1370,12 +1370,12 @@
     "free": "Ücretsiz",
     "perMonth": "/ay",
     "perSeatMonth": "/koltuk/ay",
-    "perSeatDetail": "Yani koltuk başına 21,99€ / ay",
+    "perSeatDetail": "Yani koltuk başına 16,99€ / ay",
     "redirecting": "Yönlendiriliyor...",
     "start": "Başlamak",
     "numberOfCollaborators": "Çalışan sayısı",
     "total": "Toplam",
-    "seatsExample": "Örnek: 3 çalışan = 65,97€/ay — istediğiniz zaman alanınızdan değiştirebilirsiniz."
+    "seatsExample": "Örnek: 3 çalışan = 50,97€/ay — istediğiniz zaman alanınızdan değiştirebilirsiniz."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Ekibinizin e-posta yönetimini dönüştürmeye hazır mısınız?",
       "ctaDesc": "Daha akıcı işbirliği ve on kat verimlilik için Inboria'yı tercih eden ekiplere katılın — dünya genelinde, 43 dilde.",
       "discoverBusiness": "İş planını keşfedin",
-      "ctaFooter": "İş planı 65,97€/aydan itibaren (3 koltuk 21,99€/koltuk) • 50 koltuğa kadar genişletilebilir • 2 dakikada yapılandırma",
+      "ctaFooter": "İş planı 50,97€/aydan itibaren (3 koltuk 16,99€/koltuk) • 50 koltuğa kadar genişletilebilir • 2 dakikada yapılandırma",
       "faqTitle": "Sıkça sorulan sorular",
       "faq1q": "Ekibime kaç üye ekleyebilirim?",
       "faq1a": "İş planı temel koltukları içerir ve abonelik portalınızdan ihtiyaç duyduğunuz kadar ekleyebilirsiniz. Belirli bir sınır yoktur.",
@@ -2320,7 +2320,7 @@
       "subscription": "Abonelik",
       "subscriptionDesc": "Inboria abonelik planınızı yönetin. Teklifleri karşılaştırın ve daha üst bir plana geçin.",
       "subscriptionFeatures": [
-        "4 plan: Deneme (ücretsiz), Solo (ayda 9€), Pro (ayda 19€), Business (ayda 65,97€'dan itibaren)",
+        "4 plan: Deneme (ücretsiz), Solo (ayda 9€), Pro (ayda 19€), Business (ayda 50,97€'dan itibaren)",
         "100 IA kredisi ile ücretsiz deneme dahil",
         "Paddle üzerinden güvenli ödeme",
         "Kotanız ve mevcut tüketiminizi görün",

@@ -1288,8 +1288,8 @@
     "seatCount": "Număr de locuri",
     "collaborators": "colaboratori",
     "collaborator": "colaborator",
-    "perSeatPerMonth": "Adică 21,99€ pe loc / lună (minimum 3 locuri)",
-    "seatsExample": "Exemplu: 3 colaboratori = 65,97€/lună — modificabil în orice moment din spațiul dumneavoastră.",
+    "perSeatPerMonth": "Adică 16,99€ pe loc / lună (minimum 3 locuri)",
+    "seatsExample": "Exemplu: 3 colaboratori = 50,97€/lună — modificabil în orice moment din spațiul dumneavoastră.",
     "expiredSubscription": "Abonamentul dumneavoastră a expirat",
     "trialEndedFull": "Perioada dumneavoastră de probă gratuită s-a încheiat",
     "resubscribe": "Reabonați-vă la un plan plătit pentru a continua să utilizați Inboria.",
@@ -1370,12 +1370,12 @@
     "free": "Gratuit",
     "perMonth": "/lună",
     "perSeatMonth": "/utilizator/lună",
-    "perSeatDetail": "Adică 21,99€ pe utilizator/lună",
+    "perSeatDetail": "Adică 16,99€ pe utilizator/lună",
     "redirecting": "Redirecționare...",
     "start": "Începeți",
     "numberOfCollaborators": "Număr de colaboratori",
     "total": "Total",
-    "seatsExample": "Exemplu: 3 colaboratori = 65,97€/lună — modificabil în orice moment din spațiul dumneavoastră."
+    "seatsExample": "Exemplu: 3 colaboratori = 50,97€/lună — modificabil în orice moment din spațiul dumneavoastră."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Sunteți gata să transformați gestionarea emailurilor echipei dumneavoastră?",
       "ctaDesc": "Alăturați-vă echipelor care au adoptat Inboria pentru o colaborare mai fluidă și o productivitate înzecită — în întreaga lume, în 43 de limbi.",
       "discoverBusiness": "Descoperiți planul Business",
-      "ctaFooter": "Plan Business începând de la 65,97€/lună (3 locuri la 21,99€/loc) • Extensibil până la 50 de locuri • Configurare în 2 minute",
+      "ctaFooter": "Plan Business începând de la 50,97€/lună (3 locuri la 16,99€/loc) • Extensibil până la 50 de locuri • Configurare în 2 minute",
       "faqTitle": "Întrebări frecvente",
       "faq1q": "Câți membri pot adăuga în echipa mea?",
       "faq1a": "Planul Business include locuri de bază, iar dumneavoastră puteți adăuga câte doriți direct din portalul de abonament. Nu există o limită impusă.",
@@ -2320,7 +2320,7 @@
       "subscription": "Abonament",
       "subscriptionDesc": "Gestionați planul dumneavoastră de abonament Inboria. Comparați ofertele și treceți la un plan superior.",
       "subscriptionFeatures": [
-        "4 planuri: Încercare (gratuit), Solo (9€/lună), Pro (19€/lună), Business (începând de la 65,97€/lună)",
+        "4 planuri: Încercare (gratuit), Solo (9€/lună), Pro (19€/lună), Business (începând de la 50,97€/lună)",
         "Încercare gratuită de 100 de credite IA inclusă",
         "Plată securizată prin Paddle",
         "Vizualizați cota și consumul dumneavoastră actual",

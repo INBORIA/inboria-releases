@@ -1288,8 +1288,8 @@
     "seatCount": "Kohtade arv",
     "collaborators": "kaastöötajad",
     "collaborator": "kaastöötaja",
-    "perSeatPerMonth": "Kokku 21,99€ iga koha kohta / kuu (minimaalselt 3 kohta)",
-    "seatsExample": "Näide: 3 kaastöötajat = 65,97€/kuu — muudetav igal ajal teie isiklikus ruumis.",
+    "perSeatPerMonth": "Kokku 16,99€ iga koha kohta / kuu (minimaalselt 3 kohta)",
+    "seatsExample": "Näide: 3 kaastöötajat = 50,97€/kuu — muudetav igal ajal teie isiklikus ruumis.",
     "expiredSubscription": "Teie tellimus on aegunud",
     "trialEndedFull": "Teie tasuta prooviperiood on lõppenud",
     "resubscribe": "Palun tellige tasuline plaan, et jätkata Inboria kasutamist.",
@@ -1370,12 +1370,12 @@
     "free": "Tasuta",
     "perMonth": "/kuu",
     "perSeatMonth": "/iste/kuu",
-    "perSeatDetail": "Kokku 21,99€ iga iste/kuu",
+    "perSeatDetail": "Kokku 16,99€ iga iste/kuu",
     "redirecting": "Suunamine...",
     "start": "Alustama",
     "numberOfCollaborators": "Koostöötajate arv",
     "total": "Kokku",
-    "seatsExample": "Näide: 3 koostöötajat = 65,97€/kuu — muudetav igal ajal Teie ruumis."
+    "seatsExample": "Näide: 3 koostöötajat = 50,97€/kuu — muudetav igal ajal Teie ruumis."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Kas olete valmis muutma oma meeskonna e-kirjade haldamist?",
       "ctaDesc": "Liituge tiimidega, kes on valinud Inboria sujuvama koostöö ja kümnekordse tootlikkuse nimel — kogu maailmas, 43 keeles.",
       "discoverBusiness": "Avastage Business plaan",
-      "ctaFooter": "Business plaan alates 65,97€/kuu (3 kohta 21,99€/koht) • Laiendatav kuni 50 kohani • Seadistamine 2 minutiga",
+      "ctaFooter": "Business plaan alates 50,97€/kuu (3 kohta 16,99€/koht) • Laiendatav kuni 50 kohani • Seadistamine 2 minutiga",
       "faqTitle": "Korduma kippuvad küsimused",
       "faq1q": "Kui palju liikmeid võin oma meeskonda lisada?",
       "faq1a": "Business plaan sisaldab põhikohti, ja Te saate lisada nii palju kui vajalik otse oma tellimuse portaalist. Piiranguid ei ole.",
@@ -2320,7 +2320,7 @@
       "subscription": "Tellimus",
       "subscriptionDesc": "Haldage oma Inboria tellimuse plaani. Võrrelge pakkumisi ja üleminek kõrgemale plaanile.",
       "subscriptionFeatures": [
-        "4 plaani: Katse (tasuta), Solo (9€/kuu), Pro (19€/kuu), Business (alates 65,97€/kuu)",
+        "4 plaani: Katse (tasuta), Solo (9€/kuu), Pro (19€/kuu), Business (alates 50,97€/kuu)",
         "Tasuta katse 100 tehisintellekti krediiti sisaldab",
         "Turvaline makse läbi Paddle",
         "Vaadake oma kvooti ja praegust tarbimist",

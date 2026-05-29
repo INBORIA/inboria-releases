@@ -1288,8 +1288,8 @@
     "seatCount": "Antal platser",
     "collaborators": "medarbetare",
     "collaborator": "medarbetare",
-    "perSeatPerMonth": "Det blir 21,99€ per plats / månad (minst 3 platser)",
-    "seatsExample": "Exempel: 3 medarbetare = 65,97€/månad — kan ändras när som helst från ditt utrymme.",
+    "perSeatPerMonth": "Det blir 16,99€ per plats / månad (minst 3 platser)",
+    "seatsExample": "Exempel: 3 medarbetare = 50,97€/månad — kan ändras när som helst från ditt utrymme.",
     "expiredSubscription": "Ditt abonnemang har löpt ut",
     "trialEndedFull": "Din gratis provperiod är slut",
     "resubscribe": "Återanvänd en betalplan för att fortsätta använda Inboria.",
@@ -1370,12 +1370,12 @@
     "free": "Gratis",
     "perMonth": "/månad",
     "perSeatMonth": "/användare/månad",
-    "perSeatDetail": "Det blir 21,99€ per användare/månad",
+    "perSeatDetail": "Det blir 16,99€ per användare/månad",
     "redirecting": "Omdirigering...",
     "start": "Börja",
     "numberOfCollaborators": "Antal medarbetare",
     "total": "Totalt",
-    "seatsExample": "Exempel: 3 medarbetare = 65,97€/månad — kan ändras när som helst från ditt konto."
+    "seatsExample": "Exempel: 3 medarbetare = 50,97€/månad — kan ändras när som helst från ditt konto."
   },
   "marketing": {
     "home": {
@@ -1863,7 +1863,7 @@
       "ctaTitle": "Redo att transformera din teams e-posthantering?",
       "ctaDesc": "Anslut dig till teamen som har valt Inboria för smidigare samarbete och tiofaldig produktivitet — över hela världen, på 43 språk.",
       "discoverBusiness": "Upptäck Business-planen",
-      "ctaFooter": "Business-plan från 65,97€/månad (3 platser till 21,99€/plats) • Utbyggbar upp till 50 platser • Konfiguration på 2 minuter",
+      "ctaFooter": "Business-plan från 50,97€/månad (3 platser till 16,99€/plats) • Utbyggbar upp till 50 platser • Konfiguration på 2 minuter",
       "faqTitle": "Vanliga frågor",
       "faq1q": "Hur många medlemmar kan jag lägga till i mitt team?",
       "faq1a": "Business-planen inkluderar grundplatser, och du kan lägga till så många som behövs direkt från din prenumerationsportal. Det finns ingen påtvingad gräns.",
@@ -2320,7 +2320,7 @@
       "subscription": "Prenumeration",
       "subscriptionDesc": "Hantera din Inboria-prenumeration. Jämför erbjudanden och uppgradera till en högre plan.",
       "subscriptionFeatures": [
-        "4 planer: Test (gratis), Solo (9€/månad), Pro (19€/månad), Business (från 65,97€/månad)",
+        "4 planer: Test (gratis), Solo (9€/månad), Pro (19€/månad), Business (från 50,97€/månad)",
         "Gratis test med 100 AI-krediter inkluderat",
         "Säker betalning via Paddle",
         "Se din kvot och din aktuella förbrukning",

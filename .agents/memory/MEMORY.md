@@ -1,0 +1,1 @@
+- [Ripgrep masks numbers](ripgrep-number-masking.md) — `rg` output replaced price/number strings with "n"/"ln"; trust `grep`/`sed`/`read` for numeric ground truth.

@@ -1298,8 +1298,8 @@
     "seatCount": "Anzahl der Sitze",
     "collaborators": "Mitarbeiter",
     "collaborator": "Mitarbeiter",
-    "perSeatPerMonth": "21,99 € pro Sitz/Monat (mindestens 3 Sitze)",
-    "seatsExample": "Beispiel: 3 Mitarbeiter = 65,97 €/Monat — jederzeit aus Ihrem Bereich anpassbar.",
+    "perSeatPerMonth": "16,99 € pro Sitz/Monat (mindestens 3 Sitze)",
+    "seatsExample": "Beispiel: 3 Mitarbeiter = 50,97 €/Monat — jederzeit aus Ihrem Bereich anpassbar.",
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
     "trialEndedFull": "Ihre kostenlose Testphase ist beendet",
     "resubscribe": "Abonnieren Sie einen kostenpflichtigen Plan, um Inboria weiterhin zu nutzen.",
@@ -1380,12 +1380,12 @@
     "free": "Kostenlos",
     "perMonth": "/Monat",
     "perSeatMonth": "/Sitz/Monat",
-    "perSeatDetail": "d.h. 21,99 € pro Sitz/Monat",
+    "perSeatDetail": "d.h. 16,99 € pro Sitz/Monat",
     "redirecting": "Weiterleitung...",
     "start": "Loslegen",
     "numberOfCollaborators": "Anzahl der Mitarbeiter",
     "total": "Gesamt",
-    "seatsExample": "Beispiel: 3 Mitarbeiter = 65,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar."
+    "seatsExample": "Beispiel: 3 Mitarbeiter = 50,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar."
   },
   "marketing": {
     "home": {
@@ -1873,7 +1873,7 @@
       "ctaTitle": "Bereit, das E-Mail-Management Ihres Teams zu transformieren?",
       "ctaDesc": "Schließen Sie sich den Teams an, die Inboria für reibungslosere Zusammenarbeit und zehnfache Produktivität nutzen — weltweit, in 43 Sprachen.",
       "discoverBusiness": "Geschäftsplan entdecken",
-      "ctaFooter": "Geschäftsplan ab 65,97 €/Monat (3 Sitze à 21,99 €/Sitz) • Skalierbar bis zu 50 Sitzen • Einrichtung in 2 Minuten",
+      "ctaFooter": "Geschäftsplan ab 50,97 €/Monat (3 Sitze à 16,99 €/Sitz) • Skalierbar bis zu 50 Sitzen • Einrichtung in 2 Minuten",
       "faqTitle": "Häufig gestellte Fragen",
       "faq1q": "Wie viele Mitglieder kann ich zu meinem Team hinzufügen?",
       "faq1a": "Der Geschäftsplan umfasst Basissitze, und Sie können so viele hinzufügen, wie Sie direkt über Ihr Abonnement-Portal benötigen. Es gibt keine festgelegte Grenze.",
@@ -2330,7 +2330,7 @@
       ],
       "subscriptionDesc": "Verwalten Sie Ihren Inboria-Abonnementplan. Vergleichen Sie Angebote und upgraden Sie.",
       "subscriptionFeatures": [
-        "4 Pläne: Test (kostenlos), Solo (9 €/Monat), Pro (19 €/Monat), Business (ab 65,97 €/Monat)",
+        "4 Pläne: Test (kostenlos), Solo (9 €/Monat), Pro (19 €/Monat), Business (ab 50,97 €/Monat)",
         "Kostenlose Testversion von 100 E-Mails enthalten",
         "Sichere Zahlung über Paddle",
         "Sehen Sie Ihre KI-Credits und Ihren aktuellen Verbrauch",
