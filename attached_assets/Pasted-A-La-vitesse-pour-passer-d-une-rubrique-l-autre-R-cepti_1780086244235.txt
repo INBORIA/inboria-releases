@@ -1,0 +1,25 @@
+A. La vitesse pour passer d'une rubrique à l'autre (Réception → Envoyés → Agenda…)
+
+Ce qui se passe aujourd'hui :
+
+Chaque rubrique est chargée à la demande (« lazy »). Concrètement : la toute première fois que tu ouvres une rubrique dans une session, le navigateur télécharge un petit bout de programme → un très court délai (souvent imperceptible, parfois un éclair de chargement). Les fois suivantes : instantané, c'est en cache.
+Les données récemment vues sont gardées en mémoire un certain temps (1 à 5 min selon les écrans). Si tu reviens sur une rubrique dans ce laps de temps, elle s'affiche instantanément, sans recharger.
+Quand ça se rafraîchit, l'ancien contenu reste affiché pendant le rafraîchissement (pas d'écran blanc qui clignote).
+Verdict : c'est déjà bien optimisé. Le seul vrai point faible = le petit délai la première fois qu'on ouvre chaque rubrique.
+Ce qui rendrait ça « Superhuman » : précharger les rubriques en avance — par ex. dès que ta souris survole un onglet du menu (Envoyés, Agenda…), l'app télécharge en douce le programme ET les données de cette rubrique, pour que le clic soit toujours instantané, même la première fois.
+
+B. La vitesse d'ouverture d'un mail quand tu cliques dessus
+
+Ce qui se passe aujourd'hui :
+
+Quand ta souris survole un mail dans la liste, l'app le charge déjà en arrière-plan, avant même que tu cliques (« prefetch au survol »). Du coup, au moment où tu cliques, le contenu est souvent déjà prêt → ouverture instantanée. C'est exactement la technique de Superhuman.
+Verdict : très bon sur ce point.
+Ce qui manque encore :
+
+Le préchargement ne se déclenche qu'au survol souris. Si tu navigues au clavier (j/k), il n'y a pas ce préchargement → le mail suivant peut avoir un mini-temps de chargement. La correction : précharger aussi le mail suivant/précédent quand on bouge au clavier.
+On pourrait aussi précharger la page suivante de la liste quand tu approches du bas, pour un défilement sans accroc.
+En résumé clair :
+
+Changer de rubrique = rapide, sauf un petit délai la 1ʳᵉ fois → solution : précharger au survol du menu.
+Ouvrir un mail à la souris = déjà quasi instantané.
+Ouvrir un mail au clavier = à améliorer (précharger le mail suivant).
