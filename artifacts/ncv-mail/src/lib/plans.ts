@@ -54,8 +54,8 @@ export const plans = [
   {
     id: "business",
     name: "Business",
-    price: "21.99",
-    priceYear: "211.10",
+    price: "15.99",
+    priceYear: "153.50",
     quota: 10000,
     description: "Pour les équipes",
     features: [
