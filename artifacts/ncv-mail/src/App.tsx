@@ -82,6 +82,62 @@ function RouteLoadingFallback() {
   );
 }
 
+// Préchauffage des chunks de pages en tâche de fond. Les pages du dashboard
+// sont chargées à la demande (lazy) pour démarrer vite ; conséquence : la
+// 1ère ouverture d'une page affiche un spinner le temps de télécharger son
+// code. Ici, une fois l'app authentifiée et le navigateur INACTIF, on
+// précharge ces chunks un par un, espacés, sans gêner les requêtes de la
+// page courante. Résultat : quand l'utilisateur clique enfin sur une
+// rubrique, le code est déjà là → plus de spinner « 1ère fois ».
+const warmableRouteChunks: Array<() => Promise<unknown>> = [
+  () => import("@/pages/dashboard/envoyes"),
+  () => import("@/pages/dashboard/agenda"),
+  () => import("@/pages/dashboard/contacts"),
+  () => import("@/pages/dashboard/programmes"),
+  () => import("@/pages/dashboard/dossiers"),
+  () => import("@/pages/dashboard/bilan"),
+  () => import("@/pages/dashboard/classement"),
+  () => import("@/pages/dashboard/reportes"),
+  () => import("@/pages/dashboard/archives"),
+  () => import("@/pages/dashboard/taches"),
+  () => import("@/pages/dashboard/relances"),
+  () => import("@/pages/dashboard/templates"),
+  () => import("@/pages/dashboard/regles"),
+  () => import("@/pages/dashboard/parametres"),
+];
+
+function RouteWarmer() {
+  useEffect(() => {
+    let cancelled = false;
+    let handle = 0;
+    const hasRic = typeof (window as any).requestIdleCallback === "function";
+    const ric = (cb: () => void): number =>
+      hasRic
+        ? (window as any).requestIdleCallback(cb, { timeout: 3000 })
+        : window.setTimeout(cb, 1200);
+    let i = 0;
+    const pump = () => {
+      if (cancelled || i >= warmableRouteChunks.length) return;
+      const load = warmableRouteChunks[i++];
+      load()
+        .catch(() => { /* silencieux : le clic chargera le chunk au besoin */ })
+        .finally(() => {
+          if (!cancelled) handle = ric(pump);
+        });
+    };
+    handle = ric(pump);
+    return () => {
+      cancelled = true;
+      if (hasRic && typeof (window as any).cancelIdleCallback === "function") {
+        (window as any).cancelIdleCallback(handle);
+      } else {
+        window.clearTimeout(handle);
+      }
+    };
+  }, []);
+  return null;
+}
+
 let _clearingSession = false;
 let _consecutiveAuthFailures = 0;
 
@@ -240,6 +296,8 @@ function Router() {
   const fullyAuthed = !!session && mfaState === "ok";
 
   return (
+    <>
+    {fullyAuthed && <RouteWarmer />}
     <Suspense fallback={<RouteLoadingFallback />}>
     <Switch>
       <Route path="/" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Accueil />} />
@@ -307,6 +365,7 @@ function Router() {
       <Route component={NotFound} />
     </Switch>
     </Suspense>
+    </>
   );
 }
 
