@@ -1,2 +1,3 @@
 - [Ripgrep masks numbers](ripgrep-number-masking.md) — `rg` output replaced price/number strings with "n"/"ln"; trust `grep`/`sed`/`read` for numeric ground truth.
 - [Inboria competitive gaps](inboria-competitive-gaps.md) — vs Superhuman/Missive: what already exists + the 5 real missing features (Cmd+K palette, auto-advance, go-to seq, reply collision, shared drafts). Verify live code first.
+- [ncv-mail PWA stale-cache trap](ncv-mail-pwa-stale-cache.md) — `vite build && preview` + PWA service worker precaches; edits need rebuild + usually 2 reloads. "Rien n'a changé" ≈ stale SW cache, not a code bug.
