@@ -4768,12 +4768,26 @@ export default function Dashboard() {
       const k = e.key.toLowerCase();
       if (k === "j" || k === "arrowdown") {
         e.preventDefault();
-        const next = list[Math.min(list.length - 1, currentIdx + 1)] || list[0];
-        if (next) setSelectedEmailId(next.id);
+        const nextIdx = Math.min(list.length - 1, currentIdx + 1);
+        const next = list[nextIdx] || list[0];
+        if (next) {
+          setSelectedEmailId(next.id);
+          handlePrefetchEmail(next.id);
+          // Look-ahead : on précharge aussi le mail d'après pour que
+          // l'enchaînement j/j/j reste instantané (style Superhuman).
+          const after = list[nextIdx + 1];
+          if (after) handlePrefetchEmail(after.id);
+        }
       } else if (k === "k" || k === "arrowup") {
         e.preventDefault();
-        const prev = list[Math.max(0, currentIdx - 1)] || list[0];
-        if (prev) setSelectedEmailId(prev.id);
+        const prevIdx = Math.max(0, currentIdx - 1);
+        const prev = list[prevIdx] || list[0];
+        if (prev) {
+          setSelectedEmailId(prev.id);
+          handlePrefetchEmail(prev.id);
+          const before = list[prevIdx - 1];
+          if (before) handlePrefetchEmail(before.id);
+        }
       } else if (k === "escape" && selectedEmailId) {
         e.preventDefault();
         setSelectedEmailId(null);
@@ -4800,7 +4814,7 @@ export default function Dashboard() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [activeEmails, selectedEmailId, routeLocation]);
+  }, [activeEmails, selectedEmailId, routeLocation, handlePrefetchEmail]);
 
   const handleUpdatePriority = (id: number, priority: string) => {
     const previousEmails = accumulatedEmails;

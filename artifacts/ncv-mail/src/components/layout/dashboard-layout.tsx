@@ -101,9 +101,28 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         staleTime: 30_000,
       }),
   };
+  // Préchargement du *code* (chunk JS lazy) au survol — complète le
+  // préchargement des données ci-dessus. Sans ça, au 1er clic sur une
+  // rubrique le navigateur télécharge encore le bundle de la page (petit
+  // blanc). On déclenche le même import() que les lazy() de App.tsx ; Vite
+  // sert le même chunk, donc le clic devient instantané.
+  const chunkByHref: Record<string, () => Promise<unknown>> = {
+    "/dashboard/envoyes": () => import("@/pages/dashboard/envoyes"),
+    "/dashboard/programmes": () => import("@/pages/dashboard/programmes"),
+    "/dashboard/contacts": () => import("@/pages/dashboard/contacts"),
+    "/dashboard/agenda": () => import("@/pages/dashboard/agenda"),
+    "/dashboard/dossiers": () => import("@/pages/dashboard/dossiers"),
+    "/dashboard/bilan": () => import("@/pages/dashboard/bilan"),
+    "/dashboard/classement": () => import("@/pages/dashboard/classement"),
+    "/dashboard/parametres/templates": () => import("@/pages/dashboard/templates"),
+    "/dashboard/parametres/regles": () => import("@/pages/dashboard/regles"),
+    "/dashboard/admin": () => import("@/pages/dashboard/admin"),
+  };
   const handlePrefetchSidebar = (href: string) => {
-    const fn = prefetchByHref[href];
-    if (fn) fn().catch(() => { /* silencieux : le clic refetchera au besoin */ });
+    const dataFn = prefetchByHref[href];
+    if (dataFn) dataFn().catch(() => { /* silencieux : le clic refetchera au besoin */ });
+    const chunkFn = chunkByHref[href];
+    if (chunkFn) chunkFn().catch(() => { /* silencieux : le clic chargera le chunk */ });
   };
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,

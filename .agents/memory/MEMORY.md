@@ -1,1 +1,2 @@
 - [Ripgrep masks numbers](ripgrep-number-masking.md) — `rg` output replaced price/number strings with "n"/"ln"; trust `grep`/`sed`/`read` for numeric ground truth.
+- [Inboria competitive gaps](inboria-competitive-gaps.md) — vs Superhuman/Missive: what already exists + the 5 real missing features (Cmd+K palette, auto-advance, go-to seq, reply collision, shared drafts). Verify live code first.
