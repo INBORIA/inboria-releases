@@ -521,7 +521,7 @@ export default function Archives() {
                   <div
                     key={email.id}
                     data-email-row
-                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-border/40 transition-colors ${
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-[color:var(--mail-border)] hover:border-b-[color:var(--mail-border-hover)] transition-colors ${
                       isSelected
                         ? "bg-primary/[0.10]"
                         : "border-l-transparent hover:bg-white/[0.03]"
