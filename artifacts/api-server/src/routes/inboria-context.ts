@@ -696,8 +696,34 @@ router.get(
       }
 
       // 2) Repli/route principale : ID natif via external_id (`gmail:<id>`…).
+      // L'add-on Gmail renvoie souvent l'ID au format INTERNE « msg-f:<décimal> »
+      // (variantes msg-a:/msg-d:) alors qu'on stocke l'ID HEXADÉCIMAL
+      // (`gmail:<hex>`, cf. auto-sync). Le nombre décimal après le préfixe EST
+      // l'ID hex converti en base 10 → on génère toutes les variantes possibles
+      // pour matcher quel que soit le format reçu.
       if (!resolvedId && nativeId) {
-        const extCandidates = [`gmail:${nativeId}`, `outlook:${nativeId}`];
+        const variants = new Set<string>([nativeId]);
+        const m = nativeId.match(/^msg-[afd]:(\d+)$/i);
+        if (m && m[1]) {
+          variants.add(m[1]); // décimal nu
+          try {
+            variants.add(BigInt(m[1]).toString(16)); // décimal → hex Gmail
+          } catch {
+            /* nombre hors limites — on ignore cette variante */
+          }
+        } else if (/^\d+$/.test(nativeId)) {
+          // décimal sans préfixe → hex (robustesse)
+          try {
+            variants.add(BigInt(nativeId).toString(16));
+          } catch {
+            /* ignore */
+          }
+        }
+        const variantList = Array.from(variants);
+        const extCandidates = variantList.flatMap((v) => [
+          `gmail:${v}`,
+          `outlook:${v}`,
+        ]);
         const { data, error } = await supabaseAdmin
           .from("emails")
           .select("id")
@@ -717,19 +743,25 @@ router.get(
         resolvedId = (data as any)?.id ?? null;
         if (resolvedId) matchedBy = "native-exact";
 
-        // Les re-syncs/dédup peuvent changer le préfixe → match par suffixe.
+        // Les re-syncs/dédup peuvent changer le préfixe → match par suffixe sur
+        // chaque variante.
         if (!resolvedId) {
-          const escaped = nativeId.replace(/[%_\\]/g, (m) => `\\${m}`);
-          const { data: d2 } = await supabaseAdmin
-            .from("emails")
-            .select("id")
-            .eq("user_id", userId)
-            .like("external_id", `%:${escaped}`)
-            .order("id", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          resolvedId = (d2 as any)?.id ?? null;
-          if (resolvedId) matchedBy = "native-suffix";
+          for (const v of variantList) {
+            const escaped = v.replace(/[%_\\]/g, (ch) => `\\${ch}`);
+            const { data: d2 } = await supabaseAdmin
+              .from("emails")
+              .select("id")
+              .eq("user_id", userId)
+              .like("external_id", `%:${escaped}`)
+              .order("id", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            resolvedId = (d2 as any)?.id ?? null;
+            if (resolvedId) {
+              matchedBy = "native-suffix";
+              break;
+            }
+          }
         }
       }
 
