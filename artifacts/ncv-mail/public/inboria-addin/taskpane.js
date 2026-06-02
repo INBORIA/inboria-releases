@@ -251,12 +251,12 @@
       .then(function (data) {
         if (data && data.emailId) {
           currentEmailId = data.emailId;
-          done(ORIGIN + "/dashboard?emailId=" + data.emailId);
+          done(ORIGIN + "/dashboard?emailId=" + data.emailId + "&from=outlook");
         } else {
-          done(ORIGIN + "/dashboard");
+          done(ORIGIN + "/dashboard?from=outlook");
         }
       })
-      .catch(function () { done(ORIGIN + "/dashboard"); });
+      .catch(function () { done(ORIGIN + "/dashboard?from=outlook"); });
   }
 
   // Tente de résoudre l'emailId courant en arrière-plan (contexte chat).
