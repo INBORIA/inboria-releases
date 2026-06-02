@@ -33,6 +33,9 @@ if (typeof window !== "undefined") {
         "inboria.pendingEmailId",
         JSON.stringify({ id: num, ts: Date.now() }),
       );
+      // Trace temporaire de diagnostic (deep-link Gmail/Outlook) — confirme que
+      // ce bundle (avec le fix) tourne bien côté navigateur lors du test.
+      console.info("[inboria] deep-link emailId capturé au boot:", num, "from:", from);
     }
   } catch {
     // sessionStorage indisponible (mode privé) — non fatal.

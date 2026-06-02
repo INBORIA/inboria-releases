@@ -103,25 +103,42 @@ import { EmailRowSkeleton } from "@/components/email-list/EmailRowSkeleton";
 import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-list/SearchAutocomplete";
 
-// Restaure le deep-link « Ouvrir dans Inboria » (add-on Gmail) capturé très tôt
-// dans main.tsx sous sessionStorage["inboria.pendingEmailId"]. La capture a lieu
-// au chargement de page AVANT que l'auth/les redirects ne puissent effacer le
-// ?emailId de l'URL. Ici on consomme (lit + supprime) la valeur une seule fois,
-// avec un TTL de 2 min pour ne jamais rouvrir un mail lors d'une visite ultérieure.
-function consumePendingEmailId(): number | null {
+// Restaure le deep-link « Ouvrir dans Inboria » (add-on Gmail/Outlook) capturé
+// très tôt dans main.tsx sous sessionStorage["inboria.pendingEmailId"]. La capture
+// a lieu au chargement de page AVANT que l'auth/les redirects ne puissent effacer
+// le ?emailId de l'URL.
+//
+// IMPORTANT : on LIT sans supprimer (peek). La réhydratation de session Supabase
+// sur un onglet neuf monte le Dashboard PLUSIEURS fois (locks gotrue ~5s). Si on
+// supprimait à la 1ʳᵉ lecture, un montage ultérieur ne trouverait plus rien et le
+// mail serait perdu. On ne nettoie qu'une fois le détail du mail réellement chargé
+// (clearPendingEmailId, appelé depuis un effet sur selectedEmail). TTL 2 min en
+// garde-fou pour ne jamais rouvrir un mail lors d'une visite bien ultérieure.
+function peekPendingEmailId(): number | null {
   try {
     if (typeof window === "undefined") return null;
     const raw = window.sessionStorage.getItem("inboria.pendingEmailId");
     if (!raw) return null;
-    window.sessionStorage.removeItem("inboria.pendingEmailId");
     const parsed = JSON.parse(raw) as { id?: number; ts?: number };
     const id = Number(parsed?.id);
     const ts = Number(parsed?.ts);
     if (!Number.isFinite(id) || id <= 0) return null;
-    if (Number.isFinite(ts) && Date.now() - ts > 120_000) return null;
+    if (Number.isFinite(ts) && Date.now() - ts > 120_000) {
+      window.sessionStorage.removeItem("inboria.pendingEmailId");
+      return null;
+    }
     return id;
   } catch {
     return null;
+  }
+}
+
+function clearPendingEmailId(): void {
+  try {
+    if (typeof window === "undefined") return;
+    window.sessionStorage.removeItem("inboria.pendingEmailId");
+  } catch {
+    /* noop */
   }
 }
 
@@ -3142,7 +3159,7 @@ export default function Dashboard() {
     if (Number.isFinite(num) && num > 0) return num;
     // Deep-link « Ouvrir dans Inboria » dont l'URL a perdu le ?emailId pendant
     // la danse d'authentification (capturé tôt dans main.tsx) : on le restaure.
-    return consumePendingEmailId();
+    return peekPendingEmailId();
   });
   const [assigneeFilter, setAssigneeFilter] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
@@ -3186,8 +3203,9 @@ export default function Dashboard() {
       setSelectedEmailId(num);
     } else {
       // Filet de sécurité : si l'URL a perdu le ?emailId pendant l'auth, on
-      // restaure le deep-link capturé dans main.tsx (consommé une seule fois).
-      const pending = consumePendingEmailId();
+      // restaure le deep-link capturé dans main.tsx (peek — non consommé ici ;
+      // nettoyé seulement une fois le détail chargé).
+      const pending = peekPendingEmailId();
       if (pending) setSelectedEmailId(pending);
     }
   }, [searchString, routeLocation]);
@@ -4306,6 +4324,15 @@ export default function Dashboard() {
   const selectedEmail = emailDetailData
     ? { ...selectedEmailFromList, ...emailDetailData }
     : selectedEmailFromList;
+
+  // Deep-link « Ouvrir dans Inboria » : une fois le détail du mail RÉELLEMENT
+  // chargé, on nettoie le pending (cf. peekPendingEmailId). Le mail est ouvert à
+  // l'écran → plus aucun risque qu'un remontage du Dashboard ou une visite
+  // ultérieure le rouvre par erreur. On garde le pending tant que le détail n'a
+  // pas chargé pour survivre aux multiples remontages de la réhydratation auth.
+  useEffect(() => {
+    if (emailDetailData) clearPendingEmailId();
+  }, [emailDetailData]);
 
   useEffect(() => {
     if (selectedEmailId) {
