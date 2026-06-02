@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import DOMPurify from "dompurify";
 import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Eraser, Highlighter, Type } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,61 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
 
   const handleInput = () => {
     if (editorRef.current) onChange(editorRef.current.innerHTML);
+  };
+
+  // Nettoyage du HTML collé depuis une app externe (Word, Outlook, Manus, sites…).
+  // Les contenus copiés transportent des couleurs/arrière-plans inline (souvent
+  // texte noir sur fond blanc) qui, sur notre éditeur en thème sombre,
+  // apparaissent en « rectangles blancs » et deviennent illisibles. On supprime
+  // donc background / background-color / color (et color/bgcolor en attributs)
+  // tout en conservant la mise en forme utile (gras, listes, liens, alignement).
+  const sanitizePastedHtml = (html: string): string => {
+    const safe = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+    const doc = new DOMParser().parseFromString(safe, "text/html");
+    doc.querySelectorAll("style, meta, link, title, script").forEach((n) => n.remove());
+    doc.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      el.removeAttribute("bgcolor");
+      el.removeAttribute("color");
+      el.removeAttribute("class");
+      const style = el.getAttribute("style");
+      if (style) {
+        const cleaned = style
+          .split(";")
+          .map((d) => d.trim())
+          .filter((d) => {
+            if (!d) return false;
+            const prop = d.split(":")[0].trim().toLowerCase();
+            return (
+              prop !== "color" &&
+              prop !== "-webkit-text-fill-color" &&
+              !prop.startsWith("background")
+            );
+          })
+          .join("; ");
+        if (cleaned) el.setAttribute("style", cleaned);
+        else el.removeAttribute("style");
+      }
+    });
+    return doc.body.innerHTML;
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    const html = e.clipboardData.getData("text/html");
+    const text = e.clipboardData.getData("text/plain");
+    if (html) {
+      e.preventDefault();
+      const clean = sanitizePastedHtml(html);
+      if (clean.trim()) {
+        document.execCommand("insertHTML", false, clean);
+      } else if (text) {
+        document.execCommand("insertText", false, text);
+      }
+      if (editorRef.current) onChange(editorRef.current.innerHTML);
+    } else if (text) {
+      e.preventDefault();
+      document.execCommand("insertText", false, text);
+      if (editorRef.current) onChange(editorRef.current.innerHTML);
+    }
   };
 
   // AutoFormat type Word / Outlook :
@@ -424,6 +480,7 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
         contentEditable
         suppressContentEditableWarning
         onInput={handleInput}
+        onPaste={handlePaste}
         onKeyDown={handleKeyDown}
         onFocus={() => setIsFocused(true)}
         onBlur={() => { setIsFocused(false); saveSelection(); }}
