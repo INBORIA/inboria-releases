@@ -249,12 +249,57 @@ function CacheCleanup() {
   return null;
 }
 
+// Quand un onglet sans session active ouvre une route protégée porteuse
+// d'intention (ex. lien « Ouvrir dans Inboria » de l'add-on Gmail vers
+// /dashboard?emailId=123), le garde redirige vers /login et la query string
+// serait perdue. On mémorise donc la destination complète (path + query) puis
+// on y revient une fois l'utilisateur authentifié.
+const RETURN_TO_KEY = "inboria.returnTo";
+
+function captureReturnTo() {
+  try {
+    if (typeof window === "undefined") return;
+    const path = window.location.pathname + window.location.search;
+    // On ne mémorise que les destinations dashboard porteuses de paramètres
+    // (sinon /login renverrait toujours vers /dashboard, ce qui est déjà le défaut).
+    if (path.startsWith("/dashboard") && window.location.search) {
+      window.sessionStorage.setItem(RETURN_TO_KEY, path);
+    }
+  } catch {
+    // sessionStorage indisponible (mode privé) — non fatal.
+  }
+}
+
+function consumeReturnTo(): string | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const v = window.sessionStorage.getItem(RETURN_TO_KEY);
+    if (v) window.sessionStorage.removeItem(RETURN_TO_KEY);
+    return v && v.startsWith("/dashboard") ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+// Destination par défaut une fois authentifié : la route mémorisée (returnTo)
+// si elle existe, sinon le dashboard.
+function AuthedHome() {
+  const target = consumeReturnTo() ?? "/dashboard";
+  return <Redirect to={target} />;
+}
+
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { session, loading, mfaState } = useAuth();
 
   if (loading || mfaState === "unknown") return null;
-  if (!session) return <Redirect to="/login" />;
-  if (mfaState === "needsMfa") return <Redirect to="/login" />;
+  if (!session) {
+    captureReturnTo();
+    return <Redirect to="/login" />;
+  }
+  if (mfaState === "needsMfa") {
+    captureReturnTo();
+    return <Redirect to="/login" />;
+  }
   return <Component />;
 }
 
@@ -300,7 +345,7 @@ function Router() {
     {fullyAuthed && <RouteWarmer />}
     <Suspense fallback={<RouteLoadingFallback />}>
     <Switch>
-      <Route path="/" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Accueil />} />
+      <Route path="/" component={() => fullyAuthed ? <AuthedHome /> : <Accueil />} />
       <Route path="/fonctionnalites" component={Fonctionnalites} />
       <Route path="/entreprise" component={Entreprise} />
       <Route path="/classement" component={ClassementMarketing} />
@@ -311,7 +356,7 @@ function Router() {
       <Route path="/mentions-legales" component={MentionsLegales} />
       <Route path="/confidentialite" component={Confidentialite} />
       <Route path="/conditions" component={Conditions} />
-      <Route path="/login" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Login />} />
+      <Route path="/login" component={() => fullyAuthed ? <AuthedHome /> : <Login />} />
       <Route path="/signup" component={() => session ? <Redirect to="/dashboard" /> : <Signup />} />
       <Route path="/verifier-email" component={VerifierEmail} />
       <Route path="/auth/callback" component={AuthCallback} />

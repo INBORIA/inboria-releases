@@ -95,7 +95,18 @@ export default function Login() {
       if (seats) redirect.set("seats", seats);
       setLocation(`/dashboard/abonnement?${redirect.toString()}`);
     } else {
-      setLocation("/dashboard");
+      // Destination mémorisée avant le redirect login (ex. lien « Ouvrir dans
+      // Inboria » de l'add-on Gmail vers /dashboard?emailId=123). Sans ça, on
+      // retomberait sur /dashboard nu et le mail ciblé ne s'ouvrirait pas.
+      let returnTo: string | null = null;
+      try {
+        const v = window.sessionStorage.getItem("inboria.returnTo");
+        if (v) window.sessionStorage.removeItem("inboria.returnTo");
+        if (v && v.startsWith("/dashboard")) returnTo = v;
+      } catch {
+        // sessionStorage indisponible (mode privé) — non fatal.
+      }
+      setLocation(returnTo ?? "/dashboard");
     }
   }
 
