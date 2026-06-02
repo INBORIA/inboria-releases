@@ -31,7 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw } from "lucide-react";
+import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw, Copy, Download } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -570,6 +570,52 @@ export default function ParametresMonCompte() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [outlookGuideOpen, setOutlookGuideOpen] = useState(false);
   const outlookManifestUrl = `${import.meta.env.BASE_URL}api/inboria/outlook-manifest.xml`;
+  const [gmailGuideOpen, setGmailGuideOpen] = useState(false);
+  const [gmailCode, setGmailCode] = useState("");
+  const [gmailManifest, setGmailManifest] = useState("");
+  const openGmailGuide = async () => {
+    setGmailGuideOpen(true);
+    if (gmailCode && gmailManifest) return;
+    try {
+      const base = `${import.meta.env.BASE_URL}inboria-gmail-addon/`;
+      const [codeRes, manRes] = await Promise.all([
+        fetch(`${base}Code.gs`),
+        fetch(`${base}appsscript.json`),
+      ]);
+      if (!codeRes.ok || !manRes.ok) {
+        throw new Error("fetch failed");
+      }
+      const origin = window.location.origin;
+      const code = (await codeRes.text()).split("__INBORIA_BASE__").join(origin);
+      const man = (await manRes.text()).split("__INBORIA_BASE__").join(origin);
+      setGmailCode(code);
+      setGmailManifest(man);
+    } catch {
+      toast({
+        title: t("settings.gmailLoadError", "Impossible de charger les fichiers du module. Réessayez."),
+        variant: "destructive",
+      });
+    }
+  };
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: label });
+    } catch {
+      toast({ title: t("common.copyFailed", "Copie impossible"), variant: "destructive" });
+    }
+  };
+  const downloadTextFile = (text: string, filename: string) => {
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
   const [imapHost, setImapHost] = useState("");
   const [imapPort, setImapPort] = useState("");
   const [connecting, setConnecting] = useState(false);
@@ -1152,6 +1198,99 @@ export default function ParametresMonCompte() {
                         <AlertDialogCancel>{t("common.close", "Fermer")}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => window.open("https://outlook.office.com/owa/?path=/options/manageapps", "_blank")}>
                           {t("settings.outlookOpenAddinsPage", "Ouvrir les compléments Outlook")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <div className="pt-4 mt-2 border-t border-border">
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6] mb-3">
+                      {t("settings.gmailAddonSection", "Inboria dans Gmail")}
+                    </h3>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-primary/20 rounded-lg bg-primary/5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
+                        <div>
+                          <h4 className="font-medium text-[13px] text-white">{t("settings.gmailAddonTitle", "Bouton « Demander à Inboria » dans Gmail")}</h4>
+                          <p className="text-[11px] text-[#b8c5d6]">{t("settings.gmailAddonDesc", "Ajoutez l'assistant Inboria directement dans Gmail, sans quitter vos mails.")}</p>
+                        </div>
+                      </div>
+                      <Button size="sm" className="h-8 text-[12px] gap-1.5 shrink-0" onClick={openGmailGuide}>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        {t("settings.gmailAddonInstall", "Installer dans Gmail")}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <AlertDialog open={gmailGuideOpen} onOpenChange={setGmailGuideOpen}>
+                    <AlertDialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t("settings.gmailGuideTitle", "Installer Inboria dans Gmail")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("settings.gmailGuideIntro", "Gmail ne permet pas l'installation par fichier comme Outlook : on crée un petit projet Google (5 minutes, une seule fois). Tout est guidé ci-dessous.")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <ol className="space-y-4 my-2">
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.gmailStep1", "Ouvrez Google Apps Script et créez un nouveau projet.")}
+                            <div className="mt-2">
+                              <a
+                                href="https://script.google.com/home/projects/create"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-primary-foreground text-[12px] font-medium hover:opacity-90 transition-opacity"
+                              >
+                                <Globe className="w-3.5 h-3.5" />
+                                {t("settings.gmailOpenAppsScript", "Ouvrir Google Apps Script")}
+                              </a>
+                            </div>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
+                          <div className="text-[13px] text-[#d6deeb] min-w-0 flex-1">
+                            {t("settings.gmailStep2", "Remplacez tout le contenu du fichier « Code.gs » par ce code Inboria :")}
+                            <div className="mt-2 flex gap-2">
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailCode} onClick={() => copyToClipboard(gmailCode, t("settings.gmailCodeCopied", "Code copié ✓"))}>
+                                <Copy className="w-3.5 h-3.5" />
+                                {t("settings.gmailCopyCode", "Copier le code")}
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailCode} onClick={() => downloadTextFile(gmailCode, "Code.gs")}>
+                                <Download className="w-3.5 h-3.5" />
+                                {t("settings.gmailDownload", "Télécharger")}
+                              </Button>
+                            </div>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
+                          <div className="text-[13px] text-[#d6deeb] min-w-0 flex-1">
+                            {t("settings.gmailStep3", "Activez le manifeste : menu « Paramètres du projet » › cochez « Afficher le fichier manifeste appsscript.json », puis collez ce contenu dans appsscript.json :")}
+                            <div className="mt-2 flex gap-2">
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailManifest} onClick={() => copyToClipboard(gmailManifest, t("settings.gmailManifestCopied", "Manifeste copié ✓"))}>
+                                <Copy className="w-3.5 h-3.5" />
+                                {t("settings.gmailCopyManifest", "Copier le manifeste")}
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailManifest} onClick={() => downloadTextFile(gmailManifest, "appsscript.json")}>
+                                <Download className="w-3.5 h-3.5" />
+                                {t("settings.gmailDownload", "Télécharger")}
+                              </Button>
+                            </div>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">4</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.gmailStep4", "Cliquez sur « Déployer » › « Tester les déploiements » › « Installer ». Autorisez l'accès quand Google le demande. Ouvrez ensuite un mail dans Gmail : le panneau Inboria apparaît à droite. Connectez-vous une fois, c'est prêt.")}
+                          </div>
+                        </li>
+                      </ol>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("common.close", "Fermer")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => window.open("https://script.google.com/home/projects/create", "_blank")}>
+                          {t("settings.gmailOpenAppsScript", "Ouvrir Google Apps Script")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

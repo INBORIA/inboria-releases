@@ -113,9 +113,13 @@ export default defineConfig({
         // L'add-in Outlook (taskpane statique) ne doit JAMAIS être pré-caché
         // ni servi par le service worker — il vit hors du SPA et doit rester
         // frais (Office charge ces pages dans son propre webview).
-        globIgnores: ["**/inboria-addin/**"],
+        globIgnores: ["**/inboria-addin/**", "**/inboria-gmail-addon/**"],
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/api\//, /^\/inboria-addin\//],
+        navigateFallbackDenylist: [
+          /^\/api\//,
+          /^\/inboria-addin\//,
+          /^\/inboria-gmail-addon\//,
+        ],
         // Force the new SW to activate immediately on install so the
         // PWA picks up the latest deployment without requiring the
         // user to fully close + reopen the installed app.
@@ -133,6 +137,7 @@ export default defineConfig({
               if (!sameOrigin) return false;
               if (url.pathname.startsWith("/api/")) return false;
               if (url.pathname.startsWith("/inboria-addin/")) return false;
+              if (url.pathname.startsWith("/inboria-gmail-addon/")) return false;
               return (
                 request.destination === "script" ||
                 request.destination === "style" ||
