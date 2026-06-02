@@ -161,16 +161,23 @@ function callChat_(message, emailId, lang) {
   return cleanReply_(data.reply || "");
 }
 
-function resolveEmailId_(messageRfcId) {
-  if (!messageRfcId) return null;
+// Résout l'id interne Inboria du mail courant. On envoie l'ID natif Gmail
+// (e.gmail.messageId — toujours disponible, AUCUN appel API supplémentaire)
+// ET, en bonus, le Message-ID RFC822 si on arrive à le lire. Le backend
+// matche en priorité l'ID natif (external_id = "gmail:<id>").
+function resolveEmailId_(e) {
+  var nativeId = e && e.gmail && e.gmail.messageId ? e.gmail.messageId : "";
+  var rfcId = getHeader_(e, "Message-ID");
+  if (!nativeId && !rfcId) return null;
   try {
-    var data = apiFetch_(
-      "/api/inboria/resolve-email?providerMessageId=" +
-        encodeURIComponent(messageRfcId),
-      { method: "get" }
-    );
+    var qs = [];
+    if (nativeId) qs.push("nativeMessageId=" + encodeURIComponent(nativeId));
+    if (rfcId) qs.push("providerMessageId=" + encodeURIComponent(rfcId));
+    var data = apiFetch_("/api/inboria/resolve-email?" + qs.join("&"), {
+      method: "get",
+    });
     return data && data.emailId ? data.emailId : null;
-  } catch (e) {
+  } catch (e2) {
     return null;
   }
 }
@@ -449,7 +456,7 @@ function handleQuick_(e) {
 
 function runChat_(e, payload) {
   try {
-    var emailId = resolveEmailId_(getHeader_(e, "Message-ID"));
+    var emailId = resolveEmailId_(e);
     var reply = callChat_(payload, emailId, uiLang_(e));
     var card =
       e && e.gmail && e.gmail.messageId
@@ -467,7 +474,7 @@ function runChat_(e, payload) {
 }
 
 function handleOpen_(e) {
-  var emailId = resolveEmailId_(getHeader_(e, "Message-ID"));
+  var emailId = resolveEmailId_(e);
   var url = emailId
     ? INBORIA_BASE + "/dashboard?emailId=" + emailId + "&from=gmail"
     : INBORIA_BASE + "/dashboard?from=gmail";

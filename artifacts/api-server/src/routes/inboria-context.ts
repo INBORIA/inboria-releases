@@ -649,36 +649,97 @@ router.get(
         typeof req.query.providerMessageId === "string"
           ? req.query.providerMessageId.trim()
           : "";
-      if (!raw) {
-        res.status(400).json({ error: "providerMessageId requis" });
+      // ID natif du message côté provider (Gmail messageId, Outlook id…). Plus
+      // fiable que le Message-ID RFC822 : l'add-on l'a toujours sous la main
+      // sans appel API supplémentaire. On le stocke dans `external_id`
+      // (`gmail:<id>` / `outlook:<id>`).
+      const nativeId =
+        typeof req.query.nativeMessageId === "string"
+          ? req.query.nativeMessageId.trim()
+          : "";
+      if (!raw && !nativeId) {
+        res
+          .status(400)
+          .json({ error: "providerMessageId ou nativeMessageId requis" });
         return;
       }
-      // Office renvoie souvent le Message-ID avec chevrons « <...> ». Selon le
-      // provider on stocke tantôt avec, tantôt sans → on teste les variantes.
-      const stripped = raw.replace(/^<+|>+$/g, "");
-      const candidates = Array.from(
-        new Set([raw, stripped, `<${stripped}>`].filter((v) => v.length > 0)),
-      );
-      const { data, error } = await supabaseAdmin
-        .from("emails")
-        .select("id")
-        .eq("user_id", userId)
-        .in("provider_message_id", candidates)
-        .order("id", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) {
-        req.log.error({ err: error.message }, "[inboria-resolve-email] failed");
-        res.status(500).json({ error: "Lookup échoué" });
-        return;
+
+      let resolvedId: number | null = null;
+      let matchedBy: string | null = null;
+
+      // 1) Tentative par Message-ID RFC822. Office/Gmail renvoient parfois le
+      // Message-ID avec chevrons « <...> » et on stocke tantôt avec, tantôt
+      // sans → on teste les variantes.
+      if (raw) {
+        const stripped = raw.replace(/^<+|>+$/g, "");
+        const candidates = Array.from(
+          new Set([raw, stripped, `<${stripped}>`].filter((v) => v.length > 0)),
+        );
+        const { data, error } = await supabaseAdmin
+          .from("emails")
+          .select("id")
+          .eq("user_id", userId)
+          .in("provider_message_id", candidates)
+          .order("id", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          req.log.error(
+            { err: error.message },
+            "[inboria-resolve-email] failed",
+          );
+          res.status(500).json({ error: "Lookup échoué" });
+          return;
+        }
+        resolvedId = (data as any)?.id ?? null;
+        if (resolvedId) matchedBy = "rfc822";
       }
-      const resolvedId = (data as any)?.id ?? null;
+
+      // 2) Repli/route principale : ID natif via external_id (`gmail:<id>`…).
+      if (!resolvedId && nativeId) {
+        const extCandidates = [`gmail:${nativeId}`, `outlook:${nativeId}`];
+        const { data, error } = await supabaseAdmin
+          .from("emails")
+          .select("id")
+          .eq("user_id", userId)
+          .in("external_id", extCandidates)
+          .order("id", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          req.log.error(
+            { err: error.message },
+            "[inboria-resolve-email] native failed",
+          );
+          res.status(500).json({ error: "Lookup échoué" });
+          return;
+        }
+        resolvedId = (data as any)?.id ?? null;
+        if (resolvedId) matchedBy = "native-exact";
+
+        // Les re-syncs/dédup peuvent changer le préfixe → match par suffixe.
+        if (!resolvedId) {
+          const escaped = nativeId.replace(/[%_\\]/g, (m) => `\\${m}`);
+          const { data: d2 } = await supabaseAdmin
+            .from("emails")
+            .select("id")
+            .eq("user_id", userId)
+            .like("external_id", `%:${escaped}`)
+            .order("id", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          resolvedId = (d2 as any)?.id ?? null;
+          if (resolvedId) matchedBy = "native-suffix";
+        }
+      }
+
       req.log.info(
         {
           userId,
-          rawMessageId: raw,
-          candidateCount: candidates.length,
+          hasRfc: Boolean(raw),
+          hasNative: Boolean(nativeId),
           resolvedId,
+          matchedBy,
         },
         "[inboria-resolve-email] diag",
       );
