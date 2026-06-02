@@ -103,6 +103,28 @@ import { EmailRowSkeleton } from "@/components/email-list/EmailRowSkeleton";
 import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-list/SearchAutocomplete";
 
+// Restaure le deep-link « Ouvrir dans Inboria » (add-on Gmail) capturé très tôt
+// dans main.tsx sous sessionStorage["inboria.pendingEmailId"]. La capture a lieu
+// au chargement de page AVANT que l'auth/les redirects ne puissent effacer le
+// ?emailId de l'URL. Ici on consomme (lit + supprime) la valeur une seule fois,
+// avec un TTL de 2 min pour ne jamais rouvrir un mail lors d'une visite ultérieure.
+function consumePendingEmailId(): number | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = window.sessionStorage.getItem("inboria.pendingEmailId");
+    if (!raw) return null;
+    window.sessionStorage.removeItem("inboria.pendingEmailId");
+    const parsed = JSON.parse(raw) as { id?: number; ts?: number };
+    const id = Number(parsed?.id);
+    const ts = Number(parsed?.ts);
+    if (!Number.isFinite(id) || id <= 0) return null;
+    if (Number.isFinite(ts) && Date.now() - ts > 120_000) return null;
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 // Bag de callbacks pour la barre d'actions au survol — toutes les actions
 // du menu contextuel clic droit, dans le même ordre, avec popovers ancrés
 // pour Reporter / Catégorie / Déplacer vers.
@@ -3117,7 +3139,10 @@ export default function Dashboard() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("emailId");
     const num = id ? Number(id) : NaN;
-    return Number.isFinite(num) && num > 0 ? num : null;
+    if (Number.isFinite(num) && num > 0) return num;
+    // Deep-link « Ouvrir dans Inboria » dont l'URL a perdu le ?emailId pendant
+    // la danse d'authentification (capturé tôt dans main.tsx) : on le restaure.
+    return consumePendingEmailId();
   });
   const [assigneeFilter, setAssigneeFilter] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
@@ -3159,6 +3184,11 @@ export default function Dashboard() {
     const num = id ? Number(id) : NaN;
     if (Number.isFinite(num) && num > 0) {
       setSelectedEmailId(num);
+    } else {
+      // Filet de sécurité : si l'URL a perdu le ?emailId pendant l'auth, on
+      // restaure le deep-link capturé dans main.tsx (consommé une seule fois).
+      const pending = consumePendingEmailId();
+      if (pending) setSelectedEmailId(pending);
     }
   }, [searchString, routeLocation]);
   // Canal direct : Inboria chat émet "inboria-open-mail" pour ouvrir un

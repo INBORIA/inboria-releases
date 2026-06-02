@@ -6,6 +6,39 @@ import { isPaymentsEnabled } from "@/lib/feature-flags";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { registerSW } from "virtual:pwa-register";
 
+// Capture du deep-link « Ouvrir dans Inboria » (add-on Gmail → /dashboard?emailId=123)
+// AU TOUT PREMIER INSTANT du chargement de page, avant que React, l'auth Supabase
+// ou les redirects de route (ProtectedRoute → /login) ne puissent effacer le
+// ?emailId de l'URL. La réhydratation de session sur un onglet neuf peut être
+// lente (locks gotrue ~5s) et provoquer plusieurs redirects qui perdent la query.
+// On stocke donc l'emailId ici, puis le Dashboard le restaure à son montage même
+// si l'URL l'a perdu entre-temps. TTL court pour éviter toute réouverture obsolète.
+if (typeof window !== "undefined") {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("emailId");
+    const num = raw ? Number(raw) : NaN;
+    // On ne capture QUE les deep-links des ponts (add-on Gmail / add-in Outlook),
+    // toujours marqués par ?from=gmail|outlook. Évite de « mémoriser » un emailId
+    // issu d'une navigation interne (chat Inboria…) qui pourrait rouvrir un mail
+    // par erreur lors d'un rechargement ultérieur.
+    const from = (params.get("from") || "").toLowerCase();
+    if (
+      window.location.pathname.includes("/dashboard") &&
+      (from === "gmail" || from === "outlook") &&
+      Number.isFinite(num) &&
+      num > 0
+    ) {
+      window.sessionStorage.setItem(
+        "inboria.pendingEmailId",
+        JSON.stringify({ id: num, ts: Date.now() }),
+      );
+    }
+  } catch {
+    // sessionStorage indisponible (mode privé) — non fatal.
+  }
+}
+
 if (typeof document !== "undefined") {
   const neutralizeBodyLock = () => {
     const body = document.body;
