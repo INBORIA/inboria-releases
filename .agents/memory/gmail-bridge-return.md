@@ -1,16 +1,19 @@
 ---
-name: Gmail add-on → app return flow
-description: How "Retour à Gmail" reopens the EXACT message, and why it differs from Outlook
+name: Gmail add-on ↔ app bridge (aller + retour)
+description: Round-trip Inboria↔Gmail — ouverture exacte d'un mail, accès sans mail ouvert, et bandeau de retour
 ---
 
-# Retour Gmail depuis l'app (pont Inboria)
+# Pont Gmail ↔ Inboria
 
-L'add-on Gmail ouvre l'app via `?from=gmail` (+ `emailId`). Côté app, le header `EmailDetail` détecte `from=gmail` et affiche un bouton « Retour à Gmail » qui ouvre le **mail exact** avec l'opérateur de recherche Gmail `#search/rfc822msgid:<ID>`.
+## Aller (Gmail → Inboria)
+L'add-on ouvre l'app avec `?from=gmail` (+ `emailId` si le mail est résolu). Le bouton « ↗ Ouvrir Inboria » existe sur DEUX cartes de l'add-on : la carte d'un mail ouvert ET la carte d'accueil (`onHomepage`/`buildAskCard_`) — important : sans cet ajout, on ne peut ouvrir Inboria qu'en ayant un mail ouvert. La carte d'accueil réutilise `handleOpen_`, qui gère `emailId=null` → ouvre `/dashboard?from=gmail`.
 
-**Différence majeure avec Outlook :** Gmail EXPOSE un deep-link fiable vers un message précis (opérateur `rfc822msgid:`), ce qu'Outlook n'a PAS. Donc côté Gmail on navigue vraiment vers le message ; côté Outlook on se contente de rebasculer/fermer l'onglet.
+## Retour (Inboria → Gmail), 2 niveaux
+1. **Détail d'un mail** : bouton « Retour à Gmail » qui ouvre le **mail EXACT** via `#search/rfc822msgid:<ID>`. Gmail a un deep-link fiable vers un message précis — **Outlook n'en a pas** (différence clé entre les deux ponts).
+2. **Réception / partout** : bandeau `GmailReturnBanner` (miroir de `OutlookReturnBanner`, monté dans `dashboard-layout`) — utile car on atterrit souvent en Réception quand le mail n'est pas résolu dans Inboria.
 
-**Source du Message-ID :** colonne `emails.provider_message_id` (= header RFC822 Message-ID, stocké tantôt avec chevrons `<...>` tantôt sans). Avant cette feature elle n'était PAS renvoyée au front : `GET /api/emails/:id` construit un objet camelCase explicite (pas un passthrough `select *`), il a fallu y ajouter `providerMessageId`. Pour tout nouveau champ utile au front, penser à l'ajouter à ce mapping explicite.
-
-**Construction du lien :** strip `<>`, `trim()`, `encodeURIComponent`. Fallback `mail/u/0/#inbox` si pas d'ID.
-
-**Limite connue (acceptée) :** le lien cible `mail/u/0` (1er compte Google). En multi-compte Gmail le bon compte n'est pas garanti. Choix produit assumé = option « recherche par Message-ID » ; propager l'index/adresse de compte depuis l'add-on serait l'amélioration si « exact multi-compte » devient une exigence.
+## Pièges durables
+- **Le bandeau retire `?from` de l'URL au montage** (replaceState) et persiste un flag `sessionStorage["inboria.fromGmail"]`. Donc tout code qui dépendait de `?from=gmail` (ex. le bouton du détail) DOIT lire le flag sessionStorage en plus du param URL, sinon il disparaît après le strip. Le bandeau ne supprime QUE `from` (jamais `emailId`).
+- **Retour onglet** : l'app est ouverte dans un nouvel onglet par l'add-on → `window.close()` pour rendre le focus à Gmail. `window.close()` peut être refusé (onglet non « opened by script ») ; fallback = naviguer Gmail **dans le même onglet** (`location.href`), seulement si `!window.closed` après court délai — jamais `window.open` (popup blocker).
+- **Source du Message-ID** = `emails.provider_message_id` (header RFC822, stocké avec OU sans chevrons → strip `<>` + encode). Règle durable : `GET /api/emails/:id` construit un objet de réponse **camelCase explicite** (pas de passthrough `select *`) — tout champ DB utile au front doit être ajouté à ce mapping.
+- **Limite assumée** : lien Gmail sur `mail/u/0` (1er compte). Multi-compte non garanti ; option produit choisie = recherche par Message-ID.

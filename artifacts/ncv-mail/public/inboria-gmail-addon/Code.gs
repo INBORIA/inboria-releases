@@ -352,13 +352,19 @@ function buildMessageCard_(e, answer) {
 
 function buildAskCard_(e, answer) {
   var card = baseCard_("Demander à Inboria");
-  card.addSection(
-    CardService.newCardSection().addWidget(
-      CardService.newTextParagraph().setText(
-        "Ouvrez un mail pour les actions rapides, ou posez directement votre question ci-dessous."
-      )
+  var intro = CardService.newCardSection();
+  intro.addWidget(
+    CardService.newTextParagraph().setText(
+      "Ouvrez un mail pour les actions rapides, ou posez directement votre question ci-dessous."
     )
   );
+  intro.addWidget(
+    CardService.newTextButton()
+      .setText("↗ Ouvrir Inboria")
+      .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+      .setOnClickAction(CardService.newAction().setFunctionName("handleOpen_"))
+  );
+  card.addSection(intro);
   if (answer) {
     card.addSection(
       CardService.newCardSection()

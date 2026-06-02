@@ -480,7 +480,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
         <div className="flex-1" />
         {(() => {
           if (typeof window === "undefined") return null;
-          const fromGmail = new URLSearchParams(window.location.search).get("from") === "gmail";
+          let fromGmail = new URLSearchParams(window.location.search).get("from") === "gmail";
+          try {
+            if (!fromGmail && window.sessionStorage.getItem("inboria.fromGmail") === "1") fromGmail = true;
+          } catch { /* noop */ }
           if (!fromGmail) return null;
           const msgId = String((email as any).providerMessageId || (email as any).provider_message_id || "").replace(/[<>]/g, "").trim();
           const gmailUrl = msgId

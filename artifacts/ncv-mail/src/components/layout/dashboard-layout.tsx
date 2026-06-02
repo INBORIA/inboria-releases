@@ -45,6 +45,7 @@ import {
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
 import { OutlookReturnBanner } from "@/components/OutlookReturnBanner";
+import { GmailReturnBanner } from "@/components/GmailReturnBanner";
 import { useNcvTheme } from "@/lib/inbox-theme";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -603,6 +604,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
 
         <main className="flex-1">
           <OutlookReturnBanner />
+          <GmailReturnBanner />
           {isBlocked && location !== "/dashboard/abonnement" && (
             isOrgMember ? (
               <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-3">
