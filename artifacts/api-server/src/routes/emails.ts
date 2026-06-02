@@ -666,6 +666,7 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       handledAt: handledAtVal,
       handledBy: handledByVal,
       handledByName,
+      providerMessageId: (email as any).provider_message_id || null,
       createdAt: email.created_at,
     });
   } catch {

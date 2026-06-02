@@ -8,7 +8,7 @@ import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
   MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
-  FolderKanban, Folder, FolderPlus,
+  FolderKanban, Folder, FolderPlus, ExternalLink,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -478,6 +478,28 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
           {t("common.back", "Retour")}
         </button>
         <div className="flex-1" />
+        {(() => {
+          if (typeof window === "undefined") return null;
+          const fromGmail = new URLSearchParams(window.location.search).get("from") === "gmail";
+          if (!fromGmail) return null;
+          const msgId = String((email as any).providerMessageId || (email as any).provider_message_id || "").replace(/[<>]/g, "").trim();
+          const gmailUrl = msgId
+            ? `https://mail.google.com/mail/u/0/#search/rfc822msgid:${encodeURIComponent(msgId)}`
+            : "https://mail.google.com/mail/u/0/#inbox";
+          return (
+            <a
+              href={gmailUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[12px] h-7 px-2 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+              title={t("inbox.backToGmailHint", "Ouvrir ce mail exact dans Gmail") as string}
+              data-testid="button-back-to-gmail"
+            >
+              <ExternalLink className="w-3.5 h-3.5 mr-1" />
+              {t("inbox.backToGmail", "Retour à Gmail")}
+            </a>
+          );
+        })()}
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">

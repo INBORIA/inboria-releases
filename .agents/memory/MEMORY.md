@@ -2,4 +2,5 @@
 - [Inboria competitive gaps](inboria-competitive-gaps.md) — vs Superhuman/Missive: what already exists + the 5 real missing features (Cmd+K palette, auto-advance, go-to seq, reply collision, shared drafts). Verify live code first.
 - [ncv-mail PWA stale-cache trap](ncv-mail-pwa-stale-cache.md) — `vite build && preview` + PWA service worker precaches; edits need rebuild + usually 2 reloads. "Rien n'a changé" ≈ stale SW cache, not a code bug.
 - [Outlook add-in return flow](outlook-bridge-return.md) — "Ouvrir dans Inboria" passe `?from=outlook`; bandeau retour; window.close() pas garanti pour onglet ouvert par openBrowserWindow.
+- [Gmail add-on return flow](gmail-bridge-return.md) — `?from=gmail` → bouton ouvre le mail EXACT via `rfc822msgid:` (Gmail a un deep-link fiable, pas Outlook); `/api/emails/:id` mappe en camelCase explicite (ajouter providerMessageId).
 - [Inboria bridge strategy](inboria-bridge-strategy.md) — « Demander à Inboria » par type de boîte : add-in (Microsoft + VRAI Exchange dont OVH Hosted Exchange), add-on Gmail, extension navigateur (futur), app=filet universel. + diag DNS OVH.
