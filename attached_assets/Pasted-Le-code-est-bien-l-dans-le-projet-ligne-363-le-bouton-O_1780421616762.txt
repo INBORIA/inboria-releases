@@ -1,0 +1,20 @@
+Le code est bien là dans le projet (ligne 363 : le bouton « ↗ Ouvrir Inboria » sur la carte d'accueil). Le souci, c'est où Gmail va chercher ce code.
+
+Pourquoi vous ne voyez aucun changement
+Le fichier Code.gs vit dans votre projet Replit. Mais Gmail, lui, n'exécute jamais ce fichier-là : il exécute la copie qui est publiée dans Google Apps Script (le service de Google où l'add-on est hébergé). Tant que vous ne recopiez pas le nouveau code dans Apps Script, Gmail continue d'afficher l'ancienne version. C'est comme modifier un document sur votre PC sans l'envoyer : le destinataire voit toujours l'ancien.
+
+Bref : mes modifications sont prêtes, mais il faut les pousser chez Google une fois. Ça ne peut se faire que depuis votre compte Google (je n'y ai pas accès).
+
+Comment mettre à jour (≈ 2 minutes)
+Allez sur https://script.google.com et ouvrez votre projet add-on Inboria.
+Ouvrez le fichier Code.gs dans l'éditeur Apps Script.
+Remplacez tout son contenu par le fichier à jour du projet (artifacts/ncv-mail/public/inboria-gmail-addon/Code.gs) — sélectionnez tout / collez.
+Cliquez sur Enregistrer (icône disquette).
+Déployer → Tester les déploiements (Deploy → Test deployments) → Installer / Installer le module complémentaire. Ça met votre Gmail sur la dernière version immédiatement.
+Dans Gmail : rechargez l'onglet (F5) et rouvrez l'add-on Inboria. Le bouton « ↗ Ouvrir Inboria » doit apparaître sur la carte d'accueil (même sans mail ouvert).
+Astuce : si rien ne change après F5, fermez complètement l'onglet Gmail et rouvrez-le — Gmail garde l'add-on en cache un petit moment.
+
+Pour vous faciliter la tâche
+Je peux vous présenter le fichier Code.gs à jour en pièce jointe cliquable ici dans le chat, pour que vous n'ayez qu'à copier-coller dans Apps Script. Vous voulez ?
+
+Et une question pour bien cibler : vous parlez bien de l'add-on Gmail (le panneau Inboria à droite dans Gmail), c'est ça ? Ou bien vous attendiez un changement dans Inboria déclenché depuis Gmail ?
