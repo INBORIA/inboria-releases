@@ -191,3 +191,15 @@ id = "Zk7LtwJDFJ33sZRUvDkpc"
 uri = "file://attached_assets/inboria_logo_transparent_fix_v1_1775916067670.png"
 type = "image"
 title = "Inboria Logo V1 (actuel en prod)"
+
+[[outputs]]
+id = "8o7a_PFtFM6p0mbbbhIPi"
+uri = "file://.local/addon-export/Code.gs.txt"
+type = "text"
+title = "Code.gs — add-on Gmail Inboria (à jour)"
+
+[[outputs]]
+id = "Cr94t0A6Imvm3M4iOxJYc"
+uri = "file://.local/addon-export/appsscript.json"
+type = "unspecified"
+title = "appsscript.json — manifeste add-on"
