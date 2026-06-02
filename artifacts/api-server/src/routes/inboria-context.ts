@@ -672,7 +672,17 @@ router.get(
         res.status(500).json({ error: "Lookup échoué" });
         return;
       }
-      res.json({ emailId: (data as any)?.id ?? null });
+      const resolvedId = (data as any)?.id ?? null;
+      req.log.info(
+        {
+          userId,
+          rawMessageId: raw,
+          candidateCount: candidates.length,
+          resolvedId,
+        },
+        "[inboria-resolve-email] diag",
+      );
+      res.json({ emailId: resolvedId });
     } catch (err: any) {
       req.log.error(
         { err: err?.message },
