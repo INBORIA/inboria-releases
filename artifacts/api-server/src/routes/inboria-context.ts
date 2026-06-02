@@ -505,6 +505,184 @@ router.patch("/inboria/mailbox-settings", requireAuth, async (req, res): Promise
   }
 });
 
+// ---------------------------------------------------------------------------
+// Pont Inboria — add-in Outlook / add-on Gmail (« Demander à Inboria »)
+// ---------------------------------------------------------------------------
+
+// Config publique consommée par le taskpane statique de l'add-in Outlook.
+// Ne renvoie QUE des valeurs publiques (URL Supabase + clé publishable, déjà
+// exposées dans le bundle front). Aucune auth requise.
+router.get("/inboria/addin-config", (req, res): void => {
+  const supabaseUrl = process.env["VITE_SUPABASE_URL"] || "";
+  const supabaseAnonKey = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || "";
+  if (!supabaseUrl || !supabaseAnonKey) {
+    req.log.error("[inboria-addin-config] missing Supabase env vars");
+    res.status(500).json({
+      error: "Configuration Inboria indisponible. Contactez le support.",
+    });
+    return;
+  }
+  res.json({ supabaseUrl, supabaseAnonKey });
+});
+
+// Manifest XML de l'add-in Outlook, généré dynamiquement avec le host courant
+// pour que les URLs (taskpane, icônes) collent à l'environnement (dev/prod)
+// servant la requête. Téléchargeable directement depuis l'app — aucune
+// recherche dans les menus Outlook.
+router.get("/inboria/outlook-manifest.xml", (req, res): void => {
+  const proto =
+    (typeof req.headers["x-forwarded-proto"] === "string"
+      ? req.headers["x-forwarded-proto"].split(",")[0]
+      : "") || "https";
+  const host = req.headers.host || "";
+  const base = `${proto}://${host}`;
+  // GUID fixe — identité stable de l'add-in (ne pas changer).
+  const GUID = "b6f8d1e2-3c4a-4f5b-9e0d-7a1c2b3d4e5f";
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
+  <Id>${GUID}</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Inboria</ProviderName>
+  <DefaultLocale>fr-FR</DefaultLocale>
+  <DisplayName DefaultValue="Inboria" />
+  <Description DefaultValue="Demandez à Inboria directement dans Outlook : résumés, réponses et actions sur vos mails." />
+  <IconUrl DefaultValue="${base}/favicon.png" />
+  <HighResolutionIconUrl DefaultValue="${base}/logo-icon-192.png" />
+  <SupportUrl DefaultValue="${base}/dashboard" />
+  <AppDomains>
+    <AppDomain>${base}</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Mailbox" />
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.3" />
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="${base}/inboria-addin/taskpane.html" />
+        <RequestedHeight>450</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.3">
+        <bt:Set Name="Mailbox" />
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <FunctionFile resid="functionFile" />
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="inboriaGroup">
+                <Label resid="groupLabel" />
+                <Control xsi:type="Button" id="inboriaOpenBtn">
+                  <Label resid="taskpaneLabel" />
+                  <Supertip>
+                    <Title resid="taskpaneTitle" />
+                    <Description resid="taskpaneDesc" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16" />
+                    <bt:Image size="32" resid="icon32" />
+                    <bt:Image size="80" resid="icon80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="taskpaneUrl" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon16" DefaultValue="${base}/favicon.png" />
+        <bt:Image id="icon32" DefaultValue="${base}/favicon.png" />
+        <bt:Image id="icon80" DefaultValue="${base}/logo-icon-192.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="functionFile" DefaultValue="${base}/inboria-addin/commands.html" />
+        <bt:Url id="taskpaneUrl" DefaultValue="${base}/inboria-addin/taskpane.html" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="groupLabel" DefaultValue="Inboria" />
+        <bt:String id="taskpaneLabel" DefaultValue="Demander à Inboria" />
+        <bt:String id="taskpaneTitle" DefaultValue="Demander à Inboria" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="taskpaneDesc" DefaultValue="Ouvrir l'assistant Inboria pour ce mail." />
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>`;
+  res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="inboria-outlook-manifest.xml"',
+  );
+  res.send(xml);
+});
+
+// Résout un Message-ID RFC822 (Office.js internetMessageId) vers l'id interne
+// du mail pour l'utilisateur courant, afin d'ouvrir l'app sur le bon mail.
+router.get(
+  "/inboria/resolve-email",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const raw =
+        typeof req.query.providerMessageId === "string"
+          ? req.query.providerMessageId.trim()
+          : "";
+      if (!raw) {
+        res.status(400).json({ error: "providerMessageId requis" });
+        return;
+      }
+      // Office renvoie souvent le Message-ID avec chevrons « <...> ». Selon le
+      // provider on stocke tantôt avec, tantôt sans → on teste les variantes.
+      const stripped = raw.replace(/^<+|>+$/g, "");
+      const candidates = Array.from(
+        new Set([raw, stripped, `<${stripped}>`].filter((v) => v.length > 0)),
+      );
+      const { data, error } = await supabaseAdmin
+        .from("emails")
+        .select("id")
+        .eq("user_id", userId)
+        .in("provider_message_id", candidates)
+        .order("id", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        req.log.error({ err: error.message }, "[inboria-resolve-email] failed");
+        res.status(500).json({ error: "Lookup échoué" });
+        return;
+      }
+      res.json({ emailId: (data as any)?.id ?? null });
+    } catch (err: any) {
+      req.log.error(
+        { err: err?.message },
+        "[inboria-resolve-email] unexpected error",
+      );
+      res.status(500).json({ error: "Internal error" });
+    }
+  },
+);
+
 router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
   const startedAt = Date.now();
   try {

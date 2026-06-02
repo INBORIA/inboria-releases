@@ -1,0 +1,48 @@
+Exactement. Tu tiens ton positionnement, et il est simple à vendre :
+
+« Reste dans Outlook. Clique pour passer en mode Inboria quand tu veux plus. »
+
+Ce qui est fort dans ton idée :
+
+Tu empruntes la confiance d'Outlook au lieu de la combattre. L'utilisateur ne te fait pas confiance à toi (inconnu) — il fait confiance à Outlook, et Outlook « l'envoie » vers toi. La barrière d'adoption tombe presque à zéro.
+Tu ne demandes aucun sacrifice. Pas de migration, pas de changement d'habitude. Juste un bouton en plus. C'est le contraire de « quitte Outlook pour Inboria ».
+Tu te places au-dessus de Copilot, pas contre lui. Copilot t'aide à écrire/résumer dans ta boîte à toi. Inboria fait ce que Copilot ne fait pas : travail d'équipe, boîtes partagées, anti-collision, relances auto, multi-comptes, CRM, vue client 360°. Donc le bouton n'est pas un doublon de Copilot — il fait le pas d'après. Ton message : « Copilot t'aide à répondre. Inboria gère toute la relation client de ton équipe. »
+Le seul point de vigilance, pour rester honnête :
+
+Microsoft donne à Copilot la place par défaut, la mieux mise en avant ; ton add-in est en option, l'utilisateur doit l'activer. Donc deux conditions non négociables : (1) le panneau Inboria dans Outlook doit être utile dès la première seconde (sinon personne ne clique sur « Ouvrir dans Inboria »), et (2) la promesse « plus complet » doit être réelle — c'est-à-dire les fonctions d'équipe, ton vrai écart avec Copilot.
+Bref : ton modèle est le bon, et il est même plus malin que d'attaquer Copilot de face — tu te sers d'Outlook comme rampe de lancement.
+
+On est en mode Plan, donc je ne touche à rien. Veux-tu que je te rédige maintenant le plan concret de ce pont Outlook → Inboria : ce que montre le panneau dans Outlook, comment le bouton ouvre l'app sur le bon mail, ce qui reste réservé à l'app, le modèle de prix (gratuit dans Outlook → payant pour l'équipe), et les étapes pour publier sur AppSource ? Tu n'auras plus qu'à me dire « go » ensuite.
+
+Et pourrait-on faire la meme chose avec gmail ?
+
+6 hours ago
+
+Show less
+
+Comparing Gmail and Workspace add-on constraints (11 seconds)
+Oui, et c'est même un argument de poids. Je vérifie vite que tu utilises déjà l'API Gmail (comme pour Graph) pour te répondre sans approximation.
+
+
+Show less
+
+Ran cd
+
+Strategizing email provider abstraction layer
+Oui — confirmé : tu utilises déjà l'API Gmail comme l'API Graph (Inboria gère gmail, outlook et imap). Donc le même pont est possible côté Gmail. Et franchement, ça rend ta stratégie encore plus forte.
+
+Le même modèle marche avec Gmail
+
+Le pont data existe déjà : tu synchronises les mails Gmail, tu as l'identifiant de chaque message → le bouton « Ouvrir dans Inboria » qui ouvre l'app sur le bon mail est tout aussi faisable que pour Outlook.
+Le panneau dans Gmail se fait avec un Google Workspace Add-on (l'équivalent Google de l'add-in Outlook) : il apparaît dans le panneau latéral de Gmail.
+La distribution passe par le Google Workspace Marketplace (l'équivalent d'AppSource), donc tu as aussi un canal de découverte côté Google.
+Les différences honnêtes Gmail vs Outlook
+
+Le panneau Gmail est plus contraint techniquement. Côté Outlook, l'add-in peut afficher une vraie page web complète (donc une mini-Inboria riche). Côté Gmail, l'add-on est construit à partir de « cartes » plus rigides — interactions plus limitées. Conséquence pratique : dans Gmail, le panneau sera plus simple (résumé, brouillon, créer une relance, bouton vers l'app), et tu pousses plus vite vers l'app pour le reste. Ce n'est pas un blocage, juste une UI plus sobre dans la boîte.
+Face à toi côté Google, c'est Gemini (le Copilot de Google) — même dynamique : il aide à écrire dans la boîte, il ne fait pas le travail d'équipe.
+Le vrai bonus stratégique : tu deviens la couche neutre au-dessus des deux
+
+C'est là que ton modèle devient meilleur que Copilot et Gemini :
+
+Copilot ne vit que dans Outlook. Gemini ne vit que dans Gmail. Chacun est prisonnier de sa maison.
+Inboria, lui, se branche sur les deux. Une équipe où certains sont sur Outlook et d'autres sur Gmail (cas ultra courant dans les PME) ne peut pas être unifiée par Copilot ni par Gemini. Inboria, si.

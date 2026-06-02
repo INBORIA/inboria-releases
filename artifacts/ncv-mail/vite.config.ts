@@ -110,8 +110,12 @@ export default defineConfig({
         // the precache size limit to 6 MB to accommodate it.
         maximumFileSizeToCacheInBytes: 16 * 1024 * 1024,
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+        // L'add-in Outlook (taskpane statique) ne doit JAMAIS être pré-caché
+        // ni servi par le service worker — il vit hors du SPA et doit rester
+        // frais (Office charge ces pages dans son propre webview).
+        globIgnores: ["**/inboria-addin/**"],
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/inboria-addin\//],
         // Force the new SW to activate immediately on install so the
         // PWA picks up the latest deployment without requiring the
         // user to fully close + reopen the installed app.
@@ -128,6 +132,7 @@ export default defineConfig({
             urlPattern: ({ url, request, sameOrigin }) => {
               if (!sameOrigin) return false;
               if (url.pathname.startsWith("/api/")) return false;
+              if (url.pathname.startsWith("/inboria-addin/")) return false;
               return (
                 request.destination === "script" ||
                 request.destination === "style" ||

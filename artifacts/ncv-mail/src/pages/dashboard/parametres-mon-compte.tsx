@@ -568,6 +568,8 @@ export default function ParametresMonCompte() {
   const [imapPassword, setImapPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [outlookGuideOpen, setOutlookGuideOpen] = useState(false);
+  const outlookManifestUrl = `${import.meta.env.BASE_URL}api/inboria/outlook-manifest.xml`;
   const [imapHost, setImapHost] = useState("");
   const [imapPort, setImapPort] = useState("");
   const [connecting, setConnecting] = useState(false);
@@ -1088,6 +1090,72 @@ export default function ParametresMonCompte() {
                     </Button>
                   </div>
                   </div>
+
+                  <div className="pt-4 mt-2 border-t border-border">
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6] mb-3">
+                      {t("settings.outlookAddinSection", "Inboria dans Outlook")}
+                    </h3>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-primary/20 rounded-lg bg-primary/5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">O</div>
+                        <div>
+                          <h4 className="font-medium text-[13px] text-white">{t("settings.outlookAddinTitle", "Bouton « Demander à Inboria » dans Outlook")}</h4>
+                          <p className="text-[11px] text-[#b8c5d6]">{t("settings.outlookAddinDesc", "Ajoutez l'assistant Inboria directement dans votre Outlook, sans quitter vos mails.")}</p>
+                        </div>
+                      </div>
+                      <Button size="sm" className="h-8 text-[12px] gap-1.5 shrink-0" onClick={() => setOutlookGuideOpen(true)}>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        {t("settings.outlookAddinInstall", "Installer dans Outlook")}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <AlertDialog open={outlookGuideOpen} onOpenChange={setOutlookGuideOpen}>
+                    <AlertDialogContent className="max-w-lg">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t("settings.outlookGuideTitle", "Installer Inboria dans Outlook")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("settings.outlookGuideIntro", "Trois étapes simples. Pas besoin de chercher dans les menus : tout est guidé.")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <ol className="space-y-4 my-2">
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.outlookStep1", "Téléchargez le fichier de connexion Inboria.")}
+                            <div className="mt-2">
+                              <a
+                                href={outlookManifestUrl}
+                                download
+                                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-primary-foreground text-[12px] font-medium hover:opacity-90 transition-opacity"
+                              >
+                                <MailCheck className="w-3.5 h-3.5" />
+                                {t("settings.outlookDownloadManifest", "Télécharger le fichier")}
+                              </a>
+                            </div>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.outlookStep2", "Dans Outlook, ouvrez « Obtenir des compléments » › « Mes compléments » › « Ajouter un complément personnalisé » › « À partir d'un fichier », puis sélectionnez le fichier téléchargé.")}
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.outlookStep3", "Ouvrez un mail : le bouton « Demander à Inboria » apparaît dans le ruban. Connectez-vous une fois avec votre compte Inboria, c'est prêt.")}
+                          </div>
+                        </li>
+                      </ol>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("common.close", "Fermer")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => window.open("https://outlook.office.com/owa/?path=/options/manageapps", "_blank")}>
+                          {t("settings.outlookOpenAddinsPage", "Ouvrir les compléments Outlook")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
 
 
                   {selectedProvider && (

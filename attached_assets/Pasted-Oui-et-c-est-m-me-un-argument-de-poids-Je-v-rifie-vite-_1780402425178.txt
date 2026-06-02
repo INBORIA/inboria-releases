@@ -1,0 +1,24 @@
+Oui, et c'est même un argument de poids. Je vérifie vite que tu utilises déjà l'API Gmail (comme pour Graph) pour te répondre sans approximation.
+
+
+2 actions
+Oui — confirmé : tu utilises déjà l'API Gmail comme l'API Graph (Inboria gère gmail, outlook et imap). Donc le même pont est possible côté Gmail. Et franchement, ça rend ta stratégie encore plus forte.
+
+Le même modèle marche avec Gmail
+
+Le pont data existe déjà : tu synchronises les mails Gmail, tu as l'identifiant de chaque message → le bouton « Ouvrir dans Inboria » qui ouvre l'app sur le bon mail est tout aussi faisable que pour Outlook.
+Le panneau dans Gmail se fait avec un Google Workspace Add-on (l'équivalent Google de l'add-in Outlook) : il apparaît dans le panneau latéral de Gmail.
+La distribution passe par le Google Workspace Marketplace (l'équivalent d'AppSource), donc tu as aussi un canal de découverte côté Google.
+Les différences honnêtes Gmail vs Outlook
+
+Le panneau Gmail est plus contraint techniquement. Côté Outlook, l'add-in peut afficher une vraie page web complète (donc une mini-Inboria riche). Côté Gmail, l'add-on est construit à partir de « cartes » plus rigides — interactions plus limitées. Conséquence pratique : dans Gmail, le panneau sera plus simple (résumé, brouillon, créer une relance, bouton vers l'app), et tu pousses plus vite vers l'app pour le reste. Ce n'est pas un blocage, juste une UI plus sobre dans la boîte.
+Face à toi côté Google, c'est Gemini (le Copilot de Google) — même dynamique : il aide à écrire dans la boîte, il ne fait pas le travail d'équipe.
+Le vrai bonus stratégique : tu deviens la couche neutre au-dessus des deux
+
+C'est là que ton modèle devient meilleur que Copilot et Gemini :
+
+Copilot ne vit que dans Outlook. Gemini ne vit que dans Gmail. Chacun est prisonnier de sa maison.
+Inboria, lui, se branche sur les deux. Une équipe où certains sont sur Outlook et d'autres sur Gmail (cas ultra courant dans les PME) ne peut pas être unifiée par Copilot ni par Gemini. Inboria, si.
+Ton message devient très simple et imparable : « Garde Gmail ou Outlook, peu importe. Inboria s'ajoute par-dessus les deux et donne à toute ton équipe ce qu'aucun des deux ne sait faire. » Tu n'es plus « un concurrent de plus » — tu es le seul terrain neutre qui réunit les deux mondes.
+
+En résumé : oui, même pont avec Gmail (l'API est déjà là), avec une UI un peu plus simple dans la boîte Gmail. Et couvrir Gmail + Outlook en même temps est précisément ce qui te différencie de Copilot et de Gemini, qui restent chacun enfermés chez eux.
