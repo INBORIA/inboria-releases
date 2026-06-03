@@ -26,6 +26,7 @@
     "more": "Mere"
   },
   "nav": {
+    "extensions": "Udvidelser",
     "home": "Hjem",
     "features": "Funktioner",
     "classification": "Kategorier",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Eksempel: 3 medarbejdere = 50,97€/måned — kan ændres når som helst fra dit område."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibel med dine værktøjer",
+      "heroTitle": "Inboria, overalt hvor du læser dine mails",
+      "heroDesc": "Behold din nuværende mail. Inboria tilføjes direkte til Outlook, Gmail eller din webmail — uden at ændre dine vaner.",
+      "outlookTitle": "Inboria i Outlook",
+      "outlookDesc": "En knap med « Spørg Inboria » vises i Outlook. Resuméer, kladder og intelligente svar, uden at du nogensinde forlader dine mails.",
+      "gmailTitle": "Inboria i Gmail",
+      "gmailDesc": "Inboria-modulet integreres i Gmail. Sortér, opsummér og svar hurtigere, direkte i din Google-indbakke.",
+      "webmailTitle": "Inboria i din webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud og de fleste webmails: Browserudvidelsen tilføjer Inboria-assistenten til din sædvanlige mail.",
+      "appTitle": "Inboria-appen",
+      "appDesc": "Foretrækker du at samle det hele ét sted? Web- og mobilappen samler alle dine konti i én intelligent indbakke. Den universelle løsning.",
+      "howTitle": "Guidet installation, trin for trin",
+      "howDesc": "Du behøver ikke lede rundt i menuerne: Når du er logget ind, hjælper Inboria dig med at aktivere den udvidelse, du vælger, på få minutter.",
+      "ctaTitle": "Klar til at prøve Inboria i din mail?",
+      "ctaDesc": "Opret din konto, og aktivér den udvidelse, du ønsker, allerede i dag.",
+      "cta": "Kom i gang gratis"
+    },
     "home": {
       "heroTitle1": "Dine emails ankommer sorteret",
       "heroTitle2": "og prioriteret i realtid.",

@@ -26,6 +26,7 @@
     "more": "Más"
   },
   "nav": {
+    "extensions": "Extensiones",
     "home": "Inicio",
     "features": "Características",
     "classification": "Categorías",
@@ -1388,6 +1389,24 @@
     "seatsExample": "Ejemplo: 3 colaboradores = €50,97/mes — ajustable en cualquier momento desde su espacio."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Compatible con sus herramientas",
+      "heroTitle": "Inboria, dondequiera que lea sus correos",
+      "heroDesc": "Mantenga su correo actual. Inboria se añade directamente a Outlook, Gmail o su webmail, sin cambiar nada de sus hábitos.",
+      "outlookTitle": "Inboria en Outlook",
+      "outlookDesc": "Aparece un botón « Preguntar a Inboria » en Outlook. Resúmenes, borradores y respuestas inteligentes, sin salir nunca de sus correos.",
+      "gmailTitle": "Inboria en Gmail",
+      "gmailDesc": "El módulo de Inboria se integra en Gmail. Clasifique, resuma y responda más rápido, directamente en su bandeja de entrada de Google.",
+      "webmailTitle": "Inboria en su webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud y la mayoría de los webmails: la extensión del navegador añade el asistente Inboria a su correo habitual.",
+      "appTitle": "La aplicación Inboria",
+      "appDesc": "¿Prefiere centralizarlo todo? La aplicación web y móvil reúne todas sus cuentas en una sola bandeja inteligente. La solución universal.",
+      "howTitle": "Una instalación guiada, paso a paso",
+      "howDesc": "No necesita buscar entre los menús: una vez conectado, Inboria le acompaña para activar la extensión que elija en solo unos minutos.",
+      "ctaTitle": "¿Listo para probar Inboria en su correo?",
+      "ctaDesc": "Cree su cuenta y active hoy mismo la extensión que prefiera.",
+      "cta": "Empezar gratis"
+    },
     "home": {
       "heroTitle1": "Tus correos llegan clasificados",
       "heroTitle2": "y priorizados en tiempo real.",

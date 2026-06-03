@@ -26,6 +26,7 @@
     "more": "その他"
   },
   "nav": {
+    "extensions": "拡張機能",
     "home": "ホーム",
     "features": "機能",
     "classification": "カテゴリー",
@@ -1378,6 +1379,24 @@
     "seatsExample": "例：3人の従業員 = 50.97€/月 — あなたのスペースからいつでも変更可能です。"
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "お使いのツールに対応",
+      "heroTitle": "Inboria、メールを読むあらゆる場所で",
+      "heroDesc": "現在お使いのメール環境はそのままに。Inboria は Outlook、Gmail、またはご利用中の Webメール に直接追加でき、普段の使い方を変える必要はありません。",
+      "outlookTitle": "Outlook で使う Inboria",
+      "outlookDesc": "Outlook に「Inboria に依頼」ボタンが表示されます。要約、下書き作成、スマート返信を、メール画面を離れることなくご利用いただけます。",
+      "gmailTitle": "Gmail で使う Inboria",
+      "gmailDesc": "Inboria モジュールは Gmail に統合されます。Google の受信トレイ上で、仕分け、要約、返信をよりスピーディーに行えます。",
+      "webmailTitle": "ご利用中の Webメール で使う Inboria",
+      "webmailDesc": "OVH、Yahoo、iCloud をはじめ、ほとんどの Webメール に対応。ブラウザ拡張機能が、普段お使いのメール環境に Inboria アシスタントを追加します。",
+      "appTitle": "Inboria アプリ",
+      "appDesc": "すべてを一元管理したい場合は、Web アプリとモバイルアプリをご利用ください。すべてのアカウントを、1つのスマートな受信トレイに集約できます。あらゆる環境に対応するソリューションです。",
+      "howTitle": "手順に沿ったかんたん設定",
+      "howDesc": "メニューを探し回る必要はありません。ログイン後、Inboria がご希望の拡張機能の有効化を数分で完了できるよう、手順に沿ってご案内します。",
+      "ctaTitle": "メール環境で Inboria を試してみませんか？",
+      "ctaDesc": "今すぐアカウントを作成し、ご希望の拡張機能を有効化してください。",
+      "cta": "無料で始める"
+    },
     "home": {
       "heroTitle1": "あなたのメールは整理されて届きます",
       "heroTitle2": "リアルタイムで優先順位が付けられます。",

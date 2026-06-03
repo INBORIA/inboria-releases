@@ -26,6 +26,7 @@
     "more": "Lainnya"
   },
   "nav": {
+    "extensions": "Ekstensi",
     "home": "Beranda",
     "features": "Fitur",
     "classification": "Kategori",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Contoh: 3 kolaborator = 50,97€/bulan — dapat diubah kapan saja dari ruang Anda."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibel dengan alat Anda",
+      "heroTitle": "Inboria, di mana pun Anda membaca email",
+      "heroDesc": "Pertahankan layanan email Anda saat ini. Inboria ditambahkan langsung ke Outlook, Gmail, atau webmail Anda — tanpa mengubah kebiasaan Anda.",
+      "outlookTitle": "Inboria di Outlook",
+      "outlookDesc": "Tombol « Tanya Inboria » muncul di Outlook. Ringkasan, draf, dan balasan cerdas, tanpa perlu keluar dari email Anda.",
+      "gmailTitle": "Inboria di Gmail",
+      "gmailDesc": "Modul Inboria terintegrasi dengan Gmail. Silakan sortir, ringkas, dan balas lebih cepat, langsung dari kotak masuk Google Anda.",
+      "webmailTitle": "Inboria di webmail Anda",
+      "webmailDesc": "OVH, Yahoo, iCloud, dan sebagian besar webmail: ekstensi browser menambahkan asisten Inboria ke layanan email Anda yang biasa.",
+      "appTitle": "Aplikasi Inboria",
+      "appDesc": "Apakah Anda lebih suka memusatkan semuanya? Aplikasi Web dan mobile menggabungkan semua akun Anda dalam satu kotak masuk cerdas. Solusi universal.",
+      "howTitle": "Panduan instalasi langkah demi langkah",
+      "howDesc": "Tidak perlu mencari-cari di menu: setelah terhubung, Inboria memandu Anda untuk mengaktifkan ekstensi pilihan Anda hanya dalam beberapa menit.",
+      "ctaTitle": "Siap mencoba Inboria di layanan email Anda?",
+      "ctaDesc": "Buat akun Anda dan aktifkan ekstensi pilihan Anda mulai hari ini.",
+      "cta": "Mulai gratis"
+    },
     "home": {
       "heroTitle1": "Email Anda tiba terurut",
       "heroTitle2": "dan diprioritaskan secara real-time.",

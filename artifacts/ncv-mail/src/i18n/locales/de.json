@@ -26,6 +26,7 @@
     "more": "Mehr"
   },
   "nav": {
+    "extensions": "Erweiterungen",
     "home": "Startseite",
     "features": "Funktionen",
     "classification": "Kategorien",
@@ -1388,6 +1389,24 @@
     "seatsExample": "Beispiel: 3 Mitarbeiter = 50,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibel mit Ihren Tools",
+      "heroTitle": "Inboria, überall dort, wo Sie Ihre E-Mails lesen",
+      "heroDesc": "Behalten Sie Ihre aktuelle Mail-Lösung. Inboria lässt sich direkt zu Outlook, Gmail oder Ihrem Webmail hinzufügen — ohne Ihre Gewohnheiten zu ändern.",
+      "outlookTitle": "Inboria in Outlook",
+      "outlookDesc": "In Outlook erscheint eine Schaltfläche „Inboria fragen“. Zusammenfassungen, Entwürfe und intelligente Antworten, ohne Ihre E-Mails jemals zu verlassen.",
+      "gmailTitle": "Inboria in Gmail",
+      "gmailDesc": "Das Inboria-Modul integriert sich in Gmail. Sortieren, zusammenfassen und schneller antworten, direkt in Ihrem Google-Postfach.",
+      "webmailTitle": "Inboria in Ihrem Webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud und die meisten Webmail-Dienste: Die Browser-Erweiterung fügt den Inboria-Assistenten zu Ihrer gewohnten Mail-Lösung hinzu.",
+      "appTitle": "Die Inboria-App",
+      "appDesc": "Sie möchten alles zentral an einem Ort? Die Web- und Mobile-App vereint all Ihre Konten in einem einzigen intelligenten Postfach. Die universelle Lösung.",
+      "howTitle": "Eine geführte Einrichtung, Schritt für Schritt",
+      "howDesc": "Kein mühsames Suchen in Menüs: Sobald Sie angemeldet sind, begleitet Inboria Sie dabei, die Erweiterung Ihrer Wahl in wenigen Minuten zu aktivieren.",
+      "ctaTitle": "Bereit, Inboria mit Ihrer Mail-Lösung auszuprobieren?",
+      "ctaDesc": "Erstellen Sie Ihr Konto und aktivieren Sie noch heute die Erweiterung Ihrer Wahl.",
+      "cta": "Kostenlos starten"
+    },
     "home": {
       "heroTitle1": "Ihre E-Mails kommen sortiert an",
       "heroTitle2": "und werden in Echtzeit priorisiert.",

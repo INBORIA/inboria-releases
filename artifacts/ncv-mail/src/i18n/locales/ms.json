@@ -26,6 +26,7 @@
     "more": "Lagi"
   },
   "nav": {
+    "extensions": "Extensions",
     "home": "Halaman Utama",
     "features": "Ciri-ciri",
     "classification": "Kategori",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Contoh: 3 rakan sekerja = 50,97€/bulan — boleh diubah pada bila-bila masa dari ruang anda."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Serasi dengan alat anda",
+      "heroTitle": "Inboria, di mana sahaja anda membaca e-mel",
+      "heroDesc": "Kekalkan perkhidmatan e-mel semasa anda. Inboria ditambahkan terus ke Outlook, Gmail atau webmail anda — tanpa mengubah tabiat anda.",
+      "outlookTitle": "Inboria dalam Outlook",
+      "outlookDesc": "Butang « Tanya Inboria » muncul dalam Outlook. Ringkasan, draf dan balasan pintar, tanpa perlu meninggalkan e-mel anda.",
+      "gmailTitle": "Inboria dalam Gmail",
+      "gmailDesc": "Modul Inboria bersepadu dengan Gmail. Isih, ringkaskan dan balas dengan lebih pantas, terus dalam peti masuk Google anda.",
+      "webmailTitle": "Inboria dalam webmail anda",
+      "webmailDesc": "OVH, Yahoo, iCloud dan kebanyakan webmail: sambungan pelayar menambahkan pembantu Inboria pada perkhidmatan e-mel biasa anda.",
+      "appTitle": "Aplikasi Inboria",
+      "appDesc": "Anda lebih suka menyatukan semuanya? Aplikasi web dan mudah alih menghimpunkan semua akaun anda dalam satu peti masuk pintar. Penyelesaian universal.",
+      "howTitle": "Pemasangan berpandu, langkah demi langkah",
+      "howDesc": "Tidak perlu mencari-cari dalam menu: sebaik sahaja anda log masuk, Inboria membimbing anda untuk mengaktifkan sambungan pilihan anda dalam beberapa minit.",
+      "ctaTitle": "Sedia untuk mencuba Inboria pada perkhidmatan e-mel anda?",
+      "ctaDesc": "Cipta akaun anda dan aktifkan sambungan pilihan anda mulai hari ini.",
+      "cta": "Mulakan secara percuma"
+    },
     "home": {
       "heroTitle1": "Emel anda tiba teratur",
       "heroTitle2": "dan diprioritaskan secara langsung.",

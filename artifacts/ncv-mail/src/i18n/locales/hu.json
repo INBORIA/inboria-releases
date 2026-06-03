@@ -26,6 +26,7 @@
     "more": "Több"
   },
   "nav": {
+    "extensions": "Bővítmények",
     "home": "Kezdőlap",
     "features": "Funkciók",
     "classification": "Kategóriák",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Példa: 3 munkatárs = 50,97€/hónap — bármikor módosítható az Ön felületén."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibilis az Ön eszközeivel",
+      "heroTitle": "Inboria, mindenhol, ahol az emailjeit olvassa",
+      "heroDesc": "Tartsa meg jelenlegi levelezését. Az Inboria közvetlenül csatlakozik az Outlookhoz, a Gmailhez vagy az Ön webmailjéhez — anélkül, hogy változtatnia kellene a megszokott használaton.",
+      "outlookTitle": "Inboria az Outlookban",
+      "outlookDesc": "Egy „Kérdezze meg az Inboria-t” gomb jelenik meg az Outlookban. Összefoglalók, vázlatok és intelligens válaszok, anélkül hogy elhagyná emailjeit.",
+      "gmailTitle": "Inboria a Gmailben",
+      "gmailDesc": "Az Inboria modul beépül a Gmailbe. Rendszerezzen, foglaljon össze és válaszoljon gyorsabban, közvetlenül a Google postafiókjában.",
+      "webmailTitle": "Inboria az Ön webmailjében",
+      "webmailDesc": "OVH, Yahoo, iCloud és a legtöbb webmail: a böngészőbővítmény hozzáadja az Inboria asszisztenst a megszokott levelezéséhez.",
+      "appTitle": "Az Inboria alkalmazás",
+      "appDesc": "Inkább mindent egy helyen kezelne? A webes és mobilalkalmazás egyetlen intelligens postafiókban egyesíti az összes fiókját. Az univerzális megoldás.",
+      "howTitle": "Irányított telepítés, lépésről lépésre",
+      "howDesc": "Nem kell a menükben keresgélnie: a bejelentkezés után az Inboria néhány perc alatt végigvezeti Önt a választott bővítmény aktiválásán.",
+      "ctaTitle": "Készen áll arra, hogy kipróbálja az Inboria-t a levelezésében?",
+      "ctaDesc": "Hozza létre fiókját, és aktiválja még ma az Önnek megfelelő bővítményt.",
+      "cta": "Kezdje el ingyen"
+    },
     "home": {
       "heroTitle1": "Az Ön e-mailjei rendezve érkeznek",
       "heroTitle2": "és valós időben prioritás szerint.",

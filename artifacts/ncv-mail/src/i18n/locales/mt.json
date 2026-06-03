@@ -26,6 +26,7 @@
     "more": "Aktar"
   },
   "nav": {
+    "extensions": "Estensjonijiet",
     "home": "Dar",
     "features": "Karatteristiċi",
     "classification": "Kategoriji",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Eżempju: 3 kollegi = 50,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju Tagħkom."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibbli mal-għodod tagħkom",
+      "heroTitle": "Inboria, kull fejn taqraw l-emails tagħkom",
+      "heroDesc": "Żommu l-email attwali tagħkom. Inboria jiżdied direttament ma’ Outlook, Gmail jew il-webmail tagħkom — mingħajr ma jbiddel xejn mid-drawwiet tagħkom.",
+      "outlookTitle": "Inboria f’Outlook",
+      "outlookDesc": "Tidher buttuna “Staqsi lil Inboria” f’Outlook. Sommarji, abbozzi u tweġibiet intelliġenti, mingħajr qatt ma toħorġu mill-emails tagħkom.",
+      "gmailTitle": "Inboria f’Gmail",
+      "gmailDesc": "Il-modulu ta’ Inboria jintegra ma’ Gmail. Issortjaw, agħmlu sommarju u wieġbu aktar malajr, direttament fil-kaxxa Google tagħkom.",
+      "webmailTitle": "Inboria fil-webmail tagħkom",
+      "webmailDesc": "OVH, Yahoo, iCloud u l-biċċa l-kbira tal-webmails: l-estensjoni tal-browser iżżid l-assistent Inboria mal-email tas-soltu tagħkom.",
+      "appTitle": "L-app ta’ Inboria",
+      "appDesc": "Tippreferu tikkentralizzaw kollox? L-app Web u mobile tiġbor il-kontijiet kollha tagħkom f’kaxxa intelliġenti waħda. Is-soluzzjoni universali.",
+      "howTitle": "Installazzjoni ggwidata, pass pass",
+      "howDesc": "M’hemmx għalfejn tfittxu fil-menus: ladarba tikkonnettjaw, Inboria jiggwidakom biex tattivaw l-estensjoni tal-għażla tagħkom fi ftit minuti.",
+      "ctaTitle": "Lesti biex tippruvaw Inboria fuq l-email tagħkom?",
+      "ctaDesc": "Oħolqu l-kont tagħkom u attivaw l-estensjoni tal-għażla tagħkom mil-lum.",
+      "cta": "Ibdew b’xejn"
+    },
     "home": {
       "heroTitle1": "L-emails Tagħkom jaslu mħarrġa",
       "heroTitle2": "u priorizzati f'ħin reali.",

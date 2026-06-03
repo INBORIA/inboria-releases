@@ -26,6 +26,7 @@
     "more": "Więcej"
   },
   "nav": {
+    "extensions": "Rozszerzenia",
     "home": "Strona główna",
     "features": "Funkcje",
     "classification": "Kategorie",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Przykład: 3 współpracowników = 50,97€/miesiąc — możliwe do zmiany w dowolnym momencie z Państwa konta."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatybilny z Państwa narzędziami",
+      "heroTitle": "Inboria wszędzie tam, gdzie czyta Pan/Pani swoje maile",
+      "heroDesc": "Zachowuje Pan/Pani swoją obecną skrzynkę. Inboria dodaje się bezpośrednio do Outlook, Gmail lub Państwa webmaila — bez zmiany dotychczasowych nawyków.",
+      "outlookTitle": "Inboria w Outlook",
+      "outlookDesc": "W Outlook pojawia się przycisk „Zapytaj Inboria”. Podsumowania, szkice i inteligentne odpowiedzi — bez opuszczania skrzynki mailowej.",
+      "gmailTitle": "Inboria w Gmail",
+      "gmailDesc": "Moduł Inboria integruje się z Gmail. Sortuj, podsumowuj i odpowiadaj szybciej — bezpośrednio w swojej skrzynce Google.",
+      "webmailTitle": "Inboria w Państwa webmailu",
+      "webmailDesc": "OVH, Yahoo, iCloud i większość webmaili: rozszerzenie przeglądarki dodaje asystenta Inboria do Państwa codziennej poczty.",
+      "appTitle": "Aplikacja Inboria",
+      "appDesc": "Woli Pan/Pani mieć wszystko w jednym miejscu? Aplikacja web i mobilna łączy wszystkie konta w jednej inteligentnej skrzynce. Uniwersalne rozwiązanie.",
+      "howTitle": "Instalacja krok po kroku z pełnym wsparciem",
+      "howDesc": "Nie trzeba przeszukiwać menu: po zalogowaniu Inboria poprowadzi Pana/Panią przez aktywację wybranego rozszerzenia w kilka minut.",
+      "ctaTitle": "Gotowy/-a wypróbować Inboria w swojej skrzynce pocztowej?",
+      "ctaDesc": "Załóż konto i aktywuj wybrane rozszerzenie już dziś.",
+      "cta": "Zacznij za darmo"
+    },
     "home": {
       "heroTitle1": "Państwa e-maile przychodzą posegregowane",
       "heroTitle2": "i priorytetowane w czasie rzeczywistym.",

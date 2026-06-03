@@ -26,6 +26,7 @@
     "more": "Vairāk"
   },
   "nav": {
+    "extensions": "Paplašinājumi",
     "home": "Sākums",
     "features": "Funkcijas",
     "classification": "Kategorijas",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Piemērs: 3 darbinieki = 50,97€/mēnesī — maināms jebkurā laikā Jūsu telpā."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Saderīgs ar Jūsu rīkiem",
+      "heroTitle": "Inboria — visur, kur Jūs lasāt savus e-pastus",
+      "heroDesc": "Saglabājiet savu pašreizējo e-pasta risinājumu. Inboria pievienojas tieši Outlook, Gmail vai Jūsu tīmekļa pastam — neko nemainot Jūsu ieradumos.",
+      "outlookTitle": "Inboria programmā Outlook",
+      "outlookDesc": "Outlook parādās poga “Jautāt Inboria”. Kopsavilkumi, melnraksti un viedas atbildes — neizejot no saviem e-pastiem.",
+      "gmailTitle": "Inboria pakalpojumā Gmail",
+      "gmailDesc": "Inboria modulis integrējas ar Gmail. Šķirojiet, apkopojiet un atbildiet ātrāk — tieši savā Google iesūtnē.",
+      "webmailTitle": "Inboria Jūsu tīmekļa pastā",
+      "webmailDesc": "OVH, Yahoo, iCloud un lielākā daļa tīmekļa pasta risinājumu: pārlūka paplašinājums pievieno Inboria asistentu Jūsu ierastajam e-pastam.",
+      "appTitle": "Inboria lietotne",
+      "appDesc": "Vai vēlaties visu centralizēt? Web un mobilā lietotne apvieno visus Jūsu kontus vienā viedā iesūtnē. Universāls risinājums.",
+      "howTitle": "Soli pa solim vadīta uzstādīšana",
+      "howDesc": "Nav nepieciešams meklēt izvēlnēs: pēc pieslēgšanās Inboria palīdz Jums dažu minūšu laikā aktivizēt izvēlēto paplašinājumu.",
+      "ctaTitle": "Vai esat gatavs izmēģināt Inboria savā e-pastā?",
+      "ctaDesc": "Izveidojiet savu kontu un aktivizējiet izvēlēto paplašinājumu jau šodien.",
+      "cta": "Sākt bez maksas"
+    },
     "home": {
       "heroTitle1": "Jūsu e-pasti ierodas sakārtoti",
       "heroTitle2": "un prioritizēti reālajā laikā.",

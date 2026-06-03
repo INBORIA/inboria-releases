@@ -26,6 +26,7 @@
     "more": "Mai multe"
   },
   "nav": {
+    "extensions": "Extensii",
     "home": "Acasă",
     "features": "Funcționalități",
     "classification": "Categorii",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Exemplu: 3 colaboratori = 50,97€/lună — modificabil în orice moment din spațiul dumneavoastră."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Compatibil cu instrumentele dumneavoastră",
+      "heroTitle": "Inboria, oriunde vă citiți e-mailurile",
+      "heroDesc": "Păstrați-vă mesageria actuală. Inboria se adaugă direct în Outlook, Gmail sau webmailul dumneavoastră — fără să vă schimbați obiceiurile.",
+      "outlookTitle": "Inboria în Outlook",
+      "outlookDesc": "Un buton „Întrebați Inboria” apare în Outlook. Rezumate, ciorne și răspunsuri inteligente, fără să părăsiți vreodată e-mailurile.",
+      "gmailTitle": "Inboria în Gmail",
+      "gmailDesc": "Modulul Inboria se integrează în Gmail. Sortați, rezumați și răspundeți mai rapid, direct din căsuța dumneavoastră Google.",
+      "webmailTitle": "Inboria în webmailul dumneavoastră",
+      "webmailDesc": "OVH, Yahoo, iCloud și majoritatea serviciilor de webmail: extensia de browser adaugă asistentul Inboria în mesageria dumneavoastră obișnuită.",
+      "appTitle": "Aplicația Inboria",
+      "appDesc": "Preferați să centralizați totul? Aplicația web și mobilă reunește toate conturile dumneavoastră într-o singură căsuță inteligentă. Soluția universală.",
+      "howTitle": "O instalare ghidată, pas cu pas",
+      "howDesc": "Nu este nevoie să căutați prin meniuri: odată conectat, Inboria vă ghidează pentru a activa extensia dorită în doar câteva minute.",
+      "ctaTitle": "Sunteți gata să încercați Inboria în mesageria dumneavoastră?",
+      "ctaDesc": "Creați-vă contul și activați extensia dorită chiar de astăzi.",
+      "cta": "Începeți gratuit"
+    },
     "home": {
       "heroTitle1": "Emailurile dumneavoastră sosesc sortate",
       "heroTitle2": "și prioritizate în timp real.",

@@ -26,6 +26,7 @@
     "more": "Viac"
   },
   "nav": {
+    "extensions": "Rozšírenia",
     "home": "Domov",
     "features": "Funkcie",
     "classification": "Kategórie",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Príklad: 3 spolupracovníci = 50,97€/mesiac — zmeniteľné kedykoľvek z Vášho priestoru."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibilné s Vašimi nástrojmi",
+      "heroTitle": "Inboria všade tam, kde čítate svoje e-maily",
+      "heroDesc": "Zachovajte si svoju súčasnú e-mailovú schránku. Inboria sa pridá priamo do Outlook, Gmail alebo Vášho webmailu — bez toho, aby ste menili svoje návyky.",
+      "outlookTitle": "Inboria v Outlook",
+      "outlookDesc": "V Outlook sa zobrazí tlačidlo „Spýtať sa Inboria“. Súhrny, koncepty a inteligentné odpovede bez toho, aby ste museli opustiť svoje e-maily.",
+      "gmailTitle": "Inboria v Gmail",
+      "gmailDesc": "Modul Inboria sa integruje do Gmail. Trieďte, sumarizujte a odpovedajte rýchlejšie priamo vo Vašej schránke Google.",
+      "webmailTitle": "Inboria vo Vašom webmaili",
+      "webmailDesc": "OVH, Yahoo, iCloud a väčšina webmailov: rozšírenie prehliadača pridá asistenta Inboria do Vašej bežnej e-mailovej schránky.",
+      "appTitle": "Aplikácia Inboria",
+      "appDesc": "Uprednostňujete centralizáciu všetkého? Webová a mobilná aplikácia spája všetky Vaše účty do jednej inteligentnej schránky. Univerzálne riešenie.",
+      "howTitle": "Sprievodca inštaláciou krok za krokom",
+      "howDesc": "Nemusíte sa prehrabávať v menu: po prihlásení Vás Inboria v priebehu niekoľkých minút prevedie aktiváciou rozšírenia podľa Vášho výberu.",
+      "ctaTitle": "Ste pripravení vyskúšať Inboria vo Vašej e-mailovej schránke?",
+      "ctaDesc": "Vytvorte si účet a aktivujte si rozšírenie podľa Vášho výberu ešte dnes.",
+      "cta": "Začať zdarma"
+    },
     "home": {
       "heroTitle1": "Vaše e-maily prichádzajú triedené",
       "heroTitle2": "a prioritizované v reálnom čase.",

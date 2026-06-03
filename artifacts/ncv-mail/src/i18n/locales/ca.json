@@ -26,6 +26,7 @@
     "more": "Més"
   },
   "nav": {
+    "extensions": "Extensions",
     "home": "Inici",
     "features": "Funcionalitats",
     "classification": "Categories",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Exemple: 3 col·laboradors = 50,97€/mes — modificable en qualsevol moment des del vostre espai."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Compatible amb les vostres eines",
+      "heroTitle": "Inboria, a tot arreu on llegiu els vostres correus",
+      "heroDesc": "Mantingueu la vostra bústia actual. Inboria s’afegeix directament a Outlook, Gmail o al vostre webmail, sense canviar res dels vostres hàbits.",
+      "outlookTitle": "Inboria a Outlook",
+      "outlookDesc": "A Outlook apareix un botó « Demana-ho a Inboria ». Resums, esborranys i respostes intel·ligents, sense sortir mai dels vostres correus.",
+      "gmailTitle": "Inboria a Gmail",
+      "gmailDesc": "El mòdul Inboria s’integra a Gmail. Trieu, resumiu i responeu més de pressa, directament des de la vostra bústia Google.",
+      "webmailTitle": "Inboria al vostre webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud i la majoria de webmails: l’extensió del navegador afegeix l’assistent Inboria a la vostra bústia habitual.",
+      "appTitle": "L’aplicació Inboria",
+      "appDesc": "Preferiu centralitzar-ho tot? L’aplicació web i mòbil reuneix tots els vostres comptes en una sola bústia intel·ligent. La solució universal.",
+      "howTitle": "Una insta·lació guiada, pas a pas",
+      "howDesc": "No cal remenar pels menús: un cop hàgiu iniciat sessió, Inboria us acompanya per activar l’extensió que trieu en pocs minuts.",
+      "ctaTitle": "A punt per provar Inboria a la vostra bústia?",
+      "ctaDesc": "Creeu el vostre compte i activeu l’extensió que trieu avui mateix.",
+      "cta": "Comenceu gratuïtament"
+    },
     "home": {
       "heroTitle1": "Els vostres correus electrònics arriben classificats",
       "heroTitle2": "i prioritzats en temps real.",

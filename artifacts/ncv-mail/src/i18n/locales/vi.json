@@ -26,6 +26,7 @@
     "more": "Thêm"
   },
   "nav": {
+    "extensions": "Tiện ích mở rộng",
     "home": "Trang chủ",
     "features": "Tính năng",
     "classification": "Danh mục",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Ví dụ: 3 nhân viên = 50,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Tương thích với các công cụ của Quý khách",
+      "heroTitle": "Inboria, ở mọi nơi Quý khách đọc email",
+      "heroDesc": "Giữ nguyên hệ thống email hiện tại của Quý khách. Inboria tích hợp trực tiếp vào Outlook, Gmail hoặc webmail của Quý khách — không làm thay đổi thói quen sử dụng.",
+      "outlookTitle": "Inboria trong Outlook",
+      "outlookDesc": "Nút « Hỏi Inboria » xuất hiện trong Outlook. Tóm tắt, bản nháp và trả lời thông minh mà không cần rời khỏi email của Quý khách.",
+      "gmailTitle": "Inboria trong Gmail",
+      "gmailDesc": "Mô-đun Inboria tích hợp với Gmail. Sắp xếp, tóm tắt và trả lời nhanh hơn, trực tiếp trong hộp thư Google của Quý khách.",
+      "webmailTitle": "Inboria trong webmail của Quý khách",
+      "webmailDesc": "OVH, Yahoo, iCloud và hầu hết các webmail: tiện ích trình duyệt bổ sung trợ lý Inboria vào hệ thống email quen thuộc của Quý khách.",
+      "appTitle": "Ứng dụng Inboria",
+      "appDesc": "Quý khách muốn tập trung mọi thứ tại một nơi? Ứng dụng web và di động tập hợp tất cả tài khoản của Quý khách vào một hộp thư thông minh duy nhất. Giải pháp toàn diện.",
+      "howTitle": "Cài đặt có hướng dẫn, từng bước",
+      "howDesc": "Không cần mất công tìm trong menu: sau khi đăng nhập, Inboria sẽ hướng dẫn Quý khách kích hoạt tiện ích phù hợp chỉ trong vài phút.",
+      "ctaTitle": "Sẵn sàng dùng thử Inboria trên hệ thống email của Quý khách?",
+      "ctaDesc": "Tạo tài khoản và kích hoạt tiện ích phù hợp với Quý khách ngay hôm nay.",
+      "cta": "Bắt đầu miễn phí"
+    },
     "home": {
       "heroTitle1": "Email của Quý khách đến được phân loại",
       "heroTitle2": "và ưu tiên theo thời gian thực.",

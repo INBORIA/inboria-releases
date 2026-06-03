@@ -26,6 +26,7 @@
     "more": "Daugiau"
   },
   "nav": {
+    "extensions": "Plėtiniai",
     "home": "Pradžia",
     "features": "Funkcijos",
     "classification": "Kategorijos",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Pavyzdys: 3 bendradarbiai = 50,97€/mėn. — keičiamas bet kada Jūsų erdvėje."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Suderinama su Jūsų įrankiais",
+      "heroTitle": "Inboria, visur, kur skaitote savo el. laiškus",
+      "heroDesc": "Išsaugokite savo dabartinį el. paštą. Inboria integruojasi tiesiai į Outlook, Gmail arba Jūsų webmail — nekeisdama Jūsų įpročių.",
+      "outlookTitle": "Inboria programoje Outlook",
+      "outlookDesc": "Mygtukas „Klausti Inboria“ rodomas Outlook. Santraukos, juodraščiai ir išmanūs atsakymai — nė neišeinant iš savo el. laiškų.",
+      "gmailTitle": "Inboria programoje Gmail",
+      "gmailDesc": "Inboria modulis integruojamas į Gmail. Rūšiuokite, apibendrinkite ir atsakykite greičiau — tiesiai savo Google pašto dėžutėje.",
+      "webmailTitle": "Inboria Jūsų webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud ir dauguma webmail paslaugų: naršyklės plėtinys prideda Inboria asistentą prie Jūsų įprasto el. pašto.",
+      "appTitle": "Inboria programėlė",
+      "appDesc": "Norite viską centralizuoti? Web ir mobilioji programėlė sujungia visas Jūsų paskyras į vieną išmanią pašto dėžutę. Universalus sprendimas.",
+      "howTitle": "Diegimas žingsnis po žingsnio",
+      "howDesc": "Nereikia naršyti po meniu: prisijungus Inboria padės vos per kelias minutes aktyvuoti pasirinktą plėtinį.",
+      "ctaTitle": "Pasiruošę išbandyti Inboria savo el. pašte?",
+      "ctaDesc": "Sukurkite savo paskyrą ir aktyvuokite pasirinktą plėtinį jau šiandien.",
+      "cta": "Pradėti nemokamai"
+    },
     "home": {
       "heroTitle1": "Jūsų el. laiškai atvyksta rūšiuoti",
       "heroTitle2": "ir priorizuoti realiuoju laiku.",

@@ -26,6 +26,7 @@
     "more": "Više"
   },
   "nav": {
+    "extensions": "Proširenja",
     "home": "Početna",
     "features": "Značajke",
     "classification": "Kategorije",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Primjer: 3 suradnika = 50,97€/mjesečno — moguće promijeniti u bilo kojem trenutku iz Vašeg prostora."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Kompatibilno s Vašim alatima",
+      "heroTitle": "Inboria, posvuda gdje čitate svoju e-poštu",
+      "heroDesc": "Zadržite svoju postojeću e-poštu. Inboria se izravno dodaje u Outlook, Gmail ili Vaš webmail — bez ikakvih promjena Vaših navika.",
+      "outlookTitle": "Inboria u Outlook",
+      "outlookDesc": "Gumb „Pitajte Inboria” pojavljuje se u Outlook. Sažeci, skice i pametni odgovori, bez napuštanja Vaše e-pošte.",
+      "gmailTitle": "Inboria u Gmail",
+      "gmailDesc": "Modul Inboria integrira se u Gmail. Sortirajte, sažimajte i odgovarajte brže, izravno u svom Google sandučiću.",
+      "webmailTitle": "Inboria u Vašem webmailu",
+      "webmailDesc": "OVH, Yahoo, iCloud i većina webmailova: proširenje preglednika dodaje asistenta Inboria u Vašu uobičajenu e-poštu.",
+      "appTitle": "Aplikacija Inboria",
+      "appDesc": "Radije sve centralizirate? Web i mobilna aplikacija okuplja sve Vaše račune u jednom pametnom sandučiću. Univerzalno rješenje.",
+      "howTitle": "Vođena instalacija, korak po korak",
+      "howDesc": "Nema potrebe da pretražujete izbornike: nakon prijave, Inboria Vas vodi kroz aktivaciju proširenja po Vašem izboru u samo nekoliko minuta.",
+      "ctaTitle": "Spremni isprobati Inboria u svojoj e-pošti?",
+      "ctaDesc": "Izradite svoj račun i aktivirajte proširenje po Vašem izboru već danas.",
+      "cta": "Počnite besplatno"
+    },
     "home": {
       "heroTitle1": "Vaše e-pošte dolaze sortirane",
       "heroTitle2": "i prioritetizirane u stvarnom vremenu.",

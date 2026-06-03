@@ -26,6 +26,7 @@
     "more": "Daha fazla"
   },
   "nav": {
+    "extensions": "Uzantılar",
     "home": "Ana sayfa",
     "features": "Özellikler",
     "classification": "Kategoriler",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Örnek: 3 çalışan = 50,97€/ay — istediğiniz zaman alanınızdan değiştirebilirsiniz."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Araçlarınızla uyumlu",
+      "heroTitle": "Inboria, e-postalarınızı okuduğunuz her yerde",
+      "heroDesc": "Mevcut e-posta altyapınızı koruyun. Inboria, Outlook, Gmail veya webmail'inize doğrudan eklenir — alışkanlıklarınızı değiştirmeden.",
+      "outlookTitle": "Outlook'ta Inboria",
+      "outlookDesc": "Outlook'ta bir \"Inboria'ya sor\" düğmesi görünür. Özetler, taslaklar ve akıllı yanıtlar; e-postalarınızdan hiç çıkmadan.",
+      "gmailTitle": "Gmail'de Inboria",
+      "gmailDesc": "Inboria modülü Gmail'e entegre olur. Google gelen kutunuzda doğrudan sıralayın, özetleyin ve daha hızlı yanıtlayın.",
+      "webmailTitle": "Webmail'inizde Inboria",
+      "webmailDesc": "OVH, Yahoo, iCloud ve çoğu webmail: tarayıcı uzantısı, Inboria asistanını alışık olduğunuz e-posta altyapınıza ekler.",
+      "appTitle": "Inboria uygulaması",
+      "appDesc": "Her şeyi tek yerde toplamak mı istiyorsunuz? Web ve mobil uygulama, tüm hesaplarınızı tek bir akıllı gelen kutusunda bir araya getirir. Evrensel çözüm.",
+      "howTitle": "Adım adım yönlendirilmiş kurulum",
+      "howDesc": "Menülerde kaybolmanıza gerek yok: bağlandıktan sonra Inboria, seçtiğiniz uzantıyı birkaç dakika içinde etkinleştirmeniz için size rehberlik eder.",
+      "ctaTitle": "Inboria'yı e-posta altyapınızda denemeye hazır mısınız?",
+      "ctaDesc": "Hesabınızı oluşturun ve seçtiğiniz uzantıyı hemen bugün etkinleştirin.",
+      "cta": "Ücretsiz başlayın"
+    },
     "home": {
       "heroTitle1": "E-postalarınız sıralı olarak gelir",
       "heroTitle2": "ve gerçek zamanlı olarak önceliklendirilir.",

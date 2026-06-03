@@ -26,6 +26,7 @@
     "more": "更多"
   },
   "nav": {
+    "extensions": "扩展",
     "home": "首页",
     "features": "功能",
     "classification": "类别",
@@ -1378,6 +1379,24 @@
     "seatsExample": "例如：3名员工 = 50.97€/月 — 可随时在您的空间中修改。"
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "兼容您的常用工具",
+      "heroTitle": "Inboria，随时随地陪您处理邮件",
+      "heroDesc": "请继续使用您当前的邮箱。Inboria 可直接添加到 Outlook、Gmail 或您的 webmail 中，无需改变您的任何使用习惯。",
+      "outlookTitle": "Outlook 中的 Inboria",
+      "outlookDesc": "Outlook 中会显示“询问 Inboria”按钮。摘要、草稿和智能回复，全程无需离开您的邮件。",
+      "gmailTitle": "Gmail 中的 Inboria",
+      "gmailDesc": "Inboria 模块可无缝集成到 Gmail。请直接在您的 Google 邮箱中更快完成整理、摘要和回复。",
+      "webmailTitle": "您的 webmail 中的 Inboria",
+      "webmailDesc": "OVH、Yahoo、iCloud 以及大多数 webmail：浏览器扩展可将 Inboria 助手添加到您惯用的邮箱中。",
+      "appTitle": "Inboria 应用",
+      "appDesc": "如果您更希望统一管理，一款 Web 与移动应用即可将您的所有账户汇集到一个智能收件箱中。通用之选。",
+      "howTitle": "分步引导安装",
+      "howDesc": "无需在菜单中反复查找：连接后，Inboria 将引导您在几分钟内启用您选择的扩展。",
+      "ctaTitle": "准备好在您的邮箱中试用 Inboria 了吗？",
+      "ctaDesc": "立即创建账户，并启用您选择的扩展。",
+      "cta": "免费开始"
+    },
     "home": {
       "heroTitle1": "您的邮件按类别整理",
       "heroTitle2": "并实时优先处理。",

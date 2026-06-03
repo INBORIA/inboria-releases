@@ -26,6 +26,7 @@
     "more": "More"
   },
   "nav": {
+    "extensions": "Extensions",
     "home": "Home",
     "features": "Features",
     "classification": "Categories",
@@ -1415,6 +1416,24 @@
     "seatsExample": "Example: 3 collaborators = €50.97/month — adjustable at any time from your space."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Works with your tools",
+      "heroTitle": "Inboria, everywhere you read your email",
+      "heroDesc": "Keep your current mailbox. Inboria plugs straight into Outlook, Gmail or your webmail — without changing your habits.",
+      "outlookTitle": "Inboria in Outlook",
+      "outlookDesc": "An “Ask Inboria” button appears right inside Outlook. Summaries, drafts and smart replies, without ever leaving your inbox.",
+      "gmailTitle": "Inboria in Gmail",
+      "gmailDesc": "The Inboria add-on slots into Gmail. Sort, summarize and reply faster, right inside your Google inbox.",
+      "webmailTitle": "Inboria in your webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud and most webmails: the browser extension adds the Inboria assistant to the inbox you already use.",
+      "appTitle": "The Inboria app",
+      "appDesc": "Prefer to centralize everything? The web and mobile app brings all your accounts into one smart inbox. The universal solution.",
+      "howTitle": "Guided setup, step by step",
+      "howDesc": "No digging through menus: once you’re signed in, Inboria walks you through enabling the extension of your choice in minutes.",
+      "ctaTitle": "Ready to try Inboria on your mailbox?",
+      "ctaDesc": "Create your account and turn on the extension of your choice today.",
+      "cta": "Get started for free"
+    },
     "home": {
       "heroTitle1": "Your emails arrive sorted",
       "heroTitle2": "and prioritised in real time.",

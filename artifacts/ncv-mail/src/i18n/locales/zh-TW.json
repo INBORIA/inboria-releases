@@ -26,6 +26,7 @@
     "more": "更多"
   },
   "nav": {
+    "extensions": "擴充功能",
     "home": "首頁",
     "features": "功能",
     "classification": "類別",
@@ -1378,6 +1379,24 @@
     "seatsExample": "例如：3 位合作人 = 50.97€/月 — 可隨時在您的空間中修改。"
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "相容於您的工具",
+      "heroTitle": "Inboria，陪您在任何閱讀電郵的地方",
+      "heroDesc": "保留您目前的信箱服務。Inboria 可直接加入 Outlook、Gmail 或您的 webmail，不必改變任何使用習慣。",
+      "outlookTitle": "Outlook 中的 Inboria",
+      "outlookDesc": "Outlook 內會出現「詢問 Inboria」按鈕。摘要、草稿與智慧回覆，全程無需離開您的電郵。",
+      "gmailTitle": "Gmail 中的 Inboria",
+      "gmailDesc": "Inboria 模組可整合至 Gmail。直接在您的 Google 信箱中更快完成分類、摘要與回覆。",
+      "webmailTitle": "您的 webmail 中的 Inboria",
+      "webmailDesc": "OVH、Yahoo、iCloud 以及大多數 webmail：瀏覽器擴充功能可將 Inboria 助理加入您慣用的信箱。",
+      "appTitle": "Inboria 應用程式",
+      "appDesc": "想把一切集中管理？Web 與行動應用程式可將您所有帳戶整合到同一個智慧信箱中。通用解決方案。",
+      "howTitle": "逐步引導安裝",
+      "howDesc": "不必在選單中反覆尋找：登入後，Inboria 會引導您在幾分鐘內啟用您選擇的擴充功能。",
+      "ctaTitle": "準備好在您的信箱中試用 Inboria 了嗎？",
+      "ctaDesc": "立即建立您的帳戶，並啟用您選擇的擴充功能。",
+      "cta": "免費開始"
+    },
     "home": {
       "heroTitle1": "您的電子郵件會被分類",
       "heroTitle2": "並實時優先處理。",

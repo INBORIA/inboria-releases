@@ -26,6 +26,7 @@
     "more": "Tuilleadh"
   },
   "nav": {
+    "extensions": "Eisínteachtaí",
     "home": "Baile",
     "features": "Feidhmeanna",
     "classification": "Catagóirí",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Sampla: 3 comhoibrithe = 50,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Comhoiriúnach le bhur n-uirlisí",
+      "heroTitle": "Inboria, cibé áit a léann sibh bhur ríomhphoist",
+      "heroDesc": "Coinnigh bhur gcóras ríomhphoist reatha. Cuirtear Inboria go díreach le Outlook, Gmail nó bhur ríomhphost gréasáin — gan aon rud a athrú ar bhur nósanna.",
+      "outlookTitle": "Inboria in Outlook",
+      "outlookDesc": "Tá cnaipe « Iarr ar Inboria » le feiceáil in Outlook. Achoimrí, dréachtaí agus freagraí cliste, gan bhur ríomhphoist a fhágáil riamh.",
+      "gmailTitle": "Inboria in Gmail",
+      "gmailDesc": "Comhtháthaítear modúl Inboria le Gmail. Sórtáil, déan achoimre agus freagair níos tapúla, go díreach i bhur mbosca Google.",
+      "webmailTitle": "Inboria i bhur ríomhphost gréasáin",
+      "webmailDesc": "OVH, Yahoo, iCloud agus formhór na seirbhísí ríomhphoist gréasáin: cuireann an eisínteacht bhrabhsálaí cúntóir Inboria le bhur ngnáthchóras ríomhphoist.",
+      "appTitle": "An aip Inboria",
+      "appDesc": "An fearr libh gach rud a lárú? Tugann an aip gréasáin agus soghluaiste bhur gcuntais uile le chéile in aon bhosca cliste amháin. An réiteach uilíoch.",
+      "howTitle": "Suiteáil threoraithe, céim ar chéim",
+      "howDesc": "Ní gá cuardach a dhéanamh sna roghchláir: a luaithe a bhíonn sibh ceangailte, treoraíonn Inboria sibh chun an eisínteacht is rogha libh a ghníomhachtú i gceann cúpla nóiméad.",
+      "ctaTitle": "Réidh le Inboria a thriail ar bhur gcóras ríomhphoist?",
+      "ctaDesc": "Cruthaigh bhur gcuntas agus gníomhachtaigh an eisínteacht is rogha libh inniu féin.",
+      "cta": "Tosaigh saor in aisce"
+    },
     "home": {
       "heroTitle1": "Tagann bhur ríomhphoist a shórtáil",
       "heroTitle2": "agus a thús a chur ar fáil i réaltacht.",

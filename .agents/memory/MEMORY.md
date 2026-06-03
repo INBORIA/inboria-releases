@@ -9,3 +9,4 @@
 - [OWA shared-mailbox resolve](owa-shared-mailbox-resolve.md) — sur boîtes partagées OWA le scrape attrape l'adresse de la boîte (destinataire) pas l'expéditeur → match par sender échoue ; filet sujet-exact non-ambigu (1 seul, non tronqué).
 - [Shared-mailbox dedup](shared-mailbox-dedup.md) — le dedup d'emails doit être scopé par shared_mailbox_id (null=perso) sinon la copie reçue en boîte partagée est jetée comme doublon de la copie perso.
 - [Bridge chat [mail#] chips](inboria-browser-extension.md) — panels add-in/extension doivent rendre [mail#NNNN] en bouton « Ouvrir » (pas texte brut) ; deep-link main.tsx doit accepter from=extension (pas que gmail/outlook).
+- [ncv-mail bulk i18n keys](ncv-mail-i18n-bulk-keys.md) — add a key to all 43 locales: hand-write fr/en, batch-translate the other 41 via OpenAI (per-lang formal notes), idempotent splice after nav/marketing open-brace; sandbox has no process.env (run via bash).

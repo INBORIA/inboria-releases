@@ -26,6 +26,7 @@
     "more": "Lisää"
   },
   "nav": {
+    "extensions": "Laajennukset",
     "home": "Koti",
     "features": "Ominaisuudet",
     "classification": "Luokat",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Esimerkki: 3 työntekijää = 50,97€/kuukausi — muokattavissa milloin tahansa omasta tilasta."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Yhteensopiva työkalujenne kanssa",
+      "heroTitle": "Inboria, kaikkialla missä luette sähköpostinne",
+      "heroDesc": "Säilyttäkää nykyinen sähköpostinne. Inboria lisätään suoraan Outlookiin, Gmailiin tai webmailiinne — muuttamatta mitään tavoissanne.",
+      "outlookTitle": "Inboria Outlookissa",
+      "outlookDesc": "Outlookiin ilmestyy « Kysy Inborialta » -painike. Tiivistelmät, luonnokset ja älykkäät vastaukset poistumatta koskaan sähköposteistanne.",
+      "gmailTitle": "Inboria Gmailissa",
+      "gmailDesc": "Inboria-moduuli integroituu Gmailiin. Lajitelkaa, tiivistäkää ja vastatkaa nopeammin suoraan Google-postilaatikossanne.",
+      "webmailTitle": "Inboria webmailissanne",
+      "webmailDesc": "OVH, Yahoo, iCloud ja useimmat webmailit: selainlaajennus lisää Inboria-avustajan tavalliseen sähköpostiinne.",
+      "appTitle": "Inboria-sovellus",
+      "appDesc": "Haluatteko mieluummin keskittää kaiken yhteen paikkaan? Web- ja mobiilisovellus kokoaa kaikki tilinne yhteen älykkääseen postilaatikkoon. Yleiskäyttöinen ratkaisu.",
+      "howTitle": "Opastettu asennus vaihe vaiheelta",
+      "howDesc": "Valikoita ei tarvitse penkoa: kun olette kirjautuneet sisään, Inboria ohjaa teitä ottamaan haluamanne laajennuksen käyttöön muutamassa minuutissa.",
+      "ctaTitle": "Valmiina kokeilemaan Inboriaa sähköpostissanne?",
+      "ctaDesc": "Luokaa tilinne ja ottakaa haluamanne laajennus käyttöön jo tänään.",
+      "cta": "Aloita maksutta"
+    },
     "home": {
       "heroTitle1": "Sähköpostisi saapuvat lajiteltuina",
       "heroTitle2": "ja priorisoituina reaaliajassa.",

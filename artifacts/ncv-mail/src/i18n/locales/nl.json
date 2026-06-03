@@ -26,6 +26,7 @@
     "more": "Meer"
   },
   "nav": {
+    "extensions": "Extensies",
     "home": "Start",
     "features": "Functies",
     "classification": "Categorieën",
@@ -1388,6 +1389,24 @@
     "seatsExample": "Voorbeeld: 3 medewerkers = €50,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Compatibel met uw tools",
+      "heroTitle": "Inboria, overal waar u uw mails leest",
+      "heroDesc": "Behoud uw huidige mailbox. Inboria voegt zich rechtstreeks toe aan Outlook, Gmail of uw webmail — zonder iets aan uw gewoontes te veranderen.",
+      "outlookTitle": "Inboria in Outlook",
+      "outlookDesc": "Een knop 'Vraag aan Inboria' verschijnt in Outlook. Samenvattingen, concepten en slimme antwoorden, zonder ooit uw mails te verlaten.",
+      "gmailTitle": "Inboria in Gmail",
+      "gmailDesc": "De Inboria-module integreert met Gmail. Sorteer, vat samen en antwoord sneller, rechtstreeks vanuit uw Google-inbox.",
+      "webmailTitle": "Inboria in uw webmail",
+      "webmailDesc": "OVH, Yahoo, iCloud en de meeste webmails: de browserextensie voegt de Inboria-assistent toe aan uw vertrouwde mailbox.",
+      "appTitle": "De Inboria-app",
+      "appDesc": "Verkiest u alles te centraliseren? De web- en mobiele app brengt al uw accounts samen in één slimme inbox. De universele oplossing.",
+      "howTitle": "Een begeleide installatie, stap voor stap",
+      "howDesc": "U hoeft niet in menu's te zoeken: zodra u bent ingelogd, helpt Inboria u om in enkele minuten de extensie van uw keuze te activeren.",
+      "ctaTitle": "Klaar om Inboria in uw mailbox te proberen?",
+      "ctaDesc": "Maak uw account aan en activeer vandaag nog de extensie van uw keuze.",
+      "cta": "Gratis starten"
+    },
     "home": {
       "heroTitle1": "Uw e-mails komen gesorteerd binnen",
       "heroTitle2": "en in real time geprioriteerd.",

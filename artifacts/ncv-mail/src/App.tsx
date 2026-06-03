@@ -64,6 +64,7 @@ const TeamActivite = lazy(() => import("@/pages/dashboard/team-activite"));
 const Agenda = lazy(() => import("@/pages/dashboard/agenda"));
 
 const Fonctionnalites = lazy(() => import("@/pages/marketing/fonctionnalites"));
+const Extensions = lazy(() => import("@/pages/marketing/extensions"));
 const Entreprise = lazy(() => import("@/pages/marketing/entreprise"));
 const ClassementMarketing = lazy(() => import("@/pages/marketing/classement"));
 const IntelligenceArtificielle = lazy(() => import("@/pages/marketing/intelligence-artificielle"));
@@ -366,6 +367,7 @@ function Router() {
     <Switch>
       <Route path="/" component={() => fullyAuthed ? <AuthedHome /> : <Accueil />} />
       <Route path="/fonctionnalites" component={Fonctionnalites} />
+      <Route path="/extensions" component={Extensions} />
       <Route path="/entreprise" component={Entreprise} />
       <Route path="/classement" component={ClassementMarketing} />
       <Route path="/intelligence-artificielle" component={IntelligenceArtificielle} />

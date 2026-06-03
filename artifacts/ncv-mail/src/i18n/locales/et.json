@@ -26,6 +26,7 @@
     "more": "Veel"
   },
   "nav": {
+    "extensions": "Laiendused",
     "home": "Avaleht",
     "features": "Funktsioonid",
     "classification": "Kategooriad",
@@ -1378,6 +1379,24 @@
     "seatsExample": "Näide: 3 koostöötajat = 50,97€/kuu — muudetav igal ajal Teie ruumis."
   },
   "marketing": {
+    "extensions": {
+      "eyebrow": "Ühildub Teie tööriistadega",
+      "heroTitle": "Inboria, kõikjal, kus Te oma e-kirju loete",
+      "heroDesc": "Jätkake oma praeguse meililahenduse kasutamist. Inboria lisandub otse Outlooki, Gmaili või Teie veebimeilile — ilma Teie harjumusi muutmata.",
+      "outlookTitle": "Inboria Outlookis",
+      "outlookDesc": "Outlookis kuvatakse nupp „Küsi Inboria käest”. Kokkuvõtted, mustandid ja nutikad vastused, ilma et peaksite oma e-kirjadest lahkuma.",
+      "gmailTitle": "Inboria Gmailis",
+      "gmailDesc": "Inboria moodul integreerub Gmailiga. Sorteerige, tehke kokkuvõtteid ja vastake kiiremini, otse oma Google'i postkastis.",
+      "webmailTitle": "Inboria Teie veebimeilis",
+      "webmailDesc": "OVH, Yahoo, iCloud ja enamik veebimeile: brauserilaiendus lisab Inboria abilise Teie tavapärasesse meilikeskkonda.",
+      "appTitle": "Inboria rakendus",
+      "appDesc": "Kas eelistate koondada kõik ühte kohta? Veebi- ja mobiilirakendus ühendab kõik Teie kontod üheks nutikaks postkastiks. Universaalne lahendus.",
+      "howTitle": "Juhendatud paigaldus, samm-sammult",
+      "howDesc": "Menüüdes pole vaja otsida: pärast sisselogimist juhendab Inboria Teid valitud laienduse aktiveerimisel vaid mõne minutiga.",
+      "ctaTitle": "Kas olete valmis proovima Inboriat oma meilikeskkonnas?",
+      "ctaDesc": "Looge oma konto ja aktiveerige valitud laiendus juba täna.",
+      "cta": "Alustage tasuta"
+    },
     "home": {
       "heroTitle1": "Teie e-kirjad jõuavad sorteerituna",
       "heroTitle2": "ja prioriseerituna reaalajas.",
