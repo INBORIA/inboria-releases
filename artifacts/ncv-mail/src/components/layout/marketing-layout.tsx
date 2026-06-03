@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
+import appLogo from "@assets/inboria_logo_cropped_1780520000000.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
