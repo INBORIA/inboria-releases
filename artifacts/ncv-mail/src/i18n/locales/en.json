@@ -548,7 +548,12 @@
       "done": "Done",
       "slaBreach": "SLA breached",
       "snoozed": "Snoozed"
-    }
+    },
+    "sharedDraft": "Shared draft",
+    "sharedDraftOn": "Shared draft on",
+    "draftEditing": "editing now",
+    "draftSaving": "Saving…",
+    "draftSaved": "Saved"
   },
   "sent": {
     "title": "Sent emails",

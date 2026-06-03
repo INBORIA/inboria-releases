@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Alle"
-    }
+    },
+    "sharedDraft": "Delt utkast",
+    "sharedDraftOn": "Delt utkast aktivert",
+    "draftEditing": "redigerer nå",
+    "draftSaving": "Lagrer…",
+    "draftSaved": "Lagt til"
   },
   "sent": {
     "title": "Sendte e-poster",

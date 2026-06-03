@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
@@ -8,7 +8,7 @@ import {
   Inbox, Clock, Eye, AlertTriangle, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
   MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
-  FolderKanban, Folder, FolderPlus, ExternalLink,
+  FolderKanban, Folder, FolderPlus, ExternalLink, Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import { resolveMailboxBadge } from "@/lib/mailbox-resolver";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { useEmailPresence } from "@/hooks/use-email-presence";
+import { useSharedDraft, type DraftFields } from "@/hooks/use-shared-draft";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
@@ -308,6 +309,30 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     replying: replyOpen,
   });
   const replyingPeers = replyPeers.filter((p) => p.state === "replying");
+
+  // T005 — brouillon partagé / co-rédaction temps réel (boîtes partagées / mails assignés).
+  const applyingDraftRef = useRef(false);
+  const sharedDraft = useSharedDraft({
+    emailId: email?.id,
+    sharedMailboxId: email?.sharedMailboxId || null,
+    currentUserId: currentUserId || null,
+    name: myPresenceName,
+    onRemote: (f: DraftFields) => {
+      applyingDraftRef.current = true;
+      setReplyTo(f.to);
+      setReplySubject(f.subject);
+      setReplyText(f.body);
+      setTimeout(() => {
+        applyingDraftRef.current = false;
+      }, 0);
+    },
+  });
+  // Pousse les modifications locales du composer vers les autres éditeurs.
+  useEffect(() => {
+    if (!sharedDraft.active || applyingDraftRef.current) return;
+    sharedDraft.sync({ to: replyTo, cc: "", subject: replySubject, body: replyText });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replyTo, replySubject, replyText, sharedDraft.active]);
 
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
@@ -1263,6 +1288,53 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     }}
                   />
                 </div>
+                {isSharedContext && (
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <Button
+                      type="button"
+                      variant={sharedDraft.active ? "default" : "outline"}
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px]"
+                      onClick={() => {
+                        if (sharedDraft.active) {
+                          sharedDraft.deactivate();
+                        } else {
+                          sharedDraft.activate({ to: replyTo, cc: "", subject: replySubject, body: replyText });
+                        }
+                      }}
+                      data-testid="button-shared-draft"
+                    >
+                      <Users className="w-3 h-3" />
+                      {sharedDraft.active
+                        ? t("inbox.sharedDraftOn", "Brouillon partagé activé")
+                        : t("inbox.sharedDraft", "Brouillon partagé")}
+                    </Button>
+                    {sharedDraft.active && (
+                      <div className="flex items-center gap-2 text-[11px] text-[#8b95a7] min-w-0">
+                        {sharedDraft.editors.length > 0 && (
+                          <span className="flex items-center gap-1 min-w-0">
+                            {sharedDraft.editors.slice(0, 3).map((ed) => (
+                              <span
+                                key={ed.userId}
+                                className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[9px] font-semibold text-white shrink-0"
+                                style={{ backgroundColor: ed.color }}
+                                title={ed.name}
+                              >
+                                {(ed.name || "?").slice(0, 1).toUpperCase()}
+                              </span>
+                            ))}
+                            <span className="truncate">{t("inbox.draftEditing", "édite(nt) en ce moment")}</span>
+                          </span>
+                        )}
+                        <span className="shrink-0">
+                          {sharedDraft.saving
+                            ? t("inbox.draftSaving", "Enregistrement…")
+                            : t("inbox.draftSaved", "Enregistré")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {connections && connections.length > 1 && (
                   <div>
                     <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
@@ -1357,7 +1429,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
+                      onClick={() => { sharedDraft.deactivate(); setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
                       className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                     >
                       {t("common.cancel")}
@@ -1379,6 +1451,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
                       onClick={() => {
                         onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments, replyConnectionId || undefined, replyProjectId || undefined);
+                        if (sharedDraft.active) sharedDraft.remove();
                         setReplyText("");
                         setReplyTo("");
                         setReplySubject("");

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Semua"
-    }
+    },
+    "sharedDraft": "Draf bersama",
+    "sharedDraftOn": "Draf bersama aktif",
+    "draftEditing": "sedang mengedit",
+    "draftSaving": "Menyimpan…",
+    "draftSaved": "Tersimpan"
   },
   "sent": {
     "title": "Email yang dikirim",

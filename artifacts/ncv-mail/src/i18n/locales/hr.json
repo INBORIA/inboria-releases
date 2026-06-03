@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Sve"
-    }
+    },
+    "sharedDraft": "Zajednički nacrt",
+    "sharedDraftOn": "Zajednički nacrt uključen",
+    "draftEditing": "uređuju sada",
+    "draftSaving": "Spremam…",
+    "draftSaved": "Spremjeno"
   },
   "sent": {
     "title": "Poslane e-pošte",

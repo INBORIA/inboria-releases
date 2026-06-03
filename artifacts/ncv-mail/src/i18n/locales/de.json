@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Alle"
-    }
+    },
+    "sharedDraft": "Gemeinsamer Entwurf",
+    "sharedDraftOn": "Gemeinsamer Entwurf aktiviert",
+    "draftEditing": "bearbeitet jetzt",
+    "draftSaving": "Speichern…",
+    "draftSaved": "Gespeichert"
   },
   "sent": {
     "title": "Gesendete E-Mails",

@@ -41,6 +41,7 @@ import teamAccessLogRouter from "./team-access-log";
 import contactsRouter from "./contacts";
 import calendarRouter from "./calendar";
 import foldersRouter from "./folders";
+import draftsRouter from "./drafts";
 
 const router: IRouter = Router();
 
@@ -86,5 +87,6 @@ router.use(teamAccessLogRouter);
 router.use(contactsRouter);
 router.use(calendarRouter);
 router.use(foldersRouter);
+router.use(draftsRouter);
 
 export default router;

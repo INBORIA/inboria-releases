@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Tots"
-    }
+    },
+    "sharedDraft": "Borrador compartit",
+    "sharedDraftOn": "Borrador compartit activat",
+    "draftEditing": "editant ara",
+    "draftSaving": "Desant…",
+    "draftSaved": "Desat"
   },
   "sent": {
     "title": "Correu electrònic enviats",

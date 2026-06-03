@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Visi"
-    }
+    },
+    "sharedDraft": "Kopīgais melnraksts",
+    "sharedDraftOn": "Kopīgais melnraksts ieslēgts",
+    "draftEditing": "redaktē tagad",
+    "draftSaving": "Saglabā…",
+    "draftSaved": "Saglabāts"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

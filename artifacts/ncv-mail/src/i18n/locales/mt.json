@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Kollha"
-    }
+    },
+    "sharedDraft": "Draft ma' ħbieb",
+    "sharedDraftOn": "Draft ma' ħbieb attivat",
+    "draftEditing": "qed jeditja issa",
+    "draftSaving": "Qed isalva…",
+    "draftSaved": "Salvat"
   },
   "sent": {
     "title": "Emails inviati",

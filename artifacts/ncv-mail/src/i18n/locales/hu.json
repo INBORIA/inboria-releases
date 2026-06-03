@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Összes"
-    }
+    },
+    "sharedDraft": "Megosztott vázlat",
+    "sharedDraftOn": "Megosztott vázlat be",
+    "draftEditing": "szerkesztés alatt",
+    "draftSaving": "Mentés…",
+    "draftSaved": "Mentve"
   },
   "sent": {
     "title": "Küldött emailek",

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "الكل"
-    }
+    },
+    "sharedDraft": "مسودة مشتركة",
+    "sharedDraftOn": "المسودة المشتركة مفعلة",
+    "draftEditing": "يحرر الآن",
+    "draftSaving": "جارٍ الحفظ…",
+    "draftSaved": "تم الحفظ"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

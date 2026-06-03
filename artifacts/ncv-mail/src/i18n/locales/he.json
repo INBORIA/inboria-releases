@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "הכול"
-    }
+    },
+    "sharedDraft": "טיוטה משותפת",
+    "sharedDraftOn": "טיוטה משותפת פעילה",
+    "draftEditing": "עורכים עכשיו",
+    "draftSaving": "שומר…",
+    "draftSaved": "נשמרה"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

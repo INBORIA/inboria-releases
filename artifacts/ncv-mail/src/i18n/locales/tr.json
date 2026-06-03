@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Tümü"
-    }
+    },
+    "sharedDraft": "Paylaşılan taslak",
+    "sharedDraftOn": "Paylaşılan taslak açık",
+    "draftEditing": "şu anda düzenliyor",
+    "draftSaving": "Kaydediliyor…",
+    "draftSaved": "Kaydedildi"
   },
   "sent": {
     "title": "Gönderilen e-postalar",

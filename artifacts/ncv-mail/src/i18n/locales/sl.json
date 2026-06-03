@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Vsi"
-    }
+    },
+    "sharedDraft": "Skupni osnutek",
+    "sharedDraftOn": "Skupni osnutek vklopljen",
+    "draftEditing": "ureja zdaj",
+    "draftSaving": "Shranjujem…",
+    "draftSaved": "Shranjeno"
   },
   "sent": {
     "title": "Poslane e-pošte",

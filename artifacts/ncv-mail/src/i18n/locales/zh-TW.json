@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "全部"
-    }
+    },
+    "sharedDraft": "共享草稿",
+    "sharedDraftOn": "共享草稿已開啟",
+    "draftEditing": "正在編輯",
+    "draftSaving": "儲存中…",
+    "draftSaved": "已儲存"
   },
   "sent": {
     "title": "已發送的電子郵件",

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "سب"
-    }
+    },
+    "sharedDraft": "مشترکہ مسودہ",
+    "sharedDraftOn": "مشترکہ مسودہ فعال ہے",
+    "draftEditing": "ابھی ایڈیٹ کر رہے ہیں",
+    "draftSaving": "محفوظ کر رہے ہیں…",
+    "draftSaved": "محفوظ ہو گیا"
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

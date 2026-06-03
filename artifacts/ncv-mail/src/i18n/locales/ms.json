@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Semua"
-    }
+    },
+    "sharedDraft": "Draf bersama",
+    "sharedDraftOn": "Draf bersama diaktifkan",
+    "draftEditing": "sedang menyunting",
+    "draftSaving": "Menyimpan…",
+    "draftSaved": "Disimpan"
   },
   "sent": {
     "title": "Emel yang dihantar",

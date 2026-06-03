@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Όλα"
-    }
+    },
+    "sharedDraft": "Κοινό σχέδιο",
+    "sharedDraftOn": "Κοινό σχέδιο ενεργό",
+    "draftEditing": "επεξεργάζονται τώρα",
+    "draftSaving": "Αποθήκευση…",
+    "draftSaved": "Αποθηκεύτηκε"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

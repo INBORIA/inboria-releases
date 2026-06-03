@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Toate"
-    }
+    },
+    "sharedDraft": "Schimb de schițe",
+    "sharedDraftOn": "Schimb de schițe activat",
+    "draftEditing": "editează acum",
+    "draftSaving": "Se salvează…",
+    "draftSaved": "Salvat"
   },
   "sent": {
     "title": "Email-uri trimise",

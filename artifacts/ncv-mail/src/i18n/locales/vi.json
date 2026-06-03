@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Tất cả"
-    }
+    },
+    "sharedDraft": "Bản nháp chia sẻ",
+    "sharedDraftOn": "Bản nháp chia sẻ đã bật",
+    "draftEditing": "đang chỉnh sửa",
+    "draftSaving": "Đang lưu…",
+    "draftSaved": "Đã lưu"
   },
   "sent": {
     "title": "Email đã gửi",

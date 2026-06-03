@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Сви"
-    }
+    },
+    "sharedDraft": "Делени нацрт",
+    "sharedDraftOn": "Делени нацрт укључен",
+    "draftEditing": "молимо уређују",
+    "draftSaving": "Сачувам…",
+    "draftSaved": "Сачувано"
   },
   "sent": {
     "title": "Послати имејлови",

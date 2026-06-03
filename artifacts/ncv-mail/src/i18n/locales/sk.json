@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Všetky"
-    }
+    },
+    "sharedDraft": "Zdieľaný koncept",
+    "sharedDraftOn": "Zdieľaný koncept zapnutý",
+    "draftEditing": "práve upravujú",
+    "draftSaving": "Ukladá sa…",
+    "draftSaved": "Uložené"
   },
   "sent": {
     "title": "Odoslané e-maily",

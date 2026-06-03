@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Todos"
-    }
+    },
+    "sharedDraft": "Rascunho compartilhado",
+    "sharedDraftOn": "Rascunho compartilhado ativado",
+    "draftEditing": "editando agora",
+    "draftSaving": "A salvar…",
+    "draftSaved": "Salvo"
   },
   "sent": {
     "title": "Emails enviados",

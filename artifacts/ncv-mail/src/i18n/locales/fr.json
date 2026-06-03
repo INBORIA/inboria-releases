@@ -548,7 +548,12 @@
     },
     "read": {
       "all": "Tous"
-    }
+    },
+    "sharedDraft": "Brouillon partagé",
+    "sharedDraftOn": "Brouillon partagé activé",
+    "draftEditing": "édite(nt) en ce moment",
+    "draftSaving": "Enregistrement…",
+    "draftSaved": "Enregistré"
   },
   "sent": {
     "title": "Emails envoyés",

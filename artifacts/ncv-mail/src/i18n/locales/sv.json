@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Alla"
-    }
+    },
+    "sharedDraft": "Delad utkast",
+    "sharedDraftOn": "Delad utkast aktiverad",
+    "draftEditing": "redigerar nu",
+    "draftSaving": "Sparar…",
+    "draftSaved": "Sparad"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

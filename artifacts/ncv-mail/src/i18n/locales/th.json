@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "ทั้งหมด"
-    }
+    },
+    "sharedDraft": "ร่างที่แชร์",
+    "sharedDraftOn": "ร่างที่แชร์เปิดใช้งาน",
+    "draftEditing": "กำลังแก้ไขอยู่",
+    "draftSaving": "กำลังบันทึก…",
+    "draftSaved": "บันทึกแล้ว"
   },
   "sent": {
     "title": "อีเมลที่ส่ง",

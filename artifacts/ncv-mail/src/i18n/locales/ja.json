@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "すべて"
-    }
+    },
+    "sharedDraft": "共有ドラフト",
+    "sharedDraftOn": "共有ドラフトがオン",
+    "draftEditing": "編集中です",
+    "draftSaving": "保存中…",
+    "draftSaved": "保存されました"
   },
   "sent": {
     "title": "送信済みのメール",

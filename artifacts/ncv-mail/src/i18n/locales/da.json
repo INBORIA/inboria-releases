@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Alle"
-    }
+    },
+    "sharedDraft": "Delte udkast",
+    "sharedDraftOn": "Delte udkast aktiveret",
+    "draftEditing": "redigerer nu",
+    "draftSaving": "Gemmer…",
+    "draftSaved": "Gemt"
   },
   "sent": {
     "title": "Sendte emails",

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "全部"
-    }
+    },
+    "sharedDraft": "共享草稿",
+    "sharedDraftOn": "共享草稿已开启",
+    "draftEditing": "正在编辑",
+    "draftSaving": "保存中…",
+    "draftSaved": "已保存"
   },
   "sent": {
     "title": "已发送邮件",

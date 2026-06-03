@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Alle"
-    }
+    },
+    "sharedDraft": "Gedeeld concept",
+    "sharedDraftOn": "Gedeeld concept ingeschakeld",
+    "draftEditing": "nu aan het bewerken",
+    "draftSaving": "Opslaan…",
+    "draftSaved": "Opgeslagen"
   },
   "sent": {
     "title": "Verzonden e-mails",

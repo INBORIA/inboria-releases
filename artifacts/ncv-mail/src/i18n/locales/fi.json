@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Kaikki"
-    }
+    },
+    "sharedDraft": "Jaettu luonnos",
+    "sharedDraftOn": "Jaettu luonnos päällä",
+    "draftEditing": "muokkaavat nyt",
+    "draftSaving": "Tallennetaan…",
+    "draftSaved": "Tallennettu"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

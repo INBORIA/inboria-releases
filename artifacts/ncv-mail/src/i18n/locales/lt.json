@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Visi"
-    }
+    },
+    "sharedDraft": "Bendras juodraštis",
+    "sharedDraftOn": "Bendras juodraštis įjungtas",
+    "draftEditing": "dabar redaguoja",
+    "draftSaving": "Išsaugoma…",
+    "draftSaved": "Išsaugota"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

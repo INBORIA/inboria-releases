@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Kõik"
-    }
+    },
+    "sharedDraft": "Jagatud mustand",
+    "sharedDraftOn": "Jagatud mustand sisse",
+    "draftEditing": "redigeerivad praegu",
+    "draftSaving": "Salvestamine…",
+    "draftSaved": "Salvestatud"
   },
   "sent": {
     "title": "Saadetud e-kirjad",

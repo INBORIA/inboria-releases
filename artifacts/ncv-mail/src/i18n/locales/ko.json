@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "전체"
-    }
+    },
+    "sharedDraft": "공유 초안",
+    "sharedDraftOn": "공유 초안 활성화",
+    "draftEditing": "현재 편집 중",
+    "draftSaving": "저장 중…",
+    "draftSaved": "저장됨"
   },
   "sent": {
     "title": "보낸 이메일",

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "सभी"
-    }
+    },
+    "sharedDraft": "साझा ड्राफ्ट",
+    "sharedDraftOn": "साझा ड्राफ्ट चालू",
+    "draftEditing": "अब संपादित कर रहे हैं",
+    "draftSaving": "सहेज रहा है…",
+    "draftSaved": "सहेजा गया"
   },
   "sent": {
     "title": "भेजे गए ईमेल",

@@ -532,7 +532,12 @@
     },
     "read": {
       "all": "Uile"
-    }
+    },
+    "sharedDraft": "Dréacht comhoibrithe",
+    "sharedDraftOn": "Dréacht comhoibrithe ar",
+    "draftEditing": "ag eagarthóireacht anois",
+    "draftSaving": "Ag sábháil…",
+    "draftSaved": "Sábháilte"
   },
   "sent": {
     "title": "Ríomhphoist seolta",
