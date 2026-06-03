@@ -20,6 +20,10 @@
   var btn = null;
   var frame = null;
   var panelOpen = false;
+  // Passe à true dès qu'on a reçu un 1er message du panneau : preuve que
+  // l'iframe a fini de charger sur son origine chrome-extension:// et qu'on
+  // peut donc lui postMessage en ciblant EXT_ORIGIN sans erreur.
+  var frameReady = false;
 
   // ---- Détection webmail ---------------------------------------------------
   function isWebmail() {
@@ -132,7 +136,7 @@
   }
 
   function sendContext() {
-    if (!frame || !frame.contentWindow) return;
+    if (!frame || !frame.contentWindow || !frameReady) return;
     try {
       frame.contentWindow.postMessage(
         { source: "inboria-content", type: "context", context: scrapeContext() },
@@ -197,6 +201,9 @@
     if (!frame || ev.source !== frame.contentWindow) return;
     var d = ev.data;
     if (!d || d.source !== "inboria-panel") return;
+    // Le panneau nous parle => il est chargé sur chrome-extension:// : on peut
+    // désormais lui envoyer le contexte sans erreur d'origine.
+    frameReady = true;
     if (d.type === "ready" || d.type === "request-context") {
       sendContext();
     } else if (d.type === "open" && d.url) {
