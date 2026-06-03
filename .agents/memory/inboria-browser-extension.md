@@ -21,5 +21,13 @@ Source : `artifacts/ncv-mail/public/inboria-extension/` (manifest MV3, `content.
 - `zip` CLI absent de l'env → packager le .zip via **python `zipfile`**, pas `zip`.
 - Manifest de TEST volontairement large (`matches`/`host_permissions: https://*/*`) → **à restreindre** à une liste de webmails avant soumission aux stores.
 
+## Ouvrir LE mail exact depuis un webmail sans API ni Message-ID
+- **OVH « Pro » = OWA/Exchange** (`pro3.mail.ovh.net/owa/#path=/mail`), PAS Roundcube. Les sélecteurs Roundcube ne matchent pas ; OWA n'expose ni le Message-ID RFC822 ni d'ID natif dans le DOM → impossible de résoudre par ID exact comme Gmail/Outlook.
+  **Why:** Gmail/Outlook donnaient l'ID via leur API d'add-on ; un webmail générique gratté côté DOM n'a aucun ID fiable.
+- **Repli universel `resolve-email` = sujet + expéditeur** (gratté du DOM). Le backend retrouve le mail le plus récent dont `sender` contient l'adresse ET dont le sujet normalisé (préfixes Re:/Fwd:/Tr:… retirés) correspond.
+  **How to apply:** rester STRICT — exiger À LA FOIS l'adresse e-mail de l'expéditeur ET un sujet significatif (≥5 ch), rejeter sujets vides, n'accepter le partiel que si les deux sujets ≥8 ch et l'un contient l'autre. Sinon renvoyer `emailId:null` (ouvre la Réception) plutôt que risquer d'ouvrir le MAUVAIS mail.
+  **Why:** sans cette double exigence, un match sujet-seul (ou sujet vide) ouvre un mail au hasard. C'est le piège signalé en revue.
+- Côté extension : gratter l'expéditeur via lien `mailto:` en priorité puis 1ère adresse e-mail en tête de la zone de lecture (`[role=main]`/reading pane), et le sujet via 1er `[role=heading]`/h1/h2. Envoyer `subject`+`from` à `resolve-email` ET à `prefetchEmailId`.
+
 ## Reste à faire (plan validé user)
 Étape 2 = adaptateurs de lecture par webmail (Roundcube/OVH d'abord, puis Yahoo/GMX/Zoho/iCloud/Zimbra + bonus Gmail/Outlook web). Étape 3 = section installation dans Paramètres → Mon compte + i18n + base URL dynamique. Étape 4 = packaging + publication Chrome/Edge (compte dev Chrome ~5 $ une fois), Firefox ensuite.

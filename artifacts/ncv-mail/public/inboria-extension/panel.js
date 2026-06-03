@@ -201,6 +201,10 @@
       qs.push("providerMessageId=" + encodeURIComponent(currentContext.messageId));
     if (currentContext.nativeId)
       qs.push("nativeMessageId=" + encodeURIComponent(currentContext.nativeId));
+    if (currentContext.subject)
+      qs.push("subject=" + encodeURIComponent(currentContext.subject));
+    if (currentContext.from)
+      qs.push("from=" + encodeURIComponent(currentContext.from));
     if (!qs.length) return;
     apiFetch("/api/inboria/resolve-email?" + qs.join("&"))
       .then(function (r) {
@@ -308,6 +312,11 @@
       qs.push("providerMessageId=" + encodeURIComponent(currentContext.messageId));
     if (currentContext.nativeId)
       qs.push("nativeMessageId=" + encodeURIComponent(currentContext.nativeId));
+    // Repli universel (OWA/OVH, Roundcube…) : sujet + expéditeur grattés.
+    if (currentContext.subject)
+      qs.push("subject=" + encodeURIComponent(currentContext.subject));
+    if (currentContext.from)
+      qs.push("from=" + encodeURIComponent(currentContext.from));
     if (!qs.length) return done(INBORIA_BASE + "/dashboard?from=extension");
     apiFetch("/api/inboria/resolve-email?" + qs.join("&"))
       .then(function (r) {

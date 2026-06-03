@@ -657,10 +657,21 @@ router.get(
         typeof req.query.nativeMessageId === "string"
           ? req.query.nativeMessageId.trim()
           : "";
-      if (!raw && !nativeId) {
-        res
-          .status(400)
-          .json({ error: "providerMessageId ou nativeMessageId requis" });
+      // Repli universel pour les webmails sans API ni Message-ID exposé
+      // (OWA/Exchange OVH, Roundcube, Yahoo, GMX…) : sujet + expéditeur grattés
+      // depuis la page. On retrouve le mail correspondant le plus récent.
+      const subjectQ =
+        typeof req.query.subject === "string" ? req.query.subject.trim() : "";
+      const fromQ =
+        typeof req.query.from === "string" ? req.query.from.trim() : "";
+      const fromEmailMatch = fromQ.match(
+        /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/,
+      );
+      const fromEmail = fromEmailMatch ? fromEmailMatch[0].toLowerCase() : "";
+      if (!raw && !nativeId && !subjectQ && !fromEmail) {
+        res.status(400).json({
+          error: "providerMessageId, nativeMessageId ou subject+from requis",
+        });
         return;
       }
 
@@ -765,6 +776,68 @@ router.get(
         }
       }
 
+      // 3) Repli universel (webmails sans API/Message-ID) : sujet + expéditeur.
+      // STRICT pour ne JAMAIS ouvrir un mail au hasard : on exige À LA FOIS un
+      // expéditeur (adresse e-mail) ET un sujet significatif. À défaut de l'un
+      // des deux, on renvoie null (l'app ouvrira la Réception). On compare les
+      // sujets normalisés (sans préfixes Re:/Fwd:/Tr:…), en rejetant les sujets
+      // vides et les correspondances partielles trop courtes.
+      const normSubj = (s: string): string =>
+        String(s || "")
+          .toLowerCase()
+          .replace(/^(\s*(re|ref|fwd?|tr|rv|aw|wg|antw|sv|vs)\s*:\s*)+/i, "")
+          .replace(/\s+/g, " ")
+          .trim();
+      const targetSubj = normSubj(subjectQ);
+      if (!resolvedId && fromEmail && targetSubj.length >= 5) {
+        const escaped = fromEmail.replace(/[%_\\]/g, (ch) => `\\${ch}`);
+        const { data: rows, error } = await supabaseAdmin
+          .from("emails")
+          .select("id, subject, sender, created_at")
+          .eq("user_id", userId)
+          .ilike("sender", `%${escaped}%`)
+          .order("created_at", { ascending: false })
+          .limit(40);
+        if (error) {
+          req.log.error(
+            { err: error.message },
+            "[inboria-resolve-email] subject/from failed",
+          );
+        } else if (Array.isArray(rows)) {
+          let best: any = null;
+          for (const row of rows) {
+            // Double sécurité : l'adresse exacte doit figurer dans le sender.
+            if (
+              !String((row as any).sender || "")
+                .toLowerCase()
+                .includes(fromEmail)
+            ) {
+              continue;
+            }
+            const rs = normSubj((row as any).subject);
+            if (!rs) continue; // jamais matcher un mail sans sujet
+            if (rs === targetSubj) {
+              best = row;
+              break; // correspondance exacte (le plus récent en premier)
+            }
+            // Correspondance partielle SOLIDE uniquement : les deux sujets
+            // doivent être longs et l'un contenir entièrement l'autre.
+            if (
+              !best &&
+              rs.length >= 8 &&
+              targetSubj.length >= 8 &&
+              (rs.includes(targetSubj) || targetSubj.includes(rs))
+            ) {
+              best = row;
+            }
+          }
+          if (best) {
+            resolvedId = (best as any).id ?? null;
+            if (resolvedId) matchedBy = "subject-sender";
+          }
+        }
+      }
+
       req.log.info(
         {
           userId,
@@ -773,6 +846,8 @@ router.get(
           nativeIdRaw: nativeId || null,
           nativeIdLen: nativeId.length,
           rfcRaw: raw || null,
+          hasSubject: Boolean(subjectQ),
+          hasFrom: Boolean(fromEmail),
           resolvedId,
           matchedBy,
         },

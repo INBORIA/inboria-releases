@@ -82,19 +82,62 @@
       } catch (e) {}
     }
 
+    // Zone de lecture probable (sert d'ancrage aux heuristiques universelles).
+    var readRoot =
+      document.querySelector(
+        "[aria-label*='Message body' i], [aria-label*='Reading' i], [role='main'], #ReadingPaneContainer, .ReadingPaneContent",
+      ) || document.body;
+
     if (!ctx.subject) {
       ctx.subject = txt(
         document.querySelector(
-          "h1.subject, .subject, [data-testid='message-subject'], [aria-label='Subject']",
+          "h1.subject, .subject, [data-testid='message-subject'], [aria-label='Subject'], [aria-label*='Subject' i]",
         ),
       );
+    }
+    // OWA / Exchange (OVH Pro) : le sujet est un titre dans la zone de lecture.
+    if (!ctx.subject && readRoot) {
+      var heads = readRoot.querySelectorAll(
+        "[role='heading'], h1, h2, [aria-level='2'], [aria-level='1']",
+      );
+      for (var hi = 0; hi < heads.length; hi++) {
+        var ht = txt(heads[hi]);
+        if (ht && ht.length >= 2 && ht.length <= 250) {
+          ctx.subject = ht;
+          break;
+        }
+      }
     }
     if (!ctx.from) {
       ctx.from = txt(
         document.querySelector(
-          "[data-testid='message-sender'], .sender, .from .adr, span.adr",
+          "[data-testid='message-sender'], .sender, .from .adr, span.adr, [aria-label*='From' i]",
         ),
       );
+    }
+    // Repli universel pour l'expéditeur : 1re adresse e-mail trouvée dans la
+    // zone de lecture (lien mailto: en priorité, sinon scan du texte). En OWA
+    // l'expéditeur apparaît en tête du message → c'est quasi toujours le bon.
+    if (readRoot) {
+      var foundEmail = "";
+      try {
+        var mailtoEl = readRoot.querySelector("a[href^='mailto:' i]");
+        if (mailtoEl) {
+          var href = decodeURIComponent(
+            (mailtoEl.getAttribute("href") || "").slice(7),
+          ).split("?")[0];
+          if (/@/.test(href)) foundEmail = href.trim();
+        }
+      } catch (e) {}
+      if (!foundEmail) {
+        var rt = txt(readRoot).slice(0, 2000);
+        var em = rt.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+        if (em) foundEmail = em[0];
+      }
+      // Si `from` n'a pas d'adresse @, on l'enrichit avec l'e-mail trouvé.
+      if (foundEmail && !/@/.test(ctx.from)) {
+        ctx.from = ctx.from ? ctx.from + " <" + foundEmail + ">" : foundEmail;
+      }
     }
     if (!ctx.body) {
       var sels = [
