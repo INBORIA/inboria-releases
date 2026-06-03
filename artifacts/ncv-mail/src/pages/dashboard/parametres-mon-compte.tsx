@@ -1169,7 +1169,7 @@ export default function ParametresMonCompte() {
                       <ol className="space-y-4 my-2">
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.outlookStep1", "Téléchargez le fichier de connexion Inboria.")}
                             <div className="mt-2">
                               <a
@@ -1185,13 +1185,13 @@ export default function ParametresMonCompte() {
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.outlookStep2", "Dans Outlook, ouvrez « Obtenir des compléments » › « Mes compléments » › « Ajouter un complément personnalisé » › « À partir d'un fichier », puis sélectionnez le fichier téléchargé.")}
                           </div>
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.outlookStep3", "Ouvrez un mail : le bouton « Demander à Inboria » apparaît dans le ruban. Connectez-vous une fois avec votre compte Inboria, c'est prêt.")}
                           </div>
                         </li>
@@ -1235,7 +1235,7 @@ export default function ParametresMonCompte() {
                       <ol className="space-y-4 my-2">
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.gmailStep1", "Ouvrez Google Apps Script et créez un nouveau projet.")}
                             <div className="mt-2">
                               <a
@@ -1252,14 +1252,14 @@ export default function ParametresMonCompte() {
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
-                          <div className="text-[13px] text-[#d6deeb] min-w-0 flex-1">
+                          <div className="text-[13px] text-foreground min-w-0 flex-1">
                             {t("settings.gmailStep2", "Remplacez tout le contenu du fichier « Code.gs » par ce code Inboria :")}
                             <div className="mt-2 flex gap-2">
-                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailCode} onClick={() => copyToClipboard(gmailCode, t("settings.gmailCodeCopied", "Code copié ✓"))}>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailCode} onClick={() => copyToClipboard(gmailCode, t("settings.gmailCodeCopied", "Code copié ✓"))}>
                                 <Copy className="w-3.5 h-3.5" />
                                 {t("settings.gmailCopyCode", "Copier le code")}
                               </Button>
-                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailCode} onClick={() => downloadTextFile(gmailCode, "Code.gs")}>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailCode} onClick={() => downloadTextFile(gmailCode, "Code.gs")}>
                                 <Download className="w-3.5 h-3.5" />
                                 {t("settings.gmailDownload", "Télécharger")}
                               </Button>
@@ -1268,14 +1268,14 @@ export default function ParametresMonCompte() {
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
-                          <div className="text-[13px] text-[#d6deeb] min-w-0 flex-1">
+                          <div className="text-[13px] text-foreground min-w-0 flex-1">
                             {t("settings.gmailStep3", "Activez le manifeste : menu « Paramètres du projet » › cochez « Afficher le fichier manifeste appsscript.json », puis collez ce contenu dans appsscript.json :")}
                             <div className="mt-2 flex gap-2">
-                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailManifest} onClick={() => copyToClipboard(gmailManifest, t("settings.gmailManifestCopied", "Manifeste copié ✓"))}>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailManifest} onClick={() => copyToClipboard(gmailManifest, t("settings.gmailManifestCopied", "Manifeste copié ✓"))}>
                                 <Copy className="w-3.5 h-3.5" />
                                 {t("settings.gmailCopyManifest", "Copier le manifeste")}
                               </Button>
-                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-[#b8c5d6] hover:text-white" disabled={!gmailManifest} onClick={() => downloadTextFile(gmailManifest, "appsscript.json")}>
+                              <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailManifest} onClick={() => downloadTextFile(gmailManifest, "appsscript.json")}>
                                 <Download className="w-3.5 h-3.5" />
                                 {t("settings.gmailDownload", "Télécharger")}
                               </Button>
@@ -1284,7 +1284,7 @@ export default function ParametresMonCompte() {
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">4</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.gmailStep4", "Cliquez sur « Déployer » › « Tester les déploiements » › « Installer ». Autorisez l'accès quand Google le demande. Ouvrez ensuite un mail dans Gmail : le panneau Inboria apparaît à droite. Connectez-vous une fois, c'est prêt.")}
                           </div>
                         </li>
@@ -1330,7 +1330,7 @@ export default function ParametresMonCompte() {
                       <ol className="space-y-4 my-2">
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.webmailStep1", "Téléchargez l'extension Inboria, puis décompressez le fichier (clic droit › « Extraire tout »). Vous obtenez un dossier « inboria-extension ».")}
                             <div className="mt-2">
                               <a
@@ -1346,13 +1346,13 @@ export default function ParametresMonCompte() {
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.webmailStep2", "Dans Chrome ou Edge, ouvrez la page des extensions : tapez chrome://extensions dans la barre d'adresse, puis activez le « Mode développeur » (interrupteur en haut à droite).")}
                           </div>
                         </li>
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
-                          <div className="text-[13px] text-[#d6deeb]">
+                          <div className="text-[13px] text-foreground">
                             {t("settings.webmailStep3", "Cliquez sur « Charger l'extension non empaquetée » et sélectionnez le dossier « inboria-extension » décompressé. Ouvrez ensuite votre webmail : le bouton « Demander à Inboria » apparaît. Connectez-vous une fois, c'est prêt.")}
                           </div>
                         </li>
