@@ -23,7 +23,6 @@ const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boole
   { key: "sidebar.classification", fallback: "Catégories", icon: Tags },
   { key: "templates.title", fallback: "Templates", icon: FileText },
   { key: "rules.title", fallback: "Règles automatiques", icon: Wand2 },
-  { key: "sidebar.admin", fallback: "Admin", icon: ShieldCheck },
 ];
 
 const JUNK_INDICES = [4, 5];
