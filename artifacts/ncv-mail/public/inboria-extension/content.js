@@ -94,9 +94,16 @@
     }
 
     // Zone de lecture probable (sert d'ancrage aux heuristiques universelles).
+    // Repères multilingues : OWA/Exchange (dont OVH Hosted Exchange) localise ses
+    // aria-label, donc on couvre EN + FR (« lecture », « Corps du message »…),
+    // les conteneurs OWA connus, puis [role='main'] en dernier recours.
     var readRoot =
       document.querySelector(
-        "[aria-label*='Message body' i], [aria-label*='Reading' i], [role='main'], #ReadingPaneContainer, .ReadingPaneContent",
+        "#ReadingPaneContainer, .ReadingPaneContent, " +
+          "[aria-label*='Reading Pane' i], [aria-label*='Message body' i], " +
+          "[aria-label*='Reading' i], [aria-label*='Volet de lecture' i], " +
+          "[aria-label*='Corps du message' i], [aria-label*='lecture' i], " +
+          "[role='main'], [role='document']",
       ) || document.body;
 
     if (!ctx.subject) {
@@ -168,6 +175,14 @@
           break;
         }
       }
+    }
+    // Volet de lecture trouvé mais sans conteneur de corps reconnu (OWA/Exchange,
+    // libellés localisés, classes obfusquées) : on prend le texte du volet de
+    // lecture. Skippé si readRoot a basculé sur document.body (évite de dumper
+    // toute la page) → ne se déclenche QUE quand un vrai volet a été détecté.
+    if (!ctx.body && readRoot && readRoot !== document.body) {
+      var rrt = txt(readRoot);
+      if (rrt.length > 40) ctx.body = rrt;
     }
     // Repli universel : texte sélectionné par l'utilisateur.
     if (!ctx.body && selection) ctx.body = selection;
