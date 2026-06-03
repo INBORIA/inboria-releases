@@ -173,6 +173,24 @@
     });
   }
 
+  // Lit la réponse en JSON de façon tolérante : si le serveur renvoie une page
+  // HTML (interstitiel/erreur 502 du proxy, redirection vers une page de
+  // connexion…), on ne plante PAS avec « Unexpected token '<' » mais on renvoie
+  // une erreur claire (et le signal d'expiration sur 401 pour reconnexion).
+  function readJson(r) {
+    return r.text().then(function (t) {
+      try {
+        return JSON.parse(t);
+      } catch (e) {
+        throw new Error(
+          r.status === 401
+            ? "invalid or expired token"
+            : "Inboria est momentanément indisponible. Réessayez dans un instant.",
+        );
+      }
+    });
+  }
+
   function callChat(message) {
     history.push({ role: "user", content: message });
     var body = {
@@ -186,7 +204,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }).then(function (r) {
-      return r.json().then(function (data) {
+      return readJson(r).then(function (data) {
         if (!r.ok)
           throw new Error(data.error || "Inboria est momentanément indisponible.");
         var reply = cleanReply(data.reply || "");

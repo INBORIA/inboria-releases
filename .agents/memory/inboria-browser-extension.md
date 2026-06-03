@@ -55,3 +55,8 @@ effet one-shot qui résout via `/api/inboria/resolve-email` puis `setSelectedEma
 - L'extension cachait l'access_token et le considérait valide tant que `expires_at` était futur, mais le serveur (requireAuth → supabaseAdmin.auth.getUser) pouvait le rejeter (jeton rotaté/invalidé côté Supabase, ex. login web du même compte) → 401 « Invalid or expired token » affiché brut, sans refresh ni logout.
 - FIX : apiFetch rejoue UNE fois après refresh() forcé sur 401 (param interne _retried) ; si le refresh échoue → throw "refresh failed". Et le catch de sendUserMessage déconnecte aussi sur "invalid or expired token"/"authentication failed" (regex élargie) → retour écran connexion au lieu d'un message cryptique.
 - Règle durable : tout client Supabase « maison » (extension/add-in) doit gérer le 401 serveur par refresh-and-retry, pas seulement se fier au TTL local de l'access_token.
+
+## Réponses non-JSON (« Unexpected token '<' », <!DOCTYPE)
+- Sur le dev domain Replit (INBORIA_BASE codé en dur dans panel.js), une requête peut recevoir une page HTML (interstitiel/502/redirection) au lieu de JSON → r.json() plante avec « Unexpected token '<' ».
+- FIX : helper readJson(r) = r.text() puis JSON.parse en try/catch ; sur échec → erreur lisible, et "invalid or expired token" si status 401 (déclenche logout via la regex du catch). À utiliser pour TOUT parsing de réponse utilisateur-facing dans l'extension.
+- Per-webmail : Gmail OK. OVH (Roundcube vs Exchange/OWA) = détection du changement de mail encore à fiabiliser selon le DOM réel (le scrape peut lire du contenu page-level non spécifique au mail ouvert → contexte « collé »). Demander capture d'écran avant de cibler les sélecteurs (risque de régresser Gmail/Outlook qui marchent).
