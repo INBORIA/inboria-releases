@@ -50,3 +50,8 @@ effet one-shot qui résout via `/api/inboria/resolve-email` puis `setSelectedEma
 - Détection = MutationObserver(document.body, childList+subtree) débit-limité 400ms + history pushState/replaceState + hashchange/popstate + sondage de secours 1.5s. N'émettre `type:context` au panneau QUE si la clé `subject||from||bodyLen` change.
 - LIFECYCLE STRICT (exigence architect) : toute la surveillance s'attache dans startWatch (openPanel) et se démonte dans stopWatch (closePanel) — y compris removeEventListener URL et RESTAURATION des history.pushState/replaceState originaux. Ne JAMAIS laisser un monkeypatch history permanent sur le webmail hôte.
 - Côté panel.js : à réception `type:context` il fait déjà currentContext = ... + prefetchEmailId() → aucun changement panneau nécessaire.
+
+## « Invalid or expired token » sur les actions chat (panel.js)
+- L'extension cachait l'access_token et le considérait valide tant que `expires_at` était futur, mais le serveur (requireAuth → supabaseAdmin.auth.getUser) pouvait le rejeter (jeton rotaté/invalidé côté Supabase, ex. login web du même compte) → 401 « Invalid or expired token » affiché brut, sans refresh ni logout.
+- FIX : apiFetch rejoue UNE fois après refresh() forcé sur 401 (param interne _retried) ; si le refresh échoue → throw "refresh failed". Et le catch de sendUserMessage déconnecte aussi sur "invalid or expired token"/"authentication failed" (regex élargie) → retour écran connexion au lieu d'un message cryptique.
+- Règle durable : tout client Supabase « maison » (extension/add-in) doit gérer le 401 serveur par refresh-and-retry, pas seulement se fier au TTL local de l'access_token.

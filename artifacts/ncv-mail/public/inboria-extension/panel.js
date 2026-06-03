@@ -147,13 +147,29 @@
   }
 
   // ---- API Inboria ---------------------------------------------------------
-  function apiFetch(path, options) {
+  function apiFetch(path, options, _retried) {
     return getAccessToken().then(function (token) {
       var opts = options || {};
       opts.headers = Object.assign({}, opts.headers, {
         Authorization: "Bearer " + token,
       });
-      return fetch(INBORIA_BASE + path, opts);
+      return fetch(INBORIA_BASE + path, opts).then(function (r) {
+        // Le serveur peut rejeter un jeton que le cache local croyait encore
+        // valide (expiré/rotaté côté Supabase). On force alors UN refresh et on
+        // rejoue la requête une seule fois ; si le refresh échoue, la session
+        // est morte → on remonte « refresh failed » pour déclencher le logout.
+        if (r.status === 401 && !_retried) {
+          return refresh().then(
+            function () {
+              return apiFetch(path, options, true);
+            },
+            function () {
+              throw new Error("refresh failed");
+            },
+          );
+        }
+        return r;
+      });
     });
   }
 
@@ -292,7 +308,11 @@
       })
       .catch(function (err) {
         typing.remove();
-        if (/not authenticated|refresh failed|401/.test(String(err && err.message))) {
+        if (
+          /not authenticated|refresh failed|401|invalid or expired token|authentication failed/i.test(
+            String(err && err.message),
+          )
+        ) {
           clearSession();
           show("login");
         } else {
