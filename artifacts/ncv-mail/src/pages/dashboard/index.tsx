@@ -4671,7 +4671,7 @@ export default function Dashboard() {
     const previousEmails = accumulatedEmails;
     const previousSelected = selectedEmailId;
     setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
-    if (selectedEmailId === id) setSelectedEmailId(null);
+    advanceAfterRemoval(id);
     snoozeMutCtx.mutate(
       { id, data: { snoozeUntil: date.toISOString() } },
       {
@@ -4850,13 +4850,32 @@ export default function Dashboard() {
     );
   };
 
+  // Auto-advance (style Superhuman) : quand on archive / supprime / reporte le
+  // mail actuellement ouvert, on enchaîne automatiquement sur le mail suivant
+  // (plus ancien) de la liste active, au lieu de revenir à une liste vide. Si
+  // c'était le dernier, on retombe sur le précédent ; s'il n'y a plus rien, on
+  // ferme le panneau de lecture (null).
+  const computeAutoAdvanceId = (removedId: number): number | null => {
+    const list = activeEmails || [];
+    const idx = list.findIndex((x: any) => x.id === removedId);
+    if (idx === -1) return null;
+    const next = list[idx + 1] || list[idx - 1];
+    return next ? next.id : null;
+  };
+  const advanceAfterRemoval = (removedId: number) => {
+    if (selectedEmailId !== removedId) return;
+    const nextId = computeAutoAdvanceId(removedId);
+    setSelectedEmailId(nextId);
+    if (nextId) handlePrefetchEmail(nextId);
+  };
+
   const handleArchive = (id: number) => {
     // Optimistic : on retire le mail de la liste immédiatement (style
     // Superhuman). Si le serveur échoue, on le remet à sa place + toast erreur.
     const previousEmails = accumulatedEmails;
     const previousSelected = selectedEmailId;
     setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
-    if (selectedEmailId === id) setSelectedEmailId(null);
+    advanceAfterRemoval(id);
     setSelectedIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
     updateEmail.mutate(
       { id, data: { status: "archived" } },
@@ -4880,7 +4899,7 @@ export default function Dashboard() {
     const previousEmails = accumulatedEmails;
     const previousSelected = selectedEmailId;
     setAccumulatedEmails((prev) => prev.filter((e: any) => e.id !== id));
-    if (selectedEmailId === id) setSelectedEmailId(null);
+    advanceAfterRemoval(id);
     deleteEmail.mutate(
       { id },
       {
