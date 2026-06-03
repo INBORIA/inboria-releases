@@ -27,7 +27,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-36">
             <Link href="/" className="flex items-center -ml-2 sm:-ml-4 lg:-ml-6">
-              <img src={appLogo} alt="Inboria" className="h-28 w-auto object-contain" />
+              <img src={appLogo} alt="Inboria" className="h-32 w-auto object-contain" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 ml-8 lg:ml-20">
