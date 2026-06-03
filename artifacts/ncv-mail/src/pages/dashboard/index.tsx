@@ -4916,11 +4916,29 @@ export default function Dashboard() {
     );
   };
 
+  // T002 — séquence de navigation « g » puis lettre (style Gmail/Superhuman).
+  // Ce ref mémorise l'instant jusqu'auquel un « g » pressé reste « armé ».
+  const gNavPendingRef = useRef(0);
+
   // Task #244 — Inbox keyboard shortcuts (Superhuman-style). Disabled while
   // the user types in inputs/textareas/contenteditable, while modifier keys
   // are held (so Cmd+R reload still works), and on the classic mirror.
   useEffect(() => {
     if (routeLocation.includes("inbox-classic")) return;
+    // T002 — destinations « g + lettre ». 2e touche dans la 1,2 s → navigation.
+    const G_NAV_MAP: Record<string, string> = {
+      i: "/dashboard",            // Réception
+      s: "/dashboard/envoyes",    // Envoyés
+      p: "/dashboard/programmes", // Programmés
+      r: "/dashboard/reportes",   // Reportés
+      f: "/dashboard/relances",   // Relances / suivis
+      t: "/dashboard/taches",     // Tâches
+      a: "/dashboard/archives",   // Archives
+      d: "/dashboard/dossiers",   // Mes dossiers
+      b: "/dashboard/bilan",      // Bilan quotidien
+      c: "/dashboard/contacts",   // Contacts
+      l: "/dashboard/classement", // Catégories / classement
+    };
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target) {
@@ -4928,13 +4946,34 @@ export default function Dashboard() {
         if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
         if (target.isContentEditable) return;
       }
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // T003 — « / » met le focus sur la recherche. Cmd/Ctrl+K ouvre désormais
+      // la palette de commandes globale (cf. <CommandPalette/>), plus le focus
+      // recherche.
+      if (e.key === "/") {
         e.preventDefault();
         const el = document.querySelector<HTMLInputElement>('input[type="search"], input[placeholder*="echerch" i], input[placeholder*="earch" i]');
         el?.focus();
         return;
       }
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // T002 — séquence « g » puis lettre. Traitée AVANT la liste car elle ne
+      // dépend pas d'avoir des mails affichés (on peut naviguer depuis un vide).
+      const seqKey = e.key.toLowerCase();
+      if (gNavPendingRef.current > Date.now()) {
+        gNavPendingRef.current = 0;
+        const dest = G_NAV_MAP[seqKey];
+        if (dest) {
+          e.preventDefault();
+          navigate(dest);
+          return;
+        }
+        // 2e touche non mappée : on annule la séquence et on continue normalement.
+      }
+      if (seqKey === "g") {
+        e.preventDefault();
+        gNavPendingRef.current = Date.now() + 1200;
+        return;
+      }
       const list = activeEmails || [];
       if (list.length === 0) return;
       const currentIdx = selectedEmailId ? list.findIndex((x: any) => x.id === selectedEmailId) : -1;
@@ -4987,7 +5026,15 @@ export default function Dashboard() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [activeEmails, selectedEmailId, routeLocation, handlePrefetchEmail]);
+  }, [activeEmails, selectedEmailId, routeLocation, handlePrefetchEmail, navigate]);
+
+  // T003 — la palette de commandes (globale) peut demander l'ouverture du
+  // panneau d'aide des raccourcis via cet event.
+  useEffect(() => {
+    const h = () => setShowShortcutsHelp(true);
+    window.addEventListener("inboria-show-shortcuts", h);
+    return () => window.removeEventListener("inboria-show-shortcuts", h);
+  }, []);
 
   const handleUpdatePriority = (id: number, priority: string) => {
     const previousEmails = accumulatedEmails;
@@ -7164,9 +7211,16 @@ export default function Dashboard() {
                 ["R", t("inbox.scReply", "Répondre")],
                 ["F", t("inbox.scForward", "Transférer")],
                 ["H", t("inbox.scSnooze", "Reporter (24 h)")],
-                ["⌘K / Ctrl+K", t("inbox.scSearch", "Rechercher")],
+                ["/", t("inbox.scSearch", "Rechercher")],
+                ["⌘K / Ctrl+K", t("inbox.scPalette", "Palette de commandes")],
                 ["Esc", t("inbox.scClose", "Fermer le mail")],
                 ["?", t("inbox.scHelp", "Afficher cette aide")],
+                ["G puis I", t("inbox.scGotoInbox", "Aller à la Réception")],
+                ["G puis S", t("inbox.scGotoSent", "Aller aux Envoyés")],
+                ["G puis R", t("inbox.scGotoSnoozed", "Aller aux Reportés")],
+                ["G puis T", t("inbox.scGotoTasks", "Aller aux Tâches")],
+                ["G puis A", t("inbox.scGotoArchives", "Aller aux Archives")],
+                ["G puis C", t("inbox.scGotoContacts", "Aller aux Contacts")],
               ].map(([key, label]) => (
                 <div key={key} className="flex items-center gap-3">
                   <kbd className="min-w-[44px] text-center rounded border border-white/15 bg-white/[0.04] px-2 py-0.5 text-[11px] font-mono text-[#b8c5d6]">

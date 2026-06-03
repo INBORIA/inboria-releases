@@ -48,6 +48,7 @@ import { OutlookReturnBanner } from "@/components/OutlookReturnBanner";
 import { GmailReturnBanner } from "@/components/GmailReturnBanner";
 import { WebmailReturnBanner } from "@/components/WebmailReturnBanner";
 import { useNcvTheme } from "@/lib/inbox-theme";
+import { CommandPalette } from "@/components/command-palette";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -647,6 +648,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               </div>
             )
           )}
+          <CommandPalette />
           {children}
         </main>
       </div>

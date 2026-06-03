@@ -5,7 +5,7 @@ import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, v
 import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
+  Inbox, Clock, Eye, AlertTriangle, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
   MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
   FolderKanban, Folder, FolderPlus, ExternalLink,
@@ -30,6 +30,7 @@ import { resolveMailboxBadge } from "@/lib/mailbox-resolver";
 
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
+import { useEmailPresence } from "@/hooks/use-email-presence";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
@@ -295,6 +296,19 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       window.removeEventListener("inbox-forward-shortcut", onForward);
     };
   }, [email.id, email.subject, email.sender, email.senderEmail, resolveDefaultConnectionId, signatureForConnection, t, dateFnsLocale]);
+  // T004 — détection de collision de réponse (boîtes partagées / mails assignés).
+  const isSharedContext = Boolean(email?.sharedMailboxId) || Boolean(email?.assignedTo);
+  const me = (orgMembers || []).find((m: any) => m.userId === currentUserId);
+  const myPresenceName = me?.fullName || me?.email || (currentUserId ? currentUserId.slice(0, 6) : "");
+  const { peers: replyPeers } = useEmailPresence({
+    emailId: email?.id,
+    currentUserId: currentUserId || null,
+    name: myPresenceName,
+    enabled: isSharedContext,
+    replying: replyOpen,
+  });
+  const replyingPeers = replyPeers.filter((p) => p.state === "replying");
+
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
@@ -504,6 +518,52 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
           );
         })()}
       </div>
+
+      {isSharedContext && replyPeers.length > 0 && (
+        <div className="mb-3 flex items-center gap-2 text-[11px] text-[#8b95a7]">
+          <Eye className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            {replyPeers.length === 1
+              ? t("inbox.collisionViewingOne", {
+                  defaultValue: "{{name}} consulte aussi ce mail",
+                  name: replyPeers[0].name,
+                })
+              : t("inbox.collisionViewingMany", {
+                  defaultValue: "{{count}} autres personnes consultent ce mail",
+                  count: replyPeers.length,
+                })}
+          </span>
+          <div className="flex -space-x-1">
+            {replyPeers.slice(0, 4).map((p) => (
+              <span
+                key={p.userId}
+                title={p.name}
+                className="w-5 h-5 rounded-full border border-background flex items-center justify-center text-[9px] font-semibold text-white"
+                style={{ backgroundColor: p.color }}
+              >
+                {(p.name || "?")[0].toUpperCase()}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isSharedContext && replyingPeers.length > 0 && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[12px] text-amber-200">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>
+            {replyingPeers.length === 1
+              ? t("inbox.collisionReplyingOne", {
+                  defaultValue: "{{name}} répond déjà à ce mail",
+                  name: replyingPeers[0].name,
+                })
+              : t("inbox.collisionReplyingMany", {
+                  defaultValue: "{{count}} personnes répondent déjà à ce mail",
+                  count: replyingPeers.length,
+                })}
+          </span>
+        </div>
+      )}
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="flex">
