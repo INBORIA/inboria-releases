@@ -30,7 +30,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
               <img src={appLogo} alt="Inboria" className="h-28 w-auto object-contain" />
             </Link>
 
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6 ml-8 lg:ml-20">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
