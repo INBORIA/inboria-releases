@@ -52,8 +52,19 @@
     if (d.type === "context") {
       currentContext = d.context || currentContext;
       prefetchEmailId();
+      updateOpenLabel();
     }
   });
+
+  // Le bouton « Ouvrir … » s'adapte : s'il y a un mail ouvert dans le webmail,
+  // il propose d'ouvrir CE mail dans Inboria ; sinon, juste ouvrir Inboria.
+  function updateOpenLabel() {
+    var b = $("openInApp");
+    if (!b) return;
+    b.textContent = hasMailContext()
+      ? "↗ Ouvrir ce mail dans Inboria"
+      : "↗ Ouvrir Inboria";
+  }
 
   // ---- Session -------------------------------------------------------------
   function loadSession() {
@@ -379,6 +390,7 @@
 
   function enterChat() {
     show("chat");
+    updateOpenLabel();
     if (session && session.email) $("userEmail").textContent = "Connecté : " + session.email;
     if ($("messages").childElementCount === 0) {
       addMessage(
