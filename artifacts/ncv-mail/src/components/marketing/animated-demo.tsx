@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
-  LogOut, Search, Clock, ChevronRight, ChevronDown, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
+  Bell, Search, Clock, ChevronRight, ChevronDown, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
   Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus, FolderOpen,
   MessageCircleQuestion, UserCheck, ShieldAlert, ArrowUpDown, SlidersHorizontal, X, Sun, MailOpen,
 } from "lucide-react";
@@ -188,7 +188,7 @@ export function AnimatedDemo() {
     : t("demo.status.received", { count: visibleEmails });
 
   return (
-    <div ref={containerRef} className="relative max-w-6xl mx-auto mt-12" aria-label={t("demo.ariaLabel")} role="img">
+    <div ref={containerRef} className="relative max-w-7xl mx-auto mt-12" aria-label={t("demo.ariaLabel")} role="img">
       <span className="sr-only" aria-live="polite" aria-atomic="true">{statusText}</span>
       <div aria-hidden="true" className="rounded-xl border border-[#1f2937] bg-[#0d1117] overflow-hidden shadow-2xl shadow-[#2d7dd2]/8">
         <div className="flex items-center gap-2 px-4 py-2 bg-[#141c2b] border-b border-[#1f2937]">
@@ -229,36 +229,11 @@ export function AnimatedDemo() {
               ))}
             </nav>
 
-            <div className="p-2 mt-auto border-t border-[#1f2937]">
-              <div className="px-2.5 py-2">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[9px] font-medium text-[#b8c5d6] uppercase tracking-wider">{t("demo.quota")}</span>
-                  <span className="text-[9px] font-medium text-white">782/10000</span>
-                </div>
-                <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#2d7dd2] rounded-full" style={{ width: "7.82%" }} />
-                </div>
-                <div className="mt-1 text-[8px] text-[#6b7d96] flex justify-between">
-                  <span>471 mails</span>
-                  <span>311 IA</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 px-2.5 py-1.5">
-                <div className="w-6 h-6 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[10px] font-semibold text-[#2d7dd2]">
-                  J
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-[11px] font-medium text-white truncate">Jean Dupont</span>
-                  <span className="text-[9px] text-[#b8c5d6]">Solo</span>
-                </div>
-                <LogOut className="w-3 h-3 text-[#b8c5d6] ml-auto shrink-0" />
-              </div>
-            </div>
           </div>
 
           <div className="flex-1 flex flex-col min-w-0 relative">
             {inboriaPanelOpen && (
-              <div className="hidden md:block absolute top-12 left-3 sm:left-4 z-30 w-[300px] origin-top-left animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="hidden md:block absolute top-12 right-3 sm:right-4 z-30 w-[300px] origin-top-right animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="rounded-lg border border-zinc-800 bg-zinc-950 shadow-2xl shadow-black/40 overflow-hidden">
                   <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
                     <div className="w-6 h-6 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center shrink-0">
@@ -345,20 +320,23 @@ export function AnimatedDemo() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute -top-1 left-6 w-2 h-2 rotate-45 bg-zinc-950 border-l border-t border-zinc-800" />
+                <div className="absolute -top-1 right-6 w-2 h-2 rotate-45 bg-zinc-950 border-l border-t border-zinc-800" />
               </div>
             )}
-            {/* Barre du haut — calquée 1:1 sur l'app : « Demander à Inboria »
-                à gauche, indicateur autopilote + thème + langue + avatar à
-                droite (le logo reste dans la colonne sidebar comme dans l'app). */}
+            {/* Barre du haut — calquée 1:1 sur l'app : tout est groupé à DROITE
+                (« Demander à Inboria » + cloche + indicateur autopilote + thème
+                + langue + avatar). Le logo reste dans la colonne sidebar. */}
             <div className="flex items-center gap-2 px-3 sm:px-4 h-11 border-b border-[#1f2937]">
+              <div className="flex-1" />
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyan-500/[0.08] border border-cyan-400/20 text-[11px] font-medium text-cyan-200 shrink-0">
                 <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-cyan-500/15 border border-cyan-400/30">
                   <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
                 </span>
                 <span className="hidden sm:inline">{t("inbox.askInboria", "Demander à Inboria")}</span>
               </div>
-              <div className="flex-1" />
+              <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[#b8c5d6] shrink-0">
+                <Bell className="w-3.5 h-3.5" />
+              </div>
               <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-500 ${
                 phase === "sorting"
                   ? "border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[#2d7dd2]"
@@ -468,46 +446,44 @@ export function AnimatedDemo() {
                 </div>
               </div>
 
-              {(phase === "selecting" || phase === "deleting") && !deletedJunk ? (
-                <div className="flex items-center gap-2 py-1 px-2.5 rounded-lg bg-[#2d7dd2]/[0.08] border border-[#2d7dd2]/20 transition-all duration-300">
-                  <span className="text-[10px] text-[#2d7dd2] font-medium">{t("demo.selected", { count: selectedJunk })}</span>
-                  <div className="flex-1" />
-                  <div className="flex items-center gap-1 text-[10px] text-red-400 font-medium px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20">
-                    <Trash2 className="w-2.5 h-2.5" />
-                    {t("demo.deleteBtn")}
-                  </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                  <SlidersHorizontal className="w-2.5 h-2.5" />
+                  <span>{t("inbox.filtersLabel", "Filtres")}</span>
+                  <span className="ml-0.5 inline-flex items-center justify-center min-w-[14px] h-[14px] px-1 rounded-full bg-[#2d7dd2] text-[8px] text-white font-semibold">1</span>
                 </div>
-              ) : (
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
-                    <SlidersHorizontal className="w-2.5 h-2.5" />
-                    <span>{t("inbox.filtersLabel", "Filtres")}</span>
-                    <span className="ml-0.5 inline-flex items-center justify-center min-w-[14px] h-[14px] px-1 rounded-full bg-[#2d7dd2] text-[8px] text-white font-semibold">1</span>
-                  </div>
-                  <span className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
-                    {t("inbox.importance.allLong", "Tous les mails")}
-                  </span>
-                  <span className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
-                    {t("inbox.priorities.allLong", "Toutes les priorités")}
-                  </span>
-                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
-                    <CalendarDays className="w-2.5 h-2.5" />
-                    <span>{t("inbox.date.all", "Toutes les dates")}</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
-                    <MailOpen className="w-2.5 h-2.5" />
-                    <span>{t("inbox.read.all", "Tous")}</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
-                    <Tags className="w-2.5 h-2.5" />
-                    <span>{t("inbox.category", "Catégories")}</span>
-                    <ChevronDown className="w-2.5 h-2.5" />
-                  </div>
+                <span className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                  {t("inbox.importance.allLong", "Tous les mails")}
+                </span>
+                <span className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                  {t("inbox.priorities.allLong", "Toutes les priorités")}
+                </span>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <CalendarDays className="w-2.5 h-2.5" />
+                  <span>{t("inbox.date.all", "Toutes les dates")}</span>
                 </div>
-              )}
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <MailOpen className="w-2.5 h-2.5" />
+                  <span>{t("inbox.read.all", "Tous")}</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                  <Tags className="w-2.5 h-2.5" />
+                  <span>{t("inbox.category", "Catégories")}</span>
+                  <ChevronDown className="w-2.5 h-2.5" />
+                </div>
+              </div>
             </div>
 
-            {!(phase === "selecting" || phase === "deleting") && (
+            {(phase === "selecting" || phase === "deleting") && !deletedJunk ? (
+              <div className="flex items-center gap-2 mx-3 sm:mx-4 mt-2 mb-0.5 py-1 px-2.5 rounded-lg bg-[#2d7dd2]/[0.08] border border-[#2d7dd2]/20 transition-all duration-300">
+                <span className="text-[10px] text-[#2d7dd2] font-medium">{t("demo.selected", { count: selectedJunk })}</span>
+                <div className="flex-1" />
+                <div className="flex items-center gap-1 text-[10px] text-red-400 font-medium px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20">
+                  <Trash2 className="w-2.5 h-2.5" />
+                  {t("demo.deleteBtn")}
+                </div>
+              </div>
+            ) : (
               <div className="flex items-center gap-2 px-3 sm:px-4 pt-2 pb-0.5">
                 <div className="w-4 h-4 rounded border border-[#b8c5d6]/30 shrink-0" />
                 <span className="text-[11px] text-[#b8c5d6]">{t("inbox.selectAll", "Tout sélectionner")}</span>

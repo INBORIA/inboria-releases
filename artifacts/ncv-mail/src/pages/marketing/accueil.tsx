@@ -72,7 +72,7 @@ export default function Accueil() {
     <MarketingLayout>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-32 text-center relative">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
             <span className="text-white">{t("marketing.home.heroTitle1")}</span><br />
             <span className="text-white">{t("marketing.home.heroTitle2")}</span><br />
@@ -88,7 +88,9 @@ export default function Accueil() {
               </button>
             </Link>
           </div>
+        </div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-32 relative">
           <AnimatedDemo />
         </div>
       </section>
