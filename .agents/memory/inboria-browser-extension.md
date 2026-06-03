@@ -44,3 +44,9 @@ donc l'expéditeur/sujet bruts doivent utiliser des noms distincts (préfixe `x*
 `xfrom`/`xsubject`/`xmid`/`xnid`) sinon `URLSearchParams.get("from")` renvoie le marqueur.
 Côté app : capture au boot dans `sessionStorage["inboria.pendingResolve"]` (TTL court),
 effet one-shot qui résout via `/api/inboria/resolve-email` puis `setSelectedEmailId`.
+
+## SPA context refresh (panneau collé sur l'ancien mail)
+- Webmails SPA (OWA/OVH, Gmail) NE rechargent PAS la page au changement de mail → content.js doit re-scraper activement, sinon le panneau garde le 1er mail capté et le chat répète la même réponse.
+- Détection = MutationObserver(document.body, childList+subtree) débit-limité 400ms + history pushState/replaceState + hashchange/popstate + sondage de secours 1.5s. N'émettre `type:context` au panneau QUE si la clé `subject||from||bodyLen` change.
+- LIFECYCLE STRICT (exigence architect) : toute la surveillance s'attache dans startWatch (openPanel) et se démonte dans stopWatch (closePanel) — y compris removeEventListener URL et RESTAURATION des history.pushState/replaceState originaux. Ne JAMAIS laisser un monkeypatch history permanent sur le webmail hôte.
+- Côté panel.js : à réception `type:context` il fait déjà currentContext = ... + prefetchEmailId() → aucun changement panneau nécessaire.

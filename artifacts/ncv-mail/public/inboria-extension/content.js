@@ -24,6 +24,17 @@
   // l'iframe a fini de charger sur son origine chrome-extension:// et qu'on
   // peut donc lui postMessage en ciblant EXT_ORIGIN sans erreur.
   var frameReady = false;
+  // Détection des changements de mail dans les webmails « single-page » (OWA,
+  // Gmail…) : la page ne se recharge PAS quand on change de mail, donc on
+  // surveille le DOM + l'URL et on renvoie le contexte au panneau dès que le
+  // mail affiché change réellement (sinon le panneau reste collé sur l'ancien).
+  var lastCtxKey = "";
+  var rescanTimer = null;
+  var pollTimer = null;
+  var domObserver = null;
+  var historyPatched = false;
+  var origPushState = null;
+  var origReplaceState = null;
 
   // ---- Détection webmail ---------------------------------------------------
   function isWebmail() {
@@ -178,14 +189,118 @@
     return frame;
   }
 
-  function sendContext() {
+  function ctxKey(c) {
+    return (
+      (c.subject || "") +
+      "||" +
+      (c.from || "") +
+      "||" +
+      String((c.body || "").length)
+    );
+  }
+
+  function postContext(c) {
     if (!frame || !frame.contentWindow || !frameReady) return;
     try {
       frame.contentWindow.postMessage(
-        { source: "inboria-content", type: "context", context: scrapeContext() },
+        { source: "inboria-content", type: "context", context: c },
         EXT_ORIGIN,
       );
+      lastCtxKey = ctxKey(c);
     } catch (e) {}
+  }
+
+  function sendContext() {
+    postContext(scrapeContext());
+  }
+
+  // Re-scrape et renvoie le contexte UNIQUEMENT si le mail a réellement changé
+  // (évite de spammer le panneau à chaque micro-mutation du DOM d'OWA).
+  function maybeResend() {
+    if (!panelOpen || !frameReady) return;
+    var c = scrapeContext();
+    if (ctxKey(c) === lastCtxKey) return;
+    postContext(c);
+  }
+
+  function scheduleRescan() {
+    if (!panelOpen) return;
+    if (rescanTimer) clearTimeout(rescanTimer);
+    rescanTimer = setTimeout(maybeResend, 400);
+  }
+
+  // OWA/Gmail naviguent par history API sans recharger : on instrumente
+  // push/replaceState pour réagir au changement de mail dans l'URL. Réversible
+  // (restauré à la fermeture du panneau) pour ne rien laisser sur le webmail.
+  function patchHistory() {
+    if (historyPatched) return;
+    historyPatched = true;
+    origPushState = history.pushState;
+    origReplaceState = history.replaceState;
+    if (typeof origPushState === "function") {
+      history.pushState = function () {
+        var r = origPushState.apply(this, arguments);
+        try {
+          scheduleRescan();
+        } catch (e) {}
+        return r;
+      };
+    }
+    if (typeof origReplaceState === "function") {
+      history.replaceState = function () {
+        var r = origReplaceState.apply(this, arguments);
+        try {
+          scheduleRescan();
+        } catch (e) {}
+        return r;
+      };
+    }
+  }
+
+  function unpatchHistory() {
+    if (!historyPatched) return;
+    historyPatched = false;
+    if (origPushState) history.pushState = origPushState;
+    if (origReplaceState) history.replaceState = origReplaceState;
+    origPushState = null;
+    origReplaceState = null;
+  }
+
+  // Surveillance active UNIQUEMENT pendant que le panneau est ouvert :
+  // observateur DOM (débit limité par scheduleRescan) + écouteurs URL + sondage
+  // léger de secours (1,5 s). Tout est démonté par stopWatch à la fermeture.
+  function startWatch() {
+    window.addEventListener("hashchange", scheduleRescan);
+    window.addEventListener("popstate", scheduleRescan);
+    patchHistory();
+    if (!domObserver) {
+      domObserver = new MutationObserver(function () {
+        scheduleRescan();
+      });
+    }
+    try {
+      domObserver.observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+    if (!pollTimer) pollTimer = setInterval(maybeResend, 1500);
+  }
+
+  function stopWatch() {
+    window.removeEventListener("hashchange", scheduleRescan);
+    window.removeEventListener("popstate", scheduleRescan);
+    unpatchHistory();
+    if (domObserver) {
+      try {
+        domObserver.disconnect();
+      } catch (e) {}
+    }
+    if (rescanTimer) {
+      clearTimeout(rescanTimer);
+      rescanTimer = null;
+    }
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+    }
   }
 
   function openPanel() {
@@ -197,12 +312,14 @@
     panelOpen = true;
     if (btn) btn.classList.add("inboria-ext-hidden");
     sendContext();
+    startWatch();
   }
 
   function closePanel() {
     if (frame) frame.classList.remove("inboria-ext-open");
     panelOpen = false;
     if (btn) btn.classList.remove("inboria-ext-hidden");
+    stopWatch();
   }
 
   // ---- Bouton flottant -----------------------------------------------------
