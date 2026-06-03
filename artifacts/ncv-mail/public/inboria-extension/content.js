@@ -103,13 +103,16 @@
           "[aria-label*='Reading Pane' i], [aria-label*='Message body' i], " +
           "[aria-label*='Reading' i], [aria-label*='Volet de lecture' i], " +
           "[aria-label*='Corps du message' i], [aria-label*='lecture' i], " +
+          // Yahoo Mail : conteneurs du volet de lecture (attributs data-test-id).
+          "[data-test-id='message-group-view-scroller'], " +
+          "[data-test-id='message-view-body'], " +
           "[role='main'], [role='document']",
       ) || document.body;
 
     if (!ctx.subject) {
       ctx.subject = txt(
         document.querySelector(
-          "h1.subject, .subject, [data-testid='message-subject'], [aria-label='Subject'], [aria-label*='Subject' i]",
+          "h1.subject, .subject, [data-testid='message-subject'], [data-test-id='message-subject'], [aria-label='Subject'], [aria-label*='Subject' i]",
         ),
       );
     }
@@ -129,7 +132,7 @@
     if (!ctx.from) {
       ctx.from = txt(
         document.querySelector(
-          "[data-testid='message-sender'], .sender, .from .adr, span.adr, [aria-label*='From' i]",
+          "[data-testid='message-sender'], [data-test-id='message-from'], .sender, .from .adr, span.adr, [aria-label*='From' i]",
         ),
       );
     }
@@ -164,6 +167,8 @@
         "#messagebody",
         ".messageBody",
         "[data-testid='message-body']",
+        "[data-test-id='message-view-body']",
+        ".msg-body",
         "[aria-label*='Message body' i]",
         "[role='article']",
         "article",
