@@ -79,9 +79,13 @@ async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
       if (idx < 0 || idx === ext.length - 1) continue;
       const suffix = ext.slice(idx + 1);
       if (!suffix || suffix.length < 4) continue;
-      const arr = bySuffix.get(suffix) || [];
+      // Scope par boîte partagée : une copie reçue en boîte partagée et une copie
+      // perso peuvent partager le même suffixe natif sans être des doublons.
+      const sharedKey = r.shared_mailbox_id || "_";
+      const groupKey = `${sharedKey}|${suffix}`;
+      const arr = bySuffix.get(groupKey) || [];
       arr.push({ id: r.id });
-      bySuffix.set(suffix, arr);
+      bySuffix.set(groupKey, arr);
     }
     for (const arr of bySuffix.values()) {
       if (arr.length < 2) continue;
@@ -531,13 +535,19 @@ export async function saveEmailWithTriage(
   // doublons massifs après reconnexion d'un compte (Gmail/Outlook/IMAP).
   if (!existing && nativeMessageId) {
     const escaped = nativeMessageId.replace(/[%_\\]/g, (m) => `\\${m}`);
-    const { data: existingByNative } = await supabaseAdmin
+    // Dedup CONSCIENT des boîtes partagées : une copie reçue dans une boîte
+    // partagée NE doit PAS être jetée parce qu'une copie perso/envoyée porte le
+    // même identifiant natif. On scope donc le dedup au même shared_mailbox_id
+    // (null = boîte personnelle). Le dedup intra-boîte reste assuré.
+    let nativeQuery = supabaseAdmin
       .from("emails")
       .select("id, status, external_id")
       .eq("user_id", userId)
-      .like("external_id", `%:${escaped}`)
-      .limit(1)
-      .maybeSingle();
+      .like("external_id", `%:${escaped}`);
+    nativeQuery = sharedMailboxId
+      ? nativeQuery.eq("shared_mailbox_id", sharedMailboxId)
+      : nativeQuery.is("shared_mailbox_id", null);
+    const { data: existingByNative } = await nativeQuery.limit(1).maybeSingle();
     if (existingByNative) {
       const update: Record<string, any> = {};
       if ((existingByNative as any).external_id !== externalId) update.external_id = externalId;
@@ -565,11 +575,19 @@ export async function saveEmailWithTriage(
   // colonne `provider_message_id` (la requête tolère l'absence de colonne).
   if (providerMessageId) {
     try {
-      const { data: existingByMsgId, error: msgIdErr } = await supabaseAdmin
+      // Dedup CONSCIENT des boîtes partagées (cf. dedup natif ci-dessus) : on ne
+      // déduplique une copie reçue en boîte partagée que contre les mails de la
+      // MÊME boîte (même shared_mailbox_id ; null = boîte personnelle). Évite que
+      // la copie reçue support@ soit jetée à cause de la copie perso/envoyée.
+      let msgIdQuery = supabaseAdmin
         .from("emails")
         .select("id, status, external_id")
         .eq("user_id", userId)
-        .eq("provider_message_id", providerMessageId)
+        .eq("provider_message_id", providerMessageId);
+      msgIdQuery = sharedMailboxId
+        ? msgIdQuery.eq("shared_mailbox_id", sharedMailboxId)
+        : msgIdQuery.is("shared_mailbox_id", null);
+      const { data: existingByMsgId, error: msgIdErr } = await msgIdQuery
         .limit(1)
         .maybeSingle();
       if (!msgIdErr && existingByMsgId) {

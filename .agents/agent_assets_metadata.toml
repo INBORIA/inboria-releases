@@ -209,3 +209,9 @@ id = "j0DK0EA7YRG9dj-qrSNiq"
 uri = "file://inboria-extension.zip"
 type = "unspecified"
 title = "Extension Inboria (libellé unifié)"
+
+[[outputs]]
+id = "LZuqYZNhxxVl2AeOFcNnq"
+uri = "file://dist/inboria-extension.zip"
+type = "unspecified"
+title = "Extension Inboria (corrigée) — inboria-extension.zip"

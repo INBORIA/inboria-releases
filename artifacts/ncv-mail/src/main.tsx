@@ -18,14 +18,14 @@ if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("emailId");
     const num = raw ? Number(raw) : NaN;
-    // On ne capture QUE les deep-links des ponts (add-on Gmail / add-in Outlook),
-    // toujours marqués par ?from=gmail|outlook. Évite de « mémoriser » un emailId
-    // issu d'une navigation interne (chat Inboria…) qui pourrait rouvrir un mail
-    // par erreur lors d'un rechargement ultérieur.
+    // On ne capture QUE les deep-links des ponts (add-on Gmail / add-in Outlook /
+    // extension navigateur), toujours marqués par ?from=gmail|outlook|extension.
+    // Évite de « mémoriser » un emailId issu d'une navigation interne (chat
+    // Inboria…) qui pourrait rouvrir un mail par erreur lors d'un rechargement.
     const from = (params.get("from") || "").toLowerCase();
     if (
       window.location.pathname.includes("/dashboard") &&
-      (from === "gmail" || from === "outlook") &&
+      (from === "gmail" || from === "outlook" || from === "extension") &&
       Number.isFinite(num) &&
       num > 0
     ) {

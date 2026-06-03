@@ -161,11 +161,59 @@
   }
 
   // ---- UI: messages --------------------------------------------------------
+  // Ouvre un mail précis dans Inboria (depuis un jeton [mail#123] du chat).
+  function openMailById(id) {
+    var url = ORIGIN + "/dashboard?emailId=" + id + "&from=outlook";
+    try {
+      if (Office.context.ui && Office.context.ui.openBrowserWindow) {
+        Office.context.ui.openBrowserWindow(url);
+      } else {
+        window.open(url, "_blank");
+      }
+    } catch (e) {
+      window.open(url, "_blank");
+    }
+  }
+  // Petit bouton cliquable « ↗ Ouvrir » (parité avec le chat de l'app Inboria).
+  function makeOpenChip(id) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = "↗ Ouvrir";
+    b.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;margin:0 3px;padding:2px 9px;" +
+      "border:1px solid rgba(34,211,238,.45);background:rgba(34,211,238,.14);" +
+      "color:#22d3ee;border-radius:9999px;font-size:12px;line-height:1.4;" +
+      "cursor:pointer;font-weight:600;vertical-align:baseline;";
+    b.onclick = function () {
+      openMailById(id);
+    };
+    return b;
+  }
+  // Transforme les jetons [mail#123] du texte en boutons « ↗ Ouvrir ».
+  function renderMailRefs(div, text) {
+    var re = /\[mail#(\d+)\]/g;
+    var last = 0;
+    var m;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) {
+        div.appendChild(document.createTextNode(text.slice(last, m.index)));
+      }
+      div.appendChild(makeOpenChip(parseInt(m[1], 10)));
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) {
+      div.appendChild(document.createTextNode(text.slice(last)));
+    }
+  }
   function addMessage(role, text) {
     var box = $("messages");
     var div = document.createElement("div");
     div.className = "msg " + (role === "user" ? "user" : "bot");
-    div.textContent = text;
+    if (role === "user") {
+      div.textContent = text;
+    } else {
+      renderMailRefs(div, text || "");
+    }
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
     return div;
