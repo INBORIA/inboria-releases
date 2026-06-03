@@ -456,12 +456,26 @@
       };
     });
     $("openInApp").onclick = openInApp;
+    $("clearChatBtn").onclick = function () {
+      if (busy) return;
+      history = [];
+      $("messages").innerHTML = "";
+      addGreeting();
+    };
     $("logoutBtn").onclick = function () {
       clearSession();
       history = [];
       $("messages").innerHTML = "";
       show("login");
     };
+  }
+
+  // Message d'accueil affiché à l'entrée du chat et après « Effacer la conversation ».
+  function addGreeting() {
+    addMessage(
+      "bot",
+      "Bonjour 👋 Je suis Inboria. Ouvrez un mail puis utilisez les raccourcis ci-dessus, ou posez-moi directement votre question.",
+    );
   }
 
   function wireLogin() {
@@ -498,10 +512,7 @@
     updateOpenLabel();
     if (session && session.email) $("userEmail").textContent = "Connecté : " + session.email;
     if ($("messages").childElementCount === 0) {
-      addMessage(
-        "bot",
-        "Bonjour 👋 Je suis Inboria. Ouvrez un mail puis utilisez les raccourcis ci-dessus, ou posez-moi directement votre question.",
-      );
+      addGreeting();
     }
     post("request-context");
   }
