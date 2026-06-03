@@ -2,30 +2,28 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
   LogOut, Search, Clock, ChevronRight, ChevronDown, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
-  Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus,
+  Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus, FolderOpen,
   MessageCircleQuestion, UserCheck, ShieldAlert, ArrowUpDown, SlidersHorizontal, X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 
+// Sidebar calquée 1:1 sur le vrai menu de l'app (dashboard-layout.tsx).
+// Les anciennes rubriques Assignés / Reportés / Tâches / Relances / Boîtes
+// partagées / Mon équipe / Activité équipe / Dossiers équipe / Archives ont
+// été déplacées dans les onglets de la Réception et retirées de la sidebar.
 const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boolean; badge?: number }> = [
   { key: "sidebar.inbox", fallback: "Réception", icon: Inbox, active: true },
   { key: "sidebar.sent", fallback: "Envoyés", icon: Send },
-  { key: "sidebar.assigned", fallback: "Assignés", icon: UserCheck },
-  { key: "sidebar.snoozed", fallback: "Reportés", icon: BellOff },
   { key: "sidebar.scheduled", fallback: "Programmés", icon: CalendarClock },
-  { key: "tasks.title", fallback: "Tâches", icon: CheckSquare },
-  { key: "sidebar.followups", fallback: "Relances", icon: MailCheck },
-  { key: "sidebar.sharedMailboxes", fallback: "Boîtes partagées", icon: MailPlus },
-  { key: "sidebar.myTeam", fallback: "Mon équipe", icon: Users },
-  { key: "sidebar.teamActivity", fallback: "Activité équipe", icon: Activity },
-  { key: "sidebar.projects", fallback: "Dossiers équipe", icon: FolderKanban },
+  { key: "sidebar.contacts", fallback: "Contacts", icon: Users },
   { key: "sidebar.agenda", fallback: "Agenda", icon: CalendarDays },
-  { key: "sidebar.archives", fallback: "Archives", icon: Archive },
+  { key: "folders.title", fallback: "Mes dossiers", icon: FolderOpen },
   { key: "sidebar.dailyBrief", fallback: "Bilan quotidien", icon: LayoutDashboard },
   { key: "sidebar.classification", fallback: "Catégories", icon: Tags },
   { key: "templates.title", fallback: "Templates", icon: FileText },
   { key: "rules.title", fallback: "Règles automatiques", icon: Wand2 },
+  { key: "sidebar.admin", fallback: "Admin", icon: ShieldCheck },
 ];
 
 const JUNK_INDICES = [4, 5];
@@ -395,17 +393,14 @@ export function AnimatedDemo() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5 mb-2">
+              {/* Ligne 1 — boîtes (Réception active + Indésirables + Corbeille + comptes) */}
+              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
                   <Inbox className="w-2.5 h-2.5" />
-                  <span>{t("sidebar.inbox", "Réception")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">857</span>
+                  <span>{t("inbox.title", "Réception")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">2915</span>
                 </div>
-                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
-                  <Users className="w-2.5 h-2.5" />
-                  <span>{t("inbox.sharedMailboxShort", "Partagées")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">3</span>
-                </div>
+                <span className="w-px h-4 bg-[#1f2937] mx-0.5" aria-hidden="true" />
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <ShieldAlert className="w-2.5 h-2.5" />
                   <span>{t("inbox.spamShort", "Indésirables")}</span>
@@ -414,10 +409,48 @@ export function AnimatedDemo() {
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <Trash2 className="w-2.5 h-2.5" />
                   <span>{t("inbox.trash", "Corbeille")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">153</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">182</span>
                 </div>
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <span className="truncate">{t("inbox.allAccounts", "Tous les comptes")}</span>
+                  <ChevronDown className="w-2.5 h-2.5" />
+                </div>
+              </div>
+              {/* Ligne 2 — onglets équipe & productivité (déplacés depuis la sidebar) */}
+              <div className="hidden sm:flex flex-wrap items-center gap-1.5 mb-2">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <Users className="w-2.5 h-2.5" />
+                  <span>{t("inbox.sharedMailboxShort", "Partagées")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">1</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <Activity className="w-2.5 h-2.5" />
+                  <span>{t("inbox.assignedShort", "Assignés")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">2</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <BellOff className="w-2.5 h-2.5" />
+                  <span>{t("sidebar.snoozed", "Reportés")}</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <CheckSquare className="w-2.5 h-2.5" />
+                  <span>{t("tasks.title", "Tâches")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">149</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <FolderKanban className="w-2.5 h-2.5" />
+                  <span>{t("sidebar.projects", "Dossiers équipe")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">4</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <MailCheck className="w-2.5 h-2.5" />
+                  <span>{t("sidebar.followups", "Relances")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">27</span>
+                </div>
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
+                  <Archive className="w-2.5 h-2.5" />
+                  <span>{t("sidebar.archives", "Archives")}</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">14</span>
                 </div>
               </div>
 
