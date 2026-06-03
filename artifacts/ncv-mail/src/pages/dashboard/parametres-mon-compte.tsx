@@ -31,7 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw, Copy, Download } from "lucide-react";
+import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw, Copy, Download, Chrome } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -571,6 +571,8 @@ export default function ParametresMonCompte() {
   const [outlookGuideOpen, setOutlookGuideOpen] = useState(false);
   const outlookManifestUrl = `${import.meta.env.BASE_URL}api/inboria/outlook-manifest.xml`;
   const [gmailGuideOpen, setGmailGuideOpen] = useState(false);
+  const [webmailGuideOpen, setWebmailGuideOpen] = useState(false);
+  const extensionZipUrl = `${import.meta.env.BASE_URL}inboria-extension.zip`;
   const [gmailCode, setGmailCode] = useState("");
   const [gmailManifest, setGmailManifest] = useState("");
   const openGmailGuide = async () => {
@@ -1291,6 +1293,75 @@ export default function ParametresMonCompte() {
                         <AlertDialogCancel>{t("common.close", "Fermer")}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => window.open("https://script.google.com/home/projects/create", "_blank")}>
                           {t("settings.gmailOpenAppsScript", "Ouvrir Google Apps Script")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <div className="pt-4 mt-2 border-t border-border">
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6] mb-3">
+                      {t("settings.webmailExtSection", "Inboria dans votre webmail")}
+                    </h3>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-primary/20 rounded-lg bg-primary/5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400">
+                          <Chrome className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-[13px] text-white">{t("settings.webmailExtTitle", "Bouton « Demander à Inboria » dans votre webmail")}</h4>
+                          <p className="text-[11px] text-[#b8c5d6]">{t("settings.webmailExtDesc", "OVH, Yahoo, iCloud et la plupart des webmails. Ajoutez l'assistant Inboria directement dans votre messagerie, sans quitter vos mails.")}</p>
+                        </div>
+                      </div>
+                      <Button size="sm" className="h-8 text-[12px] gap-1.5 shrink-0" onClick={() => setWebmailGuideOpen(true)}>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        {t("settings.webmailExtInstall", "Installer dans mon navigateur")}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <AlertDialog open={webmailGuideOpen} onOpenChange={setWebmailGuideOpen}>
+                    <AlertDialogContent className="max-w-lg">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t("settings.webmailGuideTitle", "Installer Inboria dans votre webmail")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("settings.webmailGuideIntro", "Fonctionne avec OVH, Yahoo, iCloud et la plupart des webmails, dans Chrome ou Edge. Trois étapes simples, une seule fois.")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <ol className="space-y-4 my-2">
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">1</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.webmailStep1", "Téléchargez l'extension Inboria, puis décompressez le fichier (clic droit › « Extraire tout »). Vous obtenez un dossier « inboria-extension ».")}
+                            <div className="mt-2">
+                              <a
+                                href={extensionZipUrl}
+                                download
+                                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-primary-foreground text-[12px] font-medium hover:opacity-90 transition-opacity"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                {t("settings.webmailDownload", "Télécharger l'extension")}
+                              </a>
+                            </div>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.webmailStep2", "Dans Chrome ou Edge, ouvrez la page des extensions : tapez chrome://extensions dans la barre d'adresse, puis activez le « Mode développeur » (interrupteur en haut à droite).")}
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
+                          <div className="text-[13px] text-[#d6deeb]">
+                            {t("settings.webmailStep3", "Cliquez sur « Charger l'extension non empaquetée » et sélectionnez le dossier « inboria-extension » décompressé. Ouvrez ensuite votre webmail : le bouton « Demander à Inboria » apparaît. Connectez-vous une fois, c'est prêt.")}
+                          </div>
+                        </li>
+                      </ol>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("common.close", "Fermer")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => copyToClipboard("chrome://extensions", t("settings.webmailUrlCopied", "Adresse copiée ✓"))}>
+                          <Copy className="w-3.5 h-3.5 mr-1.5" />
+                          {t("settings.webmailCopyUrl", "Copier chrome://extensions")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
