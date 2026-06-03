@@ -25,9 +25,9 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
       <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-44">
-            <Link href="/" className="flex items-center -ml-2 sm:-ml-4 lg:-ml-6">
-              <img src={appLogo} alt="Inboria" className="h-40 w-auto object-contain" />
+          <div className="flex items-center justify-between h-24">
+            <Link href="/" className="flex items-center -ml-1 sm:-ml-2">
+              <img src={appLogo} alt="Inboria" className="h-12 sm:h-14 lg:h-16 w-auto object-contain" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 ml-8 lg:ml-20">
@@ -107,7 +107,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-start mb-3">
-                <img src={appLogo} alt="Inboria" className="h-24 w-auto object-contain" />
+                <img src={appLogo} alt="Inboria" className="h-9 w-auto object-contain" />
               </div>
             </div>
 
