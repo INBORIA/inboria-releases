@@ -789,6 +789,11 @@ router.get(
           .replace(/\s+/g, " ")
           .trim();
       const targetSubj = normSubj(subjectQ);
+      // Diagnostic ciblé (OWA/OVH) : on expose les valeurs réellement reçues et
+      // les sujets candidats trouvés par expéditeur, pour comprendre pourquoi un
+      // mail bien présent en base n'est pas résolu (écart de scraping sujet/from).
+      let sfRowCount = -1;
+      const sfCandSubjects: string[] = [];
       if (!resolvedId && fromEmail && targetSubj.length >= 5) {
         const escaped = fromEmail.replace(/[%_\\]/g, (ch) => `\\${ch}`);
         const { data: rows, error } = await supabaseAdmin
@@ -804,6 +809,7 @@ router.get(
             "[inboria-resolve-email] subject/from failed",
           );
         } else if (Array.isArray(rows)) {
+          sfRowCount = rows.length;
           let best: any = null;
           for (const row of rows) {
             // Double sécurité : l'adresse exacte doit figurer dans le sender.
@@ -816,6 +822,7 @@ router.get(
             }
             const rs = normSubj((row as any).subject);
             if (!rs) continue; // jamais matcher un mail sans sujet
+            if (sfCandSubjects.length < 6) sfCandSubjects.push(rs.slice(0, 70));
             if (rs === targetSubj) {
               best = row;
               break; // correspondance exacte (le plus récent en premier)
@@ -848,6 +855,10 @@ router.get(
           rfcRaw: raw || null,
           hasSubject: Boolean(subjectQ),
           hasFrom: Boolean(fromEmail),
+          fromEmail: fromEmail || null,
+          targetSubj: targetSubj ? targetSubj.slice(0, 70) : null,
+          senderMatchedRows: sfRowCount,
+          candSubjects: sfCandSubjects,
           resolvedId,
           matchedBy,
         },
