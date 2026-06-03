@@ -56,14 +56,14 @@
     }
   });
 
-  // Le bouton « Ouvrir … » s'adapte : s'il y a un mail ouvert dans le webmail,
-  // il propose d'ouvrir CE mail dans Inboria ; sinon, juste ouvrir Inboria.
+  // Libellé unique demandé par l'utilisateur : « ↗ Ouvrir Inboria » dans tous
+  // les cas (qu'un mail soit ouvert ou non dans le webmail). Le comportement
+  // sous-jacent reste intelligent : si un mail est détecté et retrouvé dans
+  // Inboria, le clic ouvre directement CE mail ; sinon il ouvre la Réception.
   function updateOpenLabel() {
     var b = $("openInApp");
     if (!b) return;
-    b.textContent = hasMailContext()
-      ? "↗ Ouvrir ce mail dans Inboria"
-      : "↗ Ouvrir Inboria";
+    b.textContent = "↗ Ouvrir Inboria";
   }
 
   // ---- Session -------------------------------------------------------------
