@@ -340,6 +340,12 @@
       chip.onclick = function () { quickAction(chip.getAttribute("data-q")); };
     });
     $("openInApp").onclick = openInApp;
+    $("clearChatBtn").onclick = function () {
+      if (busy) return;
+      history = [];
+      $("messages").innerHTML = "";
+      addGreeting();
+    };
     $("logoutBtn").onclick = function () {
       clearSession();
       history = [];
@@ -348,10 +354,15 @@
     };
   }
 
+  // Message d'accueil affiché à l'entrée du chat et après « Effacer ».
+  function addGreeting() {
+    addMessage("bot", "Bonjour 👋 Je suis Inboria. Posez-moi une question sur ce mail, ou utilisez les raccourcis ci-dessus.");
+  }
+
   function enterChat() {
     show("chat");
     if ($("messages").childElementCount === 0) {
-      addMessage("bot", "Bonjour 👋 Je suis Inboria. Posez-moi une question sur ce mail, ou utilisez les raccourcis ci-dessus.");
+      addGreeting();
     }
     prefetchEmailId();
   }
