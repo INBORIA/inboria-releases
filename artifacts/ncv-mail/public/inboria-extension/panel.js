@@ -44,6 +44,9 @@
   }
 
   window.addEventListener("message", function (ev) {
+    // Sécurité : n'accepter que les messages venant de la fenêtre parente
+    // (le script de contenu qui héberge cette iframe), pas d'une autre frame.
+    if (ev.source !== window.parent) return;
     var d = ev.data;
     if (!d || d.source !== "inboria-content") return;
     if (d.type === "context") {

@@ -178,15 +178,29 @@
     document.documentElement.appendChild(btn);
   }
 
+  // Ouvre une URL externe uniquement si elle est sûre (https), jamais
+  // javascript:/data:/etc. — défense en profondeur contre un détournement.
+  function openExternal(url) {
+    try {
+      var u = new URL(String(url));
+      if (u.protocol !== "https:") return;
+      window.open(u.href, "_blank", "noopener");
+    } catch (e) {}
+  }
+
   // ---- Messages venant du panneau -----------------------------------------
+  // Sécurité : on n'accepte QUE les messages qui (1) viennent de l'origine de
+  // notre page d'extension, (2) proviennent exactement de l'iframe du panneau,
+  // (3) portent la signature attendue. Tout le reste est ignoré.
   window.addEventListener("message", function (ev) {
+    if (ev.origin !== EXT_ORIGIN) return;
+    if (!frame || ev.source !== frame.contentWindow) return;
     var d = ev.data;
     if (!d || d.source !== "inboria-panel") return;
-    if (frame && ev.source !== frame.contentWindow) return;
     if (d.type === "ready" || d.type === "request-context") {
       sendContext();
     } else if (d.type === "open" && d.url) {
-      window.open(d.url, "_blank", "noopener");
+      openExternal(d.url);
     } else if (d.type === "close") {
       closePanel();
     }
