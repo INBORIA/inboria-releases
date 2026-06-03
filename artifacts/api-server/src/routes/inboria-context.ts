@@ -793,6 +793,7 @@ router.get(
       // les sujets candidats trouvés par expéditeur, pour comprendre pourquoi un
       // mail bien présent en base n'est pas résolu (écart de scraping sujet/from).
       let sfRowCount = -1;
+      let subjOnlyCount = -1;
       const sfCandSubjects: string[] = [];
       if (!resolvedId && fromEmail && targetSubj.length >= 5) {
         const escaped = fromEmail.replace(/[%_\\]/g, (ch) => `\\${ch}`);
@@ -845,6 +846,43 @@ router.get(
         }
       }
 
+      // 4) Dernier filet (webmails type OWA boîte partagée) : la recherche par
+      // expéditeur a échoué (souvent l'adresse grattée est celle de la boîte, pas
+      // du vrai expéditeur). On tente alors le sujet EXACT normalisé, mais
+      // UNIQUEMENT s'il n'existe qu'un seul mail avec ce sujet — sinon ambigu, on
+      // s'abstient (zéro risque d'ouvrir le mauvais mail).
+      // Garde-fou anti-troncature : on ne résout que si le jeu de candidats N'EST
+      // PAS tronqué par la limite (srows.length < SUBJ_FETCH_LIMIT). Si on atteint
+      // la limite, il pourrait exister d'autres correspondances exactes au-delà de
+      // la fenêtre → on s'abstient plutôt que de risquer le mauvais mail.
+      const SUBJ_FETCH_LIMIT = 50;
+      if (!resolvedId && targetSubj.length >= 6) {
+        const escSubj = targetSubj.replace(/[%_\\]/g, (ch) => `\\${ch}`);
+        const { data: srows, error: sErr } = await supabaseAdmin
+          .from("emails")
+          .select("id, subject, created_at")
+          .eq("user_id", userId)
+          .ilike("subject", `%${escSubj}%`)
+          .order("created_at", { ascending: false })
+          .limit(SUBJ_FETCH_LIMIT);
+        if (sErr) {
+          req.log.error(
+            { err: sErr.message },
+            "[inboria-resolve-email] subject-only failed",
+          );
+        } else if (Array.isArray(srows)) {
+          const exact = srows.filter(
+            (r) => normSubj((r as any).subject) === targetSubj,
+          );
+          subjOnlyCount = exact.length;
+          const truncated = srows.length >= SUBJ_FETCH_LIMIT;
+          if (exact.length === 1 && !truncated) {
+            resolvedId = (exact[0] as any).id ?? null;
+            if (resolvedId) matchedBy = "subject-only";
+          }
+        }
+      }
+
       req.log.info(
         {
           userId,
@@ -859,6 +897,7 @@ router.get(
           targetSubj: targetSubj ? targetSubj.slice(0, 70) : null,
           senderMatchedRows: sfRowCount,
           candSubjects: sfCandSubjects,
+          subjOnlyExactCount: subjOnlyCount,
           resolvedId,
           matchedBy,
         },
