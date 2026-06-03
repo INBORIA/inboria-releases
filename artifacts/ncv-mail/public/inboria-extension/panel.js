@@ -523,6 +523,10 @@
     $("closeBtn").onclick = function () {
       post("close");
     };
+    // Filet de sécurité : la touche Échap ferme aussi le panneau.
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" || e.key === "Esc") post("close");
+    });
     post("ready");
     fetch(INBORIA_BASE + "/api/inboria/addin-config")
       .then(function (r) {

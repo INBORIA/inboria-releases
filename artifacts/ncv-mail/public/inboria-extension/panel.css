@@ -48,17 +48,25 @@ body {
   border-radius: 6px;
 }
 .icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 0;
+  border-radius: 8px;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 .icon-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
 }
 
 .view {
