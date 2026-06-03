@@ -16,6 +16,15 @@ function readStored(): NcvTheme {
   return "dark";
 }
 
+/**
+ * Thème choisi par l'abonné (persisté en localStorage), pour le contrôleur
+ * centralisé du routeur. Hors de l'app, on force toujours le sombre ; en
+ * entrant dans l'app, on ré-applique ce choix.
+ */
+export function getStoredNcvTheme(): NcvTheme {
+  return readStored();
+}
+
 function applyToDom(theme: NcvTheme) {
   if (typeof document === "undefined") return;
   document.documentElement.setAttribute(ATTR, theme);
@@ -29,11 +38,14 @@ function applyToDom(theme: NcvTheme) {
 export function useMarkInboxPage(): void {
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const prev = document.documentElement.getAttribute("data-ncv-page");
     document.documentElement.setAttribute("data-ncv-page", "inbox");
+    // Au démontage on RETIRE toujours l'attribut (jamais de « restauration »
+    // de la valeur précédente) : le contrôleur centralisé du routeur (App.tsx)
+    // est l'autorité unique et le ré-applique avant peinture sur les routes
+    // /dashboard. Restaurer "inbox" ferait baver la palette claire de l'app
+    // sur le site vitrine / login / inscription en quittant l'app.
     return () => {
-      if (prev) document.documentElement.setAttribute("data-ncv-page", prev);
-      else document.documentElement.removeAttribute("data-ncv-page");
+      document.documentElement.removeAttribute("data-ncv-page");
     };
   }, []);
 }

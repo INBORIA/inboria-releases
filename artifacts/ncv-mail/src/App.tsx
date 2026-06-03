@@ -1,5 +1,6 @@
-import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
-import { useEffect, lazy, Suspense } from "react";
+import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
+import { useEffect, useLayoutEffect, lazy, Suspense } from "react";
+import { getStoredNcvTheme } from "@/lib/inbox-theme";
 import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
 import { getGetProfileQueryKey, useGetMyOrganisation, getGetMyOrganisationQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
@@ -335,6 +336,24 @@ function AdminOnlyRoute({ component: Component }: { component: React.ComponentTy
 
 function Router() {
   const { session, loading, mfaState } = useAuth();
+  const [location] = useLocation();
+
+  // Contrôleur de thème centralisé (autorité unique). Le thème clair n'existe
+  // QUE dans l'app (/dashboard*) : c'est le choix de l'abonné connecté. Le
+  // site vitrine, la connexion et l'inscription restent TOUJOURS en sombre.
+  // En useLayoutEffect → appliqué avant peinture, donc aucun flash de clair
+  // en quittant l'app vers une page publique.
+  useLayoutEffect(() => {
+    if (typeof document === "undefined") return;
+    const el = document.documentElement;
+    if (location.startsWith("/dashboard")) {
+      el.setAttribute("data-ncv-page", "inbox");
+      el.setAttribute("data-ncv-theme", getStoredNcvTheme());
+    } else {
+      el.removeAttribute("data-ncv-page");
+      el.setAttribute("data-ncv-theme", "dark");
+    }
+  }, [location]);
 
   if (loading || mfaState === "unknown") return null;
 

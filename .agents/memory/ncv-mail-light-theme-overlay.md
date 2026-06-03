@@ -29,9 +29,20 @@ not by tokenizing everything. New code adds hexes the overlay never learned abou
   themes for free. Do NOT introduce new hardcoded hex text/bg colors.
 - `hover:text-white` is also not remapped → on light hover surfaces it can vanish.
   Use `hover:text-foreground` / `hover:text-primary` instead.
-- The hook `useMarkInboxPage`/`useEnableLightTheme` (in `lib/inbox-theme.ts`) is
-  called by EVERY dashboard page, so `data-ncv-page="inbox"` + light mode applies
-  app-wide on the dashboard, including portaled content (AlertDialog/Dialog live
-  under `<html>` so the overlay reaches them).
+- Authority for the `<html>` theme attributes is the **centralized router
+  controller** (a `useLayoutEffect` in `App.tsx`'s `Router`, keyed on wouter
+  `location`): `/dashboard*` => `data-ncv-page="inbox"` + stored theme; every
+  other route => remove `data-ncv-page` + force `data-ncv-theme="dark"`. Light
+  mode is therefore an app-only (logged-in) choice; vitrine/login/signup are
+  ALWAYS dark. Do NOT write theme/page attributes to `<html>` from anywhere else.
+- **Why central:** light used to bleed onto public pages after leaving the app —
+  `useMarkInboxPage` restored a stale `data-ncv-page="inbox"` on unmount and
+  `data-ncv-theme="light"` lingered across SPA nav (some light rules key on
+  `data-ncv-theme="light"` alone, e.g. the chat button). The hook now only ever
+  `removeAttribute("data-ncv-page")` on unmount; the router is the single source.
+- `useLayoutEffect` (pre-paint) is essential here: a passive `useEffect` would let
+  the public page paint light for one frame before correcting → visible flash.
+- The overlay still reaches portaled content (AlertDialog/Dialog live under
+  `<html>`), so within the dashboard light mode applies app-wide.
 - Radix `AlertDialog` does NOT close on outside-click (only Escape + its buttons),
   so an unreadable cancel button feels like "can't close it".
