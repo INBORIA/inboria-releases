@@ -154,7 +154,7 @@ export function NotificationBell() {
             )}
             <button
               onClick={() => setOpen(false)}
-              className="rounded p-1 text-white/40 hover:bg-white/5 hover:text-white transition"
+              className="rounded p-1 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
               aria-label={t("common.close", "Fermer")}
             >
               <X className="h-3.5 w-3.5" />
@@ -191,7 +191,7 @@ export function NotificationBell() {
                   </div>
                   <button
                     onClick={(e) => handleDelete(e, n.id)}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 rounded p-0.5 text-white/40 hover:bg-white/10 hover:text-white transition"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 rounded p-0.5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
                     aria-label={t("common.delete", "Supprimer")}
                   >
                     <X className="h-3 w-3" />
