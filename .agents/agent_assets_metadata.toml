@@ -215,3 +215,9 @@ id = "LZuqYZNhxxVl2AeOFcNnq"
 uri = "file://dist/inboria-extension.zip"
 type = "unspecified"
 title = "Extension Inboria (corrigée) — inboria-extension.zip"
+
+[[outputs]]
+id = "NjM29_amWS8TaFq_gRNUz"
+uri = "file://artifacts/ncv-mail/dist/inboria-extension.zip"
+type = "unspecified"
+title = "Extension Inboria (corrigée)"

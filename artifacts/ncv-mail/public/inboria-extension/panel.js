@@ -359,6 +359,23 @@
     if (currentContext.from)
       qs.push("from=" + encodeURIComponent(currentContext.from));
     if (!qs.length) return done(INBORIA_BASE + "/dashboard?from=extension");
+    // URL de repli : on transmet les identifiants BRUTS à l'app web (préfixe x*
+    // pour ne pas entrer en collision avec le marqueur `from=extension`). L'app,
+    // authentifiée par sa propre session, résout alors le mail elle-même — fiable
+    // même si le jeton de l'extension est expiré (résolution ici → 401).
+    var xqs = [];
+    if (currentContext.messageId)
+      xqs.push("xmid=" + encodeURIComponent(currentContext.messageId));
+    if (currentContext.nativeId)
+      xqs.push("xnid=" + encodeURIComponent(currentContext.nativeId));
+    if (currentContext.subject)
+      xqs.push("xsubject=" + encodeURIComponent(currentContext.subject));
+    if (currentContext.from)
+      xqs.push("xfrom=" + encodeURIComponent(currentContext.from));
+    var rawUrl =
+      INBORIA_BASE +
+      "/dashboard?from=extension" +
+      (xqs.length ? "&" + xqs.join("&") : "");
     apiFetch("/api/inboria/resolve-email?" + qs.join("&"))
       .then(function (r) {
         return r.ok ? r.json() : { emailId: null };
@@ -368,11 +385,11 @@
           currentEmailId = data.emailId;
           done(INBORIA_BASE + "/dashboard?emailId=" + data.emailId + "&from=extension");
         } else {
-          done(INBORIA_BASE + "/dashboard?from=extension");
+          done(rawUrl);
         }
       })
       .catch(function () {
-        done(INBORIA_BASE + "/dashboard?from=extension");
+        done(rawUrl);
       });
   }
 

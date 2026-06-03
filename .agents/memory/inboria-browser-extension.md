@@ -31,3 +31,16 @@ Source : `artifacts/ncv-mail/public/inboria-extension/` (manifest MV3, `content.
 
 ## Reste à faire (plan validé user)
 Étape 2 = adaptateurs de lecture par webmail (Roundcube/OVH d'abord, puis Yahoo/GMX/Zoho/iCloud/Zimbra + bonus Gmail/Outlook web). Étape 3 = section installation dans Paramètres → Mon compte + i18n + base URL dynamique. Étape 4 = packaging + publication Chrome/Edge (compte dev Chrome ~5 $ une fois), Firefox ensuite.
+
+## Ouvrir un mail depuis un pont = NE PAS dépendre du jeton du pont
+Le bouton « Ouvrir dans Inboria » ne doit jamais dépendre du jeton (Bearer Supabase)
+stocké dans l'extension/add-in/add-on : ce jeton peut renvoyer 401 (rotation du
+refresh-token quand l'app web Inboria tourne en parallèle et fait tourner le jeton
+partagé), et l'ouverture retombe alors sur la Réception.
+**Règle** : le pont transmet les identifiants BRUTS du mail dans l'URL de l'app web,
+et c'est l'app web — authentifiée par SA PROPRE session — qui résout l'emailId.
+**Piège** : le paramètre `from` sert déjà de marqueur de pont (`from=extension|gmail|outlook`),
+donc l'expéditeur/sujet bruts doivent utiliser des noms distincts (préfixe `x*` :
+`xfrom`/`xsubject`/`xmid`/`xnid`) sinon `URLSearchParams.get("from")` renvoie le marqueur.
+Côté app : capture au boot dans `sessionStorage["inboria.pendingResolve"]` (TTL court),
+effet one-shot qui résout via `/api/inboria/resolve-email` puis `setSelectedEmailId`.

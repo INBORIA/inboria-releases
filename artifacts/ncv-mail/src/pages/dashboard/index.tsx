@@ -142,6 +142,52 @@ function clearPendingEmailId(): void {
   }
 }
 
+// Identifiants bruts du mail à ouvrir, transmis par les ponts (extension/add-in/
+// add-on) quand ceux-ci n'ont PAS pu résoudre l'emailId eux-mêmes (jeton expiré
+// → 401). L'app, elle, est authentifiée et fait la résolution. Capturés au boot
+// dans main.tsx sous sessionStorage["inboria.pendingResolve"] (peek/clear même
+// logique que pendingEmailId : TTL 2 min, lecture non destructive).
+type PendingResolve = {
+  subject: string;
+  from: string;
+  providerMessageId: string;
+  nativeMessageId: string;
+};
+
+function peekPendingResolve(): PendingResolve | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = window.sessionStorage.getItem("inboria.pendingResolve");
+    if (!raw) return null;
+    const p = JSON.parse(raw) as Partial<PendingResolve> & { ts?: number };
+    const ts = Number(p?.ts);
+    if (Number.isFinite(ts) && Date.now() - ts > 120_000) {
+      window.sessionStorage.removeItem("inboria.pendingResolve");
+      return null;
+    }
+    const r: PendingResolve = {
+      subject: String(p?.subject || ""),
+      from: String(p?.from || ""),
+      providerMessageId: String(p?.providerMessageId || ""),
+      nativeMessageId: String(p?.nativeMessageId || ""),
+    };
+    if (!r.subject && !r.from && !r.providerMessageId && !r.nativeMessageId)
+      return null;
+    return r;
+  } catch {
+    return null;
+  }
+}
+
+function clearPendingResolve(): void {
+  try {
+    if (typeof window === "undefined") return;
+    window.sessionStorage.removeItem("inboria.pendingResolve");
+  } catch {
+    /* noop */
+  }
+}
+
 // Bag de callbacks pour la barre d'actions au survol — toutes les actions
 // du menu contextuel clic droit, dans le même ordre, avec popovers ancrés
 // pour Reporter / Catégorie / Déplacer vers.
@@ -3222,6 +3268,57 @@ export default function Dashboard() {
     window.addEventListener("inboria-open-mail", handler);
     return () => window.removeEventListener("inboria-open-mail", handler);
   }, []);
+  // Pont sans emailId pré-résolu : l'app étant authentifiée par sa propre session,
+  // c'est ELLE qui résout le mail à partir des identifiants bruts (sujet /
+  // expéditeur / Message-ID). Fiable même si le jeton de l'extension a expiré
+  // (sa résolution côté pont aurait renvoyé 401 → on retombait sur la Réception).
+  const bridgeResolveTried = useRef(false);
+  useEffect(() => {
+    if (bridgeResolveTried.current) return;
+    const params = new URLSearchParams(window.location.search);
+    const idNum = Number(params.get("emailId"));
+    if ((Number.isFinite(idNum) && idNum > 0) || peekPendingEmailId()) return;
+    const fromUrl: PendingResolve = {
+      subject: params.get("xsubject") || "",
+      from: params.get("xfrom") || "",
+      providerMessageId: params.get("xmid") || "",
+      nativeMessageId: params.get("xnid") || "",
+    };
+    const hasUrl =
+      fromUrl.subject ||
+      fromUrl.from ||
+      fromUrl.providerMessageId ||
+      fromUrl.nativeMessageId;
+    const rv = hasUrl ? fromUrl : peekPendingResolve();
+    if (!rv) return;
+    bridgeResolveTried.current = true;
+    (async () => {
+      try {
+        const q = new URLSearchParams();
+        if (rv.providerMessageId)
+          q.set("providerMessageId", rv.providerMessageId);
+        if (rv.nativeMessageId) q.set("nativeMessageId", rv.nativeMessageId);
+        if (rv.subject) q.set("subject", rv.subject);
+        if (rv.from) q.set("from", rv.from);
+        const { supabase } = await import("@/lib/supabase");
+        const { data: sess } = await supabase.auth.getSession();
+        const token = sess?.session?.access_token;
+        if (!token) return;
+        const res = await fetch(
+          `${import.meta.env.BASE_URL}api/inboria/resolve-email?${q.toString()}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as { emailId?: number };
+        const rid = Number(data?.emailId);
+        if (Number.isFinite(rid) && rid > 0) setSelectedEmailId(rid);
+      } catch {
+        /* résolution best-effort — on reste sur la Réception en cas d'échec */
+      } finally {
+        clearPendingResolve();
+      }
+    })();
+  }, [searchString, routeLocation]);
   const clearAssigneeFilter = () => {
     setAssigneeFilter(null);
     if (typeof window !== "undefined") {

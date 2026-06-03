@@ -37,6 +37,27 @@ if (typeof window !== "undefined") {
       // ce bundle (avec le fix) tourne bien côté navigateur lors du test.
       console.info("[inboria] deep-link emailId capturé au boot:", num, "from:", from);
     }
+    // Repli pont : pas d'emailId déjà résolu côté pont, mais identifiants bruts
+    // présents (sujet / expéditeur / Message-ID). On les mémorise pour que l'app —
+    // authentifiée par SA PROPRE session — résolve le mail elle-même. Crucial
+    // quand le jeton de l'extension a expiré (sa résolution côté pont → 401).
+    if (
+      window.location.pathname.includes("/dashboard") &&
+      (from === "gmail" || from === "outlook" || from === "extension")
+    ) {
+      const rv = {
+        subject: params.get("xsubject") || "",
+        from: params.get("xfrom") || "",
+        providerMessageId: params.get("xmid") || "",
+        nativeMessageId: params.get("xnid") || "",
+      };
+      if (rv.subject || rv.from || rv.providerMessageId || rv.nativeMessageId) {
+        window.sessionStorage.setItem(
+          "inboria.pendingResolve",
+          JSON.stringify({ ...rv, ts: Date.now() }),
+        );
+      }
+    }
   } catch {
     // sessionStorage indisponible (mode privé) — non fatal.
   }
