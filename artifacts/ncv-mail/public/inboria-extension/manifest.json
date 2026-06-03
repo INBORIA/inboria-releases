@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Demander à Inboria",
+  "version": "0.1.0",
+  "description": "Ajoute « Demander à Inboria » dans votre webmail : résumé, réponse et assistance IA, dans n'importe quelle messagerie web.",
+  "icons": {
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://*/*"],
+  "action": {
+    "default_title": "Demander à Inboria",
+    "default_icon": {
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["panel.html", "panel.js", "panel.css", "icon-48.png", "icon-128.png"],
+      "matches": ["https://*/*"]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+/* Inboria — extension navigateur. Bouton flottant + panneau latéral.
+ * Tout est préfixé .inboria-ext- et en z-index très haut pour passer
+ * au-dessus de n'importe quel webmail sans casser sa mise en page. */
+
+.inboria-ext-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px 0 12px;
+  margin: 0;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font: 600 13px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #fff;
+  background: linear-gradient(135deg, #6d5cff 0%, #4f46e5 100%);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.inboria-ext-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(79, 70, 229, 0.55);
+}
+.inboria-ext-btn img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: block;
+}
+.inboria-ext-btn.inboria-ext-hidden {
+  display: none !important;
+}
+
+.inboria-ext-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 2147483647;
+  width: 400px;
+  max-width: 96vw;
+  height: 100vh;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.28);
+  background: #0f1115;
+  transform: translateX(100%);
+  transition: transform 0.22s ease;
+}
+.inboria-ext-panel.inboria-ext-open {
+  transform: translateX(0);
+}

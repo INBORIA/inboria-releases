@@ -203,3 +203,9 @@ id = "Cr94t0A6Imvm3M4iOxJYc"
 uri = "file://.local/addon-export/appsscript.json"
 type = "unspecified"
 title = "appsscript.json — manifeste add-on"
+
+[[outputs]]
+id = "j0DK0EA7YRG9dj-qrSNiq"
+uri = "file://inboria-extension.zip"
+type = "unspecified"
+title = "Extension « Demander à Inboria » (version test)"
