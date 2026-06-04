@@ -574,7 +574,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       )}
 
       {isSharedContext && replyingPeers.length > 0 && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[12px] text-amber-200">
+        <div className="inboria-collision-banner mb-4 flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[12px] text-amber-200">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>
             {replyingPeers.length === 1

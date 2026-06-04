@@ -326,6 +326,17 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d2d7e0\] { color: 
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\] { color: #4b5563 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#3b4250\] { color: #3b4250 !important; }
 
+/* T004 — Bandeau de collision « X répond déjà à ce mail ». En sombre il garde
+   son look Tailwind (border-amber-500/40 + bg-amber-500/10 + text-amber-200,
+   parfaitement lisible). En clair, ces tons ambre pâles deviennent délavés sur
+   fond blanc → on repeint le bandeau en ambre foncé sur fond ambre clair (AA).
+   L'icône AlertTriangle hérite de `currentColor`, donc elle suit le texte. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .inboria-collision-banner {
+  background-color: #fef3c7 !important; /* amber-100 */
+  border-color: #f59e0b !important;     /* amber-500 */
+  color: #92400e !important;            /* amber-800 */
+}
+
 /* Task #314 — Mail rows (Réception / Envoyés / Programmés / Mes dossiers).
    Alignement Gmail / Outlook / Superhuman : un mail LU garde un texte foncé,
    on baisse seulement le poids (font-normal). Les gris pâles #7a8290 et
