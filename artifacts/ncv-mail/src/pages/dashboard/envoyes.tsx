@@ -75,7 +75,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
-import { removeEmailOptimistic } from "@/lib/optimistic-email";
+import { removeEmailOptimistic, removeEmailsOptimistic, patchEmailOptimistic } from "@/lib/optimistic-email";
 
 export default function Envoyes() {
   useEnableLightTheme();
@@ -238,24 +238,38 @@ export default function Envoyes() {
 
   const handleBulkDelete = () => {
     const ids = Array.from(selectedIds);
+    const rollback = removeEmailsOptimistic(queryClient, ids);
+    setSelectedIds(new Set());
+    toast({ title: t("inbox.deleteEmail") });
+    let failed = false;
     ids.forEach((id) => {
       deleteEmail.mutate({ id }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
         },
+        onError: (e: any) => {
+          if (!failed) {
+            failed = true;
+            rollback();
+            toast({ variant: "destructive", title: t("common.error"), description: e?.message });
+          }
+        },
       });
     });
-    setSelectedIds(new Set());
-    toast({ title: t("inbox.deleteEmail") });
   };
 
   const handleUpdateProject = (id: number, projectId: string) => {
+    const rollback = patchEmailOptimistic(queryClient, id, { projectId: projectId === "none" ? null : projectId });
     updateEmail.mutate(
       { id, data: { projectId: projectId === "none" ? null : projectId } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("sent.projectUpdated") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       }
     );
@@ -390,12 +404,17 @@ export default function Envoyes() {
     const email = sentEmails.find((e: any) => e.id === id);
     const isUnread = email?.status === "non_lu" || email?.isRead === false || (email as any)?.unread === true;
     const newStatus = isUnread ? "read" : "non_lu";
+    const rollback = patchEmailOptimistic(queryClient, id, { status: newStatus, isRead: isUnread, unread: !isUnread });
     updateEmail.mutate(
       { id, data: { status: newStatus } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       },
     );
@@ -450,12 +469,17 @@ export default function Envoyes() {
   };
 
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    const rollback = patchEmailOptimistic(queryClient, id, { categoryId, categoryName });
     updateEmail.mutate(
       { id, data: { categoryId } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       },
     );

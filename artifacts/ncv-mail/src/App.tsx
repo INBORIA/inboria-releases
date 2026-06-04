@@ -22,11 +22,11 @@ import AuthCallback from "@/pages/auth-callback";
 import MotDePasseOublie from "@/pages/mot-de-passe-oublie";
 import ResetPassword from "@/pages/reset-password";
 import AcceptInvite from "@/pages/accept-invite";
-import Dashboard from "@/pages/dashboard/index";
 import Accueil from "@/pages/marketing/accueil";
 
 // Lazy (code-split par page — chargement à la navigation pour réduire le
 // bundle initial de ~200-400 ko gzip selon la page visitée)
+const Dashboard = lazy(() => import("@/pages/dashboard/index"));
 const Archives = lazy(() => import("@/pages/dashboard/archives"));
 const MesDossiers = lazy(() => import("@/pages/dashboard/dossiers"));
 const NotificationsPage = lazy(() => import("@/pages/dashboard/notifications"));
