@@ -98,6 +98,9 @@ export function EmailComments({
   const [editingText, setEditingText] = useState("");
   const [adding, setAdding] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
+  // L'utilisateur a-t-il replié/déroulé le fil à la main ? Si oui, on ne
+  // force plus l'ouverture automatique (on respecte son choix).
+  const userToggledRef = useRef(false);
 
   const [showSuggest, setShowSuggest] = useState(false);
   const [suggestQuery, setSuggestQuery] = useState("");
@@ -242,6 +245,14 @@ export function EmailComments({
   }
 
   const commentList = (comments as any[]) || [];
+
+  // Dérouler le fil automatiquement dès qu'il y a au moins un message —
+  // sauf si l'utilisateur l'a explicitement replié/déroulé lui-même.
+  useEffect(() => {
+    if (!userToggledRef.current && commentList.length > 0) {
+      setCollapsed(false);
+    }
+  }, [commentList.length]);
 
   // Visibilité conditionnelle du Chat équipe — règle STRICTE :
   // - boîte partagée → toujours visible (toute l'équipe peut participer)
@@ -402,7 +413,7 @@ export function EmailComments({
         <div className="flex items-center justify-between mb-3">
           <button
             type="button"
-            onClick={() => setCollapsed((v) => !v)}
+            onClick={() => { userToggledRef.current = true; setCollapsed((v) => !v); }}
             className="flex items-center gap-1.5 text-left hover:opacity-80 transition-opacity"
             data-testid="button-toggle-comments"
           >
