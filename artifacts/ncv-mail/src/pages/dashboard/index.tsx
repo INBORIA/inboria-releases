@@ -3594,7 +3594,7 @@ export default function Dashboard() {
   const [assigningInboxEmailId, setAssigningInboxEmailId] = useState<string | number | null>(null);
 
   const plan = (profile as any)?.plan;
-  const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } as any });
+  const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" || (plan === "essai" && !!(myOrg as any)?.id) } as any });
 
   useEffect(() => {
     const mbs = sharedMailboxes as any[] | undefined;
@@ -3606,7 +3606,7 @@ export default function Dashboard() {
   // Active SLA breaches (unresolved) — used to flag overdue rows in the inbox.
   const { data: slaBreachList } = useQuery<any[]>({
     queryKey: ["sla-breaches-active"],
-    enabled: plan === "business",
+    enabled: plan === "business" || (plan === "essai" && !!(myOrg as any)?.id),
     refetchInterval: 60_000,
     queryFn: async () => {
       const { supabase } = await import("@/lib/supabase");
@@ -5329,7 +5329,7 @@ export default function Dashboard() {
     }
   };
 
-  const hasSharedMailboxes = plan === "business" && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
+  const hasSharedMailboxes = (plan === "business" || plan === "essai") && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
 
   // Menu contextuel rendu via fonction pour être utilisable dans les deux
   // branches (vue liste ET vue mail ouvert).

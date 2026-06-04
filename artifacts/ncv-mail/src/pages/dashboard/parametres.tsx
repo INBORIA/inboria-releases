@@ -48,7 +48,7 @@ export default function Parametres() {
           },
         ]
       : []),
-    ...(isBusiness && isOrgAdmin
+    ...((profile as any)?.plan === "essai" || (isBusiness && isOrgAdmin)
       ? [
           {
             href: "/dashboard/equipe",

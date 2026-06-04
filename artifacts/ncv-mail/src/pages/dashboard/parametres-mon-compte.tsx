@@ -560,7 +560,7 @@ export default function ParametresMonCompte() {
   const isOrgAdmin = (org as any)?.myRole === "admin";
   const isOrgMember = !!(org as any)?.id && (org as any)?.myRole !== "admin";
   const userPlan = (profile as any)?.plan;
-  const canShareWithTeam = isOrgAdmin && (userPlan === "business" || userPlan === "pro");
+  const canShareWithTeam = isOrgAdmin && (userPlan === "business" || userPlan === "pro" || userPlan === "essai");
 
   const [fullName, setFullName] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);

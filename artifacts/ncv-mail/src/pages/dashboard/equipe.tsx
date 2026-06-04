@@ -78,7 +78,8 @@ export default function Equipe() {
   const { data: sharedMailboxes, isLoading: sharedMailboxesLoading } = useGetSharedMailboxes({
     query: {
       enabled:
-        (org as any)?.myRole === "admin" && (profile as any)?.plan === "business",
+        (org as any)?.myRole === "admin" &&
+        ((profile as any)?.plan === "business" || (profile as any)?.plan === "essai"),
       queryKey: getGetSharedMailboxesQueryKey(),
     },
   });
@@ -118,6 +119,8 @@ export default function Equipe() {
   const isAdmin = (org as any)?.myRole === "admin";
   const plan = (profile as any)?.plan;
   const isBusinessPlan = plan === "business";
+  // L'essai débloque aussi les fonctions d'équipe (« essai équipe »).
+  const canTeam = plan === "business" || plan === "essai";
 
   function invalidateAll() {
     queryClient.invalidateQueries({ queryKey: getGetMyOrganisationQueryKey() });
@@ -248,11 +251,16 @@ export default function Equipe() {
             <Building2 className="mx-auto h-12 w-12 text-[#b8c5d6]/40 mb-4" />
             <h2 className="text-lg font-semibold text-white mb-2">{t("team.createOrg")}</h2>
             <p className="text-[13px] text-[#b8c5d6] mb-6">
-              {isBusinessPlan
-                ? t("team.subtitle")
+              {canTeam
+                ? plan === "essai"
+                  ? t(
+                      "team.trialTeamHint",
+                      "Essai équipe : invitez jusqu'à 3 collègues. Chacun reçoit son propre essai de 4 500 crédits, et vous débloquez les boîtes partagées, l'assignation et les commentaires internes.",
+                    )
+                  : t("team.subtitle")
                 : t("team.businessRequiredDesc")}
             </p>
-            {isBusinessPlan && (
+            {canTeam && (
               <div className="flex gap-2 max-w-sm mx-auto">
                 <Input
                   placeholder={t("team.orgNamePlaceholder")}
@@ -308,7 +316,10 @@ export default function Equipe() {
               {(org as any)?.name}
             </h1>
             <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-              {(org as any)?.plan} — {seatsUsed}/{seatsTotal}
+              {(org as any)?.plan === "essai"
+                ? t("team.trialTeamLabel", "Essai équipe")
+                : (org as any)?.plan}{" "}
+              — {seatsUsed}/{seatsTotal}
             </p>
           </div>
           {isAdmin && (
@@ -490,7 +501,7 @@ export default function Equipe() {
           </div>
         )}
 
-        {isAdmin && isBusinessPlan && (
+        {isAdmin && canTeam && (
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
             <div className="px-5 py-3 border-b border-[#1f2937] flex items-start justify-between gap-3">
               <div className="min-w-0">

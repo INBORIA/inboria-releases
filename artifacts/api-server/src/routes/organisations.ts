@@ -82,6 +82,17 @@ router.post("/organisations", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    // Une équipe d'essai = organisation marquée plan="essai". Elle débloque
+    // les fonctions Business (boîtes partagées, assignation, commentaires)
+    // pendant l'essai, avec un plafond de 3 collègues invités (4 sièges au
+    // total : le créateur + 3). Une vraie équipe payante reste plan="business".
+    const { data: creatorProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("plan")
+      .eq("id", req.userId!)
+      .single();
+    const isTrialTeam = creatorProfile?.plan === "essai";
+
     const baseSlug = generateSlug(name.trim());
     const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
@@ -90,9 +101,9 @@ router.post("/organisations", requireAuth, async (req, res): Promise<void> => {
       .insert({
         name: name.trim(),
         slug,
-        plan: "business",
-        seats_total: 3,
-        emails_quota: 30000,
+        plan: isTrialTeam ? "essai" : "business",
+        seats_total: isTrialTeam ? 4 : 3,
+        emails_quota: isTrialTeam ? 4500 : 30000,
         emails_used: 0,
         created_by: req.userId!,
       })
@@ -114,9 +125,15 @@ router.post("/organisations", requireAuth, async (req, res): Promise<void> => {
         status: "active",
       });
 
+    // Le créateur d'une équipe d'essai garde son plan "essai" et son propre
+    // essai de 4 500 crédits : il ne doit JAMAIS être passé en Business gratuit.
     await supabaseAdmin
       .from("profiles")
-      .update({ organisation_id: org.id, plan: "business" })
+      .update(
+        isTrialTeam
+          ? { organisation_id: org.id }
+          : { organisation_id: org.id, plan: "business" },
+      )
       .eq("id", req.userId!);
 
     res.status(201).json({
@@ -366,7 +383,17 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       .select("id", { count: "exact", head: true })
       .eq("organisation_id", adminMembership.organisation_id);
 
-    if (org && memberCount !== null && memberCount >= org.seats_total) {
+    // On compte aussi les invitations EN ATTENTE : sinon un admin pourrait
+    // mettre en file un nombre illimité d'invitations puis toutes les faire
+    // accepter, et dépasser le plafond de sièges (anti-abus essai équipe).
+    const { count: pendingInviteCount } = await supabaseAdmin
+      .from("invitations")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", adminMembership.organisation_id)
+      .eq("status", "pending");
+
+    const committedSeats = (memberCount ?? 0) + (pendingInviteCount ?? 0);
+    if (org && committedSeats >= org.seats_total) {
       res.status(400).json({ error: `Limite de ${org.seats_total} sièges atteinte. Augmentez votre nombre de sièges.` });
       return;
     }
@@ -440,13 +467,33 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
         return;
       }
 
+      const { data: inviteeProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("plan")
+        .eq("id", existingAuthUserId)
+        .single();
+      const inviteePaying = ["solo", "pro", "business"].includes(
+        inviteeProfile?.plan || "",
+      );
+      const inviteeUpdate: Record<string, unknown> = {
+        organisation_id: adminMembership.organisation_id,
+      };
+      if (orgInfo?.plan === "essai") {
+        // Équipe d'essai : chaque collègue reçoit SON propre essai de 4 500
+        // crédits, jamais un compte Business gratuit. Un membre déjà payant
+        // (Solo/Pro/Business) garde son plan, il rejoint juste l'équipe.
+        if (!inviteePaying) {
+          inviteeUpdate.plan = "essai";
+          inviteeUpdate.emails_quota = 4500;
+        }
+      } else {
+        // Équipe payante : les sièges sont facturés, le membre prend le plan.
+        inviteeUpdate.plan = orgInfo?.plan || "business";
+        inviteeUpdate.emails_quota = orgInfo?.emails_quota ?? 30000;
+      }
       await supabaseAdmin
         .from("profiles")
-        .update({
-          organisation_id: adminMembership.organisation_id,
-          plan: orgInfo?.plan || "business",
-          emails_quota: orgInfo?.emails_quota ?? 30000,
-        })
+        .update(inviteeUpdate)
         .eq("id", existingAuthUserId);
 
       res.status(201).json({
@@ -695,6 +742,32 @@ router.post("/invitations/:token/accept", requireAuth, async (req, res): Promise
       return;
     }
 
+    // Contrôle de capacité AVANT d'ajouter le membre : empêche de dépasser le
+    // nombre de sièges (4 pour une équipe d'essai = créateur + 3 collègues) en
+    // acceptant plusieurs invitations mises en file. L'accepteur n'est pas
+    // encore membre, on compare donc les membres actifs à seats_total.
+    const { data: acceptOrg } = await supabaseAdmin
+      .from("organisations")
+      .select("plan, seats_total")
+      .eq("id", invitation.organisation_id)
+      .single();
+
+    const { count: activeMemberCount } = await supabaseAdmin
+      .from("organisation_members")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", invitation.organisation_id);
+
+    if (
+      acceptOrg &&
+      activeMemberCount !== null &&
+      activeMemberCount >= acceptOrg.seats_total
+    ) {
+      res.status(400).json({
+        error: `Cette équipe a atteint sa limite de ${acceptOrg.seats_total} sièges.`,
+      });
+      return;
+    }
+
     await supabaseAdmin
       .from("organisation_members")
       .insert({
@@ -703,10 +776,31 @@ router.post("/invitations/:token/accept", requireAuth, async (req, res): Promise
         role: invitation.role,
         status: "active",
       });
+    const { data: acceptProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("plan")
+      .eq("id", req.userId!)
+      .single();
+    const acceptPaying = ["solo", "pro", "business"].includes(
+      acceptProfile?.plan || "",
+    );
 
+    const acceptUpdate: Record<string, unknown> = {
+      organisation_id: invitation.organisation_id,
+    };
+    if (acceptOrg?.plan === "essai") {
+      // Équipe d'essai : le nouveau collègue garde/obtient son essai de 4 500
+      // crédits (jamais Business gratuit). Un compte déjà payant garde son plan.
+      if (!acceptPaying) {
+        acceptUpdate.plan = "essai";
+        acceptUpdate.emails_quota = 4500;
+      }
+    } else {
+      acceptUpdate.plan = "business";
+    }
     await supabaseAdmin
       .from("profiles")
-      .update({ organisation_id: invitation.organisation_id, plan: "business" })
+      .update(acceptUpdate)
       .eq("id", req.userId!);
 
     await supabaseAdmin
