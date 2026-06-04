@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import inboriaLogo from "./inboria-logo.png";
 import {
   Sparkles, Search, MousePointer2, Star, Archive, Trash2,
   Reply, Forward, Inbox, Send, FileText, Paperclip, Puzzle,
   CalendarClock, BellOff, MailCheck, CheckSquare, Users, CalendarDays,
-  FolderOpen, LayoutDashboard, Tags, Bell, Sun, RefreshCw, Plus, Wand2,
+  FolderOpen, LayoutDashboard, Tags, Bell, Sun, RefreshCw, Plus,
 } from "lucide-react";
 
 // Animation marketing — page « Extensions ».
@@ -42,6 +43,23 @@ const INBORIA_NAV: Array<{ label: string; icon: any; active?: boolean }> = [
   { label: "Mes dossiers", icon: FolderOpen },
   { label: "Bilan quotidien", icon: LayoutDashboard },
   { label: "Catégories", icon: Tags },
+];
+
+// Boîte de réception triée par Inboria — scène finale « ouvrir dans Inboria ».
+// Triée façon Smart Sort : urgents + non-lus en haut, chaque ligne porte la
+// couleur de sa catégorie (auto-classée par l'IA).
+const SORTED_INBOX: Array<{
+  from: string; subject: string; preview: string;
+  cat: string; color: string; date: string; unread?: boolean; urgent?: boolean;
+}> = [
+  { from: "Marie Lemoine", subject: "Re: Devis rénovation cuisine", preview: "Pouvez-vous confirmer le montant et un délai ?", cat: "Devis", color: "#2d7dd2", date: "5 j", unread: true, urgent: true },
+  { from: "Thomas Bernard", subject: "Validation du bon de commande", preview: "Tout est bon de notre côté, on peut lancer.", cat: "Clients", color: "#10b981", date: "2 h", unread: true },
+  { from: "Sophie Caron", subject: "Question sur la livraison", preview: "Quel est le délai pour la commande #5821 ?", cat: "Clients", color: "#10b981", date: "3 h", unread: true },
+  { from: "Léa Dubois", subject: "Candidature — Développeuse", preview: "CV + portfolio en pièce jointe.", cat: "RH", color: "#f43f5e", date: "4 h", unread: true },
+  { from: "Compta Légère", subject: "Facture #2026-0418 à régler", preview: "Échéance dans 5 jours — 1 240 € TTC.", cat: "Factures", color: "#f59e0b", date: "1 j" },
+  { from: "Stripe", subject: "Paiement reçu : 1 240 €", preview: "Le virement a bien été crédité.", cat: "Factures", color: "#f59e0b", date: "6 h" },
+  { from: "Partenaire X", subject: "Proposition de collaboration", preview: "Disponible pour un échange cette semaine ?", cat: "Partenaires", color: "#06b6d4", date: "1 j" },
+  { from: "AlphaSignal", subject: "NVIDIA Robot Planner: 19x Speed Jump", preview: "Hebdo IA — les nouveautés de la semaine.", cat: "Newsletters", color: "#64748b", date: "8 h" },
 ];
 
 // step: 0 mail ouvert · 1 hover bouton · 2 panel+accueil · 3 hover raccourci ·
@@ -95,7 +113,6 @@ export function AskInboria() {
   }, [clearTimers, reducedMotion]);
 
   useEffect(() => {
-    setStep(8); return; // TEMP DEBUG
     if (reducedMotion) { setStep(6); return; }
     runCycle();
     return clearTimers;
@@ -319,7 +336,7 @@ export function AskInboria() {
               <div className="hidden md:flex flex-col w-[176px] border-r border-[#1f2937] bg-[#0d1117]">
                 <div className="flex items-center justify-center px-3 h-14 border-b border-[#1f2937]">
                   <img
-                    src={`${import.meta.env.BASE_URL}inboria-logo.png`}
+                    src={inboriaLogo}
                     alt="Inboria"
                     className="h-9 w-auto object-contain"
                   />
@@ -375,50 +392,60 @@ export function AskInboria() {
                   </div>
                 </div>
 
-                {/* Mail de Marie ouvert dans Inboria, avec apports IA */}
-                <div className="flex-1 overflow-hidden px-5 py-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-[10px] font-medium">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Urgent
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#141c2b] border border-[#1f2937] text-[#b8c5d6] text-[10px]">
-                      <Tags className="w-2.5 h-2.5" /> Devis
-                    </span>
-                  </div>
-                  <h2 className="text-[15px] font-semibold text-[#e7ecf5]">Re: Devis rénovation cuisine</h2>
-                  <div className="flex items-center gap-2.5 mt-2.5">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white shrink-0" style={{ backgroundColor: "#2d7dd2" }}>M</div>
-                    <div className="min-w-0">
-                      <p className="text-[12px] font-semibold text-[#e7ecf5]">Marie Lemoine</p>
-                      <p className="text-[10px] text-[#7a8290]">à moi — il y a 5 jours</p>
-                    </div>
-                  </div>
+                {/* Bandeau autopilote — la valeur produit en une phrase */}
+                <div className="mx-4 mt-3 flex items-center gap-2 rounded-lg border border-cyan-400/25 bg-cyan-500/[0.08] px-3 py-2">
+                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-cyan-500/15 border border-cyan-400/30 shrink-0">
+                    <Sparkles className="w-3 h-3 text-cyan-300" />
+                  </span>
+                  <p className="text-[11px] text-[#cdd6e4] leading-snug">
+                    <b className="text-cyan-200">Inboria a trié votre boîte ce matin.</b> 12 emails à traiter, 32 classés automatiquement par catégorie.
+                  </p>
+                </div>
 
-                  {/* Résumé Inboria */}
-                  <div className="mt-3 rounded-lg border border-cyan-400/25 bg-cyan-500/[0.08] px-3 py-2.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Sparkles className="w-3 h-3 text-cyan-300" />
-                      <span className="text-[10px] font-semibold text-cyan-300">Résumé Inboria</span>
+                {/* Boîte de réception triée — chaque ligne porte la couleur de sa
+                    catégorie ; entrée en cascade à chaque ouverture (effet « tri »). */}
+                <div className="flex-1 overflow-hidden px-3 pt-2.5 pb-3">
+                  {SORTED_INBOX.map((m, i) => (
+                    <div
+                      key={m.subject}
+                      className="relative flex items-center gap-2.5 h-[42px] pl-2 pr-2 rounded-md border-l-2 transition-all duration-500 ease-out"
+                      style={{
+                        borderLeftColor: m.color,
+                        backgroundColor: i === 0 ? "rgba(45,125,210,0.10)" : "transparent",
+                        opacity: appOpen ? 1 : 0,
+                        transform: appOpen ? "translateY(0)" : "translateY(8px)",
+                        transitionDelay: appOpen ? `${i * 70}ms` : "0ms",
+                      }}
+                    >
+                      <span
+                        className="flex items-center justify-center h-7 w-7 rounded-full text-[11px] font-semibold shrink-0"
+                        style={{ backgroundColor: `${m.color}26`, color: m.color, border: `1px solid ${m.color}4d` }}
+                      >
+                        {m.from.charAt(0)}
+                      </span>
+                      <span className={`w-[118px] text-[12px] truncate shrink-0 ${m.unread ? "text-[#e7ecf5] font-semibold" : "text-[#7a8290] font-normal"}`}>
+                        {m.from}
+                      </span>
+                      <span className="flex-1 min-w-0 flex items-center gap-1.5">
+                        {m.urgent && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-[9px] font-medium shrink-0">
+                            <span className="w-1 h-1 rounded-full bg-red-500" /> Urgent
+                          </span>
+                        )}
+                        <span className={`text-[12px] truncate shrink-0 max-w-[230px] ${m.unread ? "text-[#e7ecf5] font-medium" : "text-[#8b95a7]"}`}>
+                          {m.subject}
+                        </span>
+                        <span className="text-[11px] text-[#5a6270] truncate hidden lg:inline">— {m.preview}</span>
+                      </span>
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded-full shrink-0 hidden sm:inline"
+                        style={{ backgroundColor: `${m.color}1f`, color: m.color }}
+                      >
+                        {m.cat}
+                      </span>
+                      <span className="text-[10px] tabular-nums text-[#7a8290] w-8 text-right shrink-0">{m.date}</span>
                     </div>
-                    <p className="text-[11px] text-[#cdd6e4] leading-snug">
-                      Marie relance sur son devis de rénovation cuisine (sans réponse depuis 5 jours) et demande le montant et un délai.
-                    </p>
-                  </div>
-
-                  {/* Réponse suggérée */}
-                  <div className="mt-3 rounded-lg border border-[#1f2937] bg-[#141c2b] px-3 py-2.5">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <Wand2 className="w-3 h-3 text-[#2d7dd2]" />
-                      <span className="text-[10px] font-semibold text-[#e7ecf5]">Brouillon proposé</span>
-                    </div>
-                    <p className="text-[11px] text-[#b8c5d6] leading-snug">
-                      Bonjour Marie, merci pour votre relance. Voici le devis actualisé : 8 400 € TTC, démarrage possible sous 3 semaines…
-                    </p>
-                    <div className="flex gap-2 mt-2.5">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#2d7dd2] text-white text-[10px] font-medium"><Send className="w-2.5 h-2.5" /> Envoyer</span>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-[#1f2937] text-[#b8c5d6] text-[10px] font-medium">Modifier</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
