@@ -24,12 +24,19 @@ type AnyEmailLike = { id?: number | string };
 type AnyPaginatedLike = { emails?: AnyEmailLike[] } | undefined;
 
 // Predicate qui matche TOUTES les variantes de la queryKey listEmails.
-// orval encode la 1ʳᵉ entrée de la queryKey comme l'URL du endpoint :
-// `/api/emails`. Les params (status, folderId, page, search…) sont
-// dans les entrées suivantes — peu importe leur contenu, on patche tout.
+// orval encode la 1ʳᵉ entrée de la queryKey comme l'URL du endpoint.
+// Les params (status, folderId, page, search…) sont dans les entrées
+// suivantes — peu importe leur contenu, on patche tout.
+//   • `/api/emails(…)`            → Réception / Envoyés / Reportés / Archives…
+//   • `/api/folders/:id/emails(…)` → page « Mes dossiers » (useListFolderEmails)
+// Les deux exposent une shape `{ emails: Email[] }`, seul point d'accroche
+// commun exploité par les patchs ci-dessous.
 function isListEmailsQuery(queryKey: readonly unknown[]): boolean {
   const head = queryKey[0];
-  return typeof head === "string" && (head === "/api/emails" || head.startsWith("/api/emails?"));
+  if (typeof head !== "string") return false;
+  if (head === "/api/emails" || head.startsWith("/api/emails?")) return true;
+  if (head.startsWith("/api/folders/") && (head.endsWith("/emails") || head.includes("/emails?"))) return true;
+  return false;
 }
 
 // Capture un snapshot exhaustif de toutes les caches `listEmails(*)`
