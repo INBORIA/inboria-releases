@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Sparkles, Search, MessageCircleQuestion, MousePointer2, Star, Archive, Trash2,
-  Reply, Inbox, Send, FileText, Tag, Puzzle, ChevronDown,
+  Sparkles, Search, MousePointer2, Star, Archive, Trash2,
+  Reply, Forward, Inbox, Send, FileText, ListChecks, Paperclip,
+  Puzzle, ArrowUpRight,
 } from "lucide-react";
 
 // Animation marketing — page « Extensions ».
 // Concept : Inboria vit À L'INTÉRIEUR de votre webmail (Gmail / Outlook).
-// Webmail clair recognizable -> bouton « Demander à Inboria » injecté ->
-// panneau sombre Inboria qui se glisse depuis la droite -> réponse contextuelle.
+// Fidèle au VRAI add-in / extension / add-on Gmail :
+//   - on ouvre un mail
+//   - on clique le bouton « Demander à Inboria » injecté dans la barre
+//   - le panneau Inboria (sombre) se glisse depuis la droite
+//   - actions RÉELLES : « Résumer ce mail », « Proposer une réponse »,
+//     « Que dois-je faire ? », + « ↗ Ouvrir dans Inboria »
+//   - composer « Posez votre question à Inboria… »
 
 const FOLDERS = [
   { icon: Inbox, label: "Boîte de réception", count: 12, active: true },
@@ -17,32 +23,25 @@ const FOLDERS = [
   { icon: Archive, label: "Archives", count: 0 },
 ];
 
-const EMAILS = [
-  { from: "Marie Lemoine", initial: "M", subject: "Re: Devis rénovation cuisine", preview: "Bonjour, avez-vous pu regarder ma demande ?", time: "09:24", unread: true, color: "#2d7dd2" },
-  { from: "Beta Corp — Compta", initial: "B", subject: "Facture #2041 en attente", preview: "Relance automatique — échéance dépassée.", time: "08:51", unread: true, color: "#d97706" },
-  { from: "Jean Mercier", initial: "J", subject: "Disponibilités pour le rendez-vous", preview: "Seriez-vous libre lundi ou mardi prochain ?", time: "Hier", unread: true, color: "#059669" },
-  { from: "Design Weekly", initial: "D", subject: "Les tendances UI de 2026", preview: "Cette semaine : retour du skeuomorphisme…", time: "Hier", unread: false, color: "#7c3aed" },
-  { from: "LinkedIn", initial: "in", subject: "Vous avez 3 nouvelles relations", preview: "Développez votre réseau professionnel.", time: "Lun.", unread: false, color: "#0a66c2" },
-];
+// Actions réelles du panneau (cf. add-in taskpane / extension panel / Gmail Code.gs)
+const ACTIONS = [
+  { id: "summarize", label: "Résumer ce mail", icon: FileText },
+  { id: "reply", label: "Proposer une réponse", icon: Reply },
+  { id: "todo", label: "Que dois-je faire ?", icon: ListChecks },
+] as const;
 
-const CHIPS = [
-  "Quels engagements ai-je pris cette semaine ?",
-  "De quoi devrais-je relancer en priorité ?",
-  "Résume mon dernier échange avec Marie.",
-];
-
-// step: 0 inbox · 1 hover · 2 click+panel · 3 greeting+chips · 4 user msg · 5 typing · 6 answer
+// step: 0 mail ouvert · 1 hover bouton · 2 click+panel · 3 actions · 4 clic action · 5 typing · 6 réponse
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 const TIMINGS: Array<[Step, number]> = [
   [1, 1000],
   [2, 1800],
-  [3, 2200],
-  [4, 3400],
-  [5, 4100],
-  [6, 5000],
+  [3, 2300],
+  [4, 3600],
+  [5, 4300],
+  [6, 5200],
 ];
-const CYCLE = 11000;
+const CYCLE = 11500;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(() => {
@@ -87,6 +86,8 @@ export function AskInboria() {
   const panelOpen = step >= 2;
   const buttonHot = step === 1 || step === 2;
   const cursorVisible = step === 1 || step === 2;
+  // l'action « Que dois-je faire ? » est celle qui est choisie
+  const pickedAction = ACTIONS[2];
 
   return (
     <div className="min-h-screen w-full bg-[#0a0e14] flex items-center justify-center p-6 font-sans antialiased">
@@ -97,7 +98,7 @@ export function AskInboria() {
             Inboria s'invite dans votre messagerie
           </div>
           <p className="mt-2 text-[13px] text-[#8b95a7]">
-            Gmail, Outlook, webmail — sans changer vos habitudes.
+            Ouvrez un mail → cliquez « Demander à Inboria » → choisissez une action. Sans changer vos habitudes.
           </p>
         </div>
 
@@ -122,10 +123,10 @@ export function AskInboria() {
             </div>
           </div>
 
-          {/* Corps webmail (clair) */}
+          {/* Corps webmail (clair) — mail ouvert */}
           <div className="relative flex h-[520px] bg-[#f6f8fa]">
             {/* Colonne dossiers */}
-            <div className="hidden sm:flex flex-col w-[210px] border-r border-[#e4e8ee] bg-white px-3 py-4 gap-1">
+            <div className="hidden md:flex flex-col w-[200px] border-r border-[#e4e8ee] bg-white px-3 py-4 gap-1">
               <button className="flex items-center justify-center gap-2 mb-3 px-3 py-2 rounded-lg bg-[#2d7dd2] text-white text-[12px] font-semibold shadow-sm">
                 <Reply className="w-3.5 h-3.5" /> Nouveau message
               </button>
@@ -145,12 +146,14 @@ export function AskInboria() {
               ))}
             </div>
 
-            {/* Liste mails */}
+            {/* Volet lecture (mail ouvert) */}
             <div className="flex-1 flex flex-col min-w-0">
-              {/* Toolbar webmail avec bouton injecté */}
-              <div className="flex items-center gap-2 px-4 h-12 border-b border-[#e4e8ee] bg-white">
-                <span className="text-[13px] font-semibold text-[#1f2937]">Boîte de réception</span>
-                <span className="text-[11px] text-[#9aa3b0]">3 non lus</span>
+              {/* Toolbar du mail ouvert avec bouton injecté */}
+              <div className="flex items-center gap-1.5 px-4 h-12 border-b border-[#e4e8ee] bg-white">
+                <button className="p-1.5 rounded-md text-[#6b7280] hover:bg-[#f0f4f9]"><Reply className="w-4 h-4" /></button>
+                <button className="p-1.5 rounded-md text-[#6b7280] hover:bg-[#f0f4f9]"><Forward className="w-4 h-4" /></button>
+                <button className="p-1.5 rounded-md text-[#6b7280] hover:bg-[#f0f4f9]"><Archive className="w-4 h-4" /></button>
+                <button className="p-1.5 rounded-md text-[#6b7280] hover:bg-[#f0f4f9]"><Trash2 className="w-4 h-4" /></button>
                 <div className="flex-1" />
 
                 {/* Bouton « Demander à Inboria » — injecté par l'extension */}
@@ -167,11 +170,9 @@ export function AskInboria() {
                     </span>
                     Demander à Inboria
                   </div>
-                  {/* halo pulse au repos */}
                   {step === 0 && (
                     <span className="absolute inset-0 rounded-lg border border-[#2d7dd2]/40 animate-ping" />
                   )}
-                  {/* curseur */}
                   {cursorVisible && (
                     <MousePointer2
                       className="absolute -bottom-3 -right-1 w-5 h-5 text-[#0a0e14] fill-white drop-shadow-md transition-all duration-500"
@@ -181,85 +182,101 @@ export function AskInboria() {
                 </div>
               </div>
 
-              {/* Mails */}
-              <div className="flex-1 overflow-hidden">
-                {EMAILS.map((m) => (
-                  <div
-                    key={m.subject}
-                    className="flex items-center gap-3 h-[64px] px-4 border-b border-[#eef1f5] hover:bg-[#f0f4f9] transition-colors"
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white shrink-0"
-                      style={{ backgroundColor: m.color }}
-                    >
-                      {m.initial}
-                    </div>
-                    <div className="w-[150px] shrink-0">
-                      <p className={`text-[12.5px] truncate ${m.unread ? "font-bold text-[#111827]" : "font-medium text-[#4b5563]"}`}>{m.from}</p>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-[12.5px] truncate ${m.unread ? "font-semibold text-[#1f2937]" : "text-[#4b5563]"}`}>
-                        {m.subject} <span className="font-normal text-[#9aa3b0]">— {m.preview}</span>
-                      </p>
-                    </div>
-                    <span className="text-[11px] text-[#9aa3b0] tabular-nums shrink-0 w-12 text-right">{m.time}</span>
+              {/* Corps du mail ouvert */}
+              <div className="flex-1 overflow-hidden px-6 py-5">
+                <h2 className="text-[16px] font-semibold text-[#111827]">Re: Devis rénovation cuisine</h2>
+                <div className="flex items-center gap-3 mt-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shrink-0" style={{ backgroundColor: "#2d7dd2" }}>
+                    M
                   </div>
-                ))}
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-[#1f2937]">Marie Lemoine</p>
+                    <p className="text-[11px] text-[#9aa3b0]">à moi — il y a 5 jours</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2.5 text-[12.5px] text-[#4b5563] leading-relaxed max-w-[440px]">
+                  <p>Bonjour,</p>
+                  <p>Avez-vous pu regarder ma demande de devis pour la rénovation de la cuisine ? Je n'ai pas eu de retour depuis notre dernier échange.</p>
+                  <p>Pouvez-vous me confirmer le montant et un délai possible ? Merci d'avance.</p>
+                  <p className="text-[#6b7280]">Bien cordialement,<br />Marie</p>
+                </div>
+                <div className="mt-4 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-[#e4e8ee] bg-white text-[11px] text-[#4b5563]">
+                  <Paperclip className="w-3.5 h-3.5 text-[#9aa3b0]" />
+                  devis-cuisine.pdf
+                </div>
               </div>
             </div>
 
             {/* Panneau Inboria (sombre) glissé depuis la droite */}
             <div
-              className={`absolute top-3 right-3 bottom-3 w-[330px] z-30 transition-all duration-500 ease-out ${
+              className={`absolute top-3 right-3 bottom-3 w-[336px] z-30 transition-all duration-500 ease-out ${
                 panelOpen ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0"
               }`}
             >
               <div className="h-full flex flex-col rounded-xl border border-[#1f2937] bg-[#0d1117] shadow-2xl shadow-black/50 overflow-hidden">
+                {/* Entête marque — « Demander à Inboria » */}
                 <div className="flex items-center gap-2 px-3.5 py-3 border-b border-[#1f2937]">
                   <div className="w-7 h-7 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center shrink-0">
                     <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-[12px] font-semibold text-zinc-100">Inbor<span className="text-cyan-400">ia</span></span>
-                    <span className="text-[9px] text-zinc-500">Votre coéquipier emails — dans votre boîte</span>
+                    <span className="text-[9px] text-zinc-500">Demander à Inboria — dans votre boîte</span>
                   </div>
                   <span className="text-[9px] text-emerald-400 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> connecté
                   </span>
                 </div>
 
+                {/* Barre d'accès rapide : ouvrir l'app complète */}
+                <div className="flex items-center gap-2 px-3.5 py-2 border-b border-[#1f2937]">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-medium transition-all duration-300 ${
+                      step >= 6
+                        ? "border-[#2d7dd2]/60 bg-[#2d7dd2]/[0.15] text-white shadow-md shadow-[#2d7dd2]/20"
+                        : "border-[#1f2937] bg-[#141c2b] text-[#b8c5d6]"
+                    }`}
+                  >
+                    <ArrowUpRight className="w-3 h-3" /> Ouvrir dans Inboria
+                  </span>
+                  <span className="text-[9px] text-zinc-500">pour aller plus loin</span>
+                </div>
+
                 <div className="flex-1 px-3.5 py-3 space-y-2.5 overflow-hidden">
                   <p className="text-[11px] font-semibold text-white">Bonjour 👋 Je suis Inboria.</p>
                   <p className="text-[10px] text-[#b8c5d6] leading-snug">
-                    Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.
+                    Je vois le mail de <strong className="text-white">Marie Lemoine</strong>. Que souhaitez-vous faire ?
                   </p>
 
+                  {/* Actions RÉELLES */}
                   {step === 3 && (
                     <div className="space-y-1.5 transition-opacity duration-300">
-                      {CHIPS.map((q, i) => (
+                      {ACTIONS.map((a, i) => (
                         <div
-                          key={i}
-                          className={`flex items-start gap-1.5 px-2.5 py-2 rounded-lg border text-[10px] leading-snug ${
-                            i === 1
+                          key={a.id}
+                          className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border text-[10px] leading-snug ${
+                            i === 2
                               ? "border-[#2d7dd2]/50 bg-[#2d7dd2]/[0.12] text-white"
                               : "border-[#1f2937] bg-[#141c2b] text-white/80"
                           }`}
                         >
-                          <MessageCircleQuestion className="w-3 h-3 text-[#2d7dd2] shrink-0 mt-px" />
-                          <span>{q}</span>
+                          <a.icon className="w-3 h-3 text-[#2d7dd2] shrink-0" />
+                          <span>{a.label}</span>
                         </div>
                       ))}
                     </div>
                   )}
 
+                  {/* Bulle utilisateur = action choisie */}
                   {step >= 4 && (
                     <div className="flex justify-end">
                       <div className="max-w-[85%] px-2.5 py-1.5 rounded-lg rounded-tr-sm bg-[#2d7dd2] text-white text-[10px] leading-snug">
-                        {CHIPS[1]}
+                        {pickedAction.label}
                       </div>
                     </div>
                   )}
 
+                  {/* Typing */}
                   {step === 5 && (
                     <div className="flex items-center gap-1 px-2.5 py-2 rounded-lg border border-[#1f2937] bg-[#141c2b] w-fit">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#2d7dd2] animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -269,38 +286,41 @@ export function AskInboria() {
                     </div>
                   )}
 
+                  {/* Réponse contextuelle au mail ouvert */}
                   {step >= 6 && (
                     <div className="flex items-start gap-1.5">
                       <div className="w-5 h-5 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center shrink-0 mt-px">
                         <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
                       </div>
                       <div className="flex-1 min-w-0 space-y-1.5">
-                        <p className="text-[10px] text-white leading-snug">3 relances prioritaires aujourd'hui :</p>
+                        <p className="text-[10px] text-white leading-snug">3 actions concrètes pour ce mail :</p>
                         <ul className="space-y-1 text-[10px] text-white/90 leading-snug">
                           <li className="flex items-start gap-1.5">
                             <span className="text-[#2d7dd2] shrink-0">•</span>
-                            <span><strong className="text-white">Marie Lemoine</strong> — devis envoyé il y a 5 jours, sans réponse.</span>
+                            <span>Répondre à <strong className="text-white">Marie</strong> : le devis attend depuis 5 jours.</span>
                           </li>
                           <li className="flex items-start gap-1.5">
                             <span className="text-[#2d7dd2] shrink-0">•</span>
-                            <span><strong className="text-white">Beta Corp</strong> — facture impayée depuis 12 jours.</span>
+                            <span>Confirmer le <strong className="text-white">montant</strong> et un <strong className="text-white">délai</strong>.</span>
                           </li>
                           <li className="flex items-start gap-1.5">
                             <span className="text-[#2d7dd2] shrink-0">•</span>
-                            <span><strong className="text-white">Jean Mercier</strong> — rendez-vous en attente depuis lundi.</span>
+                            <span>Renvoyer la pièce jointe <strong className="text-white">devis-cuisine.pdf</strong>.</span>
                           </li>
                         </ul>
-                        <p className="text-[10px] text-[#2d7dd2] font-medium leading-snug pt-0.5">Je prépare les 3 brouillons ?</p>
+                        <p className="text-[10px] text-[#2d7dd2] font-medium leading-snug pt-0.5">Je rédige la réponse ?</p>
                       </div>
                     </div>
                   )}
                 </div>
 
+                {/* Composer réel */}
                 <div className="px-3.5 pb-3 pt-1.5 border-t border-[#1f2937]">
                   <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#141c2b] border border-[#1f2937]">
-                    <Search className="w-3 h-3 text-[#b8c5d6] shrink-0" />
-                    <span className="text-[10px] text-[#8b95a7] truncate flex-1">Demandez quelque chose à Inboria…</span>
-                    <Tag className="w-3 h-3 text-[#3a4453]" />
+                    <span className="text-[10px] text-[#8b95a7] truncate flex-1">Posez votre question à Inboria…</span>
+                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-md bg-[#2d7dd2] text-white shrink-0">
+                      <Send className="w-3 h-3" />
+                    </span>
                   </div>
                 </div>
               </div>
