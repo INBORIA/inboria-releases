@@ -489,15 +489,6 @@ export default function MesDossiers() {
     return (
       <DashboardLayout>
         <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelectedEmailId(null)}
-            className="h-8 px-2 mb-3 text-[#b8c5d6] hover:text-white text-[12px]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-            {t("common.back", "Retour")}
-          </Button>
           <EmailDetailContainer
             emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
