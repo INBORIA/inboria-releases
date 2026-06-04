@@ -1286,10 +1286,6 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
-                {/* DEBUG TEMPORAIRE — sera retiré une fois le bug trouvé */}
-                <div className="text-[11px] font-mono bg-yellow-500/20 text-yellow-200 border border-yellow-500/40 px-2 py-1 rounded break-all">
-                  DEBUG · sharedMailboxId={String(email?.sharedMailboxId)} · assignedTo={String(email?.assignedTo)} · isSharedContext={String(isSharedContext)}
-                </div>
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <TemplateSuggestionBar
                     emailId={email.id}
