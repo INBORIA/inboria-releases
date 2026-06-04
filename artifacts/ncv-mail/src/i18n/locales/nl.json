@@ -506,10 +506,10 @@
     "exitFullscreen": "Volledig scherm afsluiten",
     "appointmentProposed": "Voorgestelde afspraak toegevoegd aan agenda",
     "assigneeFilterMe": "mijn toegewezen e-mails",
-    "sharedMailboxShort": "Gedeeld",
+    "sharedMailboxShort": "Gedeelde postvakken",
     "spamShort": "Spam",
     "askInboria": "Vraag Inboria",
-    "assignedShort": "Toegewezen",
+    "assignedShort": "Toegewezen e-mails",
     "sharedClaim": {
       "all": "Alle",
       "unclaimed": "Niet opgenomen",

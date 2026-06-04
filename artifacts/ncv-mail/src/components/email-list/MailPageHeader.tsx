@@ -684,7 +684,7 @@ function MailPageHeaderImpl({
         {hasSharedMailboxes && (
           <Link href="/dashboard?mode=shared" className={cls(false)}>
             <Users className="w-3 h-3" />
-            {t("inbox.sharedMailboxShort", "Partagées")}
+            {t("inbox.sharedMailboxShort", "Boîtes partagées")}
             {sharedMailboxesCount > 0 && (
               <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {sharedMailboxesCount}
@@ -699,7 +699,7 @@ function MailPageHeaderImpl({
             className={cls(currentTab === "activite-equipe")}
           >
             <Activity className="w-3 h-3" />
-            {t("inbox.assignedShort", "Assignés")}
+            {t("inbox.assignedShort", "Mails assignés")}
             {assignedToMeCount > 0 && (
               <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
                 {assignedToMeCount}

@@ -506,10 +506,10 @@
     "exitFullscreen": "Вийти з повноекранного режиму",
     "appointmentProposed": "Запропоновану зустріч створено в календарі",
     "assigneeFilterMe": "мої призначені електронні листи",
-    "sharedMailboxShort": "Спільні",
+    "sharedMailboxShort": "Спільні скриньки",
     "spamShort": "Спам",
     "askInboria": "Запитайте Inboria",
-    "assignedShort": "Призначені",
+    "assignedShort": "Призначені листи",
     "sharedClaim": {
       "all": "Усі",
       "unclaimed": "Не взяті",

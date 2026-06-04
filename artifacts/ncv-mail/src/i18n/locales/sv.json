@@ -506,10 +506,10 @@
     "exitFullscreen": "Avsluta helskärm",
     "appointmentProposed": "Föreslagen möte skapat i kalendern",
     "assigneeFilterMe": "mina tilldelade e-postmeddelanden",
-    "sharedMailboxShort": "Delade",
+    "sharedMailboxShort": "Delade brevlådor",
     "spamShort": "Skräppost",
     "askInboria": "Fråga Inboria",
-    "assignedShort": "Tilldelade",
+    "assignedShort": "Tilldelade e-post",
     "sharedClaim": {
       "all": "Alla",
       "unclaimed": "Ej tilldelade",

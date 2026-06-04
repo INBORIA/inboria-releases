@@ -506,10 +506,10 @@
     "exitFullscreen": "退出全螢幕",
     "appointmentProposed": "已在日曆中創建提議的約會",
     "assigneeFilterMe": "我的指派電子郵件",
-    "sharedMailboxShort": "共用",
+    "sharedMailboxShort": "共享信箱",
     "spamShort": "垃圾郵件",
     "askInboria": "詢問 Inboria",
-    "assignedShort": "已指派",
+    "assignedShort": "指派郵件",
     "sharedClaim": {
       "all": "全部",
       "unclaimed": "未認領",

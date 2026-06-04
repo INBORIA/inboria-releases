@@ -523,9 +523,9 @@
     "exitFullscreen": "Quitter le plein écran",
     "appointmentProposed": "Rendez-vous proposé créé dans l'agenda",
     "assigneeFilterMe": "mes emails assignés",
-    "sharedMailboxShort": "Partagées",
+    "sharedMailboxShort": "Boîtes partagées",
     "spamShort": "Indésirables",
-    "assignedShort": "Assignés",
+    "assignedShort": "Mails assignés",
     "sharedClaim": {
       "all": "Tous",
       "unclaimed": "Non pris en charge",

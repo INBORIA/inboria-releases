@@ -506,10 +506,10 @@
     "exitFullscreen": "Sair do ecrã completo",
     "appointmentProposed": "Compromisso proposto criado na agenda",
     "assigneeFilterMe": "meus emails atribuídos",
-    "sharedMailboxShort": "Partilhadas",
+    "sharedMailboxShort": "Caixas Partilhadas",
     "spamShort": "Spam",
     "askInboria": "Perguntar à Inboria",
-    "assignedShort": "Atribuídos",
+    "assignedShort": "Emails Atribuídos",
     "sharedClaim": {
       "all": "Todos",
       "unclaimed": "Não atribuídos",

@@ -506,10 +506,10 @@
     "exitFullscreen": "Kilépés a teljes képernyőből",
     "appointmentProposed": "Javasolt találkozó létrehozva a naptárban",
     "assigneeFilterMe": "az Ön által kijelölt emailek",
-    "sharedMailboxShort": "Megosztott",
+    "sharedMailboxShort": "Megosztott postafiókok",
     "spamShort": "Levélszemét",
     "askInboria": "Kérdezze Inboriát",
-    "assignedShort": "Hozzárendelt",
+    "assignedShort": "Kiosztott e-mailek",
     "sharedClaim": {
       "all": "Összes",
       "unclaimed": "Nem kezeltek",

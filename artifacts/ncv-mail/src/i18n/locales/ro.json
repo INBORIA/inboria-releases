@@ -506,10 +506,10 @@
     "exitFullscreen": "Ieșiți din ecran complet",
     "appointmentProposed": "Întâlnire propusă creată în agendă",
     "assigneeFilterMe": "email-urile mele atribuite",
-    "sharedMailboxShort": "Partajate",
+    "sharedMailboxShort": "Căsuțe poștale partajate",
     "spamShort": "Spam",
     "askInboria": "Întrebați Inboria",
-    "assignedShort": "Atribuite",
+    "assignedShort": "Emailuri atribuite",
     "sharedClaim": {
       "all": "Toate",
       "unclaimed": "Nepreluate",

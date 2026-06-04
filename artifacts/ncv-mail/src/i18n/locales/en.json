@@ -535,9 +535,9 @@
     "exitFullscreen": "Exit fullscreen",
     "appointmentProposed": "Proposed appointment added to calendar",
     "assigneeFilterMe": "my assigned emails",
-    "sharedMailboxShort": "Shared",
+    "sharedMailboxShort": "Shared mailboxes",
     "spamShort": "Spam",
-    "assignedShort": "Assigned",
+    "assignedShort": "Assigned emails",
     "sharedClaim": {
       "all": "All",
       "unclaimed": "Unclaimed",

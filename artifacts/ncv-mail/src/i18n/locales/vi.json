@@ -506,10 +506,10 @@
     "exitFullscreen": "Thoát toàn màn hình",
     "appointmentProposed": "Cuộc hẹn được đề xuất đã được tạo trong lịch",
     "assigneeFilterMe": "các email của tôi được phân công",
-    "sharedMailboxShort": "Đã chia sẻ",
+    "sharedMailboxShort": "Hộp thư chung",
     "spamShort": "Thư rác",
     "askInboria": "Hỏi Inboria",
-    "assignedShort": "Đã giao",
+    "assignedShort": "Email được giao",
     "sharedClaim": {
       "all": "Tất cả",
       "unclaimed": "Chưa nhận",

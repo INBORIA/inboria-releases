@@ -506,10 +506,10 @@
     "exitFullscreen": "Forlad fuld skærm",
     "appointmentProposed": "Foreslået møde oprettet i kalenderen",
     "assigneeFilterMe": "mine tildelte emails",
-    "sharedMailboxShort": "Delte",
+    "sharedMailboxShort": "Delte postkasser",
     "spamShort": "Spam",
     "askInboria": "Spørg Inboria",
-    "assignedShort": "Tildelte",
+    "assignedShort": "Tildelte e-mails",
     "sharedClaim": {
       "all": "Alle",
       "unclaimed": "Ikke tildelt",

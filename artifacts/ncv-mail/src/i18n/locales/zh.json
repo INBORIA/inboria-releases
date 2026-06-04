@@ -506,10 +506,10 @@
     "exitFullscreen": "退出全屏",
     "appointmentProposed": "已在日历中创建的提议会议",
     "assigneeFilterMe": "我的分配邮件",
-    "sharedMailboxShort": "共享",
+    "sharedMailboxShort": "共享邮箱",
     "spamShort": "垃圾邮件",
     "askInboria": "询问 Inboria",
-    "assignedShort": "已分配",
+    "assignedShort": "分配邮件",
     "sharedClaim": {
       "all": "全部",
       "unclaimed": "未认领",

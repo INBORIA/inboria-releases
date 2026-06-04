@@ -506,10 +506,10 @@
     "exitFullscreen": "Изход от пълен екран",
     "appointmentProposed": "Създадено предложено събитие в календара",
     "assigneeFilterMe": "моите имейли, назначени на мен",
-    "sharedMailboxShort": "Споделени",
+    "sharedMailboxShort": "Споделени пощенски кутии",
     "spamShort": "Спам",
     "askInboria": "Попитайте Inboria",
-    "assignedShort": "Възложени",
+    "assignedShort": "Назначени имейли",
     "sharedClaim": {
       "all": "Всички",
       "unclaimed": "Непоети",

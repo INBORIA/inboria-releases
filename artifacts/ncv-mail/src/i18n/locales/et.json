@@ -506,10 +506,10 @@
     "exitFullscreen": "Täisekraanist väljumine",
     "appointmentProposed": "Ettepanekud kohtumiste loomine kalendris",
     "assigneeFilterMe": "minu määratud e-kirjad",
-    "sharedMailboxShort": "Jagatud",
+    "sharedMailboxShort": "Jagatud postkastid",
     "spamShort": "Rämpspost",
     "askInboria": "Küsige Inborialt",
-    "assignedShort": "Määratud",
+    "assignedShort": "Määratud e-kirjad",
     "sharedClaim": {
       "all": "Kõik",
       "unclaimed": "Vastu võtmata",

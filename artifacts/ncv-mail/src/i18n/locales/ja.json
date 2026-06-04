@@ -506,10 +506,10 @@
     "exitFullscreen": "全画面を終了する",
     "appointmentProposed": "提案されたアポイントメントがカレンダーに作成されました",
     "assigneeFilterMe": "私の割り当てられたメール",
-    "sharedMailboxShort": "共有",
+    "sharedMailboxShort": "共有メールボックス",
     "spamShort": "迷惑メール",
     "askInboria": "Inboriaに質問する",
-    "assignedShort": "担当",
+    "assignedShort": "担当メール",
     "sharedClaim": {
       "all": "すべて",
       "unclaimed": "未対応",

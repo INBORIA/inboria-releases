@@ -506,10 +506,10 @@
     "exitFullscreen": "Tam ekrandan çık",
     "appointmentProposed": "Takvimde önerilen randevu oluşturuldu",
     "assigneeFilterMe": "atanmış e-postalarım",
-    "sharedMailboxShort": "Paylaşılan",
+    "sharedMailboxShort": "Paylaşılan Posta Kutuları",
     "spamShort": "Spam",
     "askInboria": "Inboria'ya sorun",
-    "assignedShort": "Atananlar",
+    "assignedShort": "Atanmış E-postalar",
     "sharedClaim": {
       "all": "Tümü",
       "unclaimed": "Üstlenilmemiş",

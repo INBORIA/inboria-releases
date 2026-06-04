@@ -416,12 +416,12 @@ export function AnimatedDemo() {
               <div className="hidden sm:flex flex-wrap items-center gap-1.5 mb-2">
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <Users className="w-2.5 h-2.5" />
-                  <span>{t("inbox.sharedMailboxShort", "Partagées")}</span>
+                  <span>{t("inbox.sharedMailboxShort", "Boîtes partagées")}</span>
                   <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">1</span>
                 </div>
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <Activity className="w-2.5 h-2.5" />
-                  <span>{t("inbox.assignedShort", "Assignés")}</span>
+                  <span>{t("inbox.assignedShort", "Mails assignés")}</span>
                   <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">2</span>
                 </div>
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">

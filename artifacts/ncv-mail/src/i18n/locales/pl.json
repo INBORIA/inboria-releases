@@ -506,10 +506,10 @@
     "exitFullscreen": "Wyjdź z pełnego ekranu",
     "appointmentProposed": "Utworzono zaproponowane spotkanie w kalendarzu",
     "assigneeFilterMe": "moje przypisane emaile",
-    "sharedMailboxShort": "Współdzielone",
+    "sharedMailboxShort": "Skrzynki współdzielone",
     "spamShort": "Spam",
     "askInboria": "Zapytaj Inboria",
-    "assignedShort": "Przypisane",
+    "assignedShort": "Przypisane e-maile",
     "sharedClaim": {
       "all": "Wszystkie",
       "unclaimed": "Nieprzejęte",

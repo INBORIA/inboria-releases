@@ -506,10 +506,10 @@
     "exitFullscreen": "पूर्ण स्क्रीन से बाहर निकलें",
     "appointmentProposed": "कैलेंडर में प्रस्तावित नियुक्ति बनाई गई",
     "assigneeFilterMe": "मेरे असाइन किए गए ईमेल",
-    "sharedMailboxShort": "साझा",
+    "sharedMailboxShort": "साझा मेलबॉक्स",
     "spamShort": "स्पैम",
     "askInboria": "Inboria से पूछें",
-    "assignedShort": "असाइन किए गए",
+    "assignedShort": "नियुक्त ईमेल",
     "sharedClaim": {
       "all": "सभी",
       "unclaimed": "असौंपे गए",

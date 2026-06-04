@@ -506,10 +506,10 @@
     "exitFullscreen": "Vollbild verlassen",
     "appointmentProposed": "Vorgeschlagener Termin im Kalender erstellt",
     "assigneeFilterMe": "meine zugewiesenen E-Mails",
-    "sharedMailboxShort": "Geteilt",
+    "sharedMailboxShort": "Gemeinsame Postfächer",
     "spamShort": "Spam",
     "askInboria": "Inboria fragen",
-    "assignedShort": "Zugewiesen",
+    "assignedShort": "Zugewiesene E-Mails",
     "sharedClaim": {
       "all": "Alle",
       "unclaimed": "Nicht übernommen",

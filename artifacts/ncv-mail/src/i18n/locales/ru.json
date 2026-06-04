@@ -506,10 +506,10 @@
     "exitFullscreen": "Выйти из полного экрана",
     "appointmentProposed": "Создано предложенное событие в календаре",
     "assigneeFilterMe": "мои назначенные электронные почты",
-    "sharedMailboxShort": "Общие",
+    "sharedMailboxShort": "Общие ящики",
     "spamShort": "Спам",
     "askInboria": "Спросите Inboria",
-    "assignedShort": "Назначенные",
+    "assignedShort": "Назначенные письма",
     "sharedClaim": {
       "all": "Все",
       "unclaimed": "Не взяты",

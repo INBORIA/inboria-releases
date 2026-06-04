@@ -506,10 +506,10 @@
     "exitFullscreen": "الخروج من ملء الشاشة",
     "appointmentProposed": "تم إنشاء موعد مقترح في التقويم",
     "assigneeFilterMe": "بريدي الإلكتروني المعين",
-    "sharedMailboxShort": "مشتركة",
+    "sharedMailboxShort": "صناديق البريد المشتركة",
     "spamShort": "البريد العشوائي",
     "askInboria": "اسألوا Inboria",
-    "assignedShort": "المُسندة",
+    "assignedShort": "رسائل مخصصة",
     "sharedClaim": {
       "all": "الكل",
       "unclaimed": "غير معيّنة",

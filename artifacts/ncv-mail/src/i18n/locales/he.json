@@ -506,10 +506,10 @@
     "exitFullscreen": "צא ממסך מלא",
     "appointmentProposed": "פגישה מוצעת נוצרה בלוח השנה",
     "assigneeFilterMe": "הדוא״לים המוקצים שלי",
-    "sharedMailboxShort": "משותפות",
+    "sharedMailboxShort": "תיבות דואר משותפות",
     "spamShort": "דואר זבל",
     "askInboria": "שאלו את Inboria",
-    "assignedShort": "שהוקצו",
+    "assignedShort": "מיילים מוקצים",
     "sharedClaim": {
       "all": "הכול",
       "unclaimed": "לא טופלו",

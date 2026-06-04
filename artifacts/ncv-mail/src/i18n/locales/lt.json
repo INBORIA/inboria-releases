@@ -506,10 +506,10 @@
     "exitFullscreen": "Išeiti iš viso ekrano",
     "appointmentProposed": "Pasiūlytas susitikimas sukurtas kalendoriuje",
     "assigneeFilterMe": "mano priskirti el. paštai",
-    "sharedMailboxShort": "Bendri",
+    "sharedMailboxShort": "Bendros pašto dėžutės",
     "spamShort": "Šlamštas",
     "askInboria": "Klauskite Inborios",
-    "assignedShort": "Priskirti",
+    "assignedShort": "Priskirti el. laiškai",
     "sharedClaim": {
       "all": "Visi",
       "unclaimed": "Nepriimti",

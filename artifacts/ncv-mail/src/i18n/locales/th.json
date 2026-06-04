@@ -506,10 +506,10 @@
     "exitFullscreen": "ออกจากโหมดเต็มหน้าจอ",
     "appointmentProposed": "การนัดหมายที่เสนอถูกสร้างในปฏิทิน",
     "assigneeFilterMe": "อีเมลที่มอบหมายให้ฉัน",
-    "sharedMailboxShort": "ที่แชร์",
+    "sharedMailboxShort": "กล่องจดหมายที่ใช้ร่วมกัน",
     "spamShort": "สแปม",
     "askInboria": "ถาม Inboria",
-    "assignedShort": "ที่มอบหมาย",
+    "assignedShort": "อีเมลที่มอบหมาย",
     "sharedClaim": {
       "all": "ทั้งหมด",
       "unclaimed": "ยังไม่รับเรื่อง",

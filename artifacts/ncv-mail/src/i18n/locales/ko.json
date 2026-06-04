@@ -506,10 +506,10 @@
     "exitFullscreen": "전체 화면 종료",
     "appointmentProposed": "제안된 약속이 일정에 생성되었습니다.",
     "assigneeFilterMe": "내가 할당된 이메일",
-    "sharedMailboxShort": "공유",
+    "sharedMailboxShort": "공유 사서함",
     "spamShort": "스팸",
     "askInboria": "Inboria에게 질문하기",
-    "assignedShort": "할당됨",
+    "assignedShort": "할당된 이메일",
     "sharedClaim": {
       "all": "전체",
       "unclaimed": "미할당",

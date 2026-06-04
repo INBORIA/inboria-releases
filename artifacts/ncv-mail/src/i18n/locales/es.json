@@ -506,10 +506,10 @@
     "exitFullscreen": "Salir de pantalla completa",
     "appointmentProposed": "Cita propuesta añadida al calendario",
     "assigneeFilterMe": "mis correos asignados",
-    "sharedMailboxShort": "Compartidos",
+    "sharedMailboxShort": "Buzones compartidos",
     "spamShort": "Spam",
     "askInboria": "Preguntar a Inboria",
-    "assignedShort": "Asignados",
+    "assignedShort": "Correos asignados",
     "sharedClaim": {
       "all": "Todos",
       "unclaimed": "Sin asignar",

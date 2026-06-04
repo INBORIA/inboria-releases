@@ -506,10 +506,10 @@
     "exitFullscreen": "Uscire dallo schermo intero",
     "appointmentProposed": "Appuntamento proposto creato nel calendario",
     "assigneeFilterMe": "le mie email assegnate",
-    "sharedMailboxShort": "Condivise",
+    "sharedMailboxShort": "Caselle condivise",
     "spamShort": "Spam",
     "askInboria": "Chiedi a Inboria",
-    "assignedShort": "Assegnati",
+    "assignedShort": "Email assegnate",
     "sharedClaim": {
       "all": "Tutti",
       "unclaimed": "Non presi in carico",

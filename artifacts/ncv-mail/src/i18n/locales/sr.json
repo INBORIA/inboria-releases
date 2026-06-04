@@ -506,10 +506,10 @@
     "exitFullscreen": "Изађите из пуног екрана",
     "appointmentProposed": "Предложени састанак је креиран у календару",
     "assigneeFilterMe": "моји додељени имејлови",
-    "sharedMailboxShort": "Дељени",
+    "sharedMailboxShort": "Заједничке поштанске сандучиће",
     "spamShort": "Нежељена пошта",
     "askInboria": "Питајте Inboria",
-    "assignedShort": "Додељено",
+    "assignedShort": "Додељени имејлови",
     "sharedClaim": {
       "all": "Сви",
       "unclaimed": "Непреузети",

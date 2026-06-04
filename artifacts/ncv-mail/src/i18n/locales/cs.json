@@ -506,10 +506,10 @@
     "exitFullscreen": "Opustit celou obrazovku",
     "appointmentProposed": "Navržená schůzka vytvořena v kalendáři",
     "assigneeFilterMe": "moje přiřazené emaily",
-    "sharedMailboxShort": "Sdílené",
+    "sharedMailboxShort": "Sdílené schránky",
     "spamShort": "Spam",
     "askInboria": "Zeptejte se Inboria",
-    "assignedShort": "Přiřazené",
+    "assignedShort": "Přiřazené e-maily",
     "sharedClaim": {
       "all": "Vše",
       "unclaimed": "Nepřevzaté",

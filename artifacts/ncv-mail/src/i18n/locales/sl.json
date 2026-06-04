@@ -506,10 +506,10 @@
     "exitFullscreen": "Zapustite celozaslonski način",
     "appointmentProposed": "Predlagani sestanek je bil ustvarjen v koledarju",
     "assigneeFilterMe": "moje dodeljene e-pošte",
-    "sharedMailboxShort": "Skupni",
+    "sharedMailboxShort": "Skupne poštne predale",
     "spamShort": "Neželena pošta",
     "askInboria": "Vprašajte Inboria",
-    "assignedShort": "Dodeljeno",
+    "assignedShort": "Dodeljena e-pošta",
     "sharedClaim": {
       "all": "Vsi",
       "unclaimed": "Neprevzeti",

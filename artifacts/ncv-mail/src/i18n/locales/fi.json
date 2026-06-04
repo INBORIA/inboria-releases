@@ -506,10 +506,10 @@
     "exitFullscreen": "Poistu koko näytöstä",
     "appointmentProposed": "Ehdotettu tapaaminen luotu kalenteriin",
     "assigneeFilterMe": "minun osoitteeni",
-    "sharedMailboxShort": "Jaetut",
+    "sharedMailboxShort": "Jaetut postilaatikot",
     "spamShort": "Roskaposti",
     "askInboria": "Kysy Inborialta",
-    "assignedShort": "Määritetyt",
+    "assignedShort": "Määritetyt sähköpostit",
     "sharedClaim": {
       "all": "Kaikki",
       "unclaimed": "Ottamattomat",

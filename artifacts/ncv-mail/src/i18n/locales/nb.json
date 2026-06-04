@@ -506,10 +506,10 @@
     "exitFullscreen": "Avslutt fullskjerm",
     "appointmentProposed": "Foreslått avtale opprettet i kalenderen",
     "assigneeFilterMe": "mine tildelte e-poster",
-    "sharedMailboxShort": "Delte",
+    "sharedMailboxShort": "Delte postbokser",
     "spamShort": "Søppelpost",
     "askInboria": "Spør Inboria",
-    "assignedShort": "Tildelt",
+    "assignedShort": "Tildelte e-poster",
     "sharedClaim": {
       "all": "Alle",
       "unclaimed": "Ikke tildelt",

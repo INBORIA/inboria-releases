@@ -506,10 +506,10 @@
     "exitFullscreen": "Έξοδος από την πλήρη οθόνη",
     "appointmentProposed": "Η προτεινόμενη συνάντηση δημιουργήθηκε στο ημερολόγιο",
     "assigneeFilterMe": "τα emails σας που έχουν ανατεθεί",
-    "sharedMailboxShort": "Κοινόχρηστα",
+    "sharedMailboxShort": "Κοινόχρηστα γραμματοκιβώτια",
     "spamShort": "Ανεπιθύμητα",
     "askInboria": "Ρωτήστε το Inboria",
-    "assignedShort": "Ανατεθειμένα",
+    "assignedShort": "Ανατεθειμένα email",
     "sharedClaim": {
       "all": "Όλα",
       "unclaimed": "Μη ανατεθειμένα",

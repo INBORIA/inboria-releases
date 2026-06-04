@@ -6278,7 +6278,7 @@ export default function Dashboard() {
                   }`}
                 >
                   <Users className="w-3 h-3" />
-                  {t("inbox.sharedMailboxShort", "Partagées")}
+                  {t("inbox.sharedMailboxShort", "Boîtes partagées")}
                   {sharedEmailsCount > 0 && (
                     <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
                   )}
@@ -6298,7 +6298,7 @@ export default function Dashboard() {
                   data-testid="tab-assigned"
                 >
                   <Activity className="w-3 h-3" />
-                  {t("inbox.assignedShort", "Assignés")}
+                  {t("inbox.assignedShort", "Mails assignés")}
                   {assignedToMeCount > 0 && (
                     <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
                   )}
@@ -6605,7 +6605,7 @@ export default function Dashboard() {
                     return (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                         <Activity className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
-                        <h3 className="text-[13px] font-medium text-white">{t("inbox.assignedShort", "Assignés")}</h3>
+                        <h3 className="text-[13px] font-medium text-white">{t("inbox.assignedShort", "Mails assignés")}</h3>
                         <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.assignedNoTeam", "Cette vue nécessite une équipe (2 membres ou plus).")}</p>
                       </div>
                     );

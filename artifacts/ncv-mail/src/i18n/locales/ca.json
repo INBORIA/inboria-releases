@@ -506,10 +506,10 @@
     "exitFullscreen": "Sortir de la pantalla completa",
     "appointmentProposed": "Cita proposada creada a l'agenda",
     "assigneeFilterMe": "els meus correus electrònics assignats",
-    "sharedMailboxShort": "Compartides",
+    "sharedMailboxShort": "Safates compartides",
     "spamShort": "Brossa",
     "askInboria": "Pregunteu a Inboria",
-    "assignedShort": "Assignats",
+    "assignedShort": "Correus assignats",
     "sharedClaim": {
       "all": "Tots",
       "unclaimed": "Sense assignar",
