@@ -1313,7 +1313,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       type="button"
                       variant={sharedDraft.active ? "default" : "outline"}
                       size="sm"
-                      className="gap-1.5 h-7 text-[11px]"
+                      className={`gap-1.5 h-7 text-[11px] ${
+                        sharedDraft.active
+                          ? ""
+                          : "border-primary/40 text-primary hover:bg-primary/10 hover:text-primary"
+                      }`}
                       onClick={() => {
                         if (sharedDraft.active) {
                           sharedDraft.deactivate();
