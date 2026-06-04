@@ -328,47 +328,8 @@ function MailPageHeaderImpl({
   const hasSharedMailboxes = plan === "business" && sharedList.length > 0;
   const sharedMailboxesCount = sharedList.length;
 
-  // Compteur emails reportés (snoozed)
-  const { data: snoozedData } = useQuery<{ emails?: unknown[]; total?: number }>({
-    queryKey: ["emails-snoozed-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return { emails: [] };
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/emails?snoozed=1&limit=200`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      if (!res.ok) return { emails: [] };
-      return res.json();
-    },
-  });
-  const snoozedCount = snoozedData?.total ?? snoozedData?.emails?.length ?? 0;
-
-  // Compteur tâches ouvertes
-  const { data: openTasksData } = useQuery<unknown[]>({
-    queryKey: ["tasks-open-mine"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return [];
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/tasks?scope=mine&status=pending`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
-  const openTasksCount = Array.isArray(openTasksData) ? openTasksData.length : 0;
-
-  // Compteurs Projets / Relances / Archives — parité avec la barre d'onglets
-  // de la Réception (pages/dashboard/index.tsx L3543+). Sans ces queries, les
-  // badges nombre disparaissaient dès qu'on quittait /dashboard.
+  // Compteur Projets — badge du seul onglet à compteur restant dans le
+  // bandeau (Reportés/Relances/Archives/Tâches sont passés dans la sidebar).
   const { data: projectsData } = useQuery<unknown[]>({
     queryKey: ["projects-count"],
     refetchInterval: 60_000,
@@ -385,42 +346,6 @@ function MailPageHeaderImpl({
     },
   });
   const projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
-
-  const { data: followupsData } = useQuery<unknown[]>({
-    queryKey: ["followups-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return [];
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/followups?status=en_attente`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
-  const followupsCount = Array.isArray(followupsData) ? followupsData.length : 0;
-
-  const { data: archivesData } = useQuery<{ emails?: unknown[]; total?: number }>({
-    queryKey: ["archives-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return { emails: [], total: 0 };
-      const res = await fetch(
-        `${import.meta.env.BASE_URL}api/emails?status=archived&limit=1`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      if (!res.ok) return { emails: [], total: 0 };
-      return res.json();
-    },
-  });
-  const archivesCount = archivesData?.total ?? archivesData?.emails?.length ?? 0;
 
   // ─── Sélecteur "Tous les comptes" ────────────────────────────────────────
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
@@ -783,24 +708,9 @@ function MailPageHeaderImpl({
           </Link>
         )}
 
-        <Link href="/dashboard/reportes" className={cls(currentTab === "reportes")}>
-          <BellOff className="w-3 h-3" />
-          {t("sidebar.snoozed", "Reportés")}
-          {snoozedCount > 0 && (
-            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
-              {snoozedCount}
-            </span>
-          )}
-        </Link>
-
-        <Link href="/dashboard/taches" className={cls(currentTab === "taches")}>
+        <Link href="/dashboard/taches?scope=team" className={cls(currentTab === "taches")}>
           <CheckSquare className="w-3 h-3" />
-          {t("tasks.title")}
-          {openTasksCount > 0 && (
-            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
-              {openTasksCount}
-            </span>
-          )}
+          {t("inbox.teamTasks", "Tâches d'équipe")}
         </Link>
 
         <Link href="/dashboard/projets" className={cls(currentTab === "projets")}>
@@ -813,25 +723,6 @@ function MailPageHeaderImpl({
           )}
         </Link>
 
-        <Link href="/dashboard/relances" className={cls(currentTab === "relances")}>
-          <MailCheck className="w-3 h-3" />
-          {t("sidebar.followups", "Relances")}
-          {followupsCount > 0 && (
-            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
-              {followupsCount}
-            </span>
-          )}
-        </Link>
-
-        <Link href="/dashboard/archives" className={cls(currentTab === "archives")}>
-          <Archive className="w-3 h-3" />
-          {t("sidebar.archives")}
-          {archivesCount > 0 && (
-            <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">
-              {archivesCount}
-            </span>
-          )}
-        </Link>
       </div>
 
       {/* Bloc C — Filtres / Catégories */}

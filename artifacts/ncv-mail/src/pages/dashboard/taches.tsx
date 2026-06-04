@@ -40,6 +40,7 @@ import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { useSearch } from "wouter";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -102,7 +103,34 @@ export default function Taches() {
   }, [connections]);
 
   const [filter, setFilter] = useState<string>("all");
-  const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">("mine");
+  const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">(() => {
+    if (typeof window !== "undefined") {
+      const s = new URLSearchParams(window.location.search).get("scope");
+      if (s === "team" || s === "assigned_to_me" || s === "created_by_me" || s === "mine") return s;
+    }
+    return "mine";
+  });
+  // Le scope est piloté par l'URL : « Mes tâches » (sidebar) → pas de query
+  // (scope=mine) ; « Tâches d'équipe » (onglet Réception) → ?scope=team. On
+  // resynchronise quand la query change RÉELLEMENT, sans écraser les onglets
+  // internes de la page (eux changent `scope` sans toucher l'URL).
+  const scopeSearch = useSearch();
+  const lastUrlScopeRef = useRef<string | null>(null);
+  useEffect(() => {
+    const raw = new URLSearchParams(scopeSearch).get("scope") || "";
+    const next =
+      raw === "team" || raw === "assigned_to_me" || raw === "created_by_me"
+        ? raw
+        : "mine";
+    if (lastUrlScopeRef.current === null) {
+      lastUrlScopeRef.current = raw;
+      return;
+    }
+    if (lastUrlScopeRef.current !== raw) {
+      lastUrlScopeRef.current = raw;
+      setScope(next as "mine" | "assigned_to_me" | "created_by_me" | "team");
+    }
+  }, [scopeSearch]);
   // Recherche locale alimentée par MailPageHeader (parité Reportés/Envoyés —
   // le bandeau gère l'input ; la liste filtre côté front sur titre + sujet
   // d'email rattaché + nom de l'assigné).

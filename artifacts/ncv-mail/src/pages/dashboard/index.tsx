@@ -3852,47 +3852,9 @@ export default function Dashboard() {
     assignedEmailsFlatRef.current = flat;
   }, [teamAssignmentsData]);
 
-  // Compteur tâches ouvertes (mes tâches non terminées) — alimente le badge
-  // de l'onglet Tâches dans la barre de Réception (task #290).
-  const { data: openTasksData } = useQuery<any[]>({
-    queryKey: ["tasks-open-mine"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return [];
-      const res = await fetch(`${import.meta.env.BASE_URL}api/tasks?scope=mine&status=pending`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
-  const openTasksCount = Array.isArray(openTasksData) ? openTasksData.length : 0;
-
-  // Compteur emails reportés (snoozed) — alimente le badge de l'onglet
-  // Reportés dans la barre de Réception (task #293).
-  // L'API renvoie { emails: [...], total?: number } — pas un tableau brut.
-  const { data: snoozedData } = useQuery<{ emails?: any[]; total?: number }>({
-    queryKey: ["emails-snoozed-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return { emails: [] };
-      const res = await fetch(`${import.meta.env.BASE_URL}api/emails?snoozed=1&limit=200`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return { emails: [] };
-      return res.json();
-    },
-  });
-  const snoozedCount = snoozedData?.total ?? snoozedData?.emails?.length ?? 0;
-
-  // Compteurs onglets Projets / Relances / Archives — badges dans la barre de
-  // Réception, même pattern que Tâches/Reportés (refetch 60s).
+  // Compteur Projets — badge du seul onglet à compteur restant dans le
+  // bandeau Réception (Reportés/Relances/Archives/Tâches sont passés dans la
+  // sidebar).
   const { data: projectsData } = useQuery<any[]>({
     queryKey: ["projects-count"],
     refetchInterval: 60_000,
@@ -3909,40 +3871,6 @@ export default function Dashboard() {
     },
   });
   const projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
-
-  const { data: followupsData } = useQuery<any[]>({
-    queryKey: ["followups-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return [];
-      const res = await fetch(`${import.meta.env.BASE_URL}api/followups?status=en_attente`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
-  const followupsCount = Array.isArray(followupsData) ? followupsData.length : 0;
-
-  const { data: archivesData } = useQuery<{ emails?: any[]; total?: number }>({
-    queryKey: ["archives-count"],
-    refetchInterval: 60_000,
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) return { emails: [], total: 0 };
-      const res = await fetch(`${import.meta.env.BASE_URL}api/emails?status=archived&limit=1`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) return { emails: [], total: 0 };
-      return res.json();
-    },
-  });
-  const archivesCount = archivesData?.total ?? archivesData?.emails?.length ?? 0;
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
@@ -6376,26 +6304,11 @@ export default function Dashboard() {
                   )}
                 </button>
               )}
-              {/* Onglet Reportés — déplacé depuis la sidebar (task #293).
-                  Toujours visible avec badge du nombre de mails reportés. */}
+              {/* Onglet Tâches d'équipe — tâches assignées aux membres de
+                  l'équipe (scope=team). La vue perso « Mes tâches » vit
+                  désormais dans la sidebar. */}
               <Link
-                href="/dashboard/reportes"
-                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
-                  routeLocation === "/dashboard/reportes"
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                }`}
-              >
-                <BellOff className="w-3 h-3" />
-                {t("sidebar.snoozed", "Reportés")}
-                {snoozedCount > 0 && (
-                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{snoozedCount}</span>
-                )}
-              </Link>
-              {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
-                  Toujours visible (perso + équipe) avec badge ouverts. */}
-              <Link
-                href="/dashboard/taches"
+                href="/dashboard/taches?scope=team"
                 className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
                   routeLocation === "/dashboard/taches"
                     ? "bg-primary/15 text-primary border border-primary/20"
@@ -6403,10 +6316,7 @@ export default function Dashboard() {
                 }`}
               >
                 <CheckSquare className="w-3 h-3" />
-                {t("tasks.title")}
-                {openTasksCount > 0 && (
-                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{openTasksCount}</span>
-                )}
+                {t("inbox.teamTasks", "Tâches d'équipe")}
               </Link>
               {/* Onglet Projets — déplacé depuis la sidebar (équipe).
                   Page standalone /dashboard/projets (kanban), même pattern
@@ -6423,41 +6333,6 @@ export default function Dashboard() {
                 {t("sidebar.projects")}
                 {projectsCount > 0 && (
                   <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{projectsCount}</span>
-                )}
-              </Link>
-              {/* Onglet Relances — déplacé depuis la sidebar.
-                  Page standalone /dashboard/relances, même pattern que
-                  Tâches/Projets : navigation via Link. */}
-              <Link
-                href="/dashboard/relances"
-                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
-                  routeLocation === "/dashboard/relances"
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                }`}
-              >
-                <MailCheck className="w-3 h-3" />
-                {t("sidebar.followups", "Relances")}
-                {followupsCount > 0 && (
-                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{followupsCount}</span>
-                )}
-              </Link>
-              {/* Task #294 Phase 2 — Onglet Archives.
-                  Déplacé depuis la sidebar (où trône désormais « Mes
-                  dossiers »). Page standalone /dashboard/archives, groupée
-                  par catégorie IA. Même pattern Link que les autres onglets. */}
-              <Link
-                href="/dashboard/archives"
-                className={`inline-flex items-center justify-center gap-1 h-7 px-2.5 text-[11px] rounded-md font-medium transition-colors whitespace-nowrap ${
-                  routeLocation === "/dashboard/archives"
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                }`}
-              >
-                <Archive className="w-3 h-3" />
-                {t("sidebar.archives")}
-                {archivesCount > 0 && (
-                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{archivesCount}</span>
                 )}
               </Link>
             </div>

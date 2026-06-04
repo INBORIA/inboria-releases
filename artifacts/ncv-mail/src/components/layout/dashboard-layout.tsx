@@ -31,6 +31,7 @@ import {
   CalendarDays,
   Bell,
   BellOff,
+  MailCheck,
   ShieldCheck,
   FileText,
   Wand2,
@@ -307,6 +308,14 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // de la Réception, à côté de Tâches. Retiré de la sidebar pour éviter
     // la redondance, comme « Tâches » avant lui (#290).
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
+    // Flux mail perso regroupés dans la sidebar (réorg navigation) :
+    // Reportés / Relances / Archives / Mes tâches. La Réception ne garde
+    // que les onglets d'ÉQUIPE (Partagées / Assignés / Projets / Tâches
+    // d'équipe).
+    { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
+    { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
+    { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
+    { name: t("sidebar.myTasks", "Mes tâches"), href: "/dashboard/taches", icon: CheckSquare },
     // Note (task #290) : « Tâches » a été déplacé dans la barre d'onglets
     // de la Réception, à côté d'Assignés. Retiré de la sidebar pour éviter
     // la redondance, comme « Activité équipe » avant lui (#286).
