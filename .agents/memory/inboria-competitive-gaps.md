@@ -21,16 +21,22 @@ before any build**. Do NOT start implementing these without his go-ahead.
   sidebar links prefetch their *data* on hover; (added) sidebar links also
   preload their *JS chunk* on hover, and `j`/`k` look-ahead prefetch mails.
 
-## The 5 real missing features (the "B" list)
-1. **Real Cmd+K command palette** — today Cmd+K only focuses the search input.
-   A true palette (run any action / jump anywhere) is missing.
-2. **Auto-advance** — after archive/snooze, automatically open the next mail.
-3. **Go-to sequences** (keyboard) + **multi-select** via keyboard.
-4. **Collision detection at reply time** — presence exists on comments, but the
-   reply composer does NOT warn that a teammate is already replying to the same
-   client. This is the Missive-style "someone else is answering" guard.
-5. **Shared drafts** — co-writing / handing off a draft between teammates.
+## The 5 "B" features — NOW ALL SHIPPED (re-verify before claiming otherwise)
+The five gaps below have since been built; treat them as DONE, not missing:
+1. **Real command palette** — `components/command-palette.tsx`.
+2. **Auto-advance** — `pages/dashboard/index.tsx` (`computeAutoAdvanceId`, ~L4851).
+3. **Keyboard nav / multi-select** — shipped alongside the palette/shortcuts.
+4. **Collision detection at reply time** — `hooks/use-email-presence.ts` (per-mail
+   presence), wired into the reply composer.
+5. **Shared drafts** — `hooks/use-shared-draft.ts` + `EmailDetail.tsx` (see
+   replit.md `shared_drafts` gotcha; needs the migration applied).
 
-**Why this matters:** the user got frustrated when work was proposed without
-first checking what already existed. Always re-verify the live code before
-proposing any of these — several "missing" things turned out to already exist.
+**Where rivals still win (be honest, do NOT overclaim parity):** product maturity
+& polish, scale/reliability at volume, breadth of native integrations (Front),
+brand trust, and raw perceived speed (Superhuman's obsessive perf). Inboria's edge
+is the *combination*: native AI triage/drafting + 43-language support + Superhuman-
+style speed + Missive-style collaboration in one product.
+
+**Why this matters:** the user got frustrated when work was proposed without first
+checking what already existed. Always re-verify the live code before proposing or
+claiming anything — several "missing" things turned out to already exist.
