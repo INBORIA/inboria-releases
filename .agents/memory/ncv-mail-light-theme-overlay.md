@@ -29,6 +29,11 @@ not by tokenizing everything. New code adds hexes the overlay never learned abou
   themes for free. Do NOT introduce new hardcoded hex text/bg colors.
 - `hover:text-white` is also not remapped → on light hover surfaces it can vanish.
   Use `hover:text-foreground` / `hover:text-primary` instead.
+- There is now a consolidated "BALAYAGE LISIBILITÉ MODE CLAIR (sweep global)" block
+  in `index.css` (just before the T004 collision-banner rules) that retro-remaps the
+  pale hexes/backgrounds/`hover:text-white` that existed at sweep time. It does NOT
+  make the overlay self-maintaining — any NEW hardcoded pale hex still goes invisible.
+  Prefer tokens; only extend that block when you must keep a hardcoded hex.
 - Authority for the `<html>` theme attributes is the **centralized router
   controller** (a `useLayoutEffect` in `App.tsx`'s `Router`, keyed on wouter
   `location`): `/dashboard*` => `data-ncv-page="inbox"` + stored theme; every

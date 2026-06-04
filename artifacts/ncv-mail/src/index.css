@@ -328,6 +328,50 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#c9d1d9\] { color: 
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\] { color: #4b5563 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#3b4250\] { color: #3b4250 !important; }
 
+/* ─────────────────────────────────────────────────────────────────────
+ * BALAYAGE LISIBILITÉ MODE CLAIR (sweep global)
+ * Couleurs codées en dur, pensées pour le fond sombre, qui restaient
+ * illisibles sur fond blanc dans tout le dashboard (Contacts, Tâches,
+ * Paramètres, Chat équipe, recherche, etc.). Le mode SOMBRE n'est PAS
+ * touché : ces règles sont scopées html[...][data-ncv-theme="light"].
+ * ───────────────────────────────────────────────────────────────────── */
+/* (1) Textes « contenu » très pâles → quasi noir lisible. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d6deea\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d4dae4\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#cbd5e1\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#c8d0db\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#c5cee0\] { color: #111827 !important; }
+/* (2) Gris moyens borderline (contraste < AA sur blanc) → gris foncé lisible. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#7a8699\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#8b95a8\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7a8f\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7d96\] { color: #4b5563 !important; }
+/* (3) Accents (bleu clair / rouge clair) → versions contrastées sur blanc. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#7aa5ff\] { color: #2563eb !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#e0a8a8\] { color: #b91c1c !important; }
+/* (4) hover:text-white → texte foncé au survol (jamais couplé à un fond
+ *     coloré au survol dans le code, mais on garde les mêmes garde-fous que
+ *     .text-white pour ne JAMAIS repeindre un libellé blanc posé sur un
+ *     bouton/badge coloré permanent). */
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .hover\:text-white:hover:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-fuchsia"]):not([class*="bg-pink"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-orange"]):not([class*="bg-amber"]):not([class*="bg-yellow"]):not([class*="bg-lime"]):not([class*="bg-green"]):not([class*="bg-emerald"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-sky"]):not([class*="bg-blue"]):not([class*="bg-destructive"]):not([class*="bg-\[\#2d7dd2\]"]):not([class*="bg-\[\#2563b1\]"]):not([class*="bg-\[\#374151\]"]):not([class*="bg-\[\#4F46E5\]"]) {
+  color: #111827 !important;
+}
+/* (5) Fonds sombres restés sombres en clair → surfaces claires cohérentes
+ *     avec les remaps existants (#0d1117→#fbfbfa, #1a2235→#f0f0ec, #222a35→#eef0f3). */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0a0f1c\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0a0e14\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0a0f15\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0b1220\]:not(.fixed) { background-color: #fbfbfa !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1a2332\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1f2630\]:not(.fixed) { background-color: #f0f0ec !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#2a3441\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#2a3544\]:not(.fixed) { background-color: #eef0f3 !important; }
+/* (6) Bordures sombres mineures non remappées → bordure claire discrète. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1a2332\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#3a4a5e\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#2a3548\] { border-color: #e5e7eb !important; }
+
 /* T004 — Bandeau de collision « X répond déjà à ce mail ». En sombre il garde
    son look Tailwind (border-amber-500/40 + bg-amber-500/10 + text-amber-200,
    parfaitement lisible). En clair, ces tons ambre pâles deviennent délavés sur
