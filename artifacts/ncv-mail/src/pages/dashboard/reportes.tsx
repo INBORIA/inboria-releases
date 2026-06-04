@@ -76,7 +76,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { VirtualizedMailList } from "@/components/email-list/VirtualizedMailList";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
-import { removeEmailOptimistic } from "@/lib/optimistic-email";
+import { removeEmailOptimistic, removeEmailsOptimistic, patchEmailOptimistic } from "@/lib/optimistic-email";
 
 export default function Reportes() {
   useEnableLightTheme();
@@ -248,10 +248,17 @@ export default function Reportes() {
 
   const handleBulkDelete = () => {
     const ids = Array.from(selectedIds);
+    // Optimiste — les lignes disparaissent immédiatement, rollback par mail si échec.
+    if (ids.includes(selectedEmailId as number)) setSelectedEmailId(null);
     ids.forEach((id) => {
+      const rollback = removeEmailOptimistic(queryClient, id);
       deleteEmail.mutate({ id }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
         },
       });
     });
@@ -260,12 +267,17 @@ export default function Reportes() {
   };
 
   const handleUpdateProject = (id: number, projectId: string) => {
+    const rollback = patchEmailOptimistic(queryClient, id, { projectId: projectId === "none" ? null : projectId });
     updateEmail.mutate(
       { id, data: { projectId: projectId === "none" ? null : projectId } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("sent.projectUpdated") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
         },
       }
     );
@@ -400,12 +412,18 @@ export default function Reportes() {
     const email = snoozedEmails.find((e: any) => e.id === id);
     const isUnread = email?.status === "non_lu" || email?.isRead === false || (email as any)?.unread === true;
     const newStatus = isUnread ? "read" : "non_lu";
+    // Optimiste — le statut lu/non-lu change à l'écran avant la confirmation serveur.
+    const rollback = patchEmailOptimistic(queryClient, id, { status: newStatus, isRead: isUnread, unread: !isUnread });
     updateEmail.mutate(
       { id, data: { status: newStatus } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
         },
       },
     );
@@ -459,6 +477,8 @@ export default function Reportes() {
   };
 
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    // Optimiste — la catégorie s'affiche immédiatement sur la ligne.
+    const rollback = patchEmailOptimistic(queryClient, id, { categoryId, categoryName });
     updateEmail.mutate(
       { id, data: { categoryId } as any },
       {
@@ -466,17 +486,25 @@ export default function Reportes() {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName });
         },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: e?.message || "Échec" });
+        },
       },
     );
   };
 
   const handleMoveToFolder = async (emailIds: number[], folderId: string, folderName: string) => {
+    // Optimiste — les mails déplacés quittent la liste immédiatement.
+    const rollback = removeEmailsOptimistic(queryClient, emailIds);
+    if (emailIds.includes(selectedEmailId as number)) setSelectedEmailId(null);
     try {
       await assignToFolderMut.mutateAsync({ data: { folderId, emailIds } as any });
       toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
       queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
       queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
     } catch {
+      rollback();
       toast({ title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }), variant: "destructive" });
     }
   };
