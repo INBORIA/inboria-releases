@@ -65,7 +65,8 @@
     "adminSubscribers": "एडमिन · सब्सक्राइबर",
     "followups": "फॉलो-अप",
     "contacts": "संपर्क",
-    "assigned": "असाइन किए गए"
+    "assigned": "असाइन किए गए",
+    "myTasks": "मेरे कार्य"
   },
   "dashboard": {
     "expiredSubscription": "आपकी सदस्यता समाप्त हो गई है",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "साझा ड्राफ्ट चालू",
     "draftEditing": "अब संपादित कर रहे हैं",
     "draftSaving": "सहेज रहा है…",
-    "draftSaved": "सहेजा गया"
+    "draftSaved": "सहेजा गया",
+    "teamTasks": "टीम कार्य"
   },
   "sent": {
     "title": "भेजे गए ईमेल",

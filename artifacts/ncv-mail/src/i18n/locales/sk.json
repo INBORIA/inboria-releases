@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Odberatelia",
     "followups": "Pripomienky",
     "contacts": "Kontakty",
-    "assigned": "Priradené"
+    "assigned": "Priradené",
+    "myTasks": "Moje úlohy"
   },
   "dashboard": {
     "expiredSubscription": "Váš predplatný plán vypršal",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Zdieľaný koncept zapnutý",
     "draftEditing": "práve upravujú",
     "draftSaving": "Ukladá sa…",
-    "draftSaved": "Uložené"
+    "draftSaved": "Uložené",
+    "teamTasks": "Tímové úlohy"
   },
   "sent": {
     "title": "Odoslané e-maily",

@@ -65,7 +65,8 @@
     "adminSubscribers": "អ្នកគ្រប់គ្រង · អ្នកជាវ",
     "followups": "ការតាមដាន",
     "contacts": "ទំនាក់ទំនង",
-    "assigned": "បានចាត់តាំង"
+    "assigned": "បានចាត់តាំង",
+    "myTasks": "ភារកិច្ចរបស់ខ្ញុំ"
   },
   "dashboard": {
     "expiredSubscription": "ការជាវរបស់លោកអ្នកបានផុតកំណត់",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "រូបមន្តចែករំលែកបើក",
     "draftEditing": "កំពុងកែសម្រួល",
     "draftSaving": "កំពុងរក្សាទុក…",
-    "draftSaved": "បានរក្សាទុក"
+    "draftSaved": "បានរក្សាទុក",
+    "teamTasks": "ភារកិច្ចក្រុម"
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",

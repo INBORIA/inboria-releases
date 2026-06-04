@@ -65,7 +65,8 @@
     "adminSubscribers": "Ylläpitäjä · Tilaukset",
     "followups": "Muistutukset",
     "contacts": "Yhteystiedot",
-    "assigned": "Määrätyt"
+    "assigned": "Määrätyt",
+    "myTasks": "Omat tehtävät"
   },
   "dashboard": {
     "expiredSubscription": "Tilauksenne on vanhentunut",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Jaettu luonnos päällä",
     "draftEditing": "muokkaavat nyt",
     "draftSaving": "Tallennetaan…",
-    "draftSaved": "Tallennettu"
+    "draftSaved": "Tallennettu",
+    "teamTasks": "Tiimin tehtävät"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

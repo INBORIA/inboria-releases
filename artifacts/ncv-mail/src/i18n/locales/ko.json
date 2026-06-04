@@ -65,7 +65,8 @@
     "adminSubscribers": "관리자 · 구독자",
     "followups": "리마인더",
     "contacts": "연락처",
-    "assigned": "배정됨"
+    "assigned": "배정됨",
+    "myTasks": "내 작업"
   },
   "dashboard": {
     "expiredSubscription": "귀하의 구독이 만료되었습니다.",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "공유 초안 활성화",
     "draftEditing": "현재 편집 중",
     "draftSaving": "저장 중…",
-    "draftSaved": "저장됨"
+    "draftSaved": "저장됨",
+    "teamTasks": "팀 작업"
   },
   "sent": {
     "title": "보낸 이메일",

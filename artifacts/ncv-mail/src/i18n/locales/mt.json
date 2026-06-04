@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abbonati",
     "followups": "Ħlasijiet",
     "contacts": "Kontatti",
-    "assigned": "Assegnati"
+    "assigned": "Assegnati",
+    "myTasks": "Kompiti Tiegħi"
   },
   "dashboard": {
     "expiredSubscription": "L-abbonament tagħkom skada",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Draft ma' ħbieb attivat",
     "draftEditing": "qed jeditja issa",
     "draftSaving": "Qed isalva…",
-    "draftSaved": "Salvat"
+    "draftSaved": "Salvat",
+    "teamTasks": "Kompiti tat-Tim"
   },
   "sent": {
     "title": "Emails inviati",

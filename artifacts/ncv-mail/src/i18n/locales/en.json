@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Subscribers",
     "followups": "Follow-ups",
     "contacts": "Contacts",
-    "assigned": "Assigned"
+    "assigned": "Assigned",
+    "myTasks": "My tasks"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
@@ -553,7 +554,8 @@
     "sharedDraftOn": "Shared draft on",
     "draftEditing": "editing now",
     "draftSaving": "Saving…",
-    "draftSaved": "Saved"
+    "draftSaved": "Saved",
+    "teamTasks": "Team tasks"
   },
   "sent": {
     "title": "Sent emails",

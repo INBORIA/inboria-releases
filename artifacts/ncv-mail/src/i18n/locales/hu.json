@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Előfizetők",
     "followups": "Emlékeztetők",
     "contacts": "Kapcsolatok",
-    "assigned": "Hozzárendelve"
+    "assigned": "Hozzárendelve",
+    "myTasks": "Saját feladatok"
   },
   "dashboard": {
     "expiredSubscription": "Az előfizetése lejárt",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Megosztott vázlat be",
     "draftEditing": "szerkesztés alatt",
     "draftSaving": "Mentés…",
-    "draftSaved": "Mentve"
+    "draftSaved": "Mentve",
+    "teamTasks": "Csapat feladatok"
   },
   "sent": {
     "title": "Küldött emailek",

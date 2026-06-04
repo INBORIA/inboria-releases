@@ -65,7 +65,8 @@
     "adminSubscribers": "מנהל · מנויים",
     "followups": "תזכורות",
     "contacts": "אנשי קשר",
-    "assigned": "מוקצים"
+    "assigned": "מוקצים",
+    "myTasks": "המשימות שלי"
   },
   "dashboard": {
     "expiredSubscription": "המנוי שלך פג",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "טיוטה משותפת פעילה",
     "draftEditing": "עורכים עכשיו",
     "draftSaving": "שומר…",
-    "draftSaved": "נשמרה"
+    "draftSaved": "נשמרה",
+    "teamTasks": "משימות הצוות"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

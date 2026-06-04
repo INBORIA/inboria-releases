@@ -65,7 +65,8 @@
     "adminSubscribers": "Administratorius · Prenumeratoriai",
     "followups": "Priminti",
     "contacts": "Kontaktai",
-    "assigned": "Priskirti"
+    "assigned": "Priskirti",
+    "myTasks": "Mano užduotys"
   },
   "dashboard": {
     "expiredSubscription": "Jūsų prenumerata pasibaigė",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Bendras juodraštis įjungtas",
     "draftEditing": "dabar redaguoja",
     "draftSaving": "Išsaugoma…",
-    "draftSaved": "Išsaugota"
+    "draftSaved": "Išsaugota",
+    "teamTasks": "Komandos užduotys"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abonnenter",
     "followups": "Opfølgninger",
     "contacts": "Kontakter",
-    "assigned": "Tildelt"
+    "assigned": "Tildelt",
+    "myTasks": "Mine opgaver"
   },
   "dashboard": {
     "expiredSubscription": "Dit abonnement er udløbet",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Delte udkast aktiveret",
     "draftEditing": "redigerer nu",
     "draftSaving": "Gemmer…",
-    "draftSaved": "Gemt"
+    "draftSaved": "Gemt",
+    "teamTasks": "Teamopgaver"
   },
   "sent": {
     "title": "Sendte emails",

@@ -65,7 +65,8 @@
     "adminSubscribers": "Riarachán · Conraitheoirí",
     "followups": "Athchóirithe",
     "contacts": "Teagmhálacha",
-    "assigned": "Socrú"
+    "assigned": "Socrú",
+    "myTasks": "Mo Thascanna"
   },
   "dashboard": {
     "expiredSubscription": "Tá bhur síntiús imithe in éag",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Dréacht comhoibrithe ar",
     "draftEditing": "ag eagarthóireacht anois",
     "draftSaving": "Ag sábháil…",
-    "draftSaved": "Sábháilte"
+    "draftSaved": "Sábháilte",
+    "teamTasks": "Tascanna Foirne"
   },
   "sent": {
     "title": "Ríomhphoist seolta",

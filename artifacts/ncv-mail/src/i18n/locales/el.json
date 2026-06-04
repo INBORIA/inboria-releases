@@ -65,7 +65,8 @@
     "adminSubscribers": "Διαχειριστής · Συνδρομητές",
     "followups": "Υπενθυμίσεις",
     "contacts": "Επαφές",
-    "assigned": "Ανατεθειμένα"
+    "assigned": "Ανατεθειμένα",
+    "myTasks": "Οι εργασίες μου"
   },
   "dashboard": {
     "expiredSubscription": "Η συνδρομή σας έχει λήξει",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Κοινό σχέδιο ενεργό",
     "draftEditing": "επεξεργάζονται τώρα",
     "draftSaving": "Αποθήκευση…",
-    "draftSaved": "Αποθηκεύτηκε"
+    "draftSaved": "Αποθηκεύτηκε",
+    "teamTasks": "Ομαδικές εργασίες"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

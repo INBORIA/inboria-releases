@@ -65,7 +65,8 @@
     "adminSubscribers": "Администратор · Подписчики",
     "followups": "Напоминания",
     "contacts": "Контакты",
-    "assigned": "Назначенные"
+    "assigned": "Назначенные",
+    "myTasks": "Мои задачи"
   },
   "dashboard": {
     "expiredSubscription": "Ваша подписка истекла",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Совместный черновик включен",
     "draftEditing": "редактируют сейчас",
     "draftSaving": "Сохранение…",
-    "draftSaved": "Сохранено"
+    "draftSaved": "Сохранено",
+    "teamTasks": "Задачи команды"
   },
   "sent": {
     "title": "Отправленные электронные почты",

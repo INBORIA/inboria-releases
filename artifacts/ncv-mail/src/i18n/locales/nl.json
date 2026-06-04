@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abonnees",
     "followups": "Herinneringen",
     "contacts": "Contacten",
-    "assigned": "Toegewezen"
+    "assigned": "Toegewezen",
+    "myTasks": "Mijn taken"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Gedeeld concept ingeschakeld",
     "draftEditing": "nu aan het bewerken",
     "draftSaving": "Opslaan…",
-    "draftSaved": "Opgeslagen"
+    "draftSaved": "Opgeslagen",
+    "teamTasks": "Teamtaken"
   },
   "sent": {
     "title": "Verzonden e-mails",

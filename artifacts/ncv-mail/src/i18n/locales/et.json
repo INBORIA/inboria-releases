@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Tellijad",
     "followups": "Meeldetuletused",
     "contacts": "Kontaktid",
-    "assigned": "Määratud"
+    "assigned": "Määratud",
+    "myTasks": "Minu ülesanded"
   },
   "dashboard": {
     "expiredSubscription": "Teie tellimus on aegunud",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Jagatud mustand sisse",
     "draftEditing": "redigeerivad praegu",
     "draftSaving": "Salvestamine…",
-    "draftSaved": "Salvestatud"
+    "draftSaved": "Salvestatud",
+    "teamTasks": "Meeskonna ülesanded"
   },
   "sent": {
     "title": "Saadetud e-kirjad",

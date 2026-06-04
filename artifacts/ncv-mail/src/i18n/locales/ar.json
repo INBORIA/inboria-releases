@@ -65,7 +65,8 @@
     "adminSubscribers": "المسؤول · المشتركين",
     "followups": "التذكيرات",
     "contacts": "جهات الاتصال",
-    "assigned": "المعينون"
+    "assigned": "المعينون",
+    "myTasks": "مهامي"
   },
   "dashboard": {
     "expiredSubscription": "انتهت صلاحية اشتراككم",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "المسودة المشتركة مفعلة",
     "draftEditing": "يحرر الآن",
     "draftSaving": "جارٍ الحفظ…",
-    "draftSaved": "تم الحفظ"
+    "draftSaved": "تم الحفظ",
+    "teamTasks": "مهام الفريق"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

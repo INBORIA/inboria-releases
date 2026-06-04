@@ -65,7 +65,8 @@
     "adminSubscribers": "Yönetici · Aboneler",
     "followups": "Hatırlatmalar",
     "contacts": "İletişim Bilgileri",
-    "assigned": "Atananlar"
+    "assigned": "Atananlar",
+    "myTasks": "Görevlerim"
   },
   "dashboard": {
     "expiredSubscription": "Aboneliğiniz sona erdi",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Paylaşılan taslak açık",
     "draftEditing": "şu anda düzenliyor",
     "draftSaving": "Kaydediliyor…",
-    "draftSaved": "Kaydedildi"
+    "draftSaved": "Kaydedildi",
+    "teamTasks": "Ekip Görevleri"
   },
   "sent": {
     "title": "Gönderilen e-postalar",

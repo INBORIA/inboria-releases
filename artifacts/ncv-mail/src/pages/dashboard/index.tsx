@@ -6316,7 +6316,7 @@ export default function Dashboard() {
                 }`}
               >
                 <CheckSquare className="w-3 h-3" />
-                {t("inbox.teamTasks", "Tâches d'équipe")}
+                {t("inbox.teamTasks", "Tâches équipe")}
               </Link>
               {/* Onglet Projets — déplacé depuis la sidebar (équipe).
                   Page standalone /dashboard/projets (kanban), même pattern

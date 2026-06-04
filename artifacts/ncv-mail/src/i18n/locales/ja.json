@@ -65,7 +65,8 @@
     "adminSubscribers": "管理者 · 購読者",
     "followups": "リマインダー",
     "contacts": "連絡先",
-    "assigned": "割り当てられた"
+    "assigned": "割り当てられた",
+    "myTasks": "私のタスク"
   },
   "dashboard": {
     "expiredSubscription": "ご利用のサブスクリプションは期限切れです",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "共有ドラフトがオン",
     "draftEditing": "編集中です",
     "draftSaving": "保存中…",
-    "draftSaved": "保存されました"
+    "draftSaved": "保存されました",
+    "teamTasks": "チームのタスク"
   },
   "sent": {
     "title": "送信済みのメール",

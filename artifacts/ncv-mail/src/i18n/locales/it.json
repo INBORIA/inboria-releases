@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abbonati",
     "followups": "Solleciti",
     "contacts": "Contatti",
-    "assigned": "Assegnati"
+    "assigned": "Assegnati",
+    "myTasks": "Le mie attività"
   },
   "dashboard": {
     "expiredSubscription": "Il suo abbonamento è scaduto",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Bozza condivisa attivata",
     "draftEditing": "sta modificando ora",
     "draftSaving": "Salvataggio…",
-    "draftSaved": "Salvato"
+    "draftSaved": "Salvato",
+    "teamTasks": "Attività del team"
   },
   "sent": {
     "title": "Email inviate",

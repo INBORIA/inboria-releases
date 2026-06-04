@@ -65,7 +65,8 @@
     "adminSubscribers": "管理員 · 訂閱者",
     "followups": "提醒",
     "contacts": "聯絡人",
-    "assigned": "已指派"
+    "assigned": "已指派",
+    "myTasks": "我的任務"
   },
   "dashboard": {
     "expiredSubscription": "您的訂閱已過期",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "共享草稿已開啟",
     "draftEditing": "正在編輯",
     "draftSaving": "儲存中…",
-    "draftSaved": "已儲存"
+    "draftSaved": "已儲存",
+    "teamTasks": "團隊任務"
   },
   "sent": {
     "title": "已發送的電子郵件",

@@ -426,7 +426,7 @@ export function AnimatedDemo() {
                 </div>
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <CheckSquare className="w-2.5 h-2.5" />
-                  <span>{t("inbox.teamTasks", "Tâches d'équipe")}</span>
+                  <span>{t("inbox.teamTasks", "Tâches équipe")}</span>
                 </div>
                 <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <FolderKanban className="w-2.5 h-2.5" />

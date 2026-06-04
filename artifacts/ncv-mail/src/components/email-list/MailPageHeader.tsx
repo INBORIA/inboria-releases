@@ -710,7 +710,7 @@ function MailPageHeaderImpl({
 
         <Link href="/dashboard/taches?scope=team" className={cls(currentTab === "taches")}>
           <CheckSquare className="w-3 h-3" />
-          {t("inbox.teamTasks", "Tâches d'équipe")}
+          {t("inbox.teamTasks", "Tâches équipe")}
         </Link>
 
         <Link href="/dashboard/projets" className={cls(currentTab === "projets")}>

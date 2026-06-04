@@ -65,7 +65,8 @@
     "adminSubscribers": "Адміністратор · Підписники",
     "followups": "Нагадування",
     "contacts": "Контакти",
-    "assigned": "Призначені"
+    "assigned": "Призначені",
+    "myTasks": "Мої завдання"
   },
   "dashboard": {
     "expiredSubscription": "Ваше підписання закінчилося",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Спільний чернетка увімкнено",
     "draftEditing": "редагують зараз",
     "draftSaving": "Зберігається…",
-    "draftSaved": "Збережено"
+    "draftSaved": "Збережено",
+    "teamTasks": "Завдання команди"
   },
   "sent": {
     "title": "Відправлені електронні листи",

@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Prenumeranter",
     "followups": "Påminnelser",
     "contacts": "Kontakter",
-    "assigned": "Tilldelade"
+    "assigned": "Tilldelade",
+    "myTasks": "Mina uppgifter"
   },
   "dashboard": {
     "expiredSubscription": "Ditt abonnemang har löpt ut",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Delad utkast aktiverad",
     "draftEditing": "redigerar nu",
     "draftSaving": "Sparar…",
-    "draftSaved": "Sparad"
+    "draftSaved": "Sparad",
+    "teamTasks": "Teamets uppgifter"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

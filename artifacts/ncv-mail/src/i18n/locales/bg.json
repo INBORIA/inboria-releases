@@ -65,7 +65,8 @@
     "adminSubscribers": "Администратор · Абонати",
     "followups": "Напомняния",
     "contacts": "Контакти",
-    "assigned": "Назначени"
+    "assigned": "Назначени",
+    "myTasks": "Моите задачи"
   },
   "dashboard": {
     "expiredSubscription": "Вашият абонамент е изтекъл",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Споделен чернови включен",
     "draftEditing": "редактира в момента",
     "draftSaving": "Записване…",
-    "draftSaved": "Записано"
+    "draftSaved": "Записано",
+    "teamTasks": "Екипни задачи"
   },
   "sent": {
     "title": "Изпратени имейли",

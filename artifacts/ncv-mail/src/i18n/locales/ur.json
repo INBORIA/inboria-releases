@@ -65,7 +65,8 @@
     "adminSubscribers": "ایڈمن · سبسکرائبرز",
     "followups": "یاد دہانیاں",
     "contacts": "رابطے",
-    "assigned": "تفویض کردہ"
+    "assigned": "تفویض کردہ",
+    "myTasks": "میرے کام"
   },
   "dashboard": {
     "expiredSubscription": "آپ کی سبسکرپشن کی مدت ختم ہو گئی ہے",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "مشترکہ مسودہ فعال ہے",
     "draftEditing": "ابھی ایڈیٹ کر رہے ہیں",
     "draftSaving": "محفوظ کر رہے ہیں…",
-    "draftSaved": "محفوظ ہو گیا"
+    "draftSaved": "محفوظ ہو گیا",
+    "teamTasks": "ٹیم کے کام"
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

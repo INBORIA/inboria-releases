@@ -65,7 +65,8 @@
     "adminSubscribers": "管理员 · 订阅者",
     "followups": "跟进",
     "contacts": "联系人",
-    "assigned": "已分配"
+    "assigned": "已分配",
+    "myTasks": "我的任务"
   },
   "dashboard": {
     "expiredSubscription": "您的订阅已过期",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "共享草稿已开启",
     "draftEditing": "正在编辑",
     "draftSaving": "保存中…",
-    "draftSaved": "已保存"
+    "draftSaved": "已保存",
+    "teamTasks": "团队任务"
   },
   "sent": {
     "title": "已发送邮件",

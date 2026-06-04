@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abonați",
     "followups": "Reamintiri",
     "contacts": "Contacte",
-    "assigned": "Atribuite"
+    "assigned": "Atribuite",
+    "myTasks": "Sarcinile mele"
   },
   "dashboard": {
     "expiredSubscription": "Abonamentul dumneavoastră a expirat",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Schimb de schițe activat",
     "draftEditing": "editează acum",
     "draftSaving": "Se salvează…",
-    "draftSaved": "Salvat"
+    "draftSaved": "Salvat",
+    "teamTasks": "Sarcinile echipei"
   },
   "sent": {
     "title": "Email-uri trimise",

@@ -65,7 +65,8 @@
     "adminSubscribers": "Quản trị viên · Người đăng ký",
     "followups": "Nhắc nhở",
     "contacts": "Liên hệ",
-    "assigned": "Được chỉ định"
+    "assigned": "Được chỉ định",
+    "myTasks": "Nhiệm vụ của tôi"
   },
   "dashboard": {
     "expiredSubscription": "Gói đăng ký của Quý khách đã hết hạn",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Bản nháp chia sẻ đã bật",
     "draftEditing": "đang chỉnh sửa",
     "draftSaving": "Đang lưu…",
-    "draftSaved": "Đã lưu"
+    "draftSaved": "Đã lưu",
+    "teamTasks": "Nhiệm vụ nhóm"
   },
   "sent": {
     "title": "Email đã gửi",

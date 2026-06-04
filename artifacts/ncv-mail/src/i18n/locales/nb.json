@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abonnenter",
     "followups": "Oppfølginger",
     "contacts": "Kontakter",
-    "assigned": "Tildelt"
+    "assigned": "Tildelt",
+    "myTasks": "Mine oppgaver"
   },
   "dashboard": {
     "expiredSubscription": "Abonnementet ditt har utløpt",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Delt utkast aktivert",
     "draftEditing": "redigerer nå",
     "draftSaving": "Lagrer…",
-    "draftSaved": "Lagt til"
+    "draftSaved": "Lagt til",
+    "teamTasks": "Teamoppgaver"
   },
   "sent": {
     "title": "Sendte e-poster",

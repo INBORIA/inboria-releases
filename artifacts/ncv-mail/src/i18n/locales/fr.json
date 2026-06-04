@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Abonnés",
     "followups": "Relances",
     "contacts": "Contacts",
-    "assigned": "Assignés"
+    "assigned": "Assignés",
+    "myTasks": "Mes tâches"
   },
   "dashboard": {
     "expiredSubscription": "Votre abonnement a expiré",
@@ -553,7 +554,8 @@
     "sharedDraftOn": "Brouillon partagé activé",
     "draftEditing": "édite(nt) en ce moment",
     "draftSaving": "Enregistrement…",
-    "draftSaved": "Enregistré"
+    "draftSaved": "Enregistré",
+    "teamTasks": "Tâches équipe"
   },
   "sent": {
     "title": "Emails envoyés",

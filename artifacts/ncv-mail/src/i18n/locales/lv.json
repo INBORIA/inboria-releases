@@ -65,7 +65,8 @@
     "adminSubscribers": "Administrators · Abonenti",
     "followups": "Atgādinājumi",
     "contacts": "Kontakti",
-    "assigned": "Piešķirti"
+    "assigned": "Piešķirti",
+    "myTasks": "Mani uzdevumi"
   },
   "dashboard": {
     "expiredSubscription": "Jūsu abonements ir beidzies",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Kopīgais melnraksts ieslēgts",
     "draftEditing": "redaktē tagad",
     "draftSaving": "Saglabā…",
-    "draftSaved": "Saglabāts"
+    "draftSaved": "Saglabāts",
+    "teamTasks": "Komandas uzdevumi"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

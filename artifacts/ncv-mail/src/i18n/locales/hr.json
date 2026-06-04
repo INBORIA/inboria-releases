@@ -65,7 +65,8 @@
     "adminSubscribers": "Administrator · Pretplatnici",
     "followups": "Podsjetnici",
     "contacts": "Kontakti",
-    "assigned": "Dodijeljeni"
+    "assigned": "Dodijeljeni",
+    "myTasks": "Moji zadaci"
   },
   "dashboard": {
     "expiredSubscription": "Vaša pretplata je istekla",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Zajednički nacrt uključen",
     "draftEditing": "uređuju sada",
     "draftSaving": "Spremam…",
-    "draftSaved": "Spremjeno"
+    "draftSaved": "Spremjeno",
+    "teamTasks": "Timski zadaci"
   },
   "sent": {
     "title": "Poslane e-pošte",

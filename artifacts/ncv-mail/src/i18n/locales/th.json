@@ -65,7 +65,8 @@
     "adminSubscribers": "ผู้ดูแลระบบ · ผู้ติดตาม",
     "followups": "การติดตาม",
     "contacts": "ผู้ติดต่อ",
-    "assigned": "ที่กำหนด"
+    "assigned": "ที่กำหนด",
+    "myTasks": "งานของฉัน"
   },
   "dashboard": {
     "expiredSubscription": "การสมัครสมาชิกของท่านหมดอายุแล้ว",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "ร่างที่แชร์เปิดใช้งาน",
     "draftEditing": "กำลังแก้ไขอยู่",
     "draftSaving": "กำลังบันทึก…",
-    "draftSaved": "บันทึกแล้ว"
+    "draftSaved": "บันทึกแล้ว",
+    "teamTasks": "งานของทีม"
   },
   "sent": {
     "title": "อีเมลที่ส่ง",

@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Pelanggan",
     "followups": "Peringatan",
     "contacts": "Kontak",
-    "assigned": "Ditetapkan"
+    "assigned": "Ditetapkan",
+    "myTasks": "Tugas Saya"
   },
   "dashboard": {
     "expiredSubscription": "Langganan anda telah tamat",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Draf bersama diaktifkan",
     "draftEditing": "sedang menyunting",
     "draftSaving": "Menyimpan…",
-    "draftSaved": "Disimpan"
+    "draftSaved": "Disimpan",
+    "teamTasks": "Tugas Pasukan"
   },
   "sent": {
     "title": "Emel yang dihantar",

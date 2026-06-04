@@ -65,7 +65,8 @@
     "adminSubscribers": "Administrator · Naročniki",
     "followups": "Opomniki",
     "contacts": "Stiki",
-    "assigned": "Dodeljeni"
+    "assigned": "Dodeljeni",
+    "myTasks": "Moje naloge"
   },
   "dashboard": {
     "expiredSubscription": "Vaša naročnina je potekla",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Skupni osnutek vklopljen",
     "draftEditing": "ureja zdaj",
     "draftSaving": "Shranjujem…",
-    "draftSaved": "Shranjeno"
+    "draftSaved": "Shranjeno",
+    "teamTasks": "Skupinske naloge"
   },
   "sent": {
     "title": "Poslane e-pošte",

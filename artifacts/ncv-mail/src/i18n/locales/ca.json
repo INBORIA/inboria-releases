@@ -65,7 +65,8 @@
     "adminSubscribers": "Admin · Subscriptors",
     "followups": "Recordatoris",
     "contacts": "Contactes",
-    "assigned": "Assignats"
+    "assigned": "Assignats",
+    "myTasks": "Les meves tasques"
   },
   "dashboard": {
     "expiredSubscription": "La vostra subscripció ha caducat",
@@ -537,7 +538,8 @@
     "sharedDraftOn": "Borrador compartit activat",
     "draftEditing": "editant ara",
     "draftSaving": "Desant…",
-    "draftSaved": "Desat"
+    "draftSaved": "Desat",
+    "teamTasks": "Tasques de l'equip"
   },
   "sent": {
     "title": "Correu electrònic enviats",
