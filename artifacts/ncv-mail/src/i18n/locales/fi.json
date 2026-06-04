@@ -1367,12 +1367,17 @@
       "f8": "Ylitys: 0,001€ / krediitti"
     },
     "essai": "Koeaika",
-    "essaiDesc": "4 500 tekoälyä varten tarjottua krediittiä Inborian kokeilemiseen",
+    "essaiDesc": "Tutustu Inboriaan ilmaiseksi — tiilimoodi mukana",
     "essaiFeatures": {
-      "f1": "4 500 tekoälyä varten tarjottua krediittiä (kertakäyttö)",
-      "f2": "3 mukautettua osiota",
-      "f3": "Sähkötuki",
-      "f4": "Bozze Inboria mukaan lukien"
+      "f1": "4 500 AI-creditsiä mukana (kertakäyttö, ei luottokorttia)",
+      "f2": "Saapuneet viestit automaattisesti lajiteltu ja priorisoitu",
+      "f3": "Luonnokset & vastaukset Inborian tuottamina",
+      "f4": "3 mukautettua kategoriaa",
+      "f5": "Yhdistä Gmail, Outlook tai IMAP",
+      "f6": "Tiilikoe: kutsu mukaan jopa 3 kollegaa",
+      "f7": "Testaa Business-ominaisuuksia: jaetut postilaatikot, tehtävien assignointi, sisäiset kommentit",
+      "f8": "Verkkosovellukset & mobiilisovellukset",
+      "f9": "Sähköpostituki"
     },
     "recommended": "Suositeltu",
     "free": "Ilmainen",

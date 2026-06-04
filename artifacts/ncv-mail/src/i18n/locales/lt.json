@@ -1367,12 +1367,17 @@
       "f8": "Viršijimas: 0,001€ / kreditas"
     },
     "essai": "Bandomasis",
-    "essaiDesc": "4 500 IA kreditų dovanų, kad atrastumėte Inboria",
+    "essaiDesc": "Atraskite Inboria nemokamai — komandos režimas įtrauktas",
     "essaiFeatures": {
-      "f1": "4 500 IA kreditų dovanų (vienkartinis naudojimas)",
-      "f2": "3 pritaikytos rubrikos",
-      "f3": "Pagalba el. paštu",
-      "f4": "Bozės Inboria įtrauktos"
+      "f1": "4,500 dirbtinio intelekto kreditų įtraukti (vienkartinis, be kredito kortelės)",
+      "f2": "Automatinis jūsų pašto dėžutės rūšiavimas ir prioritetizavimas",
+      "f3": "Juodraščiai ir atsakymai generuojami Inboria",
+      "f4": "3 pritaikytos kategorijos",
+      "f5": "Prijunkite Gmail, Outlook arba IMAP",
+      "f6": "Komandos bandomasis laikotarpis: pakvieskite iki 3 kolegų",
+      "f7": "Išbandykite Business funkcijas: bendrinamos pašto dėžutės, užduočių priskyrimas, vidiniai komentarai",
+      "f8": "Žiniatinklio ir mobiliosios programos",
+      "f9": "El. pašto palaikymas"
     },
     "recommended": "Rekomenduojama",
     "free": "Nemokamai",

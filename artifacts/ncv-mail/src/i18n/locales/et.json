@@ -1367,12 +1367,17 @@
       "f8": "Ületamine: 0,001€ / krediit"
     },
     "essai": "Katsel",
-    "essaiDesc": "4 500 IA krediiti tasuta Inboria avastamiseks",
+    "essaiDesc": "Avastage Inboria tasuta — meeskonna režiim kaasas",
     "essaiFeatures": {
-      "f1": "4 500 IA krediiti (ühekordne kasutamine)",
-      "f2": "3 kohandatud rubriiki",
-      "f3": "Tugi e-posti teel",
-      "f4": "Inboria mustandid on kaasatud"
+      "f1": "4 500 IA krediiti kaasas (ühekordne, ilma krediitkaardita)",
+      "f2": "Automaatne sortimine ja prioriseerimine Teie postkasti",
+      "f3": "Mustandid ja vastused genereeritud Inboria poolt",
+      "f4": "3 kohandatud kategooriat",
+      "f5": "Ühendage Gmail, Outlook või IMAP",
+      "f6": "Meeskonna proov: kutsuge kuni 3 kolleegi",
+      "f7": "Testige Business funktsioone: jagatud postkastid, ülesannete määramine, sisemised kommentaarid",
+      "f8": "Veebi- ja mobiilirakendused",
+      "f9": "E-posti tugi"
     },
     "recommended": "Soovitatav",
     "free": "Tasuta",

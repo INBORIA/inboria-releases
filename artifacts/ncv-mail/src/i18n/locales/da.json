@@ -1367,12 +1367,17 @@
       "f8": "Overskridelse: 0,001€ / kredit"
     },
     "essai": "Prøve",
-    "essaiDesc": "4 500 IA-kreditter givet til at opdage Inboria",
+    "essaiDesc": "Opdag Inboria gratis — teamtilstand inkluderet",
     "essaiFeatures": {
-      "f1": "4 500 IA-kreditter givet (engangsbrug)",
-      "f2": "3 tilpassede kategorier",
-      "f3": "Support via email",
-      "f4": "Inboria udkast inkluderet"
+      "f1": "4.500 AI-kreditter inkluderet (engangs, ingen kreditkort)",
+      "f2": "Automatisk sortering & prioritering af din indbakke",
+      "f3": "Udkast & svar genereret af Inboria",
+      "f4": "3 tilpassede kategorier",
+      "f5": "Forbind Gmail, Outlook eller IMAP",
+      "f6": "Teamprøve: inviter op til 3 kolleger",
+      "f7": "Test Business funktioner: delte indbakker, opgavefordeling, interne kommentarer",
+      "f8": "Web & mobilapps",
+      "f9": "E-mail support"
     },
     "recommended": "Anbefalet",
     "free": "Gratis",

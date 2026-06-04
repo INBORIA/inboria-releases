@@ -1367,12 +1367,17 @@
       "f8": "Kelebihan: 0,001€ / kredit"
     },
     "essai": "Percobaan",
-    "essaiDesc": "4 500 kredit IA gratis untuk menjelajahi Inboria",
+    "essaiDesc": "Temukan Inboria secara gratis — mode tim termasuk",
     "essaiFeatures": {
-      "f1": "4 500 kredit IA ditawarkan (penggunaan tunggal)",
-      "f2": "3 kategori kustom",
-      "f3": "Dukungan melalui email",
-      "f4": "Bozze Inboria termasuk"
+      "f1": "4.500 kredits IA termasuk (sekali pakai, tanpa kartu kredit)",
+      "f2": "Penyortiran & prioritas otomatis untuk kotak masuk Anda",
+      "f3": "Draf & balasan yang dihasilkan oleh Inboria",
+      "f4": "3 kategori kustom",
+      "f5": "Sambungkan Gmail, Outlook atau IMAP",
+      "f6": "Uji coba tim: undang hingga 3 rekan kerja",
+      "f7": "Uji fitur Business: kotak masuk bersama, penugasan tugas, komentar internal",
+      "f8": "Aplikasi web & mobile",
+      "f9": "Dukungan email"
     },
     "recommended": "Direkomendasikan",
     "free": "Gratis",

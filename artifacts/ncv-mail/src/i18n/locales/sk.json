@@ -1367,12 +1367,17 @@
       "f8": "Prekročenie: 0,001€ / kredit"
     },
     "essai": "Skúšobná verzia",
-    "essaiDesc": "4 500 kreditov IA ponúkaných na objavovanie Inboria",
+    "essaiDesc": "Objavte Inboria zadarmo — tímový režim zahrnutý",
     "essaiFeatures": {
-      "f1": "4 500 kreditov IA ponúkaných (jednorazové použitie)",
-      "f2": "3 prispôsobené sekcie",
-      "f3": "Podpora e-mailom",
-      "f4": "Návrhy Inboria vrátane"
+      "f1": "4 500 kreditov IA zahrnutých (jednorazovo, bez kreditnej karty)",
+      "f2": "Automatické triedenie a priorizácia vašej schránky",
+      "f3": "Návrhy a odpovede generované Inboria",
+      "f4": "3 vlastné rubriky",
+      "f5": "Prepojte Gmail, Outlook alebo IMAP",
+      "f6": "Tímová skúška: pozvite až 3 kolegov",
+      "f7": "Otestujte funkcie Business: zdieľané schránky, priradenie úloh, interné komentáre",
+      "f8": "Webové a mobilné aplikácie",
+      "f9": "Podpora cez email"
     },
     "recommended": "Odporúčané",
     "free": "Bezplatné",

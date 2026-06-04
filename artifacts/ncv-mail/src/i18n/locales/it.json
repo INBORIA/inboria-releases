@@ -1367,12 +1367,17 @@
       "f8": "Sovrapprezzo: 0,001€ / credito"
     },
     "essai": "Prova",
-    "essaiDesc": "4 500 crediti IA offerti per scoprire Inboria",
+    "essaiDesc": "Scopri Inboria gratuitamente — modalità team inclusa",
     "essaiFeatures": {
-      "f1": "4 500 crediti IA offerti (uso unico)",
-      "f2": "3 sezioni personalizzate",
-      "f3": "Supporto via email",
-      "f4": "Bozze Inboria incluse"
+      "f1": "4.500 crediti di intelligenza artificiale inclusi (una tantum, senza carta di credito)",
+      "f2": "Ordinamento e prioritizzazione automatica della tua casella di posta",
+      "f3": "Bozze e risposte generate da Inboria",
+      "f4": "3 categorie personalizzate",
+      "f5": "Collega Gmail, Outlook o IMAP",
+      "f6": "Prova del team: invita fino a 3 colleghi",
+      "f7": "Prova le funzionalità Business: caselle di posta condivise, assegnazione di compiti, commenti interni",
+      "f8": "App web e mobile",
+      "f9": "Supporto via email"
     },
     "recommended": "Consigliato",
     "free": "Gratuito",

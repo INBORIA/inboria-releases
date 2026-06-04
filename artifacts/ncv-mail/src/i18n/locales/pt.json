@@ -1367,12 +1367,17 @@
       "f8": "Ultrapassagem: 0,001€ / crédito"
     },
     "essai": "Teste",
-    "essaiDesc": "4 500 créditos IA oferecidos para descobrir a Inboria",
+    "essaiDesc": "Descubra Inboria gratuitamente — modo equipe incluído",
     "essaiFeatures": {
-      "f1": "4 500 créditos IA oferecidos (uso único)",
-      "f2": "3 secções personalizadas",
-      "f3": "Suporte por email",
-      "f4": "Rascunhos Inboria inclus"
+      "f1": "4.500 créditos IA incluídos (uso único, sem cartão de crédito)",
+      "f2": "Classificação e priorização automáticas da sua caixa de entrada",
+      "f3": "Rascunhos e respostas gerados pelo Inboria",
+      "f4": "3 categorias personalizadas",
+      "f5": "Conecte-se ao Gmail, Outlook ou IMAP",
+      "f6": "Teste em equipe: convide até 3 colegas",
+      "f7": "Teste as funcionalidades Business: caixas de entrada compartilhadas, atribuição de tarefas, comentários internos",
+      "f8": "Aplicativos web e mobile",
+      "f9": "Suporte por email"
     },
     "recommended": "Recomendado",
     "free": "Gratuito",

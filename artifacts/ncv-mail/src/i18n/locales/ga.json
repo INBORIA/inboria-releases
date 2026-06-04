@@ -1367,12 +1367,17 @@
       "f8": "Sárú: 0,001€ / creidmheas"
     },
     "essai": "Triail",
-    "essaiDesc": "4 500 creidmheas IA ar fáil chun Inboria a chur in aithne",
+    "essaiDesc": "Faigh Inboria saor in aisce — mód foirne san áireamh",
     "essaiFeatures": {
-      "f1": "4 500 creidmheas IA ar fáil (úsáid aon uair amháin)",
-      "f2": "3 rubrics phearsantaithe",
-      "f3": "Tacaíocht trí ríomhphost",
-      "f4": "Bozze Inboria san áireamh"
+      "f1": "4,500 creidmheas AI san áireamh (uain amháin, gan cárta creidmheasa)",
+      "f2": "Díriú & tosaíocht uathoibríoch do do bhosca isteach",
+      "f3": "Dréachtaí & freagraí a ghintear ag Inboria",
+      "f4": "3 catagóirí saincheaptha",
+      "f5": "Conneachtaí Gmail, Outlook nó IMAP",
+      "f6": "Triail foirne: cuir glaoch ar suas le 3 comhoibrithe",
+      "f7": "Tástáil gnéithe Business: bhoscaí roinnte, comhoibriú tasc, tuairimí laistigh",
+      "f8": "Aipeanna gréasáin & soghluaiste",
+      "f9": "Tacaíocht ríomhphoist"
     },
     "recommended": "Molta",
     "free": "Saor",

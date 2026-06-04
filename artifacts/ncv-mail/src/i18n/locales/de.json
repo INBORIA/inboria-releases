@@ -1377,12 +1377,17 @@
       "f8": "Überziehung: 0,001 € / Credit"
     },
     "essai": "Testversion",
-    "essaiDesc": "4 500 kostenlose KI-Credits, um Inboria zu entdecken",
+    "essaiDesc": "Entdecken Sie Inboria kostenlos – Teammodus inklusive",
     "essaiFeatures": {
-      "f1": "4 500 kostenlose KI-Credits (einmalige Nutzung)",
-      "f2": "3 benutzerdefinierte Kategorien",
-      "f3": "E-Mail-Support",
-      "f4": "Inboria-Entwürfe enthalten"
+      "f1": "4.500 KI-Credits inklusive (einmalig, keine Kreditkarte)",
+      "f2": "Automatische Sortierung & Priorisierung Ihres Posteingangs",
+      "f3": "Entwürfe & Antworten generiert von Inboria",
+      "f4": "3 benutzerdefinierte Kategorien",
+      "f5": "Verbinden Sie Gmail, Outlook oder IMAP",
+      "f6": "Team-Test: Laden Sie bis zu 3 Kollegen ein",
+      "f7": "Testen Sie Business-Funktionen: gemeinsame Postfächer, Aufgabenverteilung, interne Kommentare",
+      "f8": "Web- & mobile Apps",
+      "f9": "E-Mail-Support"
     },
     "recommended": "Empfohlen",
     "free": "Kostenlos",

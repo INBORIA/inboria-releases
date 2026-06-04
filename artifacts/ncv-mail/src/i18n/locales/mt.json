@@ -1367,12 +1367,17 @@
       "f8": "Eċċedenza: 0.001€ / kredit"
     },
     "essai": "Prova",
-    "essaiDesc": "4 500 krediti IA offruti biex tiskopri Inboria",
+    "essaiDesc": "Skopri Inboria b'xejn — modalità tat-tim inkluża",
     "essaiFeatures": {
-      "f1": "4 500 krediti IA offruti (użu uniku)",
-      "f2": "3 rubri personalizzati",
-      "f3": "Support bil-posta elettronika",
-      "f4": "Bozze Inboria inklużi"
+      "f1": "4,500 intelliġenza artifiċjali krediti inklużi (waħda, mingħajr karta ta' kreditu)",
+      "f2": "Sorti awtomatiku u priorità tal-inbox tiegħek",
+      "f3": "Bozzi u risposti ġġenerati minn Inboria",
+      "f4": "3 kategoriji personalizzati",
+      "f5": "Ikkonnettja Gmail, Outlook jew IMAP",
+      "f6": "Prova tat-tim: staqsi sa 3 kollegi",
+      "f7": "Testa karatteristiċi Business: kaxxi tal-posta maqsuma, assenjazzjoni ta' kompiti, kummenti interni",
+      "f8": "Applikazzjonijiet web u mobbli",
+      "f9": "Appoġġ bl-email"
     },
     "recommended": "Rakomandat",
     "free": "B'xejn",

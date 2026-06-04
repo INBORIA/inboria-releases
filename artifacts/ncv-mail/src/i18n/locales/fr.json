@@ -1396,12 +1396,17 @@
       "f8": "Dépassement : 0,001€ / crédit"
     },
     "essai": "Essai",
-    "essaiDesc": "4 500 crédits IA offerts pour découvrir Inboria",
+    "essaiDesc": "Découvrez Inboria gratuitement — mode équipe inclus",
     "essaiFeatures": {
-      "f1": "4 500 crédits IA offerts (usage unique)",
-      "f2": "3 rubriques personnalisées",
-      "f3": "Support par email",
-      "f4": "Brouillons Inboria inclus"
+      "f1": "4 500 crédits IA offerts (usage unique, sans carte bancaire)",
+      "f2": "Tri & priorisation automatiques de votre boîte de réception",
+      "f3": "Brouillons & réponses générés par Inboria",
+      "f4": "3 rubriques personnalisées",
+      "f5": "Connexion Gmail, Outlook ou IMAP",
+      "f6": "Essai en équipe : invitez jusqu'à 3 collègues",
+      "f7": "Testez les fonctions Business : boîtes partagées, assignation, commentaires internes",
+      "f8": "Applications web & mobile",
+      "f9": "Support par email"
     },
     "recommended": "Recommandé",
     "free": "Gratuit",

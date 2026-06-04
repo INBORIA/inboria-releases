@@ -1377,12 +1377,17 @@
       "f8": "Overschrijding: €0,001 / credit"
     },
     "essai": "Proefperiode",
-    "essaiDesc": "4 500 gratis AI-credits om Inboria te ontdekken",
+    "essaiDesc": "Ontdek Inboria gratis — teammodus inbegrepen",
     "essaiFeatures": {
-      "f1": "4 500 gratis AI-credits (eenmalig gebruik)",
-      "f2": "3 aangepaste categorieën",
-      "f3": "E-mailondersteuning",
-      "f4": "Inboria-concepten inbegrepen"
+      "f1": "4.500 AI-tegoeden inbegrepen (eenmalig, geen creditcard)",
+      "f2": "Automatische sortering en prioritering van uw inbox",
+      "f3": "Concepten en antwoorden gegenereerd door Inboria",
+      "f4": "3 aangepaste categorieën",
+      "f5": "Verbind Gmail, Outlook of IMAP",
+      "f6": "Team proef: nodig tot 3 collega's uit",
+      "f7": "Test Business functies: gedeelde inboxen, taaktoewijzing, interne opmerkingen",
+      "f8": "Web- en mobiele apps",
+      "f9": "E-mailondersteuning"
     },
     "recommended": "Aanbevolen",
     "free": "Gratis",

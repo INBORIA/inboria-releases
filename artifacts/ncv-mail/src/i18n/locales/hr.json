@@ -1367,12 +1367,17 @@
       "f8": "Prekoračenje: 0,001€ / kredit"
     },
     "essai": "Probno razdoblje",
-    "essaiDesc": "4 500 IA kredita poklon za upoznavanje s Inboria",
+    "essaiDesc": "Otkrijte Inboria besplatno — uključeni timski način",
     "essaiFeatures": {
-      "f1": "4 500 IA kredita poklon (jednokratna upotreba)",
-      "f2": "3 prilagođene rubrike",
-      "f3": "Podrška putem e-pošte",
-      "f4": "Bozze Inboria uključene"
+      "f1": "4.500 kredita IA uključeno (jednokratno, bez kreditne kartice)",
+      "f2": "Automatsko sortiranje i prioritetizacija vaše pristigle pošte",
+      "f3": "Nacrti i odgovori generirani od strane Inboria",
+      "f4": "3 prilagođene kategorije",
+      "f5": "Povežite Gmail, Outlook ili IMAP",
+      "f6": "Timsko ispitivanje: pozovite do 3 kolege",
+      "f7": "Testirajte Business značajke: dijeljene poštanske sandučiće, dodjelu zadataka, interne komentare",
+      "f8": "Web i mobilne aplikacije",
+      "f9": "Podrška putem e-pošte"
     },
     "recommended": "Preporučeno",
     "free": "Besplatno",

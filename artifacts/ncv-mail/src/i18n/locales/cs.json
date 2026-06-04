@@ -1367,12 +1367,17 @@
       "f8": "Překročení: 0,001€ / kredit"
     },
     "essai": "Zkušební verze",
-    "essaiDesc": "4 500 kreditů IA zdarma pro objevování Inboria",
+    "essaiDesc": "Objevte Inboria zdarma — týmový režim zahrnut",
     "essaiFeatures": {
-      "f1": "4 500 kreditů IA zdarma (jednorázové použití)",
-      "f2": "3 přizpůsobené rubriky",
-      "f3": "Podpora e-mailem",
-      "f4": "Bozze Inboria včetně"
+      "f1": "4 500 kreditů IA zahrnuto (jednorázově, bez kreditní karty)",
+      "f2": "Automatické třídění a prioritizace Vaší schránky",
+      "f3": "Návrhy a odpovědi generované Inboria",
+      "f4": "3 vlastní kategorie",
+      "f5": "Připojte Gmail, Outlook nebo IMAP",
+      "f6": "Týmová zkušební verze: pozvěte až 3 kolegy",
+      "f7": "Otestujte funkce Business: sdílené schránky, přiřazení úkolů, interní komentáře",
+      "f8": "Webové a mobilní aplikace",
+      "f9": "Podpora e-mailem"
     },
     "recommended": "Doporučeno",
     "free": "Zdarma",

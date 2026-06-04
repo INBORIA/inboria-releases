@@ -1367,12 +1367,17 @@
       "f8": "Excedent: 0,001€ / crèdit"
     },
     "essai": "Prova",
-    "essaiDesc": "4 500 crèdits IA oferts per descobrir Inboria",
+    "essaiDesc": "Descobriu Inboria de franc — mode equip inclòs",
     "essaiFeatures": {
-      "f1": "4 500 crèdits IA oferts (ús únic)",
-      "f2": "3 seccions personalitzades",
-      "f3": "Suport per correu electrònic",
-      "f4": "Borradors d'Inboria inclosos"
+      "f1": "4.500 crèdits d'IA inclosos (una sola vegada, sense targeta de crèdit)",
+      "f2": "Classificació i priorització automàtica de la seva safata d'entrada",
+      "f3": "Esborranys i respostes generades per Inboria",
+      "f4": "3 categories personalitzades",
+      "f5": "Connecteu Gmail, Outlook o IMAP",
+      "f6": "Prova d'equip: inviteu fins a 3 companys",
+      "f7": "Proveu les funcionalitats Business: safates d'entrada compartides, assignació de tasques, comentaris interns",
+      "f8": "Aplicacions web i mòbils",
+      "f9": "Suport per correu electrònic"
     },
     "recommended": "Recomanat",
     "free": "Gratuït",

@@ -1367,12 +1367,17 @@
       "f8": "Vượt mức: 0,001€ / tín dụng"
     },
     "essai": "Dùng thử",
-    "essaiDesc": "4 500 tín dụng IA miễn phí để khám phá Inboria",
+    "essaiDesc": "Khám phá Inboria miễn phí — bao gồm chế độ nhóm",
     "essaiFeatures": {
-      "f1": "4 500 tín dụng IA miễn phí (sử dụng một lần)",
-      "f2": "3 mục tùy chỉnh",
-      "f3": "Hỗ trợ qua email",
-      "f4": "Bozze Inboria inclus"
+      "f1": "4.500 tín dụng trí tuệ nhân tạo bao gồm (một lần, không cần thẻ tín dụng)",
+      "f2": "Sắp xếp & ưu tiên tự động hộp thư đến của Quý khách",
+      "f3": "Bản nháp & phản hồi được tạo bởi Inboria",
+      "f4": "3 danh mục tùy chỉnh",
+      "f5": "Kết nối Gmail, Outlook hoặc IMAP",
+      "f6": "Thử nghiệm nhóm: mời tối đa 3 đồng nghiệp",
+      "f7": "Kiểm tra tính năng Business: hộp thư chung, phân công nhiệm vụ, bình luận nội bộ",
+      "f8": "Ứng dụng web & di động",
+      "f9": "Hỗ trợ qua email"
     },
     "recommended": "Được khuyến nghị",
     "free": "Miễn phí",

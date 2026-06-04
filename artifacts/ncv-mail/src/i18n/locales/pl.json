@@ -1367,12 +1367,17 @@
       "f8": "Przekroczenie: 0,001€ / kredyt"
     },
     "essai": "Wersja próbna",
-    "essaiDesc": "4 500 kredytów IA oferowanych na odkrycie Inboria",
+    "essaiDesc": "Odkryj Inboria za darmo — tryb zespołowy wliczony",
     "essaiFeatures": {
-      "f1": "4 500 kredytów IA oferowanych (jednorazowe użycie)",
-      "f2": "3 spersonalizowane sekcje",
-      "f3": "Wsparcie przez e-mail",
-      "f4": "Wersje robocze Inboria wliczone"
+      "f1": "4 500 kredytów AI wliczone (jednorazowo, bez karty kredytowej)",
+      "f2": "Automatyczne sortowanie i priorytetyzacja Twojej skrzynki odbiorczej",
+      "f3": "Szkice i odpowiedzi generowane przez Inboria",
+      "f4": "3 niestandardowe kategorie",
+      "f5": "Połącz Gmail, Outlook lub IMAP",
+      "f6": "Próba zespołowa: zaproś do 3 kolegów",
+      "f7": "Testuj funkcje Business: wspólne skrzynki odbiorcze, przypisywanie zadań, komentarze wewnętrzne",
+      "f8": "Aplikacje internetowe i mobilne",
+      "f9": "Wsparcie e-mailowe"
     },
     "recommended": "Zalecane",
     "free": "Darmowe",

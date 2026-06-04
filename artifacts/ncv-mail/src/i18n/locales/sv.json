@@ -1367,12 +1367,17 @@
       "f8": "Överskridande: 0,001€ / kredit"
     },
     "essai": "Provperiod",
-    "essaiDesc": "4 500 AI-krediter erbjuds för att upptäcka Inboria",
+    "essaiDesc": "Upptäck Inboria gratis — teamläge ingår",
     "essaiFeatures": {
-      "f1": "4 500 AI-krediter erbjuds (engångsanvändning)",
-      "f2": "3 anpassade rubriker",
-      "f3": "E-postsupport",
-      "f4": "Bozze Inboria inkluderade"
+      "f1": "4 500 AI-krediter ingår (engångs, inget kreditkort)",
+      "f2": "Automatisk sortering och prioritering av din inkorg",
+      "f3": "Utkast och svar genererade av Inboria",
+      "f4": "3 anpassade kategorier",
+      "f5": "Anslut Gmail, Outlook eller IMAP",
+      "f6": "Teamprov: bjud in upp till 3 kollegor",
+      "f7": "Testa Business-funktioner: delade inkorgar, uppgiftsfördelning, interna kommentarer",
+      "f8": "Webb- och mobilappar",
+      "f9": "E-postsupport"
     },
     "recommended": "Rekommenderad",
     "free": "Gratis",

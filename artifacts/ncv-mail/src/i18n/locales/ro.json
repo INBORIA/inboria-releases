@@ -1367,12 +1367,17 @@
       "f8": "Depășire: 0,001€ / credit"
     },
     "essai": "Încercare",
-    "essaiDesc": "4 500 de credite IA oferite pentru a descoperi Inboria",
+    "essaiDesc": "Descoperiți Inboria gratuit — modul echipă inclus",
     "essaiFeatures": {
-      "f1": "4 500 de credite IA oferite (utilizare unică)",
-      "f2": "3 rubrici personalizate",
-      "f3": "Suport prin email",
-      "f4": "Bozze Inboria incluse"
+      "f1": "4.500 credite AI incluse (o singură dată, fără card de credit)",
+      "f2": "Sortare și prioritizare automată a căsuței dumneavoastră de email",
+      "f3": "Schițe și răspunsuri generate de Inboria",
+      "f4": "3 categorii personalizate",
+      "f5": "Conectați Gmail, Outlook sau IMAP",
+      "f6": "Perioadă de probă pentru echipă: invitați până la 3 colegi",
+      "f7": "Testați funcționalitățile Business: căsuțe de email partajate, atribuirea sarcinilor, comentarii interne",
+      "f8": "Aplicații web și mobile",
+      "f9": "Asistență prin email"
     },
     "recommended": "Recomandat",
     "free": "Gratuit",

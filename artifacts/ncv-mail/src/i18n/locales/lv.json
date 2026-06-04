@@ -1367,12 +1367,17 @@
       "f8": "Pārsniegšana: 0,001€ / kredīts"
     },
     "essai": "Mēģinājums",
-    "essaiDesc": "4 500 IA kredīti, lai iepazītos ar Inboria",
+    "essaiDesc": "Atklājiet Inboria bez maksas — komandas režīms iekļauts",
     "essaiFeatures": {
-      "f1": "4 500 IA kredīti (vienreizējs lietojums)",
-      "f2": "3 pielāgotas sadaļas",
-      "f3": "Atbalsts pa e-pastu",
-      "f4": "Mērķi Inboria iekļauti"
+      "f1": "4 500 kredīti IA iekļauti (vienreizējs, bez kredītkartes)",
+      "f2": "Automātiska jūsu iesūtnes šķirošana un prioritizācija",
+      "f3": "Melnraksti un atbildes, ko ģenerē Inboria",
+      "f4": "3 pielāgotas kategorijas",
+      "f5": "Savienojiet Gmail, Outlook vai IMAP",
+      "f6": "Komandas izmēģinājums: aiciniet līdz 3 kolēģiem",
+      "f7": "Pārbaudiet Business funkcijas: koplietotās iesūtņu kastes, uzdevumu piešķiršana, iekšējie komentāri",
+      "f8": "Tīmekļa un mobilās lietotnes",
+      "f9": "Atbalsts pa e-pastu"
     },
     "recommended": "Ieteikts",
     "free": "Bezmaksas",

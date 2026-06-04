@@ -1367,12 +1367,17 @@
       "f8": "Aşım: 0,001€ / kredi"
     },
     "essai": "Deneme",
-    "essaiDesc": "Inboria'yı keşfetmek için 4 500 IA kredisi hediye",
+    "essaiDesc": "Inboria'yı ücretsiz keşfedin — ekip modu dahil",
     "essaiFeatures": {
-      "f1": "4 500 IA kredisi hediye (tek kullanım)",
-      "f2": "3 özel bölüm",
-      "f3": "E-posta desteği",
-      "f4": "Inboria Taslakları dahil"
+      "f1": "4.500 AI kredisi dahil (tek seferlik, kredi kartı yok)",
+      "f2": "Gelen kutunuzun otomatik sıralaması ve önceliklendirilmesi",
+      "f3": "Inboria tarafından oluşturulan taslaklar ve yanıtlar",
+      "f4": "3 özel kategori",
+      "f5": "Gmail, Outlook veya IMAP ile bağlanın",
+      "f6": "Ekip denemesi: 3 meslektaşınızı davet edin",
+      "f7": "Business özelliklerini test edin: paylaşılan gelen kutuları, görev atama, iç yorumlar",
+      "f8": "Web ve mobil uygulamalar",
+      "f9": "E-posta desteği"
     },
     "recommended": "Tavsiye edilen",
     "free": "Ücretsiz",

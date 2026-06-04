@@ -1367,12 +1367,17 @@
       "f8": "Túllépés: 0,001€ / kredit"
     },
     "essai": "Próba",
-    "essaiDesc": "4 500 ingyenes IA kredit az Inboria felfedezéséhez",
+    "essaiDesc": "Fedezze fel az Inboria-t ingyen — csapatmód beleértve",
     "essaiFeatures": {
-      "f1": "4 500 ingyenes IA kredit (egyszeri használatra)",
-      "f2": "3 testreszabott szakasz",
-      "f3": "Email támogatás",
-      "f4": "Inboria bozze benne"
+      "f1": "4 500 AI kreditet tartalmaz (egyszeri, nincs szükség bankkártyára)",
+      "f2": "Automatikus rendezés és priorizálás a beérkező levelek között",
+      "f3": "Borravázlatok és válaszok generálva az Inboria által",
+      "f4": "3 egyedi kategória",
+      "f5": "Kapcsolódjon a Gmail, Outlook vagy IMAP-hoz",
+      "f6": "Csapatpróba: hívjon meg legfeljebb 3 kollégát",
+      "f7": "Próbálja ki a Business funkciókat: megosztott leveleződobozok, feladatkiosztás, belső megjegyzések",
+      "f8": "Web- és mobilalkalmazások",
+      "f9": "Email támogatás"
     },
     "recommended": "Ajánlott",
     "free": "Ingyenes",
