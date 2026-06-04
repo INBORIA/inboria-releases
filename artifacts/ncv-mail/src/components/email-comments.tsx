@@ -216,6 +216,7 @@ export function EmailComments({
       setRecipients(new Set());
       setRecipientFilter("");
       invalidate();
+      broadcastComment();
     } catch (e: any) {
       toast({ title: e?.message || t("common.error"), variant: "destructive" });
     } finally {
@@ -230,6 +231,7 @@ export function EmailComments({
       setEditingId(null);
       setEditingText("");
       invalidate();
+      broadcastComment();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
@@ -239,6 +241,7 @@ export function EmailComments({
     try {
       await deleteComment.mutateAsync({ emailId, commentId });
       invalidate();
+      broadcastComment();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
@@ -313,6 +316,13 @@ export function EmailComments({
           [uid]: { name: payload.name || "…", until: Date.now() + 4000 },
         }));
       })
+      .on("broadcast", { event: "comment" }, ({ payload }: any) => {
+        // Un coéquipier a ajouté / modifié / supprimé un message dans ce fil.
+        // On rafraîchit l'historique pour l'afficher en temps réel, sans
+        // que l'utilisateur ait à recharger la page.
+        if (payload?.by === currentUserId) return;
+        queryClient.invalidateQueries({ queryKey: getGetEmailCommentsQueryKey(emailId) });
+      })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track({ userId: currentUserId, name: myName, color } satisfies Presence);
@@ -354,6 +364,15 @@ export function EmailComments({
       event: "typing",
       payload: { userId: currentUserId, name: myNameRef.current },
     }).catch(() => {});
+  }
+
+  // Prévenir en temps réel les autres personnes qui regardent ce mail qu'un
+  // message vient d'être ajouté / modifié / supprimé, pour qu'elles
+  // rafraîchissent leur fil sans recharger la page.
+  function broadcastComment() {
+    channelRef.current
+      ?.send({ type: "broadcast", event: "comment", payload: { by: currentUserId } })
+      .catch(() => {});
   }
 
   const otherViewers = presence.filter((p) => p.userId !== currentUserId);
