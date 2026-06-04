@@ -51,3 +51,13 @@ not by tokenizing everything. New code adds hexes the overlay never learned abou
   `<html>`), so within the dashboard light mode applies app-wide.
 - Radix `AlertDialog` does NOT close on outside-click (only Escape + its buttons),
   so an unreadable cancel button feels like "can't close it".
+
+## Gotcha: shadcn `outline` variant is invisible in light mode
+The `outline` Button variant (components/ui/button.tsx) has NO own text/bg color — it
+inherits the surrounding text color and only sets a border via `--button-outline`. In
+dark mode the inherited text is light → visible; in light mode text+border blend into
+the light background → the button disappears.
+**Fix pattern (theme-safe):** for an accent action button, set explicit `text-primary
+border-primary/40 hover:bg-primary/10 hover:text-primary` instead of relying on `outline`.
+`--primary` (brand blue) is intentionally identical in light & dark, so it stays visible
+in both. Example already in code: the "C'est moi qui envoie" button next to the shared-draft toggle.
