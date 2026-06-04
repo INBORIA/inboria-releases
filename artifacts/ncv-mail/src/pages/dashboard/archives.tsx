@@ -5,7 +5,7 @@ import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
-import { removeEmailOptimistic } from "@/lib/optimistic-email";
+import { removeEmailOptimistic, patchEmailOptimistic } from "@/lib/optimistic-email";
 import {
   useListEmails,
   useListCategories,
@@ -366,10 +366,15 @@ export default function Archives() {
     const email = archivedEmails.find((e: any) => e.id === id) as any;
     const isUnread = email?.status === "non_lu" || email?.isRead === false || email?.unread === true;
     const newStatus = isUnread ? "read" : "non_lu";
+    const rollback = patchEmailOptimistic(queryClient, id, { status: newStatus, isRead: isUnread, unread: !isUnread });
     updateEmail.mutate({ id, data: { status: newStatus } as any }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
         toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+      },
+      onError: (e: any) => {
+        rollback();
+        toast({ variant: "destructive", title: t("common.error"), description: e?.message });
       },
     });
   };
@@ -386,8 +391,10 @@ export default function Archives() {
   };
 
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    const rollback = patchEmailOptimistic(queryClient, id, { categoryId, categoryName });
     updateEmail.mutate({ id, data: { categoryId } as any }, {
       onSuccess: () => { invalidateAll(); toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName }); },
+      onError: (e: any) => { rollback(); toast({ variant: "destructive", title: t("common.error"), description: e?.message }); },
     });
   };
 

@@ -4,7 +4,7 @@ import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
-import { removeEmailOptimistic } from "@/lib/optimistic-email";
+import { removeEmailOptimistic, patchEmailOptimistic } from "@/lib/optimistic-email";
 import {
   useListFolders,
   useCreateFolder,
@@ -345,12 +345,17 @@ export default function MesDossiers() {
     const email = folderEmails.find((e: any) => e.id === id);
     const isUnread = email?.status === "non_lu";
     const newStatus = isUnread ? "read" : "non_lu";
+    const rollback = patchEmailOptimistic(qc, id, { status: newStatus, isRead: isUnread, unread: !isUnread });
     updateEmail.mutate(
       { id, data: { status: newStatus } as any },
       {
         onSuccess: () => {
           invalidateFolderEmails();
           toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+        onError: (e: any) => {
+          rollback();
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message });
         },
       },
     );
@@ -390,10 +395,12 @@ export default function MesDossiers() {
     );
   };
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    const rollback = patchEmailOptimistic(qc, id, { categoryId, categoryName });
     updateEmail.mutate(
       { id, data: { categoryId } as any },
       {
         onSuccess: () => { invalidateFolderEmails(); toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName }); },
+        onError: (e: any) => { rollback(); toast({ variant: "destructive", title: t("common.error"), description: e?.message }); },
       },
     );
   };
