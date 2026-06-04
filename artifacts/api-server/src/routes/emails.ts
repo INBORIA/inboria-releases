@@ -535,6 +535,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         recipient: e.recipient || null,
         assignedTo: e.assigned_to || null,
         assignedAt: e.assigned_at || null,
+        sharedMailboxId: e.shared_mailbox_id || null,
         spamSource: e.spam_source || null,
         snoozedUntil: e.snoozed_until || null,
         sentAt: e.sent_at || null,
