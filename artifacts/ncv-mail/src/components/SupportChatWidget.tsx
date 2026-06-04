@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { HelpCircle, Send, X, Loader2, Bot, User, MessageCircleQuestion } from "lucide-react";
+import { HelpCircle, Send, X, Loader2, Bot, User, MessageCircleQuestion, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
@@ -132,13 +132,27 @@ export function SupportChatWidget() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-[#b8c5d6] hover:text-white transition-colors p-1 rounded-md hover:bg-white/[0.06]"
-                aria-label={t("common.close", "Fermer")}
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                {messages.length > 0 && (
+                  <button
+                    onClick={() => setMessages([])}
+                    disabled={isLoading}
+                    className="text-[#b8c5d6] hover:text-white transition-colors p-1 rounded-md hover:bg-white/[0.06] disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={t("supportChat.clear", "Effacer la conversation")}
+                    aria-label={t("supportChat.clear", "Effacer la conversation")}
+                    data-testid="support-chat-clear"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-[#b8c5d6] hover:text-white transition-colors p-1 rounded-md hover:bg-white/[0.06]"
+                  aria-label={t("common.close", "Fermer")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
