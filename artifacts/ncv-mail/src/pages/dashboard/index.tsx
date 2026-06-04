@@ -142,6 +142,49 @@ function clearPendingEmailId(): void {
   }
 }
 
+// Persiste le mail actuellement ouvert pour survivre aux REMONTAGES du Dashboard
+// provoqués par les évènements d'auth Supabase (rafraîchissement / « vol » de
+// verrou gotrue — fréquents en boîte partagée où plusieurs canaux temps réel sont
+// actifs : présence, brouillon partagé, commentaires). Sans ça, un remontage
+// réinitialise selectedEmailId à null → le mail ouvert se ferme « tout seul »
+// quelques secondes après l'ouverture. Distinct de pendingEmailId (lien profond,
+// effacé dès le détail chargé) : cette clé reste tant que le mail est ouvert.
+// sessionStorage = portée onglet (effacé à la fermeture). Garde-fou 12 h.
+function persistOpenEmailId(id: number | null): void {
+  try {
+    if (typeof window === "undefined") return;
+    if (id && id > 0) {
+      window.sessionStorage.setItem(
+        "inboria.openEmailId",
+        JSON.stringify({ id, ts: Date.now() }),
+      );
+    } else {
+      window.sessionStorage.removeItem("inboria.openEmailId");
+    }
+  } catch {
+    /* noop */
+  }
+}
+
+function peekOpenEmailId(): number | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = window.sessionStorage.getItem("inboria.openEmailId");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { id?: number; ts?: number };
+    const id = Number(parsed?.id);
+    const ts = Number(parsed?.ts);
+    if (!Number.isFinite(id) || id <= 0) return null;
+    if (Number.isFinite(ts) && Date.now() - ts > 43_200_000) {
+      window.sessionStorage.removeItem("inboria.openEmailId");
+      return null;
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 // Identifiants bruts du mail à ouvrir, transmis par les ponts (extension/add-in/
 // add-on) quand ceux-ci n'ont PAS pu résoudre l'emailId eux-mêmes (jeton expiré
 // → 401). L'app, elle, est authentifiée et fait la résolution. Capturés au boot
@@ -3205,7 +3248,8 @@ export default function Dashboard() {
     if (Number.isFinite(num) && num > 0) return num;
     // Deep-link « Ouvrir dans Inboria » dont l'URL a perdu le ?emailId pendant
     // la danse d'authentification (capturé tôt dans main.tsx) : on le restaure.
-    return peekPendingEmailId();
+    // À défaut, on restaure le dernier mail ouvert (survie aux remontages auth).
+    return peekPendingEmailId() ?? peekOpenEmailId();
   });
   const [assigneeFilter, setAssigneeFilter] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
@@ -3255,6 +3299,12 @@ export default function Dashboard() {
       if (pending) setSelectedEmailId(pending);
     }
   }, [searchString, routeLocation]);
+  // Persiste le mail ouvert pour qu'il survive aux remontages du Dashboard
+  // provoqués par les évènements d'auth Supabase (cf. persistOpenEmailId). Écrit
+  // l'id à l'ouverture, l'efface à la fermeture (selectedEmailId = null).
+  useEffect(() => {
+    persistOpenEmailId(selectedEmailId);
+  }, [selectedEmailId]);
   // Canal direct : Inboria chat émet "inboria-open-mail" pour ouvrir un
   // mail sans dépendre de la propagation des query strings par wouter.
   useEffect(() => {
@@ -4407,11 +4457,16 @@ export default function Dashboard() {
       const { supabase } = await import("@/lib/supabase");
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      if (!token) return null;
+      // IMPORTANT : on LÈVE une erreur (au lieu de retourner null) sur un échec
+      // passager (jeton momentanément indisponible à cause d'une contention du
+      // verrou gotrue, ou réponse non-ok). React Query CONSERVE alors la dernière
+      // donnée valide → le mail ouvert ne se vide pas « tout seul ». Retourner
+      // null écraserait le cache et fermerait le mail.
+      if (!token) throw new Error("email-detail:no-session");
       const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${selectedEmailId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!resp.ok) return null;
+      if (!resp.ok) throw new Error(`email-detail:${resp.status}`);
       return resp.json();
     },
     enabled: !!selectedEmailId,
