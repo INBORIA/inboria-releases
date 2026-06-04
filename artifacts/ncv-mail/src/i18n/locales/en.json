@@ -1475,6 +1475,16 @@
       "tryFree": "Try for free"
     },
     "features": {
+      "commandPalette": "Command palette (Cmd+K)",
+      "commandPaletteDesc": "Press Cmd+K to run any action or jump anywhere in Inboria — without ever leaving the keyboard.",
+      "autoAdvance": "Auto-advance",
+      "autoAdvanceDesc": "After you archive, snooze or delete an email, Inboria automatically opens the next one. Fly through your inbox with zero extra clicks.",
+      "keyboardNav": "Full keyboard navigation",
+      "keyboardNavDesc": "\"Go to\" shortcuts (Inbox, Sent, Tasks…) plus keyboard multi-select. Process your email at the speed of thought.",
+      "sharedDrafts": "Shared drafts",
+      "sharedDraftsDesc": "Write a reply together, in real time, on a shared mailbox. Everyone sees who's typing, and a single teammate takes over to send.",
+      "collisionAlert": "Collision alert",
+      "collisionAlertDesc": "Inboria warns you when a teammate is already replying to the same client. No more duplicate answers or team mix-ups.",
       "heroTitle": "Everything you need to take back control of your emails",
       "heroDesc": "Inboria sorts, summarizes and drafts replies to your emails. You review and send.",
       "smartSort": "Smart sorting by categories",

@@ -1438,6 +1438,16 @@
       "tryFree": "免费试用"
     },
     "features": {
+      "commandPalette": "命令面板 (Cmd+K)",
+      "commandPaletteDesc": "请按 Cmd+K 执行任何操作或跳转到 Inboria 的任何位置——无需离开键盘。",
+      "autoAdvance": "自动推进",
+      "autoAdvanceDesc": "在您归档、延迟或删除电子邮件后，Inboria 会自动打开下一封邮件。以零额外点击快速浏览您的收件箱。",
+      "keyboardNav": "完整键盘导航",
+      "keyboardNavDesc": "\"前往\" 快捷键（收件箱、已发送、任务等）以及键盘多选。以思维的速度处理您的电子邮件。",
+      "sharedDrafts": "共享草稿",
+      "sharedDraftsDesc": "在共享邮箱中实时共同撰写回复。每个人都能看到谁在输入，单个团队成员负责发送。",
+      "collisionAlert": "冲突警报",
+      "collisionAlertDesc": "当团队成员已在回复同一客户时，Inboria 会提醒您。再也不会出现重复回答或团队混淆的情况。",
       "heroTitle": "您需要的一切，以重新掌控您的邮件",
       "heroDesc": "Inboria 对您的邮件进行分类、摘要并准备回复草稿。您只需审核并发送。",
       "smartSort": "智能分类",

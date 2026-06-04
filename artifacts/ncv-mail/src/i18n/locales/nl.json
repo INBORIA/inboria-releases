@@ -1448,6 +1448,16 @@
       "tryFree": "Gratis proberen"
     },
     "features": {
+      "commandPalette": "Opdrachtpalet (Cmd+K)",
+      "commandPaletteDesc": "Druk op Cmd+K om een actie uit te voeren of ergens in Inboria naartoe te springen — zonder ooit van het toetsenbord te hoeven gaan.",
+      "autoAdvance": "Automatisch doorgaan",
+      "autoAdvanceDesc": "Nadat u een e-mail archiveert, snooze of verwijdert, opent Inboria automatisch de volgende. Vlieg door uw inbox zonder extra klikken.",
+      "keyboardNav": "Volledige toetsenbordnavigatie",
+      "keyboardNavDesc": "\"Ga naar\" sneltoetsen (Inbox, Verzonden, Taken…) plus toetsenbord multi-selectie. Verwerk uw e-mail met de snelheid van uw gedachten.",
+      "sharedDrafts": "Gedeelde concepten",
+      "sharedDraftsDesc": "Schrijf samen een antwoord, in real-time, op een gedeelde mailbox. Iedereen ziet wie typt, en een enkele teamgenoot neemt het over om te verzenden.",
+      "collisionAlert": "Botsingswaarschuwing",
+      "collisionAlertDesc": "Inboria waarschuwt u wanneer een teamgenoot al op dezelfde klant antwoordgeeft. Geen dubbele antwoorden of verwarring binnen het team meer.",
       "heroTitle": "Alles wat u nodig heeft om de controle over uw e-mails terug te nemen",
       "heroDesc": "Inboria sorteert, vat samen en bereidt conceptantwoorden op uw e-mails voor. U beoordeelt en verstuurt.",
       "smartSort": "Slim sorteren op categorie",

@@ -1438,6 +1438,16 @@
       "tryFree": "Provar gratuïtament"
     },
     "features": {
+      "commandPalette": "Paleta de comandes (Cmd+K)",
+      "commandPaletteDesc": "Prem Cmd+K per executar qualsevol acció o saltar a qualsevol lloc a Inboria — sense mai deixar el teclat.",
+      "autoAdvance": "Avanç automàtic",
+      "autoAdvanceDesc": "Després d'archivar, ajornar o suprimir un correu electrònic, Inboria obre automàticament el següent. Voleu a través de la vostra safata d'entrada sense clics addicionals.",
+      "keyboardNav": "Navegació completa amb teclat",
+      "keyboardNavDesc": "\"Vés a\" drecers (Safata d'entrada, Enviats, Tasques…) més selecció múltiple amb teclat. Processeu els vostres correus electrònics a la velocitat del pensament.",
+      "sharedDrafts": "Esborranys compartits",
+      "sharedDraftsDesc": "Escriviu una resposta junts, en temps real, en un correu electrònic compartit. Tothom veu qui està escrivint, i un sol company s'encarrega d'enviar.",
+      "collisionAlert": "Alerta de col·lisió",
+      "collisionAlertDesc": "Inboria us avisa quan un company ja està responent al mateix client. No més respostes duplicades ni confusions entre l'equip.",
       "heroTitle": "Tot el que necessiteu per recuperar el control dels vostres correus electrònics",
       "heroDesc": "Inboria classifica, resumeix i prepara borradors de resposta als vostres correus electrònics. Vostè revisa i envia.",
       "smartSort": "Classificació intel·ligent per categories",

@@ -1438,6 +1438,16 @@
       "tryFree": "Ücretsiz deneyin"
     },
     "features": {
+      "commandPalette": "Komut paleti (Cmd+K)",
+      "commandPaletteDesc": "Herhangi bir eylemi gerçekleştirmek veya Inboria'da istediğiniz yere gitmek için Cmd+K tuşuna basın — klavyeden ayrılmadan.",
+      "autoAdvance": "Otomatik ilerleme",
+      "autoAdvanceDesc": "Bir e-postayı arşivledikten, erteledikten veya sildikten sonra, Inboria otomatik olarak bir sonraki e-postayı açar. Gelen kutunuzda ekstra tıklama olmadan hızlıca ilerleyin.",
+      "keyboardNav": "Tam klavye navigasyonu",
+      "keyboardNavDesc": "\"Git\" kısayolları (Gelen Kutusu, Gönderilenler, Görevler…) ve klavye çoklu seçim. E-postalarınızı düşünce hızında işleyin.",
+      "sharedDrafts": "Paylaşılan taslaklar",
+      "sharedDraftsDesc": "Birlikte, gerçek zamanlı olarak, paylaşılan bir posta kutusunda yanıt yazın. Herkes kimin yazdığını görür ve bir takım arkadaşı gönderimi üstlenir.",
+      "collisionAlert": "Çakışma uyarısı",
+      "collisionAlertDesc": "Inboria, bir takım arkadaşınızın aynı müşteriye zaten yanıt verdiğinde sizi uyarır. Artık tekrar eden yanıtlar veya takım karışıklıkları yok.",
       "heroTitle": "E-postalarınızı kontrol altına almak için ihtiyaç duyduğunuz her şey",
       "heroDesc": "Inboria, e-postalarınızı sıralar, özetler ve yanıt taslakları hazırlar. Siz sadece gözden geçirip gönderirsiniz.",
       "smartSort": "Kategorilere göre akıllı sıralama",

@@ -1438,6 +1438,16 @@
       "tryFree": "Ipprova b'xejn"
     },
     "features": {
+      "commandPalette": "Paletta tal-kmand (Cmd+K)",
+      "commandPaletteDesc": "Agħfas Cmd+K biex twettaq kwalunkwe azzjoni jew tiċċaqlaq kullimkien f'Inboria — mingħajr ma titlaq mill-keyboard.",
+      "autoAdvance": "Avvanz awtomatiku",
+      "autoAdvanceDesc": "Wara li tarchiva, tissnuzza jew tħassar email, Inboria awtomatikament tiftaħ l-oħra. Iċċaqlaq mal-inbox tiegħek b'ħafna inqas klikkijiet.",
+      "keyboardNav": "Navigazzjoni sħiħa tal-keyboard",
+      "keyboardNavDesc": "\"Mur għal\" shortcuts (Inbox, Sent, Tasks…) flimkien ma' multi-selezzjoni tal-keyboard. Ipproċessa l-email tiegħek bil-veloċità ta' ħsieb.",
+      "sharedDrafts": "Bozzi maqsuma",
+      "sharedDraftsDesc": "Ikteb risposta flimkien, f'ħin reali, fuq mailbox maqsuma. Kulħadd jarah min qed jikteb, u membru wieħed jieħu ħsieb li jibgħat.",
+      "collisionAlert": "Avviż ta' kolliżjoni",
+      "collisionAlertDesc": "Inboria twiegħed li int meta membru tat-tim diġà qed jirrispondi lill-istess klijent. Ebda aktar risposti duplicati jew konfużjoni tat-tim.",
       "heroTitle": "Kollox li għandek bżonn biex terġa' tieħu kontroll fuq l-emails Tagħkom",
       "heroDesc": "Inboria tordna, tissomma u tipprepara bozze ta' tweġibiet għall-emails Tagħkom. Inti tirrevedi u tibgħat.",
       "smartSort": "Ordna intelliġenti skont il-kategoriji",

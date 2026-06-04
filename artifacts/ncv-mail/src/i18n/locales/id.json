@@ -1438,6 +1438,16 @@
       "tryFree": "Coba gratis"
     },
     "features": {
+      "commandPalette": "Palet perintah (Cmd+K)",
+      "commandPaletteDesc": "Tekan Cmd+K untuk menjalankan tindakan apa pun atau melompat ke mana saja di Inboria — tanpa pernah meninggalkan keyboard.",
+      "autoAdvance": "Peningkatan otomatis",
+      "autoAdvanceDesc": "Setelah Anda mengarsipkan, menunda, atau menghapus email, Inboria secara otomatis membuka email berikutnya. Meluncur melalui kotak masuk Anda tanpa klik tambahan.",
+      "keyboardNav": "Navigasi keyboard penuh",
+      "keyboardNavDesc": "Shortcut \"Pergi ke\" (Kotak Masuk, Terkirim, Tugas…) ditambah multi-pilih keyboard. Proses email Anda secepat pikiran.",
+      "sharedDrafts": "Draf bersama",
+      "sharedDraftsDesc": "Tulis balasan bersama, secara real-time, di kotak surat bersama. Semua orang dapat melihat siapa yang sedang mengetik, dan satu rekan tim mengambil alih untuk mengirim.",
+      "collisionAlert": "Peringatan tabrakan",
+      "collisionAlertDesc": "Inboria memperingatkan Anda ketika seorang rekan tim sudah membalas klien yang sama. Tidak ada lagi jawaban duplikat atau kebingungan tim.",
       "heroTitle": "Semua yang Anda butuhkan untuk mengambil kembali kendali atas email Anda",
       "heroDesc": "Inboria mengurutkan, merangkum, dan menyiapkan draf balasan untuk email Anda. Anda hanya perlu meninjau dan mengirim.",
       "smartSort": "Pengurutan cerdas berdasarkan kategori",

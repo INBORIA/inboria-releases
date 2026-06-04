@@ -1448,6 +1448,16 @@
       "tryFree": "Kostenlos ausprobieren"
     },
     "features": {
+      "commandPalette": "Befehlspalette (Cmd+K)",
+      "commandPaletteDesc": "Drücken Sie Cmd+K, um eine Aktion auszuführen oder überall in Inboria zu springen – ohne jemals die Tastatur zu verlassen.",
+      "autoAdvance": "Automatisches Voranschreiten",
+      "autoAdvanceDesc": "Nachdem Sie eine E-Mail archiviert, aufgeschoben oder gelöscht haben, öffnet Inboria automatisch die nächste. Fliegen Sie durch Ihren Posteingang ohne zusätzliche Klicks.",
+      "keyboardNav": "Vollständige Tastaturnavigation",
+      "keyboardNavDesc": "\"Gehe zu\"-Tastenkombinationen (Posteingang, Gesendet, Aufgaben…) plus Tastatur-Multi-Select. Bearbeiten Sie Ihre E-Mails im Gedankenfluss.",
+      "sharedDrafts": "Gemeinsame Entwürfe",
+      "sharedDraftsDesc": "Verfassen Sie gemeinsam in Echtzeit eine Antwort in einem gemeinsamen Postfach. Jeder sieht, wer tippt, und ein einzelnes Teammitglied übernimmt das Senden.",
+      "collisionAlert": "Kollisionswarnung",
+      "collisionAlertDesc": "Inboria warnt Sie, wenn ein Teamkollege bereits auf denselben Kunden antwortet. Keine doppelten Antworten oder Verwirrung im Team mehr.",
       "heroTitle": "Alles, was Sie brauchen, um die Kontrolle über Ihre E-Mails zurückzugewinnen",
       "heroDesc": "Inboria sortiert, fasst zusammen und bereitet Antwortentwürfe für Ihre E-Mails vor. Sie prüfen und senden.",
       "smartSort": "Intelligente Sortierung nach Kategorien",

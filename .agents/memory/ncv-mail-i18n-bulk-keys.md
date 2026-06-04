@@ -28,3 +28,9 @@ To add new keys (e.g. a new marketing page) in every language:
 Targeted splice after the parent open-brace is clean and re-runnable.
 **How to apply:** any time the user asks to add UI/marketing copy that must exist in all 43 langs.
 The sandbox (`code_execution`) has NO `process.env`; run the translation script via bash instead.
+
+## Ops note: OpenAI batch script gets killed after ~10 langs in this env
+The bash tool kills a long Node script (41 sequential OpenAI calls) after ~10 languages
+(exit -1, no output). Make the inject step write per-language AND idempotent (skip files
+already containing the new key), then just re-run the same script 3-4× until all 43 files
+contain the key. Validate every locale with JSON.parse afterward.

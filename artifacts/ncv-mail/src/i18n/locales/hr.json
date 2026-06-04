@@ -1438,6 +1438,16 @@
       "tryFree": "Isprobajte besplatno"
     },
     "features": {
+      "commandPalette": "Paleta naredbi (Cmd+K)",
+      "commandPaletteDesc": "Pritisnite Cmd+K za pokretanje bilo koje radnje ili skakanje bilo gdje u Inboriji — bez napuštanja tipkovnice.",
+      "autoAdvance": "Automatsko napredovanje",
+      "autoAdvanceDesc": "Nakon što arhivirate, odgodite ili izbrišete e-mail, Inboria automatski otvara sljedeći. Prolazite kroz svoju pristiglu poštu bez dodatnih klikova.",
+      "keyboardNav": "Potpuna navigacija tipkovnicom",
+      "keyboardNavDesc": "\"Idi na\" prečaci (Pristigla pošta, Poslano, Zadatci…) plus višestruko odabiranje tipkovnicom. Obradite svoje e-mailove brzinom misli.",
+      "sharedDrafts": "Zajednički nacrti",
+      "sharedDraftsDesc": "Zajedno pišite odgovor, u stvarnom vremenu, na zajedničkoj pošti. Svi vide tko tipka, a jedan član tima preuzima slanje.",
+      "collisionAlert": "Upozorenje o sukobu",
+      "collisionAlertDesc": "Inboria Vas upozorava kada član tima već odgovara istom klijentu. Nema više dupliciranih odgovora ili zabuna u timu.",
       "heroTitle": "Sve što Vam je potrebno za ponovno preuzimanje kontrole nad Vašim e-poštama",
       "heroDesc": "Inboria razvrstava, sažima i priprema boze odgovora na Vaše e-pošte. Vi ih pregledavate i šaljete.",
       "smartSort": "Pametno razvrstavanje po kategorijama",

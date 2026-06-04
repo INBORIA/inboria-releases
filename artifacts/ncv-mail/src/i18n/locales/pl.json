@@ -1438,6 +1438,16 @@
       "tryFree": "Wypróbuj za darmo"
     },
     "features": {
+      "commandPalette": "Paleta poleceń (Cmd+K)",
+      "commandPaletteDesc": "Naciśnij Cmd+K, aby wykonać dowolną akcję lub przejść wszędzie w Inboria — bez opuszczania klawiatury.",
+      "autoAdvance": "Automatyczne przechodzenie",
+      "autoAdvanceDesc": "Po zarchiwizowaniu, odłożeniu lub usunięciu wiadomości, Inboria automatycznie otwiera następną. Przemieszczaj się po swojej skrzynce odbiorczej bez dodatkowych kliknięć.",
+      "keyboardNav": "Pełna nawigacja klawiaturowa",
+      "keyboardNavDesc": "Skróty „Przejdź do” (Skrzynka odbiorcza, Wysłane, Zadania…) oraz wielokrotne zaznaczanie za pomocą klawiatury. Przetwarzaj swoje e-maile z prędkością myśli.",
+      "sharedDrafts": "Wspólne szkice",
+      "sharedDraftsDesc": "Pisanie odpowiedzi razem, w czasie rzeczywistym, na wspólnym koncie e-mailowym. Wszyscy widzą, kto pisze, a jeden z członków zespołu przejmuje, aby wysłać.",
+      "collisionAlert": "Powiadomienie o kolizji",
+      "collisionAlertDesc": "Inboria ostrzega, gdy członek zespołu już odpowiada na tego samego klienta. Koniec z powielonymi odpowiedziami i zamieszaniem w zespole.",
       "heroTitle": "Wszystko, czego potrzebujesz, aby odzyskać kontrolę nad swoimi e-mailami",
       "heroDesc": "Inboria sortuje, podsumowuje i przygotowuje wersje robocze odpowiedzi na Państwa e-maile. Państwo przeglądają i wysyłają.",
       "smartSort": "Inteligentne sortowanie według kategorii",

@@ -1438,6 +1438,16 @@
       "tryFree": "Kokeile ilmaiseksi"
     },
     "features": {
+      "commandPalette": "Komentopaneeli (Cmd+K)",
+      "commandPaletteDesc": "Paina Cmd+K suorittaaksesi toiminnon tai siirtyäksesi mihin tahansa Inboriassa — ilman, että sinun tarvitsee koskaan jättää näppäimistöä.",
+      "autoAdvance": "Automaattinen siirtyminen",
+      "autoAdvanceDesc": "Kun arkistoit, siirrät tai poistat sähköpostin, Inboria avaa automaattisesti seuraavan. Liiku saapuneiden postien läpi ilman ylimääräisiä klikkauksia.",
+      "keyboardNav": "Täysi näppäimistön navigointi",
+      "keyboardNavDesc": "\"Siirry\" pikanäppäimet (Saapuneet, Lähetetyt, Tehtävät…) sekä näppäimistön monivalinta. Käsittele sähköpostiasi ajatuksen nopeudella.",
+      "sharedDrafts": "Jaetut luonnokset",
+      "sharedDraftsDesc": "Kirjoita vastaus yhdessä, reaaliaikaisesti, jaetussa postilaatikossa. Kaikki näkevät, kuka kirjoittaa, ja yksi tiimikaveri ottaa vastuun lähettämisestä.",
+      "collisionAlert": "Yhteentörmäyksestä ilmoittaminen",
+      "collisionAlertDesc": "Inboria varoittaa sinua, kun tiimikaveri on jo vastaamassa samaan asiakkaaseen. Ei enää päällekkäisiä vastauksia tai tiimivirheitä.",
       "heroTitle": "Kaikki mitä tarvitset ottaaksesi sähköpostisi hallintaan",
       "heroDesc": "Inboria lajittelee, tiivistää ja valmistaa vastausluonnoksia sähköposteihisi. Sinun tarvitsee vain tarkistaa ja lähettää.",
       "smartSort": "Älykäs lajittelu kategorioittain",

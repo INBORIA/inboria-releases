@@ -1438,6 +1438,16 @@
       "tryFree": "Mēģināt bez maksas"
     },
     "features": {
+      "commandPalette": "Komandu palete (Cmd+K)",
+      "commandPaletteDesc": "Nospiediet Cmd+K, lai izpildītu jebkuru darbību vai pārietu uz jebkuru vietu Inboria — nekad neatstājot tastatūru.",
+      "autoAdvance": "Automātiska pāreja",
+      "autoAdvanceDesc": "Pēc tam, kad Jūs arhivējat, atlikat vai dzēšat e-pastu, Inboria automātiski atver nākamo. Lidojiet cauri savam e-pasta iesūtnes bez papildu klikšķiem.",
+      "keyboardNav": "Pilna tastatūras navigācija",
+      "keyboardNavDesc": "\"Pāriet uz\" īsinājumtaustiņi (Iesūtne, Nosūtītie, Uzdevumi…) plus tastatūras vairāku izvēle. Apstrādājiet savus e-pastus domāšanas ātrumā.",
+      "sharedDrafts": "Kopīgie melnraksti",
+      "sharedDraftsDesc": "Rakstiet atbildi kopā, reālā laikā, kopīgajā pastkastē. Ikviens redz, kurš raksta, un viens komandas biedrs pārņem, lai nosūtītu.",
+      "collisionAlert": "Sadursmes brīdinājums",
+      "collisionAlertDesc": "Inboria brīdina Jūs, kad kāds komandas biedrs jau atbild uz to pašu klientu. Vairs nekādu dublētu atbilžu vai komandas neskaidrību.",
       "heroTitle": "Viss, kas Jums nepieciešams, lai atgūtu kontroli pār Jūsu e-pastiem",
       "heroDesc": "Inboria šķiro, apkopo un sagatavo atbildes melnrakstus uz Jūsu e-pastiem. Jums atliek tikai pārskatīt un nosūtīt.",
       "smartSort": "Inteliģenta šķirošana pa kategorijām",

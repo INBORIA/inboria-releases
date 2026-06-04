@@ -1438,6 +1438,16 @@
       "tryFree": "Încercați gratuit"
     },
     "features": {
+      "commandPalette": "Paleta de comenzi (Cmd+K)",
+      "commandPaletteDesc": "Apăsați Cmd+K pentru a rula orice acțiune sau a sări oriunde în Inboria — fără a părăsi vreodată tastatura.",
+      "autoAdvance": "Avansare automată",
+      "autoAdvanceDesc": "După ce arhivați, amânați sau ștergeți un email, Inboria deschide automat următorul. Navigați prin inbox-ul dumneavoastră fără clicuri suplimentare.",
+      "keyboardNav": "Navigare completă cu tastatura",
+      "keyboardNavDesc": "\"Mergi la\" comenzi rapide (Inbox, Trimise, Sarcini…) plus selecție multiplă cu tastatura. Procesați emailurile la viteza gândului.",
+      "sharedDrafts": "Drafturi partajate",
+      "sharedDraftsDesc": "Scrieți un răspuns împreună, în timp real, pe o cutie poștală partajată. Toată lumea vede cine scrie, iar un singur coleg preia pentru a trimite.",
+      "collisionAlert": "Alerte de coliziune",
+      "collisionAlertDesc": "Inboria vă avertizează când un coleg răspunde deja aceluiași client. Fără răspunsuri duplicate sau confuzii în echipă.",
       "heroTitle": "Tot ce aveți nevoie pentru a recâștiga controlul asupra emailurilor dumneavoastră",
       "heroDesc": "Inboria sortează, rezumă și pregătește boze de răspuns pentru emailurile dumneavoastră. Dumneavoastră revizuiți și trimiteți.",
       "smartSort": "Sortare inteligentă pe categorii",

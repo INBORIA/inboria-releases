@@ -1438,6 +1438,16 @@
       "tryFree": "Thử nghiệm miễn phí"
     },
     "features": {
+      "commandPalette": "Bảng lệnh (Cmd+K)",
+      "commandPaletteDesc": "Nhấn Cmd+K để thực hiện bất kỳ hành động nào hoặc nhảy đến bất kỳ đâu trong Inboria — mà không cần rời khỏi bàn phím.",
+      "autoAdvance": "Tự động chuyển tiếp",
+      "autoAdvanceDesc": "Sau khi Quý khách lưu trữ, tạm hoãn hoặc xóa một email, Inboria sẽ tự động mở email tiếp theo. Duyệt qua hộp thư đến của Quý khách mà không cần thêm cú nhấp chuột nào.",
+      "keyboardNav": "Điều hướng bằng bàn phím đầy đủ",
+      "keyboardNavDesc": "Các phím tắt \"Đi đến\" (Hộp thư đến, Đã gửi, Nhiệm vụ…) cùng với chọn nhiều bằng bàn phím. Xử lý email của Quý khách với tốc độ suy nghĩ.",
+      "sharedDrafts": "Bản nháp chung",
+      "sharedDraftsDesc": "Viết phản hồi cùng nhau, trong thời gian thực, trên một hộp thư chung. Mọi người đều thấy ai đang gõ, và một đồng đội sẽ đảm nhận để gửi.",
+      "collisionAlert": "Cảnh báo va chạm",
+      "collisionAlertDesc": "Inboria cảnh báo Quý khách khi một đồng đội đã đang phản hồi cho cùng một khách hàng. Không còn câu trả lời trùng lặp hoặc nhầm lẫn trong nhóm.",
       "heroTitle": "Tất cả những gì Quý khách cần để lấy lại quyền kiểm soát email của mình",
       "heroDesc": "Inboria phân loại, tóm tắt và chuẩn bị các bản nháp trả lời cho email của Quý khách. Quý khách chỉ cần xem lại và gửi đi.",
       "smartSort": "Phân loại thông minh theo danh mục",

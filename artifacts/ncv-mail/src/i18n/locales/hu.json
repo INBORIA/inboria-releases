@@ -1438,6 +1438,16 @@
       "tryFree": "Ingyenes kipróbálás"
     },
     "features": {
+      "commandPalette": "Parancs paletta (Cmd+K)",
+      "commandPaletteDesc": "Nyomja meg a Cmd+K billentyűkombinációt bármelyik művelet végrehajtásához vagy a navigáláshoz az Inboria-ban — anélkül, hogy elhagyná a billentyűzetet.",
+      "autoAdvance": "Automatikus előrehaladás",
+      "autoAdvanceDesc": "Miután archivál egy e-mailt, szundít vagy töröl, az Inboria automatikusan megnyitja a következőt. Repüljön át az bejövő levelek között extra kattintások nélkül.",
+      "keyboardNav": "Teljes billentyűzet navigáció",
+      "keyboardNavDesc": "\"Ugrás\" gyorsbillentyűk (Bejövő, Küldött, Feladatok…) plusz billentyűzetes többszörös kijelölés. Feldolgozza az e-mailjeit a gondolat sebességével.",
+      "sharedDrafts": "Megosztott tervezetek",
+      "sharedDraftsDesc": "Írjon közösen választ valós időben egy megosztott postaládán. Mindenki látja, ki gépel, és egyetlen csapattag átveszi a küldést.",
+      "collisionAlert": "Ütközési figyelmeztetés",
+      "collisionAlertDesc": "Az Inboria figyelmezteti, ha egy csapattag már válaszol ugyanannak az ügyfélnek. Nincs többé duplikált válasz vagy csapatbeli zűrzavar.",
       "heroTitle": "Minden, amire szüksége van az e-mailjei feletti kontroll visszaszerzéséhez",
       "heroDesc": "Az Inboria rendezi, összefoglalja és előkészíti az e-mailjeihez a választervezeteket. Ön átnézi és elküldi.",
       "smartSort": "Intelligens rendezés kategóriák szerint",

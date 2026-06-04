@@ -1438,6 +1438,16 @@
       "tryFree": "Išbandyti nemokamai"
     },
     "features": {
+      "commandPalette": "Komandų paletė (Cmd+K)",
+      "commandPaletteDesc": "Paspauskite Cmd+K, kad atliktumėte bet kokią veiksmą arba pereitumėte bet kur Inboria — niekada nepalikdami klaviatūros.",
+      "autoAdvance": "Automatinis perėjimas",
+      "autoAdvanceDesc": "Po to, kai archyvuojate, atidėliojate arba trininate el. laišką, Inboria automatiškai atidaro kitą. Sklandžiai naršykite savo pašto dėžutėje be jokių papildomų paspaudimų.",
+      "keyboardNav": "Pilnas klaviatūros naršymas",
+      "keyboardNavDesc": "\"Eiti į\" spartieji klavišai (Gautieji, Išsiųsti, Užduotys…) plius klaviatūros daugiapasirinkimas. Apdorokite savo el. laiškus minties greičiu.",
+      "sharedDrafts": "Bendri juodraščiai",
+      "sharedDraftsDesc": "Rašykite atsakymą kartu, realiu laiku, bendroje pašto dėžutėje. Visi mato, kas rašo, o vienas komandos narys perima ir išsiunčia.",
+      "collisionAlert": "Kollizijos įspėjimas",
+      "collisionAlertDesc": "Inboria įspėja Jus, kai komandos narys jau atsako tam pačiam klientui. Jokių daugiau dubliuotų atsakymų ar komandos nesusipratimų.",
       "heroTitle": "Visi įrankiai, kurių Jums reikia, kad atgautumėte kontrolę savo el. laiškuose",
       "heroDesc": "Inboria rūšiuoja, apibendrina ir rengia atsakymų bozes Jūsų el. laiškams. Jūs peržiūrite ir siunčiate.",
       "smartSort": "Išmanus rūšiavimas pagal kategorijas",

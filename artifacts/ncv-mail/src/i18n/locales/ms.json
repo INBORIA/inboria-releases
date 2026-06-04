@@ -1438,6 +1438,16 @@
       "tryFree": "Cuba secara percuma"
     },
     "features": {
+      "commandPalette": "Palet arahan (Cmd+K)",
+      "commandPaletteDesc": "Tekan Cmd+K untuk menjalankan sebarang tindakan atau melompat ke mana-mana dalam Inboria — tanpa meninggalkan papan kekunci.",
+      "autoAdvance": "Penyambungan automatik",
+      "autoAdvanceDesc": "Selepas anda mengarkib, menangguhkan atau memadamkan emel, Inboria secara automatik membuka emel seterusnya. Lalui peti masuk anda tanpa sebarang klik tambahan.",
+      "keyboardNav": "Navigasi papan kekunci penuh",
+      "keyboardNavDesc": "\"Pergi ke\" pintasan (Peti Masuk, Dihantar, Tugas…) serta pemilihan berganda dengan papan kekunci. Proses emel anda dengan kelajuan pemikiran.",
+      "sharedDrafts": "Draf bersama",
+      "sharedDraftsDesc": "Tulis balasan bersama, secara masa nyata, pada peti mel bersama. Semua orang dapat melihat siapa yang sedang menaip, dan seorang rakan sepasukan mengambil alih untuk menghantar.",
+      "collisionAlert": "Amaran perlanggaran",
+      "collisionAlertDesc": "Inboria memberi amaran kepada anda apabila seorang rakan sepasukan sudah membalas kepada klien yang sama. Tiada lagi jawapan berganda atau kekeliruan dalam pasukan.",
       "heroTitle": "Segala yang anda perlukan untuk mengambil semula kawalan emel anda",
       "heroDesc": "Inboria menyusun, merumuskan dan menyediakan bozze balasan kepada emel anda. Anda hanya perlu menyemak dan menghantar.",
       "smartSort": "Penyortiran pintar mengikut kategori",

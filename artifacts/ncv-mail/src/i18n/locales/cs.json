@@ -1438,6 +1438,16 @@
       "tryFree": "Vyzkoušet zdarma"
     },
     "features": {
+      "commandPalette": "Paleta příkazů (Cmd+K)",
+      "commandPaletteDesc": "Stiskněte Cmd+K pro provedení jakékoli akce nebo skok na jakékoli místo v Inboria — aniž byste opustili klávesnici.",
+      "autoAdvance": "Automatické přecházení",
+      "autoAdvanceDesc": "Po archivaci, odložení nebo smazání e-mailu Inboria automaticky otevře ten další. Procházejte svou schránkou bez dalších kliknutí.",
+      "keyboardNav": "Úplná navigace klávesnicí",
+      "keyboardNavDesc": "\"Přejít na\" zkratky (Doručená pošta, Odeslané, Úkoly…) plus vícenásobný výběr klávesnicí. Zpracovávejte své e-maily rychlostí myšlenky.",
+      "sharedDrafts": "Sdílené návrhy",
+      "sharedDraftsDesc": "Napište odpověď společně, v reálném čase, na sdílené schránce. Každý vidí, kdo píše, a jeden člen týmu převezme odeslání.",
+      "collisionAlert": "Upozornění na kolizi",
+      "collisionAlertDesc": "Inboria vás varuje, když už na stejného klienta odpovídá jiný člen týmu. Žádné duplicitní odpovědi ani zmatky v týmu.",
       "heroTitle": "Vše, co potřebujete k obnovení kontroly nad Vašimi e-maily",
       "heroDesc": "Inboria třídí, shrnuje a připravuje návrhy odpovědí na Vaše e-maily. Vy je pouze zkontrolujete a odešlete.",
       "smartSort": "Inteligentní třídění podle kategorií",

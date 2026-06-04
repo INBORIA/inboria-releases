@@ -1438,6 +1438,16 @@
       "tryFree": "Prova gratis"
     },
     "features": {
+      "commandPalette": "Kommandopalett (Cmd+K)",
+      "commandPaletteDesc": "Tryck på Cmd+K för att utföra en åtgärd eller hoppa någonstans i Inboria — utan att lämna tangentbordet.",
+      "autoAdvance": "Automatisk vidarebefordran",
+      "autoAdvanceDesc": "Efter att du har arkiverat, snoozat eller raderat ett e-postmeddelande öppnar Inboria automatiskt nästa. Flyg genom din inkorg utan extra klick.",
+      "keyboardNav": "Full tangentbordsnavigering",
+      "keyboardNavDesc": "\"Gå till\" genvägar (Inkorg, Skickat, Uppgifter…) samt tangentbords-multi-val. Behandla din e-post i tankens hastighet.",
+      "sharedDrafts": "Delade utkast",
+      "sharedDraftsDesc": "Skriv ett svar tillsammans, i realtid, på en delad inkorg. Alla ser vem som skriver, och en enda kollega tar över för att skicka.",
+      "collisionAlert": "Kollisionsvarning",
+      "collisionAlertDesc": "Inboria varnar dig när en kollega redan svarar på samma klient. Inga fler duplicerade svar eller förväxlingar i teamet.",
       "heroTitle": "Allt du behöver för att återfå kontrollen över dina e-postmeddelanden",
       "heroDesc": "Inboria sorterar, sammanfattar och förbereder svarsmallar på dina e-postmeddelanden. Du läser och skickar.",
       "smartSort": "Intelligent sortering efter kategorier",

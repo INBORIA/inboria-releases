@@ -1438,6 +1438,16 @@
       "tryFree": "Proovige tasuta"
     },
     "features": {
+      "commandPalette": "Käskude palett (Cmd+K)",
+      "commandPaletteDesc": "Pange Cmd+K, et käivitada mis tahes toiming või hüpata igale poole Inboria's — ilma klaviatuurilt lahkumata.",
+      "autoAdvance": "Automaatne edasiviimine",
+      "autoAdvanceDesc": "Pärast e-kirja arhiveerimist, edasilükkamist või kustutamist avab Inboria automaatselt järgmise. Liikuge oma postkastis nulli lisaklikiga.",
+      "keyboardNav": "Täielik klaviatuuri navigeerimine",
+      "keyboardNavDesc": "\"Mine\" otseteed (Postkast, Saadetud, Ülesanded…) pluss klaviatuuri mitme valiku funktsioon. Töötlege oma e-kirju mõttekiirusel.",
+      "sharedDrafts": "Jagatud mustandid",
+      "sharedDraftsDesc": "Kirjutage koos vastus reaalajas jagatud postkastis. Igaüks näeb, kes kirjutab, ja üks meeskonnaliige võtab üle saatmise.",
+      "collisionAlert": "Kokkupõrkehoiatus",
+      "collisionAlertDesc": "Inboria hoiatab Teid, kui meeskonnaliige vastab juba samale kliendile. Ükski dubleeritud vastus ega meeskonna segadus.",
       "heroTitle": "Kõik, mida vajate oma e-kirjade kontrolli taastamiseks",
       "heroDesc": "Inboria sorteerib, kokkuvõtab ja valmistab ette vastuse mustandeid teie e-kirjadele. Teie loete üle ja saadate.",
       "smartSort": "Intelligentne sorteerimine kategooriate järgi",

@@ -1438,6 +1438,16 @@
       "tryFree": "Prøv gratis"
     },
     "features": {
+      "commandPalette": "Kommando palette (Cmd+K)",
+      "commandPaletteDesc": "Tryk Cmd+K for at udføre en handling eller hoppe hvor som helst i Inboria — uden nogensinde at forlade tastaturet.",
+      "autoAdvance": "Auto-fremskridning",
+      "autoAdvanceDesc": "Når du arkiverer, udsætter eller sletter en e-mail, åbner Inboria automatisk den næste. Flyv gennem din indbakke uden ekstra klik.",
+      "keyboardNav": "Fuld tastaturnavigation",
+      "keyboardNavDesc": "\"Gå til\" genveje (Indbakke, Sendt, Opgaver…) plus tastatur multi-vælg. Behandl din e-mail i tankens hastighed.",
+      "sharedDrafts": "Delte udkast",
+      "sharedDraftsDesc": "Skriv et svar sammen, i realtid, på en delt postkasse. Alle kan se, hvem der skriver, og en enkelt kollega overtager for at sende.",
+      "collisionAlert": "Kollisionsadvarsel",
+      "collisionAlertDesc": "Inboria advarer dig, når en kollega allerede svarer på den samme kunde. Ingen flere duplikerede svar eller forvirring i teamet.",
       "heroTitle": "Alt hvad du har brug for for at genvinde kontrollen over dine e-mails",
       "heroDesc": "Inboria sorterer, opsummerer og forbereder udkast til svar på dine e-mails. Du gennemgår og sender.",
       "smartSort": "Intelligent sortering efter kategorier",

@@ -23,6 +23,11 @@ import {
   Bell,
   Languages,
   Bot,
+  Command,
+  ChevronsRight,
+  Keyboard,
+  Pencil,
+  ShieldAlert,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
@@ -52,6 +57,11 @@ export default function Fonctionnalites() {
     { icon: Bell, key: "realtimeNotifications" },
     { icon: Languages, key: "multilingual" },
     { icon: Bot, key: "autopilotMode" },
+    { icon: Command, key: "commandPalette" },
+    { icon: ChevronsRight, key: "autoAdvance" },
+    { icon: Keyboard, key: "keyboardNav" },
+    { icon: Pencil, key: "sharedDrafts" },
+    { icon: ShieldAlert, key: "collisionAlert" },
   ];
 
   return (

@@ -1438,6 +1438,16 @@
       "tryFree": "Experimentar gratuitamente"
     },
     "features": {
+      "commandPalette": "Palete de comandos (Cmd+K)",
+      "commandPaletteDesc": "Pressione Cmd+K para executar qualquer ação ou saltar para qualquer lugar no Inboria — sem nunca deixar o teclado.",
+      "autoAdvance": "Avanço automático",
+      "autoAdvanceDesc": "Após arquivar, adiar ou eliminar um e-mail, o Inboria abre automaticamente o seguinte. Navegue pela sua caixa de entrada sem cliques adicionais.",
+      "keyboardNav": "Navegação total por teclado",
+      "keyboardNavDesc": "Atalhos de \"Ir para\" (Caixa de entrada, Enviados, Tarefas…) mais seleção múltipla por teclado. Processar os seus e-mails à velocidade do pensamento.",
+      "sharedDrafts": "Rascunhos partilhados",
+      "sharedDraftsDesc": "Escreva uma resposta em conjunto, em tempo real, numa caixa de correio partilhada. Todos veem quem está a escrever, e um único colega assume para enviar.",
+      "collisionAlert": "Alerta de colisão",
+      "collisionAlertDesc": "O Inboria avisa-o quando um colega já está a responder ao mesmo cliente. Chega de respostas duplicadas ou confusões na equipa.",
       "heroTitle": "Tudo o que precisa para retomar o controlo dos seus emails",
       "heroDesc": "Inboria organiza, resume e prepara rascunhos de resposta aos seus emails. Você revisa e envia.",
       "smartSort": "Organização inteligente por categorias",

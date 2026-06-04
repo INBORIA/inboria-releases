@@ -1438,6 +1438,16 @@
       "tryFree": "Triail saor in aisce"
     },
     "features": {
+      "commandPalette": "Pailéad ordaithe (Cmd+K)",
+      "commandPaletteDesc": "Bain úsáid as Cmd+K chun aon ghníomh a rith nó chun dul áit ar bith i Inboria — gan éirí as an eochairbhord riamh.",
+      "autoAdvance": "Réamhghluaiseacht uathoibríoch",
+      "autoAdvanceDesc": "Tar éis duit ríomhphost a chur ar archive, a chur ar snooze nó a scriosadh, osclaíonn Inboria an chéad cheann eile go huathoibríoch. Éalaigh tríd do bhosca isteach le nialas cliceanna breise.",
+      "keyboardNav": "Naveagadh iomlán ar an eochairbhord",
+      "keyboardNavDesc": "\"Téigh go\" gasta (Bosca isteach, Seolta, Tascanna…) chomh maith le il-roghnú ar an eochairbhord. Déan próiseáil ar do ríomhphoist ag luas do smaointe.",
+      "sharedDrafts": "Dréachtaí comhoibrithe",
+      "sharedDraftsDesc": "Scríobh freagra le chéile, i bhfíor-am, ar bhosca poist comhoibrithe. Feiceann gach duine cé atá ag scríobh, agus glacann comhoibrí amháin smacht chun é a sheoladh.",
+      "collisionAlert": "Foláireamh comhoibrithe",
+      "collisionAlertDesc": "Cuireann Inboria foláireamh ort nuair atá comhoibrí ag freagairt cheana don chliant céanna. Níl aon fhreagraí dúbailte nó mearbhall foirne ann a thuilleadh.",
       "heroTitle": "Gach rud atá uait chun smacht a fháil ar bhur ríomhphoist",
       "heroDesc": "Sórtálann Inboria, déanann sé achoimre agus ullmhaíonn sé bozza freagartha do bhur ríomhphoist. Léigh sibh agus seol.",
       "smartSort": "Sórtáil cliste de réir catagóirí",
