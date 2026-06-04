@@ -72,7 +72,7 @@
     "expiredSubscription": "L-abbonament tagħkom skada",
     "trialEnded": "Il-perjodu ta' prova ħielsa tagħkom temm.",
     "resubscribe": "Irreġistraw mill-ġdid biex tkomplu tużaw Inboria.",
-    "trialUsed": "Użajtu l-100 kreditu IA ħielsa tagħkom. Agħżlu pjan biex tkomplu.",
+    "trialUsed": "Użajtu l-4 500 kreditu IA ħielsa tagħkom. Agħżlu pjan biex tkomplu.",
     "choosePlan": "Agħżel pjan",
     "contactAdminTitle": "Problema ta' abbonament tat-tim",
     "contactAdminDesc": "Ikkuntattjaw l-admin tat-tim tagħkom biex isibu soluzzjoni."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "L-abbonament tagħkom skadit",
     "trialEndedFull": "L-eżami ħieles tagħkom tlesta",
     "resubscribe": "Irreġistra għal pjan mħallas biex tkompli tuża Inboria.",
-    "trialUsedFull": "Użajt il-100 kreditu IA ħielsa tiegħek. Agħżel pjan hawn taħt biex tkompli.",
+    "trialUsedFull": "Użajt il-4 500 kreditu IA ħielsa tiegħek. Agħżel pjan hawn taħt biex tkompli.",
     "maintenanceHint": "Għażliet avvanzati: irriċalcola l-kontatur tal-krediti jew irrestawra l-emails immarkati bħala mhux mixtieqa b'żball.",
     "recountQuota": "Irriċalcola l-krediti",
     "recountSuccess": "Krediti rriċalkolati",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Prova",
-    "trialDesc": "100 krediti IA offruti biex tiskopri Inboria",
+    "trialDesc": "4 500 krediti IA offruti biex tiskopri Inboria",
     "trialFeatures": {
-      "f1": "100 krediti IA offruti (użu uniku)",
+      "f1": "4 500 krediti IA offruti (użu uniku)",
       "f2": "3 rubri personalizzati",
       "f3": "Support bil-posta elettronika",
       "f4": "Bozze Inboria inklużi"
@@ -1367,9 +1367,9 @@
       "f8": "Eċċedenza: 0.001€ / kredit"
     },
     "essai": "Prova",
-    "essaiDesc": "100 krediti IA offruti biex tiskopri Inboria",
+    "essaiDesc": "4 500 krediti IA offruti biex tiskopri Inboria",
     "essaiFeatures": {
-      "f1": "100 krediti IA offruti (użu uniku)",
+      "f1": "4 500 krediti IA offruti (użu uniku)",
       "f2": "3 rubri personalizzati",
       "f3": "Support bil-posta elettronika",
       "f4": "Bozze Inboria inklużi"
@@ -1434,7 +1434,7 @@
       "multilingual": "Multilingwi nativ",
       "multilingualDesc": "L-interfaċċa u l-IA huma disponibbli f'43 lingwa — mill-Franċiż għall-Ġappuniż, inklużi l-Għarbi, il-Korean u ċ-Ċiniż. Kull membru tat-tim Tagħkom jaħdem fil-lingwa tiegħu.",
       "ctaTitle": "Lesti biex tirbaħ 2h kuljum?",
-      "ctaDesc": "100 krediti IA mogħtija biex skopru Inboria. Ebda karta ta' kreditu meħtieġa.",
+      "ctaDesc": "4 500 krediti IA mogħtija biex skopru Inboria. Ebda karta ta' kreditu meħtieġa.",
       "tryFree": "Ipprova b'xejn"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Sigurtà u privatezza",
       "securityDesc": "Id-dejta tagħkom hija protetta minn encryptazzjoni ta' punta għal punta. Aħna nħarsu strettament l-RGPD u qatt ma nbiegħu l-informazzjoni tagħkom.",
       "ctaTitle": "Lesti li tirbaħ 2h kuljum?",
-      "ctaDesc": "100 krediti IA offerti biex tiskopri Inboria. Ebda karta ta' kreditu meħtieġa.",
+      "ctaDesc": "4 500 krediti IA offerti biex tiskopri Inboria. Ebda karta ta' kreditu meħtieġa.",
       "tryFree": "Ippruvaw b'xejn",
       "snoozeSchedule": "Ippostponi u ippjana l-emails",
       "snoozeScheduleDesc": "Ippostponi email għal wara jew ippjana l-bidu fl-għażla ta' data u ħin ideali. Il-kaxxa tagħkom tibqa' ċentrata fuq l-essenzjali tal-mument.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Attiva l-pakkett li jikkonforma mal-attività tagħkom, jew itolbu lil Inboria referenza personalizzata. Inboria mbagħad tikklassifika kull email li jidħol fil-post it-tajjeb.",
       "startFree": "Ibda b'xejn",
       "seePricingAlt": "Ara l-prezzijiet",
-      "ctaFooter": "100 krediti IA offruti biex tibda · Ebda karta ta' kreditu meħtieġa"
+      "ctaFooter": "4 500 krediti IA offruti biex tibda · Ebda karta ta' kreditu meħtieġa"
     },
     "ai": {
       "badge": "Inboria tifhem il-kaxxa tal-posta tagħkom",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Ingħaqdu mal-PMI li jiksbu 2 siegħa kuljum grazzi għal Inboria.",
       "tryFree": "Ippruvaw b'xejn",
       "seePricing": "Ara t-tariffi",
-      "ctaFooter": "100 krediti IA offerti • Ebda karta ta' kreditu meħtieġa • Inboria inkluża f'kull pjan"
+      "ctaFooter": "4 500 krediti IA offerti • Ebda karta ta' kreditu meħtieġa • Inboria inkluża f'kull pjan"
     },
     "inboriaChat": {
       "badge": "Il-chat Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Iġġestixxi l-pjan ta' abbonament Tagħkom ma' Inboria. Kkompara l-offerti u għaddi għal pjan ogħla.",
       "subscriptionFeatures": [
         "4 pjani: Prova (b'xejn), Solo (9€/xahar), Pro (19€/xahar), Business (minn 50,97€/xahar)",
-        "Prova b'xejn ta' 100 kreditu IA inklużi",
+        "Prova b'xejn ta' 4 500 kreditu IA inklużi",
         "Ħlas sigur permezz ta' Paddle",
         "Ara l-kwota Tagħkom u l-konsum attwali",
         "Biddel il-pjan fi kwalunkwe ħin"

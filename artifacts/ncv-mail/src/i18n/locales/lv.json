@@ -72,7 +72,7 @@
     "expiredSubscription": "Jūsu abonements ir beidzies",
     "trialEnded": "Jūsu bezmaksas izmēģinājums ir beidzies",
     "resubscribe": "Lūdzu, atjaunojiet abonementu, lai turpinātu izmantot Inboria.",
-    "trialUsed": "Jūs esat izmantojuši savus 100 bezmaksas IA kredītus. Lūdzu, izvēlieties plānu, lai turpinātu.",
+    "trialUsed": "Jūs esat izmantojuši savus 4 500 bezmaksas IA kredītus. Lūdzu, izvēlieties plānu, lai turpinātu.",
     "choosePlan": "Izvēlēties plānu",
     "contactAdminTitle": "Problēmas ar komandas abonementu",
     "contactAdminDesc": "Lūdzu, sazinieties ar savas komandas administratoru, lai to atrisinātu."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Jūsu abonements ir beidzies",
     "trialEndedFull": "Jūsu bezmaksas izmēģinājums ir beidzies",
     "resubscribe": "Pārejat uz maksas plānu, lai turpinātu izmantot Inboria.",
-    "trialUsedFull": "Jūs esat izmantojuši savus 100 bezmaksas IA kredītus. Izvēlieties plānu zemāk, lai turpinātu.",
+    "trialUsedFull": "Jūs esat izmantojuši savus 4 500 bezmaksas IA kredītus. Izvēlieties plānu zemāk, lai turpinātu.",
     "maintenanceHint": "Papildu opcijas: pārrēķināt kredītu skaitītāju vai atjaunot e-pastus, kas kļūdaini atzīti par nevēlamiem.",
     "recountQuota": "Pārrēķināt kredītus",
     "recountSuccess": "Pārrēķinātie kredīti",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Mēģinājums",
-    "trialDesc": "100 IA kredīti, lai iepazītos ar Inboria",
+    "trialDesc": "4 500 IA kredīti, lai iepazītos ar Inboria",
     "trialFeatures": {
-      "f1": "100 IA kredīti (vienreizējs lietojums)",
+      "f1": "4 500 IA kredīti (vienreizējs lietojums)",
       "f2": "3 pielāgotas sadaļas",
       "f3": "Atbalsts pa e-pastu",
       "f4": "Inboria melnraksti iekļauti"
@@ -1367,9 +1367,9 @@
       "f8": "Pārsniegšana: 0,001€ / kredīts"
     },
     "essai": "Mēģinājums",
-    "essaiDesc": "100 IA kredīti, lai iepazītos ar Inboria",
+    "essaiDesc": "4 500 IA kredīti, lai iepazītos ar Inboria",
     "essaiFeatures": {
-      "f1": "100 IA kredīti (vienreizējs lietojums)",
+      "f1": "4 500 IA kredīti (vienreizējs lietojums)",
       "f2": "3 pielāgotas sadaļas",
       "f3": "Atbalsts pa e-pastu",
       "f4": "Mērķi Inboria iekļauti"
@@ -1434,7 +1434,7 @@
       "multilingual": "Dzimtā valoda",
       "multilingualDesc": "Saskarne un mākslīgais intelekts pieejami 43 valodās — no franču līdz japāņu valodai, ieskaitot arābu, korejiešu un ķīniešu valodas. Katrs Jūsu komandas loceklis strādā savā valodā.",
       "ctaTitle": "Gatavi iegūt 2 stundas dienā?",
-      "ctaDesc": "100 IA kredīti dāvanā, lai iepazītos ar Inboria. Nav nepieciešama kredītkarte.",
+      "ctaDesc": "4 500 IA kredīti dāvanā, lai iepazītos ar Inboria. Nav nepieciešama kredītkarte.",
       "tryFree": "Mēģināt bez maksas"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Drošība un privātums",
       "securityDesc": "Jūsu dati ir aizsargāti ar end-to-end šifrēšanu. Mēs stingri ievērojam GDPR un nekad nepārdodam Jūsu informāciju.",
       "ctaTitle": "Vai esat gatavi iegūt 2 stundas dienā?",
-      "ctaDesc": "100 AI kredīti dāvanā, lai iepazītos ar Inboria. Nav nepieciešama kredītkarte.",
+      "ctaDesc": "4 500 AI kredīti dāvanā, lai iepazītos ar Inboria. Nav nepieciešama kredītkarte.",
       "tryFree": "Mēģināt bez maksas",
       "snoozeSchedule": "Pārcelt un ieplānot e-pastus",
       "snoozeScheduleDesc": "Pārceliet e-pastu uz vēlāk vai ieplānojiet nosūtīšanu noteiktā datumā un laikā. Jūsu pastkaste paliek koncentrēta uz būtisko.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktivizējiet pakotni, kas atbilst Jūsu darbībai, vai lūdziet Inboria izstrādāt pielāgotu reģistru. Inboria pēc tam klasificē katru ienākošo e-pastu pareizajā vietā.",
       "startFree": "Sākt bez maksas",
       "seePricingAlt": "Skatīt cenas",
-      "ctaFooter": "100 AI kredīti dāvanā, lai uzsāktu · Nav nepieciešama kredītkarte"
+      "ctaFooter": "4 500 AI kredīti dāvanā, lai uzsāktu · Nav nepieciešama kredītkarte"
     },
     "ai": {
       "badge": "Inboria saprot Jūsu pastkasti",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Pievienojieties mazo un vidējo uzņēmumu grupai, kas iegūst 2 stundas dienā, pateicoties Inboria.",
       "tryFree": "Mēģiniet bez maksas",
       "seePricing": "Skatīt cenas",
-      "ctaFooter": "100 IA kredīti dāvanā • Nav nepieciešama kredītkarte • Inboria iekļauta visos plānos"
+      "ctaFooter": "4 500 IA kredīti dāvanā • Nav nepieciešama kredītkarte • Inboria iekļauta visos plānos"
     },
     "inboriaChat": {
       "badge": "Inboria čats",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Pārvaldiet savu Inboria abonēšanas plānu. Salīdziniet piedāvājumus un pārejiet uz augstāku plānu.",
       "subscriptionFeatures": [
         "4 plāni: Izmēģinājums (bez maksas), Solo (9€/mēnesī), Pro (19€/mēnesī), Business (no 50,97€/mēnesī)",
-        "Bezmaksas izmēģinājums ar 100 IA kredītiem iekļauts",
+        "Bezmaksas izmēģinājums ar 4 500 IA kredītiem iekļauts",
         "Droša maksājuma veikšana caur Paddle",
         "Skatīt savu kvotu un pašreizējo patēriņu",
         "Mainīt plānu jebkurā laikā"

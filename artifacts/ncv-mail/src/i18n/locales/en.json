@@ -74,7 +74,7 @@
     "contactAdminDesc": "Please contact your team admin to resolve this.",
     "trialEnded": "Your free trial has ended",
     "resubscribe": "Resubscribe to continue using Inboria.",
-    "trialUsed": "You have used your 100 free AI credits. Choose a plan to continue.",
+    "trialUsed": "You have used your 4 500 free AI credits. Choose a plan to continue.",
     "choosePlan": "Choose a plan"
   },
   "footer": {
@@ -1338,7 +1338,7 @@
     "expiredSubscription": "Your subscription has expired",
     "trialEndedFull": "Your free trial has ended",
     "resubscribe": "Resubscribe to a paid plan to continue using Inboria.",
-    "trialUsedFull": "You have used your 100 free AI credits. Choose a plan below to continue.",
+    "trialUsedFull": "You have used your 4 500 free AI credits. Choose a plan below to continue.",
     "maintenanceHint": "Advanced options: recount the credit usage or restore emails flagged as junk by mistake.",
     "recountQuota": "Recount credits",
     "recountSuccess": "Credits recounted",
@@ -1361,9 +1361,9 @@
   },
   "plans": {
     "trial": "Trial",
-    "trialDesc": "100 free AI credits to discover Inboria",
+    "trialDesc": "4 500 free AI credits to discover Inboria",
     "trialFeatures": {
-      "f1": "100 free AI credits (one-time use)",
+      "f1": "4 500 free AI credits (one-time use)",
       "f2": "3 custom categories",
       "f3": "Email support",
       "f4": "Inboria drafts included"
@@ -1404,9 +1404,9 @@
       "f8": "Overage: €0.001 / credit"
     },
     "essai": "Trial",
-    "essaiDesc": "100 free AI credits to discover Inboria",
+    "essaiDesc": "4 500 free AI credits to discover Inboria",
     "essaiFeatures": {
-      "f1": "100 free AI credits (one-time use)",
+      "f1": "4 500 free AI credits (one-time use)",
       "f2": "3 custom categories",
       "f3": "Email support",
       "f4": "Inboria drafts included"
@@ -1471,7 +1471,7 @@
       "multilingual": "Native multilingual",
       "multilingualDesc": "Interface and AI available in 43 languages — from French to Japanese, including Arabic, Korean and Chinese. Every team member works in their own language.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free AI credits to discover Inboria. No credit card required.",
+      "ctaDesc": "4 500 free AI credits to discover Inboria. No credit card required.",
       "tryFree": "Try for free"
     },
     "features": {
@@ -1512,7 +1512,7 @@
       "security": "Security and privacy",
       "securityDesc": "Your data is protected by end-to-end encryption. We strictly comply with GDPR and never sell your information.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free AI credits to discover Inboria. No credit card required.",
+      "ctaDesc": "4 500 free AI credits to discover Inboria. No credit card required.",
       "tryFree": "Try for free",
       "snoozeSchedule": "Snooze & schedule emails",
       "snoozeScheduleDesc": "Snooze an email for later or schedule sending at the perfect date and time. Your inbox stays focused on what matters now.",
@@ -1610,7 +1610,7 @@
       "ctaDesc": "Choose your industry pack, apply it, and let Inboria sort your emails automatically. It's that simple.",
       "startFree": "Start for free",
       "seePricingAlt": "See pricing",
-      "ctaFooter": "100 free AI credits to try • No credit card required"
+      "ctaFooter": "4 500 free AI credits to try • No credit card required"
     },
     "ai": {
       "badge": "Inboria understands your inbox",
@@ -1710,7 +1710,7 @@
       "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",
-      "ctaFooter": "100 free AI credits • No credit card required • Inboria included in every plan"
+      "ctaFooter": "4 500 free AI credits • No credit card required • Inboria included in every plan"
     },
     "inboriaChat": {
       "badge": "The Inboria chat",
@@ -2408,7 +2408,7 @@
       "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
         "4 plans: Trial (free), Solo (€9/mo), Pro (€19/mo), Business (from €50.97/mo)",
-        "Free trial of 100 AI credits included",
+        "Free trial of 4 500 AI credits included",
         "Secure payment via Paddle",
         "View your quota and current consumption",
         "Change plans anytime"

@@ -66,7 +66,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       notificationCount,
       pendingTasks: pendingTasks || 0,
       emailsUsed: profile?.emails_used ?? 0,
-      emailsQuota: profile?.emails_quota ?? 100,
+      emailsQuota: profile?.emails_quota ?? 4500,
       plan: profile?.plan ?? "essai",
     });
   } catch {

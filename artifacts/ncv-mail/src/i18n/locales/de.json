@@ -74,7 +74,7 @@
     "contactAdminDesc": "Bitte wenden Sie sich an Ihren Team-Admin, um dies zu beheben.",
     "trialEnded": "Ihre kostenlose Testversion ist beendet",
     "resubscribe": "Erneut abonnieren, um Inboria weiterhin zu nutzen.",
-    "trialUsed": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan, um fortzufahren.",
+    "trialUsed": "Sie haben Ihre 4 500 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan, um fortzufahren.",
     "choosePlan": "Wählen Sie einen Plan"
   },
   "footer": {
@@ -1311,7 +1311,7 @@
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
     "trialEndedFull": "Ihre kostenlose Testphase ist beendet",
     "resubscribe": "Abonnieren Sie einen kostenpflichtigen Plan, um Inboria weiterhin zu nutzen.",
-    "trialUsedFull": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
+    "trialUsedFull": "Sie haben Ihre 4 500 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
     "maintenanceHint": "Erweiterte Optionen: Credit-Verbrauch neu berechnen oder fälschlicherweise als Junk-E-Mail markierte Nachrichten wiederherstellen.",
     "recountQuota": "Credits neu berechnen",
     "recountSuccess": "Credits neu gezählt",
@@ -1334,9 +1334,9 @@
   },
   "plans": {
     "trial": "Testversion",
-    "trialDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken",
+    "trialDesc": "4 500 kostenlose KI-Credits, um Inboria zu entdecken",
     "trialFeatures": {
-      "f1": "100 kostenlose KI-Credits (einmalige Nutzung)",
+      "f1": "4 500 kostenlose KI-Credits (einmalige Nutzung)",
       "f2": "3 benutzerdefinierte Kategorien",
       "f3": "E-Mail-Support",
       "f4": "Inboria-Entwürfe enthalten"
@@ -1377,9 +1377,9 @@
       "f8": "Überziehung: 0,001 € / Credit"
     },
     "essai": "Testversion",
-    "essaiDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken",
+    "essaiDesc": "4 500 kostenlose KI-Credits, um Inboria zu entdecken",
     "essaiFeatures": {
-      "f1": "100 kostenlose KI-Credits (einmalige Nutzung)",
+      "f1": "4 500 kostenlose KI-Credits (einmalige Nutzung)",
       "f2": "3 benutzerdefinierte Kategorien",
       "f3": "E-Mail-Support",
       "f4": "Inboria-Entwürfe enthalten"
@@ -1444,7 +1444,7 @@
       "multilingual": "Nativ mehrsprachig",
       "multilingualDesc": "Oberfläche und KI verfügbar in 43 Sprachen — von Französisch bis Japanisch, einschließlich Arabisch, Koreanisch und Chinesisch. Jedes Teammitglied arbeitet in seiner eigenen Sprache.",
       "ctaTitle": "Bereit, 2 Stunden am Tag zu sparen?",
-      "ctaDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
+      "ctaDesc": "4 500 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
       "tryFree": "Kostenlos ausprobieren"
     },
     "features": {
@@ -1485,7 +1485,7 @@
       "security": "Sicherheit und Datenschutz",
       "securityDesc": "Ihre Daten sind durch End-to-End-Verschlüsselung geschützt. Wir halten uns strikt an die DSGVO und verkaufen niemals Ihre Informationen.",
       "ctaTitle": "Bereit, 2 Stunden am Tag zu sparen?",
-      "ctaDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
+      "ctaDesc": "4 500 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
       "tryFree": "Kostenlos ausprobieren",
       "snoozeSchedule": "E-Mails zurückstellen & planen",
       "snoozeScheduleDesc": "Stellen Sie eine E-Mail für später zurück oder planen Sie den Versand zum idealen Zeitpunkt. Ihr Postfach bleibt auf das Wesentliche konzentriert.",
@@ -1583,7 +1583,7 @@
       "ctaDesc": "Wählen Sie Ihr Branchenpaket, wenden Sie es an, und lassen Sie Inboria Ihre E-Mails automatisch sortieren. So einfach ist das.",
       "startFree": "Kostenlos starten",
       "seePricingAlt": "Preise ansehen",
-      "ctaFooter": "100 kostenlose KI-Credits zum Ausprobieren • Keine Kreditkarte erforderlich"
+      "ctaFooter": "4 500 kostenlose KI-Credits zum Ausprobieren • Keine Kreditkarte erforderlich"
     },
     "ai": {
       "badge": "Inboria versteht Ihren Posteingang",
@@ -1683,7 +1683,7 @@
       "ctaDesc": "Schließen Sie sich den KMU an, die dank Inboria 2 Stunden pro Tag sparen.",
       "tryFree": "Kostenlos testen",
       "seePricing": "Preise ansehen",
-      "ctaFooter": "100 kostenlose KI-Credits • Keine Kreditkarte erforderlich • Inboria in jedem Plan enthalten"
+      "ctaFooter": "4 500 kostenlose KI-Credits • Keine Kreditkarte erforderlich • Inboria in jedem Plan enthalten"
     },
     "inboriaChat": {
       "badge": "Der Inboria-Chat",
@@ -2367,7 +2367,7 @@
       "subscriptionDesc": "Verwalten Sie Ihren Inboria-Abonnementplan. Vergleichen Sie Angebote und upgraden Sie.",
       "subscriptionFeatures": [
         "4 Pläne: Test (kostenlos), Solo (9 €/Monat), Pro (19 €/Monat), Business (ab 50,97 €/Monat)",
-        "Kostenlose Testversion von 100 E-Mails enthalten",
+        "Kostenlose Testversion von 4 500 E-Mails enthalten",
         "Sichere Zahlung über Paddle",
         "Sehen Sie Ihre KI-Credits und Ihren aktuellen Verbrauch",
         "Ändern Sie die Pläne jederzeit"

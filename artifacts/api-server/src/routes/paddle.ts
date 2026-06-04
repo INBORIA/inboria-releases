@@ -14,7 +14,7 @@ function getFrontendUrl(): string {
 }
 
 const PLAN_QUOTAS: Record<string, number> = {
-  essai: 100,
+  essai: 4500,
   solo: 3000,
   pro: 10000,
   business: 10000,

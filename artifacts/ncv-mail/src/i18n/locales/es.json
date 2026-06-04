@@ -74,7 +74,7 @@
     "contactAdminDesc": "Contacta al admin de tu equipo para resolverlo.",
     "trialEnded": "Su prueba gratuita ha terminado",
     "resubscribe": "Vuelva a suscribirse para continuar usando Inboria.",
-    "trialUsed": "Ha utilizado sus 100 créditos IA gratuitos. Elija un plan para continuar.",
+    "trialUsed": "Ha utilizado sus 4 500 créditos IA gratuitos. Elija un plan para continuar.",
     "choosePlan": "Elija un plan"
   },
   "footer": {
@@ -1311,7 +1311,7 @@
     "expiredSubscription": "Tu suscripción ha expirado",
     "trialEndedFull": "Tu prueba gratuita ha terminado",
     "resubscribe": "Vuelve a suscribirte a un plan de pago para continuar usando Inboria.",
-    "trialUsedFull": "Has utilizado tus 100 créditos IA gratuitos. Elige un plan a continuación para continuar.",
+    "trialUsedFull": "Has utilizado tus 4 500 créditos IA gratuitos. Elige un plan a continuación para continuar.",
     "maintenanceHint": "Opciones avanzadas: recalcular el uso de créditos o restaurar correos marcados como no deseados por error.",
     "recountQuota": "Recalcular créditos",
     "recountSuccess": "Créditos recontados",
@@ -1334,9 +1334,9 @@
   },
   "plans": {
     "trial": "Prueba",
-    "trialDesc": "100 créditos IA gratuitos para descubrir Inboria",
+    "trialDesc": "4 500 créditos IA gratuitos para descubrir Inboria",
     "trialFeatures": {
-      "f1": "100 créditos IA gratuitos (uso único)",
+      "f1": "4 500 créditos IA gratuitos (uso único)",
       "f2": "3 categorías personalizadas",
       "f3": "Soporte por correo electrónico",
       "f4": "Borradores de Inboria incluidos"
@@ -1377,9 +1377,9 @@
       "f8": "Exceso: €0.001 / crédito"
     },
     "essai": "Prueba",
-    "essaiDesc": "100 créditos IA gratuitos para descubrir Inboria",
+    "essaiDesc": "4 500 créditos IA gratuitos para descubrir Inboria",
     "essaiFeatures": {
-      "f1": "100 créditos IA gratuitos (uso único)",
+      "f1": "4 500 créditos IA gratuitos (uso único)",
       "f2": "3 categorías personalizadas",
       "f3": "Soporte por correo electrónico",
       "f4": "Borradores de Inboria incluidos"
@@ -1444,7 +1444,7 @@
       "multilingual": "Multilingüe nativo",
       "multilingualDesc": "Interfaz e IA disponibles en 43 idiomas — del francés al japonés, pasando por el árabe, el coreano y el chino. Cada miembro de su equipo trabaja en su idioma.",
       "ctaTitle": "¿Listo para ahorrar 2 horas al día?",
-      "ctaDesc": "100 créditos IA gratis para descubrir Inboria. No se requiere tarjeta de crédito.",
+      "ctaDesc": "4 500 créditos IA gratis para descubrir Inboria. No se requiere tarjeta de crédito.",
       "tryFree": "Prueba gratis"
     },
     "features": {
@@ -1485,7 +1485,7 @@
       "security": "Seguridad y privacidad",
       "securityDesc": "Tus datos están protegidos por cifrado de extremo a extremo. Cumplimos estrictamente con el RGPD y nunca vendemos tu información.",
       "ctaTitle": "¿Listo para ahorrar 2 horas al día?",
-      "ctaDesc": "100 créditos IA gratuitos para descubrir Inboria. No se requiere tarjeta de crédito.",
+      "ctaDesc": "4 500 créditos IA gratuitos para descubrir Inboria. No se requiere tarjeta de crédito.",
       "tryFree": "Prueba gratis",
       "snoozeSchedule": "Posponer y programar correos",
       "snoozeScheduleDesc": "Pospón un correo para más tarde o programa el envío a la fecha y hora ideales. Tu bandeja permanece centrada en lo importante del momento.",
@@ -1583,7 +1583,7 @@
       "ctaDesc": "Elige tu paquete de la industria, aplícalo y deja que Inboria clasifique tus correos electrónicos automáticamente. Así de simple.",
       "startFree": "Comienza gratis",
       "seePricingAlt": "Ver precios",
-      "ctaFooter": "100 créditos IA gratis para probar • No se requiere tarjeta de crédito"
+      "ctaFooter": "4 500 créditos IA gratis para probar • No se requiere tarjeta de crédito"
     },
     "ai": {
       "badge": "Inboria entiende tu bandeja de entrada",
@@ -1683,7 +1683,7 @@
       "ctaDesc": "Únete a las pymes que ahorran 2 horas al día gracias a Inboria.",
       "tryFree": "Probar gratis",
       "seePricing": "Ver precios",
-      "ctaFooter": "100 créditos de IA gratis • Sin tarjeta de crédito • Inboria incluida en cada plan"
+      "ctaFooter": "4 500 créditos de IA gratis • Sin tarjeta de crédito • Inboria incluida en cada plan"
     },
     "inboriaChat": {
       "badge": "El chat Inboria",
@@ -2367,7 +2367,7 @@
       "subscriptionDesc": "Gestiona tu plan de suscripción de Inboria. Compara ofertas y actualiza.",
       "subscriptionFeatures": [
         "4 planes: Prueba (gratis), Solo (€9/mes), Pro (€19/mes), Empresarial (desde €50,97/mes)",
-        "Prueba gratuita de 100 créditos IA incluida",
+        "Prueba gratuita de 4 500 créditos IA incluida",
         "Pago seguro a través de Paddle",
         "Ver tu cuota y consumo actual",
         "Cambiar de plan en cualquier momento"

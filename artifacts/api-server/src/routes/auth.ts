@@ -567,7 +567,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
         plan: "essai",
         seats: 1,
         emails_used: 0,
-        emails_quota: 100,
+        emails_quota: 4500,
       };
       if (country) {
         profileData.country = country.toUpperCase();
@@ -587,7 +587,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
         plan: "essai",
         seats: 1,
         emailsUsed: 0,
-        emailsQuota: 100,
+        emailsQuota: 4500,
         createdAt: data.user?.created_at,
       },
       session: (data as any).session,
@@ -686,7 +686,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
         plan: profile?.plan ?? "essai",
         seats: profile?.seats ?? 1,
         emailsUsed: profile?.emails_used ?? 0,
-        emailsQuota: profile?.emails_quota ?? 100,
+        emailsQuota: profile?.emails_quota ?? 4500,
         createdAt: data.user.created_at,
       },
       session: (data as any).session,
@@ -719,7 +719,7 @@ router.get("/auth/me", requireAuth, async (req, res): Promise<void> => {
       plan: profile?.plan ?? "essai",
       seats: profile?.seats ?? 1,
       emailsUsed: profile?.emails_used ?? 0,
-      emailsQuota: profile?.emails_quota ?? 100,
+      emailsQuota: profile?.emails_quota ?? 4500,
       createdAt: userData.user?.created_at || "",
     });
   } catch (err) {

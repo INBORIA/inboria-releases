@@ -5,10 +5,10 @@ export const plans = [
     id: "essai",
     name: "Essai",
     price: "gratuit",
-    quota: 100,
-    description: "100 crédits IA offerts pour découvrir Inboria",
+    quota: 4500,
+    description: "4 500 crédits IA offerts pour découvrir Inboria",
     features: [
-      "100 crédits IA offerts (usage unique)",
+      "4 500 crédits IA offerts (usage unique)",
       "3 rubriques personnalisées",
       "Support par email",
       "Brouillons IA inclus",

@@ -72,7 +72,7 @@
     "expiredSubscription": "Teie tellimus on aegunud",
     "trialEnded": "Teie tasuta prooviperiood on lõppenud",
     "resubscribe": "Palun tellige uuesti, et jätkata Inboria kasutamist.",
-    "trialUsed": "Olete kasutanud oma 100 tasuta IA krediiti. Valige plaan, et jätkata.",
+    "trialUsed": "Olete kasutanud oma 4 500 tasuta IA krediiti. Valige plaan, et jätkata.",
     "choosePlan": "Valige plaan",
     "contactAdminTitle": "Probleem meeskonna tellimusega",
     "contactAdminDesc": "Palun võtke ühendust oma meeskonna administraatoriga, et seda lahendada."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Teie tellimus on aegunud",
     "trialEndedFull": "Teie tasuta prooviperiood on lõppenud",
     "resubscribe": "Palun tellige tasuline plaan, et jätkata Inboria kasutamist.",
-    "trialUsedFull": "Te olete kasutanud oma 100 tasuta IA krediiti. Palun valige allpool plaan, et jätkata.",
+    "trialUsedFull": "Te olete kasutanud oma 4 500 tasuta IA krediiti. Palun valige allpool plaan, et jätkata.",
     "maintenanceHint": "Täiendavad valikud: arvutage krediidikalkulaator uuesti või taastage valehäiretega märgitud e-kirjad.",
     "recountQuota": "Arvutage krediidid uuesti",
     "recountSuccess": "Krediidid on uuesti arvutatud",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Katsel",
-    "trialDesc": "100 tasuta IA krediiti Inboria avastamiseks",
+    "trialDesc": "4 500 tasuta IA krediiti Inboria avastamiseks",
     "trialFeatures": {
-      "f1": "100 tasuta IA krediiti (ühekordne kasutamine)",
+      "f1": "4 500 tasuta IA krediiti (ühekordne kasutamine)",
       "f2": "3 kohandatud rubriiki",
       "f3": "Toetamine e-posti teel",
       "f4": "Inboria mustandid on kaasatud"
@@ -1367,9 +1367,9 @@
       "f8": "Ületamine: 0,001€ / krediit"
     },
     "essai": "Katsel",
-    "essaiDesc": "100 IA krediiti tasuta Inboria avastamiseks",
+    "essaiDesc": "4 500 IA krediiti tasuta Inboria avastamiseks",
     "essaiFeatures": {
-      "f1": "100 IA krediiti (ühekordne kasutamine)",
+      "f1": "4 500 IA krediiti (ühekordne kasutamine)",
       "f2": "3 kohandatud rubriiki",
       "f3": "Tugi e-posti teel",
       "f4": "Inboria mustandid on kaasatud"
@@ -1434,7 +1434,7 @@
       "multilingual": "Emakeelne mitmekeelsus",
       "multilingualDesc": "Liides ja tehisintellekt on saadaval 43 keeles — prantsuse keelest jaapani keeleni, sealhulgas araabia, korea ja hiina keel. Iga Teie meeskonnaliige töötab oma keeles.",
       "ctaTitle": "Kas olete valmis võitma 2 tundi päevas?",
-      "ctaDesc": "100 IA krediiti Inboria avastamiseks. Pangakaarti ei nõuta.",
+      "ctaDesc": "4 500 IA krediiti Inboria avastamiseks. Pangakaarti ei nõuta.",
       "tryFree": "Proovige tasuta"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Turvalisus ja privaatsus",
       "securityDesc": "Teie andmed on kaitstud lõpp-otsast lõpp-otsani krüpteerimisega. Me järgime rangelt GDPR-i ja ei müü kunagi teie teavet.",
       "ctaTitle": "Kas olete valmis võitma 2 tundi päevas?",
-      "ctaDesc": "100 IA krediiti Inboria avastamiseks. Pangakaarti ei nõuta.",
+      "ctaDesc": "4 500 IA krediiti Inboria avastamiseks. Pangakaarti ei nõuta.",
       "tryFree": "Proovige tasuta",
       "snoozeSchedule": "E-kirjade edasilükkamine ja ajastamine",
       "snoozeScheduleDesc": "Edasi lükake e-kiri hilisemaks või ajastage saatmine ideaalsetel kuupäevadel ja kellaaegadel. Teie postkast jääb keskenduma hetke olulisele.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktiveerige pakett, mis vastab Teie tegevusele, või küsige Inborialt kohandatud allikat. Inboria klassifitseerib seejärel iga sissetuleva e-kirja õigesse kohta.",
       "startFree": "Alustage tasuta",
       "seePricingAlt": "Vaadake hindu",
-      "ctaFooter": "100 IA krediiti tasuta alustamiseks · Pangakaarti ei nõuta"
+      "ctaFooter": "4 500 IA krediiti tasuta alustamiseks · Pangakaarti ei nõuta"
     },
     "ai": {
       "badge": "Inboria mõistab Teie postkasti",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Liituge väikeettevõtetega, kes teenivad Inboria abil 2 tundi päevas.",
       "tryFree": "Proovige tasuta",
       "seePricing": "Vaadake hindu",
-      "ctaFooter": "100 IA krediiti tasuta • Pangakaarti ei nõuta • Inboria on kaasatud kõikidesse plaanidesse"
+      "ctaFooter": "4 500 IA krediiti tasuta • Pangakaarti ei nõuta • Inboria on kaasatud kõikidesse plaanidesse"
     },
     "inboriaChat": {
       "badge": "Inboria vestlus",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Haldage oma Inboria tellimuse plaani. Võrrelge pakkumisi ja üleminek kõrgemale plaanile.",
       "subscriptionFeatures": [
         "4 plaani: Katse (tasuta), Solo (9€/kuu), Pro (19€/kuu), Business (alates 50,97€/kuu)",
-        "Tasuta katse 100 tehisintellekti krediiti sisaldab",
+        "Tasuta katse 4 500 tehisintellekti krediiti sisaldab",
         "Turvaline makse läbi Paddle",
         "Vaadake oma kvooti ja praegust tarbimist",
         "Vahetage plaani igal ajal"

@@ -563,7 +563,7 @@ router.post(
           : "essai";
       // Quotas par défaut alignés sur la grille produit (cf. paddle.ts)
       const QUOTAS: Record<string, number> = {
-        essai: 100,
+        essai: 4500,
         solo: 1000,
         pro: 5000,
         business: 30000,

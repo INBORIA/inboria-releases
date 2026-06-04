@@ -72,7 +72,7 @@
     "expiredSubscription": "Gói đăng ký của Quý khách đã hết hạn",
     "trialEnded": "Thời gian dùng thử miễn phí của Quý khách đã kết thúc",
     "resubscribe": "Xin vui lòng đăng ký lại để tiếp tục sử dụng Inboria.",
-    "trialUsed": "Quý khách đã sử dụng hết 100 tín dụng AI miễn phí. Xin vui lòng chọn một gói để tiếp tục.",
+    "trialUsed": "Quý khách đã sử dụng hết 4 500 tín dụng AI miễn phí. Xin vui lòng chọn một gói để tiếp tục.",
     "choosePlan": "Chọn gói",
     "contactAdminTitle": "Vấn đề đăng ký bên đội ngũ",
     "contactAdminDesc": "Xin vui lòng liên hệ với quản trị viên của đội ngũ Quý khách để giải quyết vấn đề này."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Đăng ký của Quý khách đã hết hạn",
     "trialEndedFull": "Thử nghiệm miễn phí của Quý khách đã kết thúc",
     "resubscribe": "Quý khách hãy đăng ký lại một gói trả phí để tiếp tục sử dụng Inboria.",
-    "trialUsedFull": "Quý khách đã sử dụng hết 100 tín dụng IA miễn phí. Vui lòng chọn một gói bên dưới để tiếp tục.",
+    "trialUsedFull": "Quý khách đã sử dụng hết 4 500 tín dụng IA miễn phí. Vui lòng chọn một gói bên dưới để tiếp tục.",
     "maintenanceHint": "Tùy chọn nâng cao: tính lại số tín dụng hoặc khôi phục email bị đánh dấu là không mong muốn do nhầm lẫn.",
     "recountQuota": "Tính lại tín dụng",
     "recountSuccess": "Tín dụng đã được tính lại",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Dùng thử",
-    "trialDesc": "100 tín dụng IA miễn phí để khám phá Inboria",
+    "trialDesc": "4 500 tín dụng IA miễn phí để khám phá Inboria",
     "trialFeatures": {
-      "f1": "100 tín dụng IA miễn phí (sử dụng một lần)",
+      "f1": "4 500 tín dụng IA miễn phí (sử dụng một lần)",
       "f2": "3 mục tùy chỉnh",
       "f3": "Hỗ trợ qua email",
       "f4": "Bản nháp Inboria bao gồm"
@@ -1367,9 +1367,9 @@
       "f8": "Vượt mức: 0,001€ / tín dụng"
     },
     "essai": "Dùng thử",
-    "essaiDesc": "100 tín dụng IA miễn phí để khám phá Inboria",
+    "essaiDesc": "4 500 tín dụng IA miễn phí để khám phá Inboria",
     "essaiFeatures": {
-      "f1": "100 tín dụng IA miễn phí (sử dụng một lần)",
+      "f1": "4 500 tín dụng IA miễn phí (sử dụng một lần)",
       "f2": "3 mục tùy chỉnh",
       "f3": "Hỗ trợ qua email",
       "f4": "Bozze Inboria inclus"
@@ -1434,7 +1434,7 @@
       "multilingual": "Đa ngôn ngữ bản địa",
       "multilingualDesc": "Giao diện và AI có sẵn bằng 43 ngôn ngữ — từ tiếng Pháp đến tiếng Nhật, bao gồm tiếng Ả Rập, tiếng Hàn và tiếng Trung. Mỗi thành viên trong đội ngũ của Quý khách làm việc bằng ngôn ngữ riêng.",
       "ctaTitle": "Quý khách đã sẵn sàng để tiết kiệm 2 giờ mỗi ngày?",
-      "ctaDesc": "100 tín dụng AI miễn phí để khám phá Inboria. Không cần thẻ tín dụng.",
+      "ctaDesc": "4 500 tín dụng AI miễn phí để khám phá Inboria. Không cần thẻ tín dụng.",
       "tryFree": "Thử nghiệm miễn phí"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Bảo mật và quyền riêng tư",
       "securityDesc": "Dữ liệu của Quý khách được bảo vệ bằng mã hóa đầu cuối. Chúng tôi tuân thủ nghiêm ngặt GDPR và không bao giờ bán thông tin của Quý khách.",
       "ctaTitle": "Quý khách đã sẵn sàng để tiết kiệm 2 giờ mỗi ngày chưa?",
-      "ctaDesc": "100 tín dụng AI miễn phí để khám phá Inboria. Không cần thẻ tín dụng.",
+      "ctaDesc": "4 500 tín dụng AI miễn phí để khám phá Inboria. Không cần thẻ tín dụng.",
       "tryFree": "Dùng thử miễn phí",
       "snoozeSchedule": "Hoãn & lập lịch gửi email",
       "snoozeScheduleDesc": "Hoãn một email đến sau hoặc lập lịch gửi vào ngày và giờ lý tưởng. Hộp thư của Quý khách vẫn tập trung vào những điều quan trọng nhất tại thời điểm đó.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Kích hoạt gói phù hợp với hoạt động của Quý khách, hoặc xin vui lòng yêu cầu Inboria một chỉ mục tùy chỉnh. Inboria sau đó sẽ phân loại mỗi email đến vào đúng vị trí.",
       "startFree": "Bắt đầu miễn phí",
       "seePricingAlt": "Xem giá cả",
-      "ctaFooter": "100 tín dụng AI miễn phí để bắt đầu · Không cần thẻ tín dụng"
+      "ctaFooter": "4 500 tín dụng AI miễn phí để bắt đầu · Không cần thẻ tín dụng"
     },
     "ai": {
       "badge": "Inboria hiểu hộp thư của Quý khách",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Tham gia cùng các doanh nghiệp vừa và nhỏ tiết kiệm 2 giờ mỗi ngày nhờ Inboria.",
       "tryFree": "Thử nghiệm miễn phí",
       "seePricing": "Xem giá cả",
-      "ctaFooter": "100 tín dụng AI miễn phí • Không cần thẻ tín dụng • Inboria được bao gồm trong tất cả các gói"
+      "ctaFooter": "4 500 tín dụng AI miễn phí • Không cần thẻ tín dụng • Inboria được bao gồm trong tất cả các gói"
     },
     "inboriaChat": {
       "badge": "Trò chuyện với Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Xin vui lòng quản lý gói đăng ký Inboria của Quý khách. So sánh các gói và nâng cấp lên gói cao hơn.",
       "subscriptionFeatures": [
         "4 gói: Dùng thử (miễn phí), Solo (9€/tháng), Pro (19€/tháng), Business (từ 50,97€/tháng)",
-        "Dùng thử miễn phí 100 tín dụng AI bao gồm",
+        "Dùng thử miễn phí 4 500 tín dụng AI bao gồm",
         "Thanh toán an toàn qua Paddle",
         "Xem hạn ngạch và mức tiêu thụ hiện tại của Quý khách",
         "Thay đổi gói bất cứ lúc nào"

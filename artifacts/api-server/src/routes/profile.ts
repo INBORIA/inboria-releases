@@ -57,7 +57,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       seats: profile.seats ?? 1,
       emailsUsed: profile.emails_used ?? 0,
       aiCreditsUsed: profile.ai_credits_used ?? 0,
-      emailsQuota: profile.emails_quota ?? 100,
+      emailsQuota: profile.emails_quota ?? 4500,
       quotaPeriodStart: profile.quota_period_start || null,
       aiLanguage: profile.ai_language || "fr",
       signature: "",
@@ -97,12 +97,12 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       }
       updates.plan = parsed.data.plan;
       const quotaMap: Record<string, number> = {
-        essai: 100,
+        essai: 4500,
         solo: 3000,
         pro: 10000,
         business: 10000,
       };
-      updates.emails_quota = quotaMap[parsed.data.plan] ?? 100;
+      updates.emails_quota = quotaMap[parsed.data.plan] ?? 4500;
     }
     if (parsed.data.seats !== undefined) updates.seats = parsed.data.seats;
     if ((parsed.data as any).followUpDelayDays !== undefined) {
@@ -158,7 +158,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       seats: profile.seats ?? 1,
       emailsUsed: profile.emails_used ?? 0,
       aiCreditsUsed: profile.ai_credits_used ?? 0,
-      emailsQuota: profile.emails_quota ?? 100,
+      emailsQuota: profile.emails_quota ?? 4500,
       quotaPeriodStart: profile.quota_period_start || null,
       aiLanguage: profile.ai_language || "fr",
       signature: "",

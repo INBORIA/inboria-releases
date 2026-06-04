@@ -280,7 +280,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   }, [open]);
   const { theme: ncvTheme, toggle: toggleNcvTheme } = useNcvTheme();
 
-  const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
+  const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 4500 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
   // Considère « équipe » uniquement s'il existe au moins un coéquipier actif
   // en plus du compte courant — un solo avec organisation seule n'a pas

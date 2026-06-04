@@ -257,7 +257,7 @@ router.get("/dashboard/bootstrap", requireAuth, async (req, res): Promise<void> 
       notificationCount: 0,
       pendingTasks: pendingTasksResult.count || 0,
       emailsUsed: profile.emails_used ?? 0,
-      emailsQuota: profile.emails_quota ?? 100,
+      emailsQuota: profile.emails_quota ?? 4500,
       plan: profile.plan ?? "essai",
     };
 
@@ -275,7 +275,7 @@ router.get("/dashboard/bootstrap", requireAuth, async (req, res): Promise<void> 
         seats: profile.seats ?? 1,
         emailsUsed: profile.emails_used ?? 0,
         aiCreditsUsed: profile.ai_credits_used ?? 0,
-        emailsQuota: profile.emails_quota ?? 100,
+        emailsQuota: profile.emails_quota ?? 4500,
         quotaPeriodStart: profile.quota_period_start || null,
         aiLanguage: profile.ai_language || "fr",
         signature: "",

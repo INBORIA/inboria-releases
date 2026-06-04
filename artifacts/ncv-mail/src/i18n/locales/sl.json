@@ -72,7 +72,7 @@
     "expiredSubscription": "Vaša naročnina je potekla",
     "trialEnded": "Vaša brezplačna preizkusna različica je končana",
     "resubscribe": "Ponovno se naročite, da nadaljujete z uporabo Inboria.",
-    "trialUsed": "Izkoristili ste svojih 100 brezplačnih kreditov IA. Izberite načrt, da nadaljujete.",
+    "trialUsed": "Izkoristili ste svojih 4 500 brezplačnih kreditov IA. Izberite načrt, da nadaljujete.",
     "choosePlan": "Izberite načrt",
     "contactAdminTitle": "Težava z naročnino ekipe",
     "contactAdminDesc": "Obrnite se na administratorja vaše ekipe, da to uredite."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Vaša naročnina je potekla",
     "trialEndedFull": "Vaš brezplačni preizkus je končan",
     "resubscribe": "Ponovno se naročite na plačljiv načrt, da nadaljujete z uporabo Inboria.",
-    "trialUsedFull": "Uporabili ste svojih 100 brezplačnih IA kreditov. Izberite načrt spodaj, da nadaljujete.",
+    "trialUsedFull": "Uporabili ste svojih 4 500 brezplačnih IA kreditov. Izberite načrt spodaj, da nadaljujete.",
     "maintenanceHint": "Napredne možnosti: ponovno izračunajte števec kreditov ali obnovite e-pošto, ki je bila pomotoma označena kot neželena.",
     "recountQuota": "Ponovno izračunajte kredite",
     "recountSuccess": "Krediti so bili ponovno izračunani",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Preizkus",
-    "trialDesc": "100 kreditov IA podarjenih za spoznavanje Inboria",
+    "trialDesc": "4 500 kreditov IA podarjenih za spoznavanje Inboria",
     "trialFeatures": {
-      "f1": "100 kreditov IA podarjenih (enkratna uporaba)",
+      "f1": "4 500 kreditov IA podarjenih (enkratna uporaba)",
       "f2": "3 prilagojeni razdelki",
       "f3": "Podpora po e-pošti",
       "f4": "Božične osnutke Inboria vključene"
@@ -1367,9 +1367,9 @@
       "f8": "Prekoračitev: 0,001€ / kredit"
     },
     "essai": "Preizkus",
-    "essaiDesc": "100 kreditov IA podarjenih za spoznavanje Inboria",
+    "essaiDesc": "4 500 kreditov IA podarjenih za spoznavanje Inboria",
     "essaiFeatures": {
-      "f1": "100 kreditov IA podarjenih (enkratna uporaba)",
+      "f1": "4 500 kreditov IA podarjenih (enkratna uporaba)",
       "f2": "3 prilagojeni razdelki",
       "f3": "Podpora po e-pošti",
       "f4": "Bozze Inboria vključene"
@@ -1434,7 +1434,7 @@
       "multilingual": "Nativno večjezično",
       "multilingualDesc": "Vmesnik in UI sta na voljo v 43 jezikih — od francoščine do japonščine, vključno z arabščino, korejščino in kitajščino. Vsak član Vaše ekipe dela v svojem jeziku.",
       "ctaTitle": "Pripravljeni, da pridobite 2 uri na dan?",
-      "ctaDesc": "100 kreditov AI podarjenih za odkrivanje Inboria. Brez potrebe po kreditni kartici.",
+      "ctaDesc": "4 500 kreditov AI podarjenih za odkrivanje Inboria. Brez potrebe po kreditni kartici.",
       "tryFree": "Preizkusite brezplačno"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Varnost in zasebnost",
       "securityDesc": "Vaši podatki so zaščiteni s šifriranjem od konca do konca. Strogo spoštujemo GDPR in nikoli ne prodajamo vaših informacij.",
       "ctaTitle": "Ste pripravljeni pridobiti 2 uri na dan?",
-      "ctaDesc": "100 kreditov AI kot darilo za odkrivanje Inboria. Brez potrebe po kreditni kartici.",
+      "ctaDesc": "4 500 kreditov AI kot darilo za odkrivanje Inboria. Brez potrebe po kreditni kartici.",
       "tryFree": "Preizkusite brezplačno",
       "snoozeSchedule": "Preložite in načrtujte e-pošto",
       "snoozeScheduleDesc": "Preložite e-pošto na kasneje ali načrtujte pošiljanje na idealen datum in čas. Vaš poštni predal ostaja osredotočen na bistvene stvari.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktivirajte paket, ki ustreza Vaši dejavnosti, ali zahtevajte pri Inboria prilagojen referenčni sistem. Inboria nato razvrsti vsako prihajajoče e-poštno sporočilo na pravo mesto.",
       "startFree": "Začnite brezplačno",
       "seePricingAlt": "Oglejte si cene",
-      "ctaFooter": "100 kreditov AI podarjenih za začetek · Brez potrebe po kreditni kartici"
+      "ctaFooter": "4 500 kreditov AI podarjenih za začetek · Brez potrebe po kreditni kartici"
     },
     "ai": {
       "badge": "Inboria razume Vaš poštni predal",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Pridružite se malim in srednjim podjetjem, ki z Inboria pridobijo 2 uri na dan.",
       "tryFree": "Preizkusite brezplačno",
       "seePricing": "Oglejte si cene",
-      "ctaFooter": "100 kreditov IA brezplačno • Brez potrebe po kreditni kartici • Inboria vključena v vse načrte"
+      "ctaFooter": "4 500 kreditov IA brezplačno • Brez potrebe po kreditni kartici • Inboria vključena v vse načrte"
     },
     "inboriaChat": {
       "badge": "Klepet Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Upravljajte Vaš načrt naročnine Inboria. Primerjajte ponudbe in preklopite na višji načrt.",
       "subscriptionFeatures": [
         "4 načrti: Preizkus (brezplačno), Solo (9€/mesec), Pro (19€/mesec), Poslovni (od 50,97€/mesec)",
-        "Brezplačen preizkus z 100 krediti AI vključen",
+        "Brezplačen preizkus z 4 500 krediti AI vključen",
         "Varno plačilo preko Paddle",
         "Oglejte si Vašo kvoto in trenutno porabo",
         "Spremenite načrt kadarkoli"

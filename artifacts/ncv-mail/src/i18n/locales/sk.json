@@ -72,7 +72,7 @@
     "expiredSubscription": "Váš predplatný plán vypršal",
     "trialEnded": "Váš bezplatný skúšobný prístup sa skončil",
     "resubscribe": "Znovu sa prihláste, aby ste mohli pokračovať v používaní Inboria.",
-    "trialUsed": "Využili ste svojich 100 bezplatných kreditov IA. Vyberte si plán, aby ste mohli pokračovať.",
+    "trialUsed": "Využili ste svojich 4 500 bezplatných kreditov IA. Vyberte si plán, aby ste mohli pokračovať.",
     "choosePlan": "Vybrať plán",
     "contactAdminTitle": "Problém s predplatným tímu",
     "contactAdminDesc": "Kontaktujte správcu svojho tímu, aby to vyriešil."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Vaše predplatné vypršalo",
     "trialEndedFull": "Vaša bezplatná skúšobná verzia skončila",
     "resubscribe": "Obnovte sa na platený plán, aby ste mohli pokračovať v používaní Inboria.",
-    "trialUsedFull": "Využili ste svoje 100 bezplatných IA kreditov. Vyberte si plán nižšie, aby ste mohli pokračovať.",
+    "trialUsedFull": "Využili ste svoje 4 500 bezplatných IA kreditov. Vyberte si plán nižšie, aby ste mohli pokračovať.",
     "maintenanceHint": "Pokročilé možnosti: prepočítať počet kreditov alebo obnoviť e-maily označené ako nevyžiadané omylom.",
     "recountQuota": "Prepočítať kredity",
     "recountSuccess": "Kredity prepočítané",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Skúšobná verzia",
-    "trialDesc": "100 kreditov IA ponúkaných na objavovanie Inboria",
+    "trialDesc": "4 500 kreditov IA ponúkaných na objavovanie Inboria",
     "trialFeatures": {
-      "f1": "100 kreditov IA ponúkaných (jednorazové použitie)",
+      "f1": "4 500 kreditov IA ponúkaných (jednorazové použitie)",
       "f2": "3 prispôsobené sekcie",
       "f3": "Podpora e-mailom",
       "f4": "Návrhy Inboria zahrnuté"
@@ -1367,9 +1367,9 @@
       "f8": "Prekročenie: 0,001€ / kredit"
     },
     "essai": "Skúšobná verzia",
-    "essaiDesc": "100 kreditov IA ponúkaných na objavovanie Inboria",
+    "essaiDesc": "4 500 kreditov IA ponúkaných na objavovanie Inboria",
     "essaiFeatures": {
-      "f1": "100 kreditov IA ponúkaných (jednorazové použitie)",
+      "f1": "4 500 kreditov IA ponúkaných (jednorazové použitie)",
       "f2": "3 prispôsobené sekcie",
       "f3": "Podpora e-mailom",
       "f4": "Návrhy Inboria vrátane"
@@ -1434,7 +1434,7 @@
       "multilingual": "Nativne viacjazyčné",
       "multilingualDesc": "Rozhranie a AI sú dostupné v 43 jazykoch — od francúzštiny po japončinu, vrátane arabčiny, kórejčiny a čínštiny. Každý člen Vášho tímu pracuje vo svojom jazyku.",
       "ctaTitle": "Pripravení získať 2 hodiny denne?",
-      "ctaDesc": "100 kreditov AI zadarmo na objavenie Inboria. Žiadna kreditná karta nie je potrebná.",
+      "ctaDesc": "4 500 kreditov AI zadarmo na objavenie Inboria. Žiadna kreditná karta nie je potrebná.",
       "tryFree": "Vyskúšať bezplatne"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Bezpečnosť a dôvernosť",
       "securityDesc": "Vaše údaje sú chránené šifrovaním od konca po koniec. Striktne dodržiavame GDPR a nikdy nepredávame Vaše informácie.",
       "ctaTitle": "Pripravení získať 2 hodiny denne?",
-      "ctaDesc": "100 kreditov IA ponúkaných na objavovanie Inboria. Žiadna kreditná karta nie je potrebná.",
+      "ctaDesc": "4 500 kreditov IA ponúkaných na objavovanie Inboria. Žiadna kreditná karta nie je potrebná.",
       "tryFree": "Vyskúšať zadarmo",
       "snoozeSchedule": "Odložiť a naplánovať e-maily",
       "snoozeScheduleDesc": "Odložte e-mail na neskôr alebo naplánujte odoslanie na ideálny dátum a čas. Vaša schránka zostáva zameraná na podstatné veci.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktivujte balík, ktorý zodpovedá Vašej činnosti, alebo požiadajte Inboria o referenčný rámec na mieru. Inboria následne triedi každý prichádzajúci e-mail na správne miesto.",
       "startFree": "Začnite zadarmo",
       "seePricingAlt": "Pozrite si ceny",
-      "ctaFooter": "100 kreditov IA ponúkaných na začiatok · Bez potreby kreditnej karty"
+      "ctaFooter": "4 500 kreditov IA ponúkaných na začiatok · Bez potreby kreditnej karty"
     },
     "ai": {
       "badge": "Inboria rozumie Vašej poštovej schránke",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Pridajte sa k malým a stredným podnikom, ktoré získavajú 2 hodiny denne vďaka Inboria.",
       "tryFree": "Vyskúšať zadarmo",
       "seePricing": "Zobraziť ceny",
-      "ctaFooter": "100 kreditov IA zadarmo • Žiadna kreditná karta nie je potrebná • Inboria je zahrnutá vo všetkých plánoch"
+      "ctaFooter": "4 500 kreditov IA zadarmo • Žiadna kreditná karta nie je potrebná • Inboria je zahrnutá vo všetkých plánoch"
     },
     "inboriaChat": {
       "badge": "Chat Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Spravujte svoj plán predplatného Inboria. Porovnajte ponuky a prejdite na vyšší plán.",
       "subscriptionFeatures": [
         "4 plány: Skúšobný (zadarmo), Solo (9€/mesiac), Pro (19€/mesiac), Business (od 50,97€/mesiac)",
-        "Bezplatná skúška s 100 kreditmi AI zahrnutá",
+        "Bezplatná skúška s 4 500 kreditmi AI zahrnutá",
         "Bezpečná platba cez Paddle",
         "Zobraziť svoj kvót a aktuálnu spotrebu",
         "Zmeniť plán kedykoľvek"

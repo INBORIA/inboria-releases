@@ -72,7 +72,7 @@
     "expiredSubscription": "Aboneliğiniz sona erdi",
     "trialEnded": "Ücretsiz denemeniz sona erdi",
     "resubscribe": "Inboria'yı kullanmaya devam etmek için yeniden abone olun.",
-    "trialUsed": "Ücretsiz 100 yapay zeka kredisini kullandınız. Devam etmek için bir plan seçin.",
+    "trialUsed": "Ücretsiz 4 500 yapay zeka kredisini kullandınız. Devam etmek için bir plan seçin.",
     "choosePlan": "Bir plan seçin",
     "contactAdminTitle": "Ekip aboneliği ile ilgili sorun",
     "contactAdminDesc": "Bunu çözmek için ekibinizin yöneticisiyle iletişime geçin."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Aboneliğinizin süresi dolmuş",
     "trialEndedFull": "Ücretsiz denemeniz sona erdi",
     "resubscribe": "Inboria'yı kullanmaya devam etmek için ücretli bir plana yeniden abone olun.",
-    "trialUsedFull": "100 ücretsiz IA kredinizi kullandınız. Devam etmek için aşağıdaki plandan birini seçin.",
+    "trialUsedFull": "4 500 ücretsiz IA kredinizi kullandınız. Devam etmek için aşağıdaki plandan birini seçin.",
     "maintenanceHint": "Gelişmiş seçenekler: kredi sayacını yeniden hesaplamak veya yanlışlıkla spam olarak işaretlenmiş e-postaları geri yüklemek.",
     "recountQuota": "Kredileri yeniden hesapla",
     "recountSuccess": "Yeniden hesaplanan krediler",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Deneme",
-    "trialDesc": "Inboria'yı keşfetmek için 100 IA kredisi hediye",
+    "trialDesc": "Inboria'yı keşfetmek için 4 500 IA kredisi hediye",
     "trialFeatures": {
-      "f1": "100 IA kredisi hediye (tek kullanım)",
+      "f1": "4 500 IA kredisi hediye (tek kullanım)",
       "f2": "3 özel bölüm",
       "f3": "E-posta desteği",
       "f4": "Inboria taslakları dahil"
@@ -1367,9 +1367,9 @@
       "f8": "Aşım: 0,001€ / kredi"
     },
     "essai": "Deneme",
-    "essaiDesc": "Inboria'yı keşfetmek için 100 IA kredisi hediye",
+    "essaiDesc": "Inboria'yı keşfetmek için 4 500 IA kredisi hediye",
     "essaiFeatures": {
-      "f1": "100 IA kredisi hediye (tek kullanım)",
+      "f1": "4 500 IA kredisi hediye (tek kullanım)",
       "f2": "3 özel bölüm",
       "f3": "E-posta desteği",
       "f4": "Inboria Taslakları dahil"
@@ -1434,7 +1434,7 @@
       "multilingual": "Yerel çok dilli",
       "multilingualDesc": "Arayüz ve yapay zeka 43 dilde mevcut — Fransızcadan Japoncaya, Arapça, Korece ve Çince dahil. Ekibinizin her üyesi kendi dilinde çalışır.",
       "ctaTitle": "Günde 2 saat kazanmaya hazır mısınız?",
-      "ctaDesc": "Inboria'yı keşfetmek için 100 ücretsiz AI kredisi. Kredi kartı gerekmez.",
+      "ctaDesc": "Inboria'yı keşfetmek için 4 500 ücretsiz AI kredisi. Kredi kartı gerekmez.",
       "tryFree": "Ücretsiz deneyin"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Güvenlik ve gizlilik",
       "securityDesc": "Verileriniz uçtan uca şifreleme ile korunmaktadır. GDPR'ye sıkı bir şekilde uyuyoruz ve bilgilerinizi asla satmıyoruz.",
       "ctaTitle": "Günde 2 saat kazanmaya hazır mısınız?",
-      "ctaDesc": "Inboria'yı keşfetmek için 100 AI kredisi hediye. Kredi kartı gerekmiyor.",
+      "ctaDesc": "Inboria'yı keşfetmek için 4 500 AI kredisi hediye. Kredi kartı gerekmiyor.",
       "tryFree": "Ücretsiz deneme",
       "snoozeSchedule": "E-postaları erteleme ve programlama",
       "snoozeScheduleDesc": "Bir e-postayı daha sonra erteleyin veya ideal tarih ve saatte göndermek için programlayın. Posta kutunuz, o anın önemli olanına odaklanmaya devam eder.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Faaliyetlerinize uygun paketi etkinleştirin veya Inboria'dan özel bir referans talep edin. Inboria, ardından her gelen e-postayı doğru yere yerleştirir.",
       "startFree": "Ücretsiz başlayın",
       "seePricingAlt": "Fiyatları görün",
-      "ctaFooter": "Başlamak için 100 AI kredisi hediye · Kredi kartı gerekmiyor"
+      "ctaFooter": "Başlamak için 4 500 AI kredisi hediye · Kredi kartı gerekmiyor"
     },
     "ai": {
       "badge": "Inboria, e-posta kutunuzu anlıyor",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Inboria sayesinde günde 2 saat kazanan KOBİ'lere katılın.",
       "tryFree": "Ücretsiz deneyin",
       "seePricing": "Fiyatları görün",
-      "ctaFooter": "100 AI kredisi hediye • Kredi kartı gerekmez • Inboria tüm planlarda dahildir"
+      "ctaFooter": "4 500 AI kredisi hediye • Kredi kartı gerekmez • Inboria tüm planlarda dahildir"
     },
     "inboriaChat": {
       "badge": "Inboria sohbeti",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Inboria abonelik planınızı yönetin. Teklifleri karşılaştırın ve daha üst bir plana geçin.",
       "subscriptionFeatures": [
         "4 plan: Deneme (ücretsiz), Solo (ayda 9€), Pro (ayda 19€), Business (ayda 50,97€'dan itibaren)",
-        "100 IA kredisi ile ücretsiz deneme dahil",
+        "4 500 IA kredisi ile ücretsiz deneme dahil",
         "Paddle üzerinden güvenli ödeme",
         "Kotanız ve mevcut tüketiminizi görün",
         "İstediğiniz zaman planınızı değiştirin"

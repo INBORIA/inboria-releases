@@ -185,7 +185,7 @@ Mon app mobile Expo (iOS et Android). Mêmes fonctionnalités principales : Réc
 
 # PLANS & TARIFS
 
-- **Essai** — Gratuit, 100 crédits IA offerts (usage unique), 3 rubriques personnalisées, brouillons IA. Pour découvrir.
+- **Essai** — Gratuit, 4 500 crédits IA offerts (usage unique), 3 rubriques personnalisées, brouillons IA. Pour découvrir.
 - **Solo** — 9 €/mois, 3 000 crédits IA/mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction tâches. Pour les indépendants. Dépassement : 0,002 €/crédit.
 - **Pro** — 21,99 €/mois (ou 211,10 €/an, ~2 mois offerts), 10 000 crédits IA/mois, tout Solo + statistiques détaillées + intégrations CRM (HubSpot, Pipedrive). Pour pros. Dépassement : 0,001 €/crédit.
 - **Business** — 21,99 €/siège/mois (ou 211,10 €/an/siège), 10 000 crédits IA/siège/mois, tout Pro + minimum 3 sièges (jusqu'à 50) + boîtes partagées + assignation tâches entre membres + Salesforce + Odoo + API + webhooks + SLA + activité équipe. Pour équipes. Dépassement : 0,001 €/crédit.
@@ -433,7 +433,7 @@ Gmail, Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus,
 Plan and payment management.
 
 ### Available plans:
-- **Trial**: Free, 100 AI credits (one-time), 3 custom categories, AI drafts. Perfect to discover Inboria.
+- **Trial**: Free, 4,500 AI credits (one-time), 3 custom categories, AI drafts. Perfect to discover Inboria.
 - **Solo**: €9/month, 3,000 AI credits/month, unlimited categories, daily brief, proactive AI drafts, automatic task extraction. For freelancers. Overage: €0.002/credit.
 - **Pro**: €21.99/month (or €211.10/year, ~2 months free), 10,000 AI credits/month, unlimited categories, daily brief, proactive AI drafts, task extraction, detailed analytics. Ideal for professionals. Overage: €0.001/credit.
 - **Business**: €21.99/seat/month (or €211.10/year/seat), 10,000 AI credits/seat/month, everything in Pro, minimum 3 seats up to 50, shared mailboxes, task assignment, dedicated API. For teams. Overage: €0.001/credit.
@@ -1781,7 +1781,7 @@ Tu parles à la **1re personne au nom d'Inboria** ("je", "moi", "mon/ma/mes" —
 
 ✅ CE QUE TU FAIS ICI :
 - Expliquer mes fonctionnalités ("À quoi sert la page Bilan ?", "C'est quoi Smart Sort ?", "Comment marche l'agenda multi-créneaux ?").
-- Donner mes plans et tarifs librement (Essai gratuit 100 crédits IA, Solo 9 €/mois, Pro 21,99 €/mois, Business 21,99 €/siège/mois min. 3 sièges) + différences entre plans.
+- Donner mes plans et tarifs librement (Essai gratuit 4 500 crédits IA, Solo 9 €/mois, Pro 21,99 €/mois, Business 21,99 €/siège/mois min. 3 sièges) + différences entre plans.
 - Guider l'utilisateur dans l'app ("Va dans Paramètres → Calendriers pour brancher Google Agenda").
 - Expliquer mes intégrations (Gmail/Outlook/IMAP, HubSpot/Pipedrive/Salesforce/Odoo, Slack/Notion/Teams/Meet, Paddle pour la facturation).
 - Répondre aux questions sur le site vitrine, l'inscription, l'essai gratuit, la facturation, la résiliation.

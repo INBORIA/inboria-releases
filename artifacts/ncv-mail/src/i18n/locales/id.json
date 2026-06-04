@@ -72,7 +72,7 @@
     "expiredSubscription": "Langganan Anda telah kedaluwarsa",
     "trialEnded": "Masa percobaan gratis Anda telah berakhir",
     "resubscribe": "Silakan berlangganan kembali untuk melanjutkan penggunaan Inboria.",
-    "trialUsed": "Anda telah menggunakan 100 kredit IA gratis Anda. Silakan pilih rencana untuk melanjutkan.",
+    "trialUsed": "Anda telah menggunakan 4 500 kredit IA gratis Anda. Silakan pilih rencana untuk melanjutkan.",
     "choosePlan": "Pilih Rencana",
     "contactAdminTitle": "Masalah langganan di pihak tim",
     "contactAdminDesc": "Silakan hubungi admin tim Anda untuk menyelesaikan ini."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Langganan Anda telah kedaluwarsa",
     "trialEndedFull": "Percobaan gratis Anda telah selesai",
     "resubscribe": "Daftar kembali ke rencana berbayar untuk terus menggunakan Inboria.",
-    "trialUsedFull": "Anda telah menggunakan 100 kredit IA gratis Anda. Pilih rencana di bawah ini untuk melanjutkan.",
+    "trialUsedFull": "Anda telah menggunakan 4 500 kredit IA gratis Anda. Pilih rencana di bawah ini untuk melanjutkan.",
     "maintenanceHint": "Opsi lanjutan: hitung ulang jumlah kredit atau pulihkan email yang salah ditandai sebagai spam.",
     "recountQuota": "Hitung ulang kredit",
     "recountSuccess": "Kredit dihitung ulang",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Percobaan",
-    "trialDesc": "100 kredit IA gratis untuk menjelajahi Inboria",
+    "trialDesc": "4 500 kredit IA gratis untuk menjelajahi Inboria",
     "trialFeatures": {
-      "f1": "100 kredit IA ditawarkan (penggunaan tunggal)",
+      "f1": "4 500 kredit IA ditawarkan (penggunaan tunggal)",
       "f2": "3 kategori kustom",
       "f3": "Dukungan melalui email",
       "f4": "Draf Inboria termasuk"
@@ -1367,9 +1367,9 @@
       "f8": "Kelebihan: 0,001€ / kredit"
     },
     "essai": "Percobaan",
-    "essaiDesc": "100 kredit IA gratis untuk menjelajahi Inboria",
+    "essaiDesc": "4 500 kredit IA gratis untuk menjelajahi Inboria",
     "essaiFeatures": {
-      "f1": "100 kredit IA ditawarkan (penggunaan tunggal)",
+      "f1": "4 500 kredit IA ditawarkan (penggunaan tunggal)",
       "f2": "3 kategori kustom",
       "f3": "Dukungan melalui email",
       "f4": "Bozze Inboria termasuk"
@@ -1434,7 +1434,7 @@
       "multilingual": "Multibahasa asli",
       "multilingualDesc": "Antarmuka dan AI tersedia dalam 43 bahasa — dari bahasa Prancis hingga Jepang, termasuk Arab, Korea, dan Mandarin. Setiap anggota tim Anda bekerja dalam bahasa mereka sendiri.",
       "ctaTitle": "Siap untuk menghemat 2 jam per hari?",
-      "ctaDesc": "100 kredit AI diberikan untuk mencoba Inboria. Tidak diperlukan kartu kredit.",
+      "ctaDesc": "4 500 kredit AI diberikan untuk mencoba Inboria. Tidak diperlukan kartu kredit.",
       "tryFree": "Coba gratis"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Keamanan dan privasi",
       "securityDesc": "Data Anda dilindungi dengan enkripsi end-to-end. Kami mematuhi GDPR secara ketat dan tidak pernah menjual informasi Anda.",
       "ctaTitle": "Siap untuk mendapatkan 2 jam per hari?",
-      "ctaDesc": "100 kredit AI gratis untuk mencoba Inboria. Tidak perlu kartu kredit.",
+      "ctaDesc": "4 500 kredit AI gratis untuk mencoba Inboria. Tidak perlu kartu kredit.",
       "tryFree": "Coba gratis",
       "snoozeSchedule": "Menunda & menjadwalkan email",
       "snoozeScheduleDesc": "Tunda sebuah email untuk nanti atau jadwalkan pengiriman pada tanggal dan waktu yang ideal. Kotak Anda tetap fokus pada hal yang penting saat ini.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktifkan paket yang sesuai dengan aktivitas Anda, atau mohon kepada Inboria untuk referensi yang disesuaikan. Inboria kemudian mengklasifikasikan setiap email masuk ke tempat yang tepat.",
       "startFree": "Mulai gratis",
       "seePricingAlt": "Lihat tarif",
-      "ctaFooter": "100 kredit AI gratis untuk memulai · Tidak diperlukan kartu kredit"
+      "ctaFooter": "4 500 kredit AI gratis untuk memulai · Tidak diperlukan kartu kredit"
     },
     "ai": {
       "badge": "Inboria memahami kotak surat Anda",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Bergabunglah dengan UKM yang menghemat 2 jam per hari berkat Inboria.",
       "tryFree": "Coba gratis",
       "seePricing": "Lihat tarif",
-      "ctaFooter": "100 kredit IA gratis • Tidak perlu kartu kredit • Inboria termasuk dalam semua paket"
+      "ctaFooter": "4 500 kredit IA gratis • Tidak perlu kartu kredit • Inboria termasuk dalam semua paket"
     },
     "inboriaChat": {
       "badge": "Obrolan Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Kelola paket langganan Inboria Anda. Bandingkan penawaran dan tingkatkan ke paket yang lebih tinggi.",
       "subscriptionFeatures": [
         "4 paket: Uji coba (gratis), Solo (9€/bulan), Pro (19€/bulan), Bisnis (mulai dari 50,97€/bulan)",
-        "Uji coba gratis dengan 100 kredit AI termasuk",
+        "Uji coba gratis dengan 4 500 kredit AI termasuk",
         "Pembayaran aman melalui Paddle",
         "Lihat kuota dan konsumsi Anda saat ini",
         "Ubah paket kapan saja"

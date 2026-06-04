@@ -72,7 +72,7 @@
     "expiredSubscription": "Tilauksenne on vanhentunut",
     "trialEnded": "Ilmainen kokeilunne on päättynyt",
     "resubscribe": "Tilatkaa uudelleen jatkaaksenne Inborian käyttöä.",
-    "trialUsed": "Olette käyttäneet kaikki 100 ilmaista IA-krediittiänne. Valitkaa suunnitelma jatkaaksenne.",
+    "trialUsed": "Olette käyttäneet kaikki 4 500 ilmaista IA-krediittiänne. Valitkaa suunnitelma jatkaaksenne.",
     "choosePlan": "Valitse suunnitelma",
     "contactAdminTitle": "Tiimipuolen tilausongelma",
     "contactAdminDesc": "Ottakaa yhteyttä tiiminne ylläpitäjään tämän ratkaisemiseksi."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Tilaustanne on vanhentunut",
     "trialEndedFull": "Ilmainen kokeilunne on päättynyt",
     "resubscribe": "Tilataksenne maksullisen suunnitelman jatkaaksenne Inborian käyttöä.",
-    "trialUsedFull": "Olette käyttäneet 100 ilmaista IA-krediittiä. Valitkaa alla oleva suunnitelma jatkaaksenne.",
+    "trialUsedFull": "Olette käyttäneet 4 500 ilmaista IA-krediittiä. Valitkaa alla oleva suunnitelma jatkaaksenne.",
     "maintenanceHint": "Lisäasetukset: laske krediittimittari uudelleen tai palauttakaa virheellisesti roskapostiksi merkittyjä sähköposteja.",
     "recountQuota": "Laske krediitit uudelleen",
     "recountSuccess": "Krediitit laskettu uudelleen",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Koeaika",
-    "trialDesc": "100 tekoälyä varten tarjottua krediittiä Inborian kokeilemiseen",
+    "trialDesc": "4 500 tekoälyä varten tarjottua krediittiä Inborian kokeilemiseen",
     "trialFeatures": {
-      "f1": "100 tekoälyä varten tarjottua krediittiä (kertakäyttö)",
+      "f1": "4 500 tekoälyä varten tarjottua krediittiä (kertakäyttö)",
       "f2": "3 mukautettua osiota",
       "f3": "Sähkötuki",
       "f4": "Inboria luonnokset sisältyvät"
@@ -1367,9 +1367,9 @@
       "f8": "Ylitys: 0,001€ / krediitti"
     },
     "essai": "Koeaika",
-    "essaiDesc": "100 tekoälyä varten tarjottua krediittiä Inborian kokeilemiseen",
+    "essaiDesc": "4 500 tekoälyä varten tarjottua krediittiä Inborian kokeilemiseen",
     "essaiFeatures": {
-      "f1": "100 tekoälyä varten tarjottua krediittiä (kertakäyttö)",
+      "f1": "4 500 tekoälyä varten tarjottua krediittiä (kertakäyttö)",
       "f2": "3 mukautettua osiota",
       "f3": "Sähkötuki",
       "f4": "Bozze Inboria mukaan lukien"
@@ -1434,7 +1434,7 @@
       "multilingual": "Äidinkielinen monikielisyys",
       "multilingualDesc": "Käyttöliittymä ja tekoäly saatavilla 43 kielellä — ranskasta japaniin, mukaan lukien arabia, korea ja kiina. Jokainen tiimin jäsen työskentelee omalla kielellään.",
       "ctaTitle": "Valmiina voittamaan 2 tuntia päivässä?",
-      "ctaDesc": "100 tekoälyä varten myönnettyä krediittiä Inborian kokeilemiseen. Ei vaadi luottokorttia.",
+      "ctaDesc": "4 500 tekoälyä varten myönnettyä krediittiä Inborian kokeilemiseen. Ei vaadi luottokorttia.",
       "tryFree": "Kokeile ilmaiseksi"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Turvallisuus ja yksityisyys",
       "securityDesc": "Tietonne ovat suojattuja päätepisteestä päätepisteeseen -salauksella. Noudatamme tiukasti GDPR:ää emmekä koskaan myy tietojanne.",
       "ctaTitle": "Oletteko valmiita voittamaan 2 tuntia päivässä?",
-      "ctaDesc": "100 ilmaista tekoälyä Inborian kokeilemiseen. Ei vaadita luottokorttia.",
+      "ctaDesc": "4 500 ilmaista tekoälyä Inborian kokeilemiseen. Ei vaadita luottokorttia.",
       "tryFree": "Kokeile ilmaiseksi",
       "snoozeSchedule": "Sähköpostien siirtäminen ja aikatauluttaminen",
       "snoozeScheduleDesc": "Siirtäkää sähköposti myöhempään ajankohtaan tai aikatauluttakaa lähetys oikeaan päivään ja aikaan. Postilaatikkanne pysyy keskittyneenä hetken olennaiseen.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktivoi paketti, joka vastaa liiketoimintaasi, tai pyydä Inborialta räätälöityä viitetta. Inboria luokittelee sitten jokaisen saapuvan sähköpostin oikeaan paikkaan.",
       "startFree": "Aloita ilmaiseksi",
       "seePricingAlt": "Katso hinnat",
-      "ctaFooter": "100 IA-creditsiä tarjotaan aloittamiseen · Ei vaadita luottokorttia"
+      "ctaFooter": "4 500 IA-creditsiä tarjotaan aloittamiseen · Ei vaadita luottokorttia"
     },
     "ai": {
       "badge": "Inboria ymmärtää sähköpostisi",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Liitytte pk-yrityksiin, jotka voittavat 2 tuntia päivässä Inborian avulla.",
       "tryFree": "Kokeile ilmaiseksi",
       "seePricing": "Näe hinnat",
-      "ctaFooter": "100 ilmaista IA-credits • Ei vaadita luottokorttia • Inboria sisältyy kaikkiin suunnitelmiin"
+      "ctaFooter": "4 500 ilmaista IA-credits • Ei vaadita luottokorttia • Inboria sisältyy kaikkiin suunnitelmiin"
     },
     "inboriaChat": {
       "badge": "Inboria-chat",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Hallitse Inboria-tilaussuunnitelmaasi. Vertaa tarjouksia ja siirry korkeampaan suunnitelmaan.",
       "subscriptionFeatures": [
         "4 suunnitelmaa: Ilmainen kokeilu, Solo (9€/kk), Pro (19€/kk), Business (alkaen 50,97€/kk)",
-        "Ilmainen kokeilu, joka sisältää 100 IA-credits",
+        "Ilmainen kokeilu, joka sisältää 4 500 IA-credits",
         "Turvallinen maksaminen Paddle:n kautta",
         "Näe kiintiösi ja nykyinen kulutuksesi",
         "Vaihda suunnitelmaa milloin tahansa"

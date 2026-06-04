@@ -72,7 +72,7 @@
     "expiredSubscription": "您的订阅已过期",
     "trialEnded": "您的免费试用已结束",
     "resubscribe": "请重新订阅以继续使用 Inboria。",
-    "trialUsed": "您已使用完100个免费AI积分。请选择一个计划以继续。",
+    "trialUsed": "您已使用完4 500个免费AI积分。请选择一个计划以继续。",
     "choosePlan": "选择一个计划",
     "contactAdminTitle": "团队订阅问题",
     "contactAdminDesc": "请联系您团队的管理员以解决此问题。"
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "您的订阅已过期",
     "trialEndedFull": "您的免费试用已结束",
     "resubscribe": "请重新订阅付费计划以继续使用Inboria。",
-    "trialUsedFull": "您已使用完100个免费IA积分。请在下面选择一个计划以继续。",
+    "trialUsedFull": "您已使用完4 500个免费IA积分。请在下面选择一个计划以继续。",
     "maintenanceHint": "高级选项：重新计算积分计数或恢复错误标记为垃圾邮件的邮件。",
     "recountQuota": "重新计算积分",
     "recountSuccess": "积分已重新计算",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "试用",
-    "trialDesc": "赠送 100 个 IA 积分以体验 Inboria",
+    "trialDesc": "赠送 4 500 个 IA 积分以体验 Inboria",
     "trialFeatures": {
-      "f1": "赠送 100 个 IA 积分（一次性使用）",
+      "f1": "赠送 4 500 个 IA 积分（一次性使用）",
       "f2": "3 个自定义栏目",
       "f3": "电子邮件支持",
       "f4": "包含 Inboria 草稿"
@@ -1367,9 +1367,9 @@
       "f8": "超出部分：每个积分 0.001€"
     },
     "essai": "试用",
-    "essaiDesc": "赠送 100 个 IA 积分以体验 Inboria",
+    "essaiDesc": "赠送 4 500 个 IA 积分以体验 Inboria",
     "essaiFeatures": {
-      "f1": "赠送 100 个 IA 积分（一次性使用）",
+      "f1": "赠送 4 500 个 IA 积分（一次性使用）",
       "f2": "3 个自定义栏目",
       "f3": "电子邮件支持",
       "f4": "Inboria 草稿包含"
@@ -1434,7 +1434,7 @@
       "multilingual": "本地多语言",
       "multilingualDesc": "界面和 AI 提供 43 种语言 — 从法语到日语，包括阿拉伯语、韩语和中文。您的团队每位成员都可以使用自己的语言工作。",
       "ctaTitle": "准备好每天节省 2 小时吗？",
-      "ctaDesc": "赠送 100 个 AI 积分以体验 Inboria。无需信用卡。",
+      "ctaDesc": "赠送 4 500 个 AI 积分以体验 Inboria。无需信用卡。",
       "tryFree": "免费试用"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "安全与隐私",
       "securityDesc": "您的数据通过端到端加密得到保护。我们严格遵守 GDPR，并绝不会出售您的信息。",
       "ctaTitle": "准备好每天节省 2 小时吗？",
-      "ctaDesc": "赠送 100 个 AI 积分以体验 Inboria。无需信用卡。",
+      "ctaDesc": "赠送 4 500 个 AI 积分以体验 Inboria。无需信用卡。",
       "tryFree": "免费试用",
       "snoozeSchedule": "推迟和安排邮件",
       "snoozeScheduleDesc": "将邮件推迟到稍后或安排在理想的日期和时间发送。您的邮箱始终专注于当下的重点。",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "激活与您的活动相符的套餐，或向 Inboria 请求定制的参考资料。Inboria 随后会将每封进入的电子邮件分类到合适的位置。",
       "startFree": "免费开始",
       "seePricingAlt": "查看价格",
-      "ctaFooter": "赠送 100 个 AI 积分以开始 · 无需信用卡"
+      "ctaFooter": "赠送 4 500 个 AI 积分以开始 · 无需信用卡"
     },
     "ai": {
       "badge": "Inboria 理解您的邮箱",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "加入那些每天通过 Inboria 节省 2 小时的中小企业。",
       "tryFree": "免费试用",
       "seePricing": "查看价格",
-      "ctaFooter": "赠送 100 个 AI 积分 • 无需信用卡 • Inboria 包含在所有计划中"
+      "ctaFooter": "赠送 4 500 个 AI 积分 • 无需信用卡 • Inboria 包含在所有计划中"
     },
     "inboriaChat": {
       "badge": "Inboria 聊天",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "管理您的Inboria订阅计划。比较不同的套餐并升级到更高的计划。",
       "subscriptionFeatures": [
         "4个计划：试用（免费）、个人（9€/月）、专业（19€/月）、商务（起价50.97€/月）",
-        "包含100个AI积分的免费试用",
+        "包含4 500个AI积分的免费试用",
         "通过Paddle进行安全支付",
         "查看您的配额和当前消费",
         "随时更改计划"

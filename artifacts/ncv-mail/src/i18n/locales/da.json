@@ -72,7 +72,7 @@
     "expiredSubscription": "Dit abonnement er udløbet",
     "trialEnded": "Din gratis prøveperiode er slut",
     "resubscribe": "Genabonnér for at fortsætte med at bruge Inboria.",
-    "trialUsed": "Du har brugt dine 100 gratis AI-kreditter. Vælg en plan for at fortsætte.",
+    "trialUsed": "Du har brugt dine 4 500 gratis AI-kreditter. Vælg en plan for at fortsætte.",
     "choosePlan": "Vælg en plan",
     "contactAdminTitle": "Problemer med abonnementet på teamniveau",
     "contactAdminDesc": "Kontakt admin for dit team for at løse dette."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Dit abonnement er udløbet",
     "trialEndedFull": "Din gratis prøveperiode er slut",
     "resubscribe": "Tilmeld dig en betalt plan for at fortsætte med at bruge Inboria.",
-    "trialUsedFull": "Du har brugt dine 100 gratis IA-kreditter. Vælg en plan nedenfor for at fortsætte.",
+    "trialUsedFull": "Du har brugt dine 4 500 gratis IA-kreditter. Vælg en plan nedenfor for at fortsætte.",
     "maintenanceHint": "Avancerede indstillinger: genberegn kredit tælleren eller gendan e-mails, der fejlagtigt er markeret som spam.",
     "recountQuota": "Genberegn kreditter",
     "recountSuccess": "Genberegnede kreditter",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Prøve",
-    "trialDesc": "100 IA-kreditter givet til at opdage Inboria",
+    "trialDesc": "4 500 IA-kreditter givet til at opdage Inboria",
     "trialFeatures": {
-      "f1": "100 IA-kreditter givet (engangsbrug)",
+      "f1": "4 500 IA-kreditter givet (engangsbrug)",
       "f2": "3 tilpassede emner",
       "f3": "Support via e-mail",
       "f4": "Inboria udkast inkluderet"
@@ -1367,9 +1367,9 @@
       "f8": "Overskridelse: 0,001€ / kredit"
     },
     "essai": "Prøve",
-    "essaiDesc": "100 IA-kreditter givet til at opdage Inboria",
+    "essaiDesc": "4 500 IA-kreditter givet til at opdage Inboria",
     "essaiFeatures": {
-      "f1": "100 IA-kreditter givet (engangsbrug)",
+      "f1": "4 500 IA-kreditter givet (engangsbrug)",
       "f2": "3 tilpassede kategorier",
       "f3": "Support via email",
       "f4": "Inboria udkast inkluderet"
@@ -1434,7 +1434,7 @@
       "multilingual": "Nativt flersproget",
       "multilingualDesc": "Grænseflade og AI tilgængelig på 43 sprog — fra fransk til japansk, herunder arabisk, koreansk og kinesisk. Hvert teammedlem arbejder på sit eget sprog.",
       "ctaTitle": "Klar til at vinde 2 timer om dagen?",
-      "ctaDesc": "100 AI-kreditter givet for at opdage Inboria. Ingen kreditkort kræves.",
+      "ctaDesc": "4 500 AI-kreditter givet for at opdage Inboria. Ingen kreditkort kræves.",
       "tryFree": "Prøv gratis"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Sikkerhed og fortrolighed",
       "securityDesc": "Dine data er beskyttet af end-to-end kryptering. Vi overholder strengt GDPR og sælger aldrig dine oplysninger.",
       "ctaTitle": "Klar til at vinde 2 timer om dagen?",
-      "ctaDesc": "100 AI-kreditter givet for at opdage Inboria. Ingen kreditkort kræves.",
+      "ctaDesc": "4 500 AI-kreditter givet for at opdage Inboria. Ingen kreditkort kræves.",
       "tryFree": "Prøv gratis",
       "snoozeSchedule": "Udskyd og planlæg e-mails",
       "snoozeScheduleDesc": "Udskyd en e-mail til senere eller planlæg afsendelse til den ideelle dato og tidspunkt. Din postkasse forbliver fokuseret på det væsentlige i øjeblikket.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktiver den pakke, der passer til din aktivitet, eller bed Inboria om et skræddersyet referenceregister. Inboria klassificerer derefter hver indkommende e-mail det rigtige sted.",
       "startFree": "Begynd gratis",
       "seePricingAlt": "Se priser",
-      "ctaFooter": "100 AI-kreditter givet til at starte · Ingen kreditkort kræves"
+      "ctaFooter": "4 500 AI-kreditter givet til at starte · Ingen kreditkort kræves"
     },
     "ai": {
       "badge": "Inboria forstår din indbakke",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Deltag i SMV'er, der vinder 2 timer om dagen takket være Inboria.",
       "tryFree": "Prøv gratis",
       "seePricing": "Se priser",
-      "ctaFooter": "100 IA-kreditter givet • Ingen kreditkort kræves • Inboria inkluderet i alle planer"
+      "ctaFooter": "4 500 IA-kreditter givet • Ingen kreditkort kræves • Inboria inkluderet i alle planer"
     },
     "inboriaChat": {
       "badge": "Inboria-chatten",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Administrer dit Inboria-abonnement. Sammenlign tilbud og opgrader til en højere plan.",
       "subscriptionFeatures": [
         "4 planer: Prøve (gratis), Solo (9€/måned), Pro (19€/måned), Business (fra 50,97€/måned)",
-        "Gratis prøve med 100 AI-kreditter inkluderet",
+        "Gratis prøve med 4 500 AI-kreditter inkluderet",
         "Sikker betaling via Paddle",
         "Se din kvote og dit nuværende forbrug",
         "Skift plan når som helst"

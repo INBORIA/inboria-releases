@@ -72,7 +72,7 @@
     "expiredSubscription": "Vaša pretplata je istekla",
     "trialEnded": "Vaš besplatni probni period je završio",
     "resubscribe": "Ponovno se pretplatite kako biste nastavili koristiti Inboria.",
-    "trialUsed": "Iskoristili ste svojih 100 besplatnih AI kredita. Odaberite plan kako biste nastavili.",
+    "trialUsed": "Iskoristili ste svojih 4 500 besplatnih AI kredita. Odaberite plan kako biste nastavili.",
     "choosePlan": "Odaberite plan",
     "contactAdminTitle": "Problem s pretplatom tima",
     "contactAdminDesc": "Kontaktirajte administratora svog tima kako biste to riješili."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Vaša pretplata je istekla",
     "trialEndedFull": "Vaše besplatno probno razdoblje je završeno",
     "resubscribe": "Ponovno se pretplatite na plaćeni plan kako biste nastavili koristiti Inboria.",
-    "trialUsedFull": "Iskoristili ste svojih 100 besplatnih IA kredita. Odaberite plan u nastavku kako biste nastavili.",
+    "trialUsedFull": "Iskoristili ste svojih 4 500 besplatnih IA kredita. Odaberite plan u nastavku kako biste nastavili.",
     "maintenanceHint": "Napredne opcije: ponovo izračunajte broj kredita ili obnovite e-mailove označene kao neželjene greškom.",
     "recountQuota": "Ponovno izračunavanje kredita",
     "recountSuccess": "Krediti ponovno izračunati",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Probno razdoblje",
-    "trialDesc": "100 IA kredita poklon za upoznavanje s Inboria",
+    "trialDesc": "4 500 IA kredita poklon za upoznavanje s Inboria",
     "trialFeatures": {
-      "f1": "100 IA kredita poklon (jednokratna upotreba)",
+      "f1": "4 500 IA kredita poklon (jednokratna upotreba)",
       "f2": "3 prilagođene rubrike",
       "f3": "Podrška putem e-pošte",
       "f4": "Inboria skice uključene"
@@ -1367,9 +1367,9 @@
       "f8": "Prekoračenje: 0,001€ / kredit"
     },
     "essai": "Probno razdoblje",
-    "essaiDesc": "100 IA kredita poklon za upoznavanje s Inboria",
+    "essaiDesc": "4 500 IA kredita poklon za upoznavanje s Inboria",
     "essaiFeatures": {
-      "f1": "100 IA kredita poklon (jednokratna upotreba)",
+      "f1": "4 500 IA kredita poklon (jednokratna upotreba)",
       "f2": "3 prilagođene rubrike",
       "f3": "Podrška putem e-pošte",
       "f4": "Bozze Inboria uključene"
@@ -1434,7 +1434,7 @@
       "multilingual": "Izvorni višejezični",
       "multilingualDesc": "Sučelje i AI dostupni su na 43 jezika — od francuskog do japanskog, uključujući arapski, korejski i kineski. Svaki član Vašeg tima radi na vlastitom jeziku.",
       "ctaTitle": "Spremni za uštedu 2 sata dnevno?",
-      "ctaDesc": "100 AI kredita poklon za otkrivanje Inboria. Nema potrebe za kreditnom karticom.",
+      "ctaDesc": "4 500 AI kredita poklon za otkrivanje Inboria. Nema potrebe za kreditnom karticom.",
       "tryFree": "Isprobajte besplatno"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Sigurnost i privatnost",
       "securityDesc": "Vaši podaci su zaštićeni end-to-end enkripcijom. Strogo poštujemo GDPR i nikada ne prodajemo vaše informacije.",
       "ctaTitle": "Spremni za uštedu 2 sata dnevno?",
-      "ctaDesc": "100 AI kredita poklon za otkrivanje Inborije. Nema potrebe za kreditnom karticom.",
+      "ctaDesc": "4 500 AI kredita poklon za otkrivanje Inborije. Nema potrebe za kreditnom karticom.",
       "tryFree": "Isprobajte besplatno",
       "snoozeSchedule": "Odgađanje i zakazivanje e-poruka",
       "snoozeScheduleDesc": "Odložite e-poruku za kasnije ili zakazujte slanje na idealan datum i vrijeme. Vaša pošta ostaje usredotočena na bitno.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktivirajte paket koji odgovara Vašoj aktivnosti ili zatražite od Inborije prilagođenu referentnu listu. Inboria zatim razvrstava svaku dolaznu e-poštu na pravo mjesto.",
       "startFree": "Započnite besplatno",
       "seePricingAlt": "Pogledajte cijene",
-      "ctaFooter": "100 AI kredita poklonjeno za početak · Nema potrebe za kreditnom karticom"
+      "ctaFooter": "4 500 AI kredita poklonjeno za početak · Nema potrebe za kreditnom karticom"
     },
     "ai": {
       "badge": "Inboria razumije Vaš poštanski sandučić",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Pridružite se malim i srednjim poduzećima koja svakodnevno štede 2 sata zahvaljujući Inboria.",
       "tryFree": "Isprobajte besplatno",
       "seePricing": "Pogledajte cijene",
-      "ctaFooter": "100 AI kredita poklon • Nema potrebe za kreditnom karticom • Inboria uključena u sve planove"
+      "ctaFooter": "4 500 AI kredita poklon • Nema potrebe za kreditnom karticom • Inboria uključena u sve planove"
     },
     "inboriaChat": {
       "badge": "Inboria chat",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Upravljajte svojom Inboria pretplatom. Usporedite ponude i prebacite se na viši plan.",
       "subscriptionFeatures": [
         "4 plana: Probni (besplatan), Solo (9€/mj), Pro (19€/mj), Business (od 50,97€/mj)",
-        "Besplatno probno razdoblje s 100 AI kredita uključeno",
+        "Besplatno probno razdoblje s 4 500 AI kredita uključeno",
         "Sigurno plaćanje putem Paddle",
         "Pogledajte svoj kvotu i trenutnu potrošnju",
         "Promijenite plan u bilo kojem trenutku"

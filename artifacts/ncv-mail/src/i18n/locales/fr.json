@@ -72,7 +72,7 @@
     "expiredSubscription": "Votre abonnement a expiré",
     "trialEnded": "Votre essai gratuit est terminé",
     "resubscribe": "Réabonnez-vous pour continuer à utiliser Inboria.",
-    "trialUsed": "Vous avez utilisé vos 100 crédits IA gratuits. Choisissez un plan pour continuer.",
+    "trialUsed": "Vous avez utilisé vos 4 500 crédits IA gratuits. Choisissez un plan pour continuer.",
     "choosePlan": "Choisir un plan",
     "contactAdminTitle": "Souci d'abonnement côté équipe",
     "contactAdminDesc": "Contactez l'admin de votre équipe pour régler ça."
@@ -1330,7 +1330,7 @@
     "expiredSubscription": "Votre abonnement a expiré",
     "trialEndedFull": "Votre essai gratuit est terminé",
     "resubscribe": "Réabonnez-vous à un plan payant pour continuer à utiliser Inboria.",
-    "trialUsedFull": "Vous avez utilisé vos 100 crédits IA gratuits. Choisissez un plan ci-dessous pour continuer.",
+    "trialUsedFull": "Vous avez utilisé vos 4 500 crédits IA gratuits. Choisissez un plan ci-dessous pour continuer.",
     "maintenanceHint": "Options avancées : recalculer le compteur de crédits ou restaurer des emails marqués comme indésirables par erreur.",
     "recountQuota": "Recalculer les crédits",
     "recountSuccess": "Crédits recalculés",
@@ -1353,9 +1353,9 @@
   },
   "plans": {
     "trial": "Essai",
-    "trialDesc": "100 crédits IA offerts pour découvrir Inboria",
+    "trialDesc": "4 500 crédits IA offerts pour découvrir Inboria",
     "trialFeatures": {
-      "f1": "100 crédits IA offerts (usage unique)",
+      "f1": "4 500 crédits IA offerts (usage unique)",
       "f2": "3 rubriques personnalisées",
       "f3": "Support par email",
       "f4": "Brouillons Inboria inclus"
@@ -1396,9 +1396,9 @@
       "f8": "Dépassement : 0,001€ / crédit"
     },
     "essai": "Essai",
-    "essaiDesc": "100 crédits IA offerts pour découvrir Inboria",
+    "essaiDesc": "4 500 crédits IA offerts pour découvrir Inboria",
     "essaiFeatures": {
-      "f1": "100 crédits IA offerts (usage unique)",
+      "f1": "4 500 crédits IA offerts (usage unique)",
       "f2": "3 rubriques personnalisées",
       "f3": "Support par email",
       "f4": "Brouillons Inboria inclus"
@@ -1463,7 +1463,7 @@
       "multilingual": "Multilingue natif",
       "multilingualDesc": "Interface et IA disponibles dans 43 langues — du français au japonais, en passant par l'arabe, le coréen et le chinois. Chaque membre de votre équipe travaille dans sa langue.",
       "ctaTitle": "Prêt à gagner 2h par jour ?",
-      "ctaDesc": "100 crédits IA offerts pour découvrir Inboria. Aucune carte bancaire requise.",
+      "ctaDesc": "4 500 crédits IA offerts pour découvrir Inboria. Aucune carte bancaire requise.",
       "tryFree": "Essayer gratuitement"
     },
     "features": {
@@ -1504,7 +1504,7 @@
       "security": "Sécurité et confidentialité",
       "securityDesc": "Vos données sont protégées par un chiffrement de bout en bout. Nous respectons strictement le RGPD et ne vendons jamais vos informations.",
       "ctaTitle": "Prêt à gagner 2h par jour ?",
-      "ctaDesc": "100 crédits IA offerts pour découvrir Inboria. Aucune carte bancaire requise.",
+      "ctaDesc": "4 500 crédits IA offerts pour découvrir Inboria. Aucune carte bancaire requise.",
       "tryFree": "Essayer gratuitement",
       "snoozeSchedule": "Reporter & programmer les emails",
       "snoozeScheduleDesc": "Reportez un email à plus tard ou programmez l'envoi à la date et l'heure idéales. Votre boîte reste centrée sur l'essentiel du moment.",
@@ -1602,7 +1602,7 @@
       "ctaDesc": "Activez le pack qui correspond à votre activité, ou demandez à Inboria un référentiel sur mesure. Inboria classe ensuite chaque email entrant à la bonne place.",
       "startFree": "Commencer gratuitement",
       "seePricingAlt": "Voir les tarifs",
-      "ctaFooter": "100 crédits IA offerts pour démarrer · Aucune carte bancaire requise"
+      "ctaFooter": "4 500 crédits IA offerts pour démarrer · Aucune carte bancaire requise"
     },
     "ai": {
       "badge": "Inboria comprend votre boîte mail",
@@ -1702,7 +1702,7 @@
       "ctaDesc": "Rejoignez les PME qui gagnent 2 heures par jour grâce à Inboria.",
       "tryFree": "Essayer gratuitement",
       "seePricing": "Voir les tarifs",
-      "ctaFooter": "100 crédits IA offerts • Aucune carte bancaire requise • Inboria incluse dans tous les plans"
+      "ctaFooter": "4 500 crédits IA offerts • Aucune carte bancaire requise • Inboria incluse dans tous les plans"
     },
     "inboriaChat": {
       "badge": "Le chat Inboria",
@@ -2400,7 +2400,7 @@
       "subscriptionDesc": "Gérez votre plan d'abonnement Inboria. Comparez les offres et passez à un plan supérieur.",
       "subscriptionFeatures": [
         "4 plans : Essai (gratuit), Solo (9€/mois), Pro (19€/mois), Business (à partir de 50,97€/mois)",
-        "Essai gratuit de 100 crédits IA inclus",
+        "Essai gratuit de 4 500 crédits IA inclus",
         "Paiement sécurisé via Paddle",
         "Voir votre quota et votre consommation actuelle",
         "Changer de plan à tout moment"

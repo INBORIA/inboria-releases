@@ -72,7 +72,7 @@
     "expiredSubscription": "Az előfizetése lejárt",
     "trialEnded": "A próbaidőszaka véget ért",
     "resubscribe": "Újra előfizetnie kell, hogy továbbra is használhassa az Inboria-t.",
-    "trialUsed": "Ön felhasználta a 100 ingyenes IA kreditet. Válasszon egy csomagot a folytatáshoz.",
+    "trialUsed": "Ön felhasználta a 4 500 ingyenes IA kreditet. Válasszon egy csomagot a folytatáshoz.",
     "choosePlan": "Csomag választása",
     "contactAdminTitle": "Probléma az előfizetéssel a csapat oldalán",
     "contactAdminDesc": "Kérjük, lépjen kapcsolatba a csapata adminisztrátorával ennek rendezéséhez."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Az előfizetése lejárt",
     "trialEndedFull": "A próbaidőszaka véget ért",
     "resubscribe": "Iratkozzon fel egy fizetős tervre, hogy továbbra is használhassa az Inboria-t.",
-    "trialUsedFull": "Ön felhasználta a 100 ingyenes IA kreditjét. Válasszon egy tervet az alábbiakban a folytatáshoz.",
+    "trialUsedFull": "Ön felhasználta a 4 500 ingyenes IA kreditjét. Válasszon egy tervet az alábbiakban a folytatáshoz.",
     "maintenanceHint": "Haladó lehetőségek: a kreditszámláló újraszámítása vagy a tévesen spamként megjelölt e-mailek helyreállítása.",
     "recountQuota": "Kreditek újraszámítása",
     "recountSuccess": "Újraszámolt kreditek",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Próba",
-    "trialDesc": "100 ingyenes IA kredit az Inboria felfedezéséhez",
+    "trialDesc": "4 500 ingyenes IA kredit az Inboria felfedezéséhez",
     "trialFeatures": {
-      "f1": "100 ingyenes IA kredit (egyszeri használatra)",
+      "f1": "4 500 ingyenes IA kredit (egyszeri használatra)",
       "f2": "3 testreszabott szakasz",
       "f3": "Email támogatás",
       "f4": "Inboria vázlatok benne"
@@ -1367,9 +1367,9 @@
       "f8": "Túllépés: 0,001€ / kredit"
     },
     "essai": "Próba",
-    "essaiDesc": "100 ingyenes IA kredit az Inboria felfedezéséhez",
+    "essaiDesc": "4 500 ingyenes IA kredit az Inboria felfedezéséhez",
     "essaiFeatures": {
-      "f1": "100 ingyenes IA kredit (egyszeri használatra)",
+      "f1": "4 500 ingyenes IA kredit (egyszeri használatra)",
       "f2": "3 testreszabott szakasz",
       "f3": "Email támogatás",
       "f4": "Inboria bozze benne"
@@ -1434,7 +1434,7 @@
       "multilingual": "Anyanyelvi többnyelvűség",
       "multilingualDesc": "A felület és a mesterséges intelligencia 43 nyelven érhető el — a franciától a japánig, beleértve az arabot, a koreait és a kínait is. Csapata minden tagja a saját nyelvén dolgozhat.",
       "ctaTitle": "Készen áll arra, hogy napi 2 órát nyerjen?",
-      "ctaDesc": "100 ingyenes AI kredit az Inboria felfedezéséhez. Bankkártya nem szükséges.",
+      "ctaDesc": "4 500 ingyenes AI kredit az Inboria felfedezéséhez. Bankkártya nem szükséges.",
       "tryFree": "Ingyenes kipróbálás"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Biztonság és adatvédelem",
       "securityDesc": "Az Ön adatai végponttól végpontig terjedő titkosítással védettek. Szigorúan betartjuk a GDPR-t, és soha nem értékesítjük az információit.",
       "ctaTitle": "Készen áll arra, hogy napi 2 órát nyerjen?",
-      "ctaDesc": "100 ingyenes IA kredit az Inboria felfedezéséhez. Nincs szükség bankkártyára.",
+      "ctaDesc": "4 500 ingyenes IA kredit az Inboria felfedezéséhez. Nincs szükség bankkártyára.",
       "tryFree": "Próbálja ki ingyenesen",
       "snoozeSchedule": "Emailek elhalasztása és ütemezése",
       "snoozeScheduleDesc": "Halasszon el egy emailt későbbre, vagy ütemezze az elküldést a megfelelő időpontra. Az Ön postaládája továbbra is a lényegre összpontosít.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktiválja a tevékenységéhez illő csomagot, vagy kérjen az Inboria-tól egy testreszabott referenciát. Az Inboria ezután minden bejövő e-mailt a megfelelő helyre sorol.",
       "startFree": "Kezdje el ingyenesen",
       "seePricingAlt": "Nézze meg az árakat",
-      "ctaFooter": "100 ingyenes IA kredit az induláshoz · Nincs szükség bankkártyára"
+      "ctaFooter": "4 500 ingyenes IA kredit az induláshoz · Nincs szükség bankkártyára"
     },
     "ai": {
       "badge": "Az Inboria megérti az Ön postaládáját",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Csatlakozzon azokhoz a KKV-khez, akik napi 2 órát nyernek az Inboria segítségével.",
       "tryFree": "Próbálja ki ingyenesen",
       "seePricing": "Nézze meg az árakat",
-      "ctaFooter": "100 ingyenes IA kredit • Nincs szükség bankkártyára • Az Inboria minden csomagban benne van"
+      "ctaFooter": "4 500 ingyenes IA kredit • Nincs szükség bankkártyára • Az Inboria minden csomagban benne van"
     },
     "inboriaChat": {
       "badge": "Az Inboria chat",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Kezelje az Inboria előfizetési tervét. Hasonlítsa össze az ajánlatokat, és lépjen egy magasabb tervre.",
       "subscriptionFeatures": [
         "4 terv: Próbaverzió (ingyenes), Solo (9€/hó), Pro (19€/hó), Business (50,97€/hó-tól)",
-        "Ingyenes próbaverzió 100 AI kredittel",
+        "Ingyenes próbaverzió 4 500 AI kredittel",
         "Biztonságos fizetés a Paddle-en keresztül",
         "Tekintse meg kvótáját és aktuális fogyasztását",
         "Tervek váltása bármikor"

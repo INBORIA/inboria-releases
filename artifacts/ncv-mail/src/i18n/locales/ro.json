@@ -72,7 +72,7 @@
     "expiredSubscription": "Abonamentul dumneavoastră a expirat",
     "trialEnded": "Perioada de probă gratuită s-a încheiat",
     "resubscribe": "Reabonați-vă pentru a continua să utilizați Inboria.",
-    "trialUsed": "Ați folosit cele 100 de credite IA gratuite. Alegeți un plan pentru a continua.",
+    "trialUsed": "Ați folosit cele 4 500 de credite IA gratuite. Alegeți un plan pentru a continua.",
     "choosePlan": "Alegeți un plan",
     "contactAdminTitle": "Probleme cu abonamentul echipei",
     "contactAdminDesc": "Contactați adminul echipei dumneavoastră pentru a rezolva aceasta."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Abonamentul dumneavoastră a expirat",
     "trialEndedFull": "Perioada dumneavoastră de probă gratuită s-a încheiat",
     "resubscribe": "Reabonați-vă la un plan plătit pentru a continua să utilizați Inboria.",
-    "trialUsedFull": "Ați utilizat cele 100 de credite IA gratuite. Alegeți un plan mai jos pentru a continua.",
+    "trialUsedFull": "Ați utilizat cele 4 500 de credite IA gratuite. Alegeți un plan mai jos pentru a continua.",
     "maintenanceHint": "Opțiuni avansate: recalculați contorul de credite sau restaurați emailurile marcate ca nedorite din greșeală.",
     "recountQuota": "Recalculați creditele",
     "recountSuccess": "Credite recalibrate",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Încercare",
-    "trialDesc": "100 de credite IA oferite pentru a descoperi Inboria",
+    "trialDesc": "4 500 de credite IA oferite pentru a descoperi Inboria",
     "trialFeatures": {
-      "f1": "100 de credite IA oferite (utilizare unică)",
+      "f1": "4 500 de credite IA oferite (utilizare unică)",
       "f2": "3 rubrici personalizate",
       "f3": "Suport prin email",
       "f4": "Bozze Inboria incluse"
@@ -1367,9 +1367,9 @@
       "f8": "Depășire: 0,001€ / credit"
     },
     "essai": "Încercare",
-    "essaiDesc": "100 de credite IA oferite pentru a descoperi Inboria",
+    "essaiDesc": "4 500 de credite IA oferite pentru a descoperi Inboria",
     "essaiFeatures": {
-      "f1": "100 de credite IA oferite (utilizare unică)",
+      "f1": "4 500 de credite IA oferite (utilizare unică)",
       "f2": "3 rubrici personalizate",
       "f3": "Suport prin email",
       "f4": "Bozze Inboria incluse"
@@ -1434,7 +1434,7 @@
       "multilingual": "Multilingv nativ",
       "multilingualDesc": "Interfață și IA disponibile în 43 de limbi — de la franceză la japoneză, inclusiv arabă, coreeană și chineză. Fiecare membru al echipei lucrează în limba sa.",
       "ctaTitle": "Sunteți gata să câștigați 2 ore pe zi?",
-      "ctaDesc": "100 de credite IA oferite pentru a descoperi Inboria. Fără card bancar necesar.",
+      "ctaDesc": "4 500 de credite IA oferite pentru a descoperi Inboria. Fără card bancar necesar.",
       "tryFree": "Încercați gratuit"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Securitate și confidențialitate",
       "securityDesc": "Datele dumneavoastră sunt protejate prin criptare end-to-end. Respectăm strict RGPD-ul și nu vindem niciodată informațiile dumneavoastră.",
       "ctaTitle": "Sunteți pregătit să câștigați 2 ore pe zi?",
-      "ctaDesc": "100 de credite IA oferite pentru a descoperi Inboria. Fără card bancar necesar.",
+      "ctaDesc": "4 500 de credite IA oferite pentru a descoperi Inboria. Fără card bancar necesar.",
       "tryFree": "Încercați gratuit",
       "snoozeSchedule": "Amânare & programare emailuri",
       "snoozeScheduleDesc": "Amânați un email pentru mai târziu sau programați trimiterea la data și ora ideale. Căsuța dumneavoastră rămâne concentrată pe esențial.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Activați pachetul care corespunde activității dumneavoastră sau solicitați de la Inboria o referință personalizată. Inboria clasifică apoi fiecare email primit la locul potrivit.",
       "startFree": "Începeți gratuit",
       "seePricingAlt": "Vezi tarifele",
-      "ctaFooter": "100 de credite AI oferite pentru a începe · Fără card bancar necesar"
+      "ctaFooter": "4 500 de credite AI oferite pentru a începe · Fără card bancar necesar"
     },
     "ai": {
       "badge": "Inboria înțelege căsuța dumneavoastră de email",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Alăturați-vă IMM-urilor care câștigă 2 ore pe zi datorită Inboria.",
       "tryFree": "Încercați gratuit",
       "seePricing": "Vezi tarifele",
-      "ctaFooter": "100 de credite IA oferite • Fără card bancar necesar • Inboria inclusă în toate planurile"
+      "ctaFooter": "4 500 de credite IA oferite • Fără card bancar necesar • Inboria inclusă în toate planurile"
     },
     "inboriaChat": {
       "badge": "Chatul Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Gestionați planul dumneavoastră de abonament Inboria. Comparați ofertele și treceți la un plan superior.",
       "subscriptionFeatures": [
         "4 planuri: Încercare (gratuit), Solo (9€/lună), Pro (19€/lună), Business (începând de la 50,97€/lună)",
-        "Încercare gratuită de 100 de credite IA inclusă",
+        "Încercare gratuită de 4 500 de credite IA inclusă",
         "Plată securizată prin Paddle",
         "Vizualizați cota și consumul dumneavoastră actual",
         "Schimbați planul în orice moment"

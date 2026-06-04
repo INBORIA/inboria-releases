@@ -74,7 +74,7 @@
     "contactAdminDesc": "Neem contact op met de admin van uw team om dit op te lossen.",
     "trialEnded": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw uw abonnement om Inboria te blijven gebruiken.",
-    "trialUsed": "U heeft uw 100 gratis AI-credits gebruikt. Kies een plan om door te gaan.",
+    "trialUsed": "U heeft uw 4 500 gratis AI-credits gebruikt. Kies een plan om door te gaan.",
     "choosePlan": "Kies een plan"
   },
   "footer": {
@@ -1311,7 +1311,7 @@
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
-    "trialUsedFull": "U heeft uw 100 gratis AI-credits gebruikt. Kies hieronder een plan om door te gaan.",
+    "trialUsedFull": "U heeft uw 4 500 gratis AI-credits gebruikt. Kies hieronder een plan om door te gaan.",
     "maintenanceHint": "Geavanceerde opties: het credit-gebruik opnieuw berekenen of e-mails herstellen die ten onrechte als ongewenst zijn gemarkeerd.",
     "recountQuota": "Credits opnieuw tellen",
     "recountSuccess": "Credits opnieuw geteld",
@@ -1334,9 +1334,9 @@
   },
   "plans": {
     "trial": "Proef",
-    "trialDesc": "100 gratis AI-credits om Inboria te ontdekken",
+    "trialDesc": "4 500 gratis AI-credits om Inboria te ontdekken",
     "trialFeatures": {
-      "f1": "100 gratis AI-credits (eenmalig gebruik)",
+      "f1": "4 500 gratis AI-credits (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
       "f3": "E-mailondersteuning",
       "f4": "Inboria-concepten inbegrepen"
@@ -1377,9 +1377,9 @@
       "f8": "Overschrijding: €0,001 / credit"
     },
     "essai": "Proefperiode",
-    "essaiDesc": "100 gratis AI-credits om Inboria te ontdekken",
+    "essaiDesc": "4 500 gratis AI-credits om Inboria te ontdekken",
     "essaiFeatures": {
-      "f1": "100 gratis AI-credits (eenmalig gebruik)",
+      "f1": "4 500 gratis AI-credits (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
       "f3": "E-mailondersteuning",
       "f4": "Inboria-concepten inbegrepen"
@@ -1444,7 +1444,7 @@
       "multilingual": "Native meertalig",
       "multilingualDesc": "Interface en AI beschikbaar in 43 talen — van Frans tot Japans, inclusief Arabisch, Koreaans en Chinees. Elk teamlid werkt in zijn eigen taal.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "4 500 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen"
     },
     "features": {
@@ -1485,7 +1485,7 @@
       "security": "Beveiliging en privacy",
       "securityDesc": "Uw gegevens worden beschermd door end-to-end-encryptie. Wij respecteren strikt de AVG en verkopen nooit uw informatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "4 500 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen",
       "snoozeSchedule": "E-mails uitstellen & plannen",
       "snoozeScheduleDesc": "Stel een e-mail uit voor later of plan het verzenden op de ideale datum en tijd. Uw inbox blijft gericht op wat er nu telt.",
@@ -1583,7 +1583,7 @@
       "ctaDesc": "Kies uw branchepakket, pas het toe en laat Inboria uw e-mails automatisch sorteren. Zo eenvoudig is het.",
       "startFree": "Gratis beginnen",
       "seePricingAlt": "Tarieven bekijken",
-      "ctaFooter": "100 gratis AI-credits om te proberen • Geen creditcard vereist"
+      "ctaFooter": "4 500 gratis AI-credits om te proberen • Geen creditcard vereist"
     },
     "ai": {
       "badge": "Inboria begrijpt uw inbox",
@@ -1683,7 +1683,7 @@
       "ctaDesc": "Sluit u aan bij de kmo's die 2 uur per dag besparen dankzij Inboria.",
       "tryFree": "Gratis proberen",
       "seePricing": "Bekijk de prijzen",
-      "ctaFooter": "100 gratis AI-credits • Geen kredietkaart nodig • Inboria inbegrepen in elk plan"
+      "ctaFooter": "4 500 gratis AI-credits • Geen kredietkaart nodig • Inboria inbegrepen in elk plan"
     },
     "inboriaChat": {
       "badge": "De Inboria-chat",
@@ -2367,7 +2367,7 @@
       "subscriptionDesc": "Beheer uw Inboria-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
       "subscriptionFeatures": [
         "4 plannen: Proef (gratis), Solo (€9/maand), Pro (€19/maand), Business (vanaf €50,97/maand)",
-        "Gratis proef van 100 e-mails inbegrepen",
+        "Gratis proef van 4 500 e-mails inbegrepen",
         "Veilige betaling via Paddle",
         "Uw quota en huidig verbruik bekijken",
         "Op elk moment van plan wisselen"

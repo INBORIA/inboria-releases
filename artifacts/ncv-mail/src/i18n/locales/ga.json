@@ -72,7 +72,7 @@
     "expiredSubscription": "Tá bhur síntiús imithe in éag",
     "trialEnded": "Tá bhur triail saor in aisce críochnaithe",
     "resubscribe": "Athshínigh chun leanúint ar aghaidh ag úsáid Inboria.",
-    "trialUsed": "Tá bhur 100 creidmheas AI saor in aisce úsáidte. Roghnaigh plean chun leanúint ar aghaidh.",
+    "trialUsed": "Tá bhur 4 500 creidmheas AI saor in aisce úsáidte. Roghnaigh plean chun leanúint ar aghaidh.",
     "choosePlan": "Roghnaigh plean",
     "contactAdminTitle": "Fadhb le síntiús ghrúpa",
     "contactAdminDesc": "Déanaigí teagmháil le riarachán bhur ghrúpa chun é seo a réiteach."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Tá bhur síntiús imithe in éag",
     "trialEndedFull": "Tá bhur thriail saor in aisce críochnaithe",
     "resubscribe": "Athshínigh chuig plean íoctha chun leanúint ar aghaidh ag úsáid Inboria.",
-    "trialUsedFull": "Tá bhur 100 creidmheas IA saor in aisce úsáidte. Roghnaigh plean thíos chun leanúint ar aghaidh.",
+    "trialUsedFull": "Tá bhur 4 500 creidmheas IA saor in aisce úsáidte. Roghnaigh plean thíos chun leanúint ar aghaidh.",
     "maintenanceHint": "Roghaí chun cinn: athchomhoiriúnú an comhoiriúnachta creidmheasa nó aiseolas a thabhairt ar ríomhphoist a marcadh mar neamh-inmhianaithe de bharr earráide.",
     "recountQuota": "Athchomhoiriúnú na creidmheasa",
     "recountSuccess": "Creidmheasa athchomhoiriúnaithe",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Triail",
-    "trialDesc": "100 creidmheas IA ar fáil chun Inboria a chur in aithne",
+    "trialDesc": "4 500 creidmheas IA ar fáil chun Inboria a chur in aithne",
     "trialFeatures": {
-      "f1": "100 creidmheas IA ar fáil (úsáid aon uair amháin)",
+      "f1": "4 500 creidmheas IA ar fáil (úsáid aon uair amháin)",
       "f2": "3 rubrics phearsantaithe",
       "f3": "Tacaíocht trí ríomhphost",
       "f4": "Broscaí Inboria san áireamh"
@@ -1367,9 +1367,9 @@
       "f8": "Sárú: 0,001€ / creidmheas"
     },
     "essai": "Triail",
-    "essaiDesc": "100 creidmheas IA ar fáil chun Inboria a chur in aithne",
+    "essaiDesc": "4 500 creidmheas IA ar fáil chun Inboria a chur in aithne",
     "essaiFeatures": {
-      "f1": "100 creidmheas IA ar fáil (úsáid aon uair amháin)",
+      "f1": "4 500 creidmheas IA ar fáil (úsáid aon uair amháin)",
       "f2": "3 rubrics phearsantaithe",
       "f3": "Tacaíocht trí ríomhphost",
       "f4": "Bozze Inboria san áireamh"
@@ -1434,7 +1434,7 @@
       "multilingual": "Ilteangach dúchasach",
       "multilingualDesc": "Tá an comhéadan agus an IA ar fáil i 43 teanga — ón bhFraincis go dtí an tSeapáinis, lena n-áirítear an Araibis, an Chóiréis agus an tSínis. Oibríonn gach ball den fhoireann ina theanga féin.",
       "ctaTitle": "Réidh le 2h a shábháil in aghaidh an lae?",
-      "ctaDesc": "100 creidmheas AI ar fáil chun Inboria a fháil amach. Ní gá cárta bainc.",
+      "ctaDesc": "4 500 creidmheas AI ar fáil chun Inboria a fháil amach. Ní gá cárta bainc.",
       "tryFree": "Triail saor in aisce"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Sábháilteacht agus príobháideacht",
       "securityDesc": "Tá do shonraí cosanta le criptithe ó cheann go ceann. Comhlíonann muid go docht an RGPD agus ní dhíolaimid do chuid faisnéise riamh.",
       "ctaTitle": "Réidh le 2h a bhuachan gach lá?",
-      "ctaDesc": "100 creidmheas AI ar fáil chun Inboria a fháil amach. Ní gá cárta bainc.",
+      "ctaDesc": "4 500 creidmheas AI ar fáil chun Inboria a fháil amach. Ní gá cárta bainc.",
       "tryFree": "Triail saor in aisce",
       "snoozeSchedule": "Cuir siar & pleanáil na ríomhphoist",
       "snoozeScheduleDesc": "Cuir ríomhphost siar go dtí níos déanaí nó pleanáil an seoladh ag an dáta agus an t-am foirfe. Fanann do bhosca dírithe ar an t-ábhar tábhachtach atá ann.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Gníomhachtaigh an pacáiste a fhreagraíonn do do ghnó, nó iarr ar Inboria tagairt oiriúnach. Cuireann Inboria gach ríomhphost ag teacht isteach sa áit cheart.",
       "startFree": "Tosú saor in aisce",
       "seePricingAlt": "Féach ar na praghsanna",
-      "ctaFooter": "100 creidmheas AI ar fáil chun tosú · Ní gá cárta bainc"
+      "ctaFooter": "4 500 creidmheas AI ar fáil chun tosú · Ní gá cárta bainc"
     },
     "ai": {
       "badge": "Tuigeann Inboria bhur mbosca poist",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Bí i dteannta na n-údarás beaga a bhuaigh 2 uair an chloig in aghaidh an lae le cabhair ó Inboria.",
       "tryFree": "Triail saor in aisce",
       "seePricing": "Féach ar na praghsanna",
-      "ctaFooter": "100 creidmheas AI ar fáil • Ní gá cárta bainc • Áirítear Inboria i ngach plean"
+      "ctaFooter": "4 500 creidmheas AI ar fáil • Ní gá cárta bainc • Áirítear Inboria i ngach plean"
     },
     "inboriaChat": {
       "badge": "An comhrá Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Bainistigh bhur bplean síntiúis Inboria. Comparáid na dtairiscintí agus bogadh chuig plean níos airde.",
       "subscriptionFeatures": [
         "4 phlean: Triail (saor), Duine (9€/mí), Pro (19€/mí), Gnó (ó 50,97€/mí)",
-        "Triail saor in aisce le 100 creidmheas AI san áireamh",
+        "Triail saor in aisce le 4 500 creidmheas AI san áireamh",
         "Íocaíocht shlán trí Paddle",
         "Féach ar bhur gcion agus bhur n-úsáid reatha",
         "Athraigh plean ag am ar bith"

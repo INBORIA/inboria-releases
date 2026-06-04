@@ -72,7 +72,7 @@
     "expiredSubscription": "La vostra subscripció ha caducat",
     "trialEnded": "La vostra prova gratuïta ha acabat",
     "resubscribe": "Re-subscriviu-vos per continuar utilitzant Inboria.",
-    "trialUsed": "Heu utilitzat els vostres 100 crèdits IA gratuïts. Trieu un pla per continuar.",
+    "trialUsed": "Heu utilitzat els vostres 4 500 crèdits IA gratuïts. Trieu un pla per continuar.",
     "choosePlan": "Trieu un pla",
     "contactAdminTitle": "Problema de subscripció a l'equip",
     "contactAdminDesc": "Contacteu amb l'admin del vostre equip per resoldre-ho."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "La vostra subscripció ha caducat",
     "trialEndedFull": "La vostra prova gratuïta ha acabat",
     "resubscribe": "Re-subscriviu-vos a un pla de pagament per continuar utilitzant Inboria.",
-    "trialUsedFull": "Heu utilitzat els vostres 100 crèdits IA gratuïts. Trieu un pla a continuació per continuar.",
+    "trialUsedFull": "Heu utilitzat els vostres 4 500 crèdits IA gratuïts. Trieu un pla a continuació per continuar.",
     "maintenanceHint": "Opcions avançades: recalcular el comptador de crèdits o restaurar correus electrònics marcats com a indesejables per error.",
     "recountQuota": "Recalcular els crèdits",
     "recountSuccess": "Crèdits recalculats",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Prova",
-    "trialDesc": "100 crèdits IA oferts per descobrir Inboria",
+    "trialDesc": "4 500 crèdits IA oferts per descobrir Inboria",
     "trialFeatures": {
-      "f1": "100 crèdits IA oferts (ús únic)",
+      "f1": "4 500 crèdits IA oferts (ús únic)",
       "f2": "3 seccions personalitzades",
       "f3": "Suport per correu electrònic",
       "f4": "Brouillons Inboria inclosos"
@@ -1367,9 +1367,9 @@
       "f8": "Excedent: 0,001€ / crèdit"
     },
     "essai": "Prova",
-    "essaiDesc": "100 crèdits IA oferts per descobrir Inboria",
+    "essaiDesc": "4 500 crèdits IA oferts per descobrir Inboria",
     "essaiFeatures": {
-      "f1": "100 crèdits IA oferts (ús únic)",
+      "f1": "4 500 crèdits IA oferts (ús únic)",
       "f2": "3 seccions personalitzades",
       "f3": "Suport per correu electrònic",
       "f4": "Borradors d'Inboria inclosos"
@@ -1434,7 +1434,7 @@
       "multilingual": "Multilingüe natiu",
       "multilingualDesc": "Interfície i IA disponibles en 43 idiomes — del francès al japonès, passant per l'àrab, el coreà i el xinès. Cada membre del seu equip treballa en el seu propi idioma.",
       "ctaTitle": "Preparat per guanyar 2h al dia?",
-      "ctaDesc": "100 crèdits IA oferts per descobrir Inboria. Cap targeta de crèdit requerida.",
+      "ctaDesc": "4 500 crèdits IA oferts per descobrir Inboria. Cap targeta de crèdit requerida.",
       "tryFree": "Provar gratuïtament"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Seguretat i privacitat",
       "securityDesc": "Les vostres dades estan protegides per un xifratge de punta a punta. Respectem estrictament el RGPD i mai venem la vostra informació.",
       "ctaTitle": "Preparat per guanyar 2 hores al dia?",
-      "ctaDesc": "100 crèdits IA oferts per descobrir Inboria. Cap targeta bancària requerida.",
+      "ctaDesc": "4 500 crèdits IA oferts per descobrir Inboria. Cap targeta bancària requerida.",
       "tryFree": "Proveu gratuïtament",
       "snoozeSchedule": "Retard i programació dels correus electrònics",
       "snoozeScheduleDesc": "Retardeu un correu electrònic per més tard o programeu l'enviament a la data i hora ideals. La vostra bústia es manté centrada en l'essencial del moment.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Activeu el paquet que correspon a la vostra activitat, o demaneu a Inboria un referencial a mida. Inboria classifica després cada correu electrònic entrant al lloc adequat.",
       "startFree": "Començar gratuïtament",
       "seePricingAlt": "Veure els preus",
-      "ctaFooter": "100 crèdits IA oferts per començar · Cap targeta bancària requerida"
+      "ctaFooter": "4 500 crèdits IA oferts per començar · Cap targeta bancària requerida"
     },
     "ai": {
       "badge": "Inboria comprèn la vostra bústia",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Uneix-te a les pimes que guanyen 2 hores al dia gràcies a Inboria.",
       "tryFree": "Proveu gratuïtament",
       "seePricing": "Veure els preus",
-      "ctaFooter": "100 crèdits IA oferts • Cap targeta bancària requerida • Inboria inclosa en tots els plans"
+      "ctaFooter": "4 500 crèdits IA oferts • Cap targeta bancària requerida • Inboria inclosa en tots els plans"
     },
     "inboriaChat": {
       "badge": "El xat d'Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Gereu el vostre pla de subscripció Inboria. Compareu les ofertes i passeu a un pla superior.",
       "subscriptionFeatures": [
         "4 plans: Prova (gratuïta), Solo (9€/mes), Pro (19€/mes), Business (a partir de 50,97€/mes)",
-        "Prova gratuïta de 100 crèdits IA inclosos",
+        "Prova gratuïta de 4 500 crèdits IA inclosos",
         "Pagament segur a través de Paddle",
         "Veieu el vostre quota i el vostre consum actual",
         "Canvieu de pla en qualsevol moment"

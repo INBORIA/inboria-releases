@@ -72,7 +72,7 @@
     "expiredSubscription": "Twoja subskrypcja wygasła",
     "trialEnded": "Twój bezpłatny okres próbny dobiegł końca",
     "resubscribe": "Zarejestruj się ponownie, aby kontynuować korzystanie z Inboria.",
-    "trialUsed": "Wykorzystałeś swoje 100 bezpłatnych kredytów AI. Wybierz plan, aby kontynuować.",
+    "trialUsed": "Wykorzystałeś swoje 4 500 bezpłatnych kredytów AI. Wybierz plan, aby kontynuować.",
     "choosePlan": "Wybierz plan",
     "contactAdminTitle": "Problem z subskrypcją zespołu",
     "contactAdminDesc": "Skontaktuj się z administratorem swojego zespołu, aby to rozwiązać."
@@ -1301,7 +1301,7 @@
     "expiredSubscription": "Państwa abonament wygasł",
     "trialEndedFull": "Państwa bezpłatny okres próbny dobiegł końca",
     "resubscribe": "Zarejestruj się ponownie w płatnym planie, aby kontynuować korzystanie z Inboria.",
-    "trialUsedFull": "Wykorzystali Państwo swoje 100 darmowych kredytów IA. Wybierz plan poniżej, aby kontynuować.",
+    "trialUsedFull": "Wykorzystali Państwo swoje 4 500 darmowych kredytów IA. Wybierz plan poniżej, aby kontynuować.",
     "maintenanceHint": "Opcje zaawansowane: przeliczenie licznika kredytów lub przywrócenie e-maili oznaczonych jako spam przez pomyłkę.",
     "recountQuota": "Przelicz kredyty",
     "recountSuccess": "Kredyty przeliczone",
@@ -1324,9 +1324,9 @@
   },
   "plans": {
     "trial": "Wersja próbna",
-    "trialDesc": "100 kredytów IA oferowanych na odkrycie Inboria",
+    "trialDesc": "4 500 kredytów IA oferowanych na odkrycie Inboria",
     "trialFeatures": {
-      "f1": "100 kredytów IA oferowanych (jednorazowe użycie)",
+      "f1": "4 500 kredytów IA oferowanych (jednorazowe użycie)",
       "f2": "3 spersonalizowane sekcje",
       "f3": "Wsparcie przez e-mail",
       "f4": "Wersje robocze Inboria wliczone"
@@ -1367,9 +1367,9 @@
       "f8": "Przekroczenie: 0,001€ / kredyt"
     },
     "essai": "Wersja próbna",
-    "essaiDesc": "100 kredytów IA oferowanych na odkrycie Inboria",
+    "essaiDesc": "4 500 kredytów IA oferowanych na odkrycie Inboria",
     "essaiFeatures": {
-      "f1": "100 kredytów IA oferowanych (jednorazowe użycie)",
+      "f1": "4 500 kredytów IA oferowanych (jednorazowe użycie)",
       "f2": "3 spersonalizowane sekcje",
       "f3": "Wsparcie przez e-mail",
       "f4": "Wersje robocze Inboria wliczone"
@@ -1434,7 +1434,7 @@
       "multilingual": "Rodzimy wielojęzyczny",
       "multilingualDesc": "Interfejs i AI dostępne w 43 językach — od francuskiego po japoński, w tym arabski, koreański i chiński. Każdy członek zespołu pracuje w swoim języku.",
       "ctaTitle": "Gotowy, aby zyskać 2 godziny dziennie?",
-      "ctaDesc": "100 kredytów AI w prezencie, aby odkryć Inboria. Brak wymaganej karty kredytowej.",
+      "ctaDesc": "4 500 kredytów AI w prezencie, aby odkryć Inboria. Brak wymaganej karty kredytowej.",
       "tryFree": "Wypróbuj za darmo"
     },
     "features": {
@@ -1475,7 +1475,7 @@
       "security": "Bezpieczeństwo i prywatność",
       "securityDesc": "Twoje dane są chronione szyfrowaniem end-to-end. Ściśle przestrzegamy RODO i nigdy nie sprzedajemy Twoich informacji.",
       "ctaTitle": "Gotowy na zyskanie 2 godzin dziennie?",
-      "ctaDesc": "100 kredytów AI w prezencie na odkrycie Inboria. Brak wymogu podawania karty kredytowej.",
+      "ctaDesc": "4 500 kredytów AI w prezencie na odkrycie Inboria. Brak wymogu podawania karty kredytowej.",
       "tryFree": "Wypróbuj za darmo",
       "snoozeSchedule": "Przesuwanie i planowanie e-maili",
       "snoozeScheduleDesc": "Przesuń e-mail na później lub zaplanuj wysyłkę na idealną datę i godzinę. Twoja skrzynka pozostaje skupiona na najważniejszych sprawach.",
@@ -1573,7 +1573,7 @@
       "ctaDesc": "Aktywuj pakiet, który odpowiada Twojej działalności, lub poproś Inboria o spersonalizowane referencje. Inboria następnie klasyfikuje każdy przychodzący e-mail we właściwe miejsce.",
       "startFree": "Rozpocznij za darmo",
       "seePricingAlt": "Zobacz ceny",
-      "ctaFooter": "100 kredytów AI na start · Brak wymaganej karty kredytowej"
+      "ctaFooter": "4 500 kredytów AI na start · Brak wymaganej karty kredytowej"
     },
     "ai": {
       "badge": "Inboria rozumie Twoją skrzynkę pocztową",
@@ -1673,7 +1673,7 @@
       "ctaDesc": "Dołącz do małych i średnich przedsiębiorstw, które zyskują 2 godziny dziennie dzięki Inboria.",
       "tryFree": "Wypróbuj za darmo",
       "seePricing": "Zobacz ceny",
-      "ctaFooter": "100 kredytów AI w prezencie • Brak wymogu podawania karty kredytowej • Inboria w każdym planie"
+      "ctaFooter": "4 500 kredytów AI w prezencie • Brak wymogu podawania karty kredytowej • Inboria w każdym planie"
     },
     "inboriaChat": {
       "badge": "Czat Inboria",
@@ -2357,7 +2357,7 @@
       "subscriptionDesc": "Zarządzaj swoim planem subskrypcyjnym Inboria. Porównaj oferty i przejdź na wyższy plan.",
       "subscriptionFeatures": [
         "4 plany: Bezpłatny okres próbny, Solo (9€/miesiąc), Pro (19€/miesiąc), Business (od 50,97€/miesiąc)",
-        "Bezpłatny okres próbny z 100 kredytami AI w zestawie",
+        "Bezpłatny okres próbny z 4 500 kredytami AI w zestawie",
         "Bezpieczna płatność przez Paddle",
         "Zobacz swój limit i aktualne zużycie",
         "Zmień plan w dowolnym momencie"
