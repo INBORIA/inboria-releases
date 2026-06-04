@@ -75,6 +75,55 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
   const queryClient = useQueryClient();
+
+  // T002 — Navigation clavier globale « g + lettre » (style Gmail/Superhuman).
+  // Montée ici (layout) pour fonctionner sur TOUTES les pages du tableau de
+  // bord, pas seulement la Réception. Désactivée pendant la saisie (input/
+  // textarea/contenteditable), avec un modificateur (Cmd+R reste un reload),
+  // et sur le miroir « inbox-classic ».
+  const gNavPendingRef = useRef(0);
+  useEffect(() => {
+    if (location.includes("inbox-classic")) return;
+    const G_NAV_MAP: Record<string, string> = {
+      i: "/dashboard",            // Réception
+      s: "/dashboard/envoyes",    // Envoyés
+      p: "/dashboard/programmes", // Programmés
+      r: "/dashboard/reportes",   // Reportés
+      f: "/dashboard/relances",   // Relances / suivis
+      t: "/dashboard/taches",     // Tâches
+      a: "/dashboard/archives",   // Archives
+      d: "/dashboard/dossiers",   // Mes dossiers
+      b: "/dashboard/bilan",      // Bilan quotidien
+      c: "/dashboard/contacts",   // Contacts
+      l: "/dashboard/classement", // Catégories / classement
+    };
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (target.isContentEditable) return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const seqKey = e.key.toLowerCase();
+      if (gNavPendingRef.current > Date.now()) {
+        gNavPendingRef.current = 0;
+        const dest = G_NAV_MAP[seqKey];
+        if (dest) {
+          e.preventDefault();
+          setLocation(dest);
+          return;
+        }
+        // 2e touche non mappée : on annule la séquence silencieusement.
+      }
+      if (seqKey === "g") {
+        e.preventDefault();
+        gNavPendingRef.current = Date.now() + 1200;
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [location, setLocation]);
   // Prefetch au hover sidebar (style Superhuman) : dès que la souris survole
   // un lien de la sidebar, on précharge la query correspondante. Au clic, la
   // page s'affiche instantanément (cache déjà chaud). staleTime 30s évite de

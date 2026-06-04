@@ -4916,29 +4916,11 @@ export default function Dashboard() {
     );
   };
 
-  // T002 — séquence de navigation « g » puis lettre (style Gmail/Superhuman).
-  // Ce ref mémorise l'instant jusqu'auquel un « g » pressé reste « armé ».
-  const gNavPendingRef = useRef(0);
-
   // Task #244 — Inbox keyboard shortcuts (Superhuman-style). Disabled while
   // the user types in inputs/textareas/contenteditable, while modifier keys
   // are held (so Cmd+R reload still works), and on the classic mirror.
   useEffect(() => {
     if (routeLocation.includes("inbox-classic")) return;
-    // T002 — destinations « g + lettre ». 2e touche dans la 1,2 s → navigation.
-    const G_NAV_MAP: Record<string, string> = {
-      i: "/dashboard",            // Réception
-      s: "/dashboard/envoyes",    // Envoyés
-      p: "/dashboard/programmes", // Programmés
-      r: "/dashboard/reportes",   // Reportés
-      f: "/dashboard/relances",   // Relances / suivis
-      t: "/dashboard/taches",     // Tâches
-      a: "/dashboard/archives",   // Archives
-      d: "/dashboard/dossiers",   // Mes dossiers
-      b: "/dashboard/bilan",      // Bilan quotidien
-      c: "/dashboard/contacts",   // Contacts
-      l: "/dashboard/classement", // Catégories / classement
-    };
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target) {
@@ -4954,24 +4936,6 @@ export default function Dashboard() {
         e.preventDefault();
         const el = document.querySelector<HTMLInputElement>('input[type="search"], input[placeholder*="echerch" i], input[placeholder*="earch" i]');
         el?.focus();
-        return;
-      }
-      // T002 — séquence « g » puis lettre. Traitée AVANT la liste car elle ne
-      // dépend pas d'avoir des mails affichés (on peut naviguer depuis un vide).
-      const seqKey = e.key.toLowerCase();
-      if (gNavPendingRef.current > Date.now()) {
-        gNavPendingRef.current = 0;
-        const dest = G_NAV_MAP[seqKey];
-        if (dest) {
-          e.preventDefault();
-          navigate(dest);
-          return;
-        }
-        // 2e touche non mappée : on annule la séquence et on continue normalement.
-      }
-      if (seqKey === "g") {
-        e.preventDefault();
-        gNavPendingRef.current = Date.now() + 1200;
         return;
       }
       const list = activeEmails || [];
