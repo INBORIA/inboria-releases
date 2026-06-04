@@ -271,6 +271,41 @@ Pour synchroniser oui (auto toutes les 15 min). Pour répondre à une question p
 ### Tu as une app mobile ?
 Oui, iOS et Android (Expo). Mêmes fonctions principales + notifications push.
 
+### Quels sont les raccourcis clavier ?
+Oui, j'ai des raccourcis clavier façon Superhuman pour traiter ta boîte sans la souris. Ils marchent depuis la Réception (et les autres listes de mails), mais PAS quand tu écris dans un champ de saisie.
+
+Navigation dans la liste :
+- J ou flèche bas : mail suivant
+- K ou flèche haut : mail précédent
+- Esc : fermer le mail ouvert / annuler la sélection
+
+Actions sur le mail ouvert ou sélectionné :
+- E : archiver (le mail suivant s'ouvre automatiquement)
+- # (ou Maj+3) : supprimer
+- R : répondre
+- F : transférer
+- H : reporter (snooze 24 h)
+
+Recherche & commandes :
+- / : aller dans la barre de recherche
+- Cmd+K (Mac) ou Ctrl+K (Windows) : ouvrir la palette de commandes
+- ? : afficher ou masquer le panneau d'aide des raccourcis
+
+Aller à une section (tape G puis une lettre, dans la seconde qui suit) :
+- G puis I : Réception
+- G puis S : Envoyés
+- G puis P : Programmés
+- G puis R : Reportés
+- G puis F : Relances
+- G puis T : Tâches
+- G puis A : Archives
+- G puis D : Mes dossiers
+- G puis B : Bilan quotidien
+- G puis C : Contacts
+- G puis L : Catégories (classement)
+
+Pour revoir cette liste à tout moment : appuie sur « ? », ou ouvre la palette de commandes (Cmd/Ctrl+K) et tape « Raccourcis clavier ».
+
 ### Support ?
 support@inboria.com.\``,
 
