@@ -335,6 +335,34 @@ function AdminOnlyRoute({ component: Component }: { component: React.ComponentTy
   return <Component />;
 }
 
+// Les <Route> de wouter remontent leur sous-arbre dès que l'identité du
+// composant passé à `component` change. Avec une fonction fléchée inline
+// (`component={protectedRoute(X)}`) cette identité change
+// à CHAQUE rendu du Router — et le Router se re-rend à chaque évènement d'auth
+// (rafraîchissement de jeton Supabase toutes les quelques secondes). Résultat :
+// la page active (et donc l'état local comme le composer de réponse ouvert)
+// était détruite puis recréée toutes les quelques secondes. On stabilise donc
+// l'identité du wrapper par composant via un cache (les composants de page sont
+// des références de module stables → clés WeakMap valides).
+const protectedRouteCache = new WeakMap<React.ComponentType, React.ComponentType>();
+function protectedRoute(Component: React.ComponentType): React.ComponentType {
+  let wrapped = protectedRouteCache.get(Component);
+  if (!wrapped) {
+    wrapped = () => <ProtectedRoute component={Component} />;
+    protectedRouteCache.set(Component, wrapped);
+  }
+  return wrapped;
+}
+const adminRouteCache = new WeakMap<React.ComponentType, React.ComponentType>();
+function adminRoute(Component: React.ComponentType): React.ComponentType {
+  let wrapped = adminRouteCache.get(Component);
+  if (!wrapped) {
+    wrapped = () => <AdminOnlyRoute component={Component} />;
+    adminRouteCache.set(Component, wrapped);
+  }
+  return wrapped;
+}
+
 function Router() {
   const { session, loading, mfaState } = useAuth();
   const [location] = useLocation();
@@ -384,50 +412,50 @@ function Router() {
       <Route path="/mot-de-passe-oublie" component={() => session ? <Redirect to="/dashboard" /> : <MotDePasseOublie />} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/accept-invite" component={AcceptInvite} />
-      <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
-      <Route path="/dashboard/inbox-classic" component={() => <ProtectedRoute component={Dashboard} />} />
-      <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
-      <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
-      <Route path="/dashboard/programmes" component={() => <ProtectedRoute component={Programmes} />} />
+      <Route path="/dashboard" component={protectedRoute(Dashboard)} />
+      <Route path="/dashboard/inbox-classic" component={protectedRoute(Dashboard)} />
+      <Route path="/dashboard/envoyes" component={protectedRoute(Envoyes)} />
+      <Route path="/dashboard/suivi" component={protectedRoute(Suivi)} />
+      <Route path="/dashboard/programmes" component={protectedRoute(Programmes)} />
       {/* /dashboard/reportes — page autonome refactorisée façon Envoyés
           (52px Superhuman + HoverActions + clic droit + sélection multiple
           + colonne « Réveille le » + bouton « Réveiller maintenant » au
           survol). Remplace l'ancienne version qui montait Dashboard
           (task #293) pour afficher SnoozedPanel inline. */}
-      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Reportes} />} />
-      <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
-      <Route path="/dashboard/dossiers" component={() => <ProtectedRoute component={MesDossiers} />} />
-      <Route path="/dashboard/notifications" component={() => <ProtectedRoute component={NotificationsPage} />} />
-      <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
-      <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
-      <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
-      <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />
-      <Route path="/dashboard/relances" component={() => <ProtectedRoute component={Relances} />} />
-      <Route path="/dashboard/classement" component={() => <ProtectedRoute component={Classement} />} />
+      <Route path="/dashboard/reportes" component={protectedRoute(Reportes)} />
+      <Route path="/dashboard/archives" component={protectedRoute(Archives)} />
+      <Route path="/dashboard/dossiers" component={protectedRoute(MesDossiers)} />
+      <Route path="/dashboard/notifications" component={protectedRoute(NotificationsPage)} />
+      <Route path="/dashboard/indesirables" component={protectedRoute(Indesirables)} />
+      <Route path="/dashboard/corbeille" component={protectedRoute(Corbeille)} />
+      <Route path="/dashboard/bilan" component={protectedRoute(BilanQuotidien)} />
+      <Route path="/dashboard/taches" component={protectedRoute(Taches)} />
+      <Route path="/dashboard/relances" component={protectedRoute(Relances)} />
+      <Route path="/dashboard/classement" component={protectedRoute(Classement)} />
       <Route path="/dashboard/categories" component={() => <Redirect to="/dashboard/classement" />} />
-      <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />
-      <Route path="/dashboard/contacts" component={() => <ProtectedRoute component={Contacts} />} />
-      <Route path="/dashboard/contacts/:email" component={() => <ProtectedRoute component={Contacts} />} />
-      <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
-      <Route path="/dashboard/parametres/mon-compte" component={() => <ProtectedRoute component={ParametresMonCompte} />} />
-      <Route path="/dashboard/parametres/calendriers" component={() => <ProtectedRoute component={ParametresCalendriers} />} />
-      <Route path="/dashboard/parametres/vie-privee" component={() => <ProtectedRoute component={ParametresViePrivee} />} />
-      <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
-      <Route path="/dashboard/parametres/developpeurs" component={() => <AdminOnlyRoute component={ParametresDeveloppeurs} />} />
-      <Route path="/dashboard/parametres/administration" component={() => <AdminOnlyRoute component={ParametresAdministration} />} />
-      <Route path="/dashboard/parametres/templates" component={() => <ProtectedRoute component={Templates} />} />
-      <Route path="/dashboard/parametres/regles" component={() => <ProtectedRoute component={Regles} />} />
-      <Route path="/dashboard/parametres/sla" component={() => <AdminOnlyRoute component={ParametresSla} />} />
-      <Route path="/dashboard/parametres/api" component={() => <AdminOnlyRoute component={ParametresApi} />} />
-      <Route path="/dashboard/parametres/webhooks" component={() => <AdminOnlyRoute component={ParametresWebhooks} />} />
-      <Route path="/dashboard/parametres/integrations" component={() => <AdminOnlyRoute component={ParametresIntegrations} />} />
-      <Route path="/dashboard/abonnement" component={() => <AdminOnlyRoute component={Abonnement} />} />
-      <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
-      <Route path="/dashboard/activite-equipe" component={() => <ProtectedRoute component={TeamActivite} />} />
-      <Route path="/dashboard/agenda" component={() => <ProtectedRoute component={Agenda} />} />
-      <Route path="/dashboard/admin" component={() => <ProtectedRoute component={AdminIndex} />} />
-      <Route path="/dashboard/admin/waitlist" component={() => <ProtectedRoute component={AdminWaitlist} />} />
-      <Route path="/dashboard/admin/abonnes" component={() => <ProtectedRoute component={AdminAbonnes} />} />
+      <Route path="/dashboard/projets" component={protectedRoute(Projets)} />
+      <Route path="/dashboard/contacts" component={protectedRoute(Contacts)} />
+      <Route path="/dashboard/contacts/:email" component={protectedRoute(Contacts)} />
+      <Route path="/dashboard/parametres" component={protectedRoute(Parametres)} />
+      <Route path="/dashboard/parametres/mon-compte" component={protectedRoute(ParametresMonCompte)} />
+      <Route path="/dashboard/parametres/calendriers" component={protectedRoute(ParametresCalendriers)} />
+      <Route path="/dashboard/parametres/vie-privee" component={protectedRoute(ParametresViePrivee)} />
+      <Route path="/dashboard/parametres/crm" component={protectedRoute(ParametresCrm)} />
+      <Route path="/dashboard/parametres/developpeurs" component={adminRoute(ParametresDeveloppeurs)} />
+      <Route path="/dashboard/parametres/administration" component={adminRoute(ParametresAdministration)} />
+      <Route path="/dashboard/parametres/templates" component={protectedRoute(Templates)} />
+      <Route path="/dashboard/parametres/regles" component={protectedRoute(Regles)} />
+      <Route path="/dashboard/parametres/sla" component={adminRoute(ParametresSla)} />
+      <Route path="/dashboard/parametres/api" component={adminRoute(ParametresApi)} />
+      <Route path="/dashboard/parametres/webhooks" component={adminRoute(ParametresWebhooks)} />
+      <Route path="/dashboard/parametres/integrations" component={adminRoute(ParametresIntegrations)} />
+      <Route path="/dashboard/abonnement" component={adminRoute(Abonnement)} />
+      <Route path="/dashboard/equipe" component={protectedRoute(Equipe)} />
+      <Route path="/dashboard/activite-equipe" component={protectedRoute(TeamActivite)} />
+      <Route path="/dashboard/agenda" component={protectedRoute(Agenda)} />
+      <Route path="/dashboard/admin" component={protectedRoute(AdminIndex)} />
+      <Route path="/dashboard/admin/waitlist" component={protectedRoute(AdminWaitlist)} />
+      <Route path="/dashboard/admin/abonnes" component={protectedRoute(AdminAbonnes)} />
       <Route component={NotFound} />
     </Switch>
     </Suspense>
