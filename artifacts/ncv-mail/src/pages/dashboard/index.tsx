@@ -4275,14 +4275,29 @@ export default function Dashboard() {
         const { supabase } = await import("@/lib/supabase");
         const { data: sessionData } = await supabase.auth.getSession();
         const token = sessionData?.session?.access_token;
-        if (!token) return null;
+        // IMPORTANT : on LÈVE une erreur (au lieu de retourner null) sur un échec
+        // passager (jeton momentanément indisponible à cause d'une contention du
+        // verrou gotrue, ou réponse non-ok). Ce préchargement PARTAGE la clé de
+        // cache ["email-detail", id] avec la requête principale (L~4382) qui a un
+        // staleTime de 30s. Si on cachait `null`, la requête principale servirait
+        // ce null pendant 30s sans re-fetch → l'email ouvert perdrait ses champs
+        // de détail (dont sharedMailboxId) → le bouton « Brouillon partagé »
+        // disparaîtrait. Lever une erreur n'écrit RIEN dans le cache.
+        if (!token) throw new Error("email-detail:no-session");
         const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!resp.ok) return null;
+        if (!resp.ok) throw new Error(`email-detail:${resp.status}`);
         return resp.json();
       },
       staleTime: 30_000,
+      retry: false,
+    }).catch(() => {
+      // Échec passager du préchargement : on retire l'id du set pour pouvoir
+      // réessayer au survol suivant (sinon un seul échec bloquerait le
+      // préchargement de ce mail pour toute la session). L'ouverture par clic
+      // reste de toute façon couverte par la requête détail principale.
+      prefetchedRef.current.delete(id);
     });
   }, [queryClient]);
 
