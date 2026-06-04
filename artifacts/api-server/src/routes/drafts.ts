@@ -68,6 +68,8 @@ function serialize(d: Record<string, unknown>) {
     cc: d.cc_addr ?? "",
     subject: d.subject ?? "",
     body: d.body ?? "",
+    sendClaimedBy: d.send_claimed_by ?? null,
+    sendClaimedAt: d.send_claimed_at ?? null,
     createdAt: d.created_at,
     updatedAt: d.updated_at,
   };
@@ -87,6 +89,8 @@ const updateSchema = z.object({
   cc: z.string().optional(),
   subject: z.string().optional(),
   body: z.string().optional(),
+  // T005 — revendication d'envoi : id du membre qui « prend l'envoi », ou null pour libérer.
+  sendClaimedBy: z.string().uuid().nullable().optional(),
 });
 
 // GET /api/drafts?emailId=123 — brouillons accessibles de l'organisation.
@@ -264,12 +268,28 @@ router.patch("/drafts/:id", requireAuth, async (req, res): Promise<void> => {
     if (b.cc !== undefined) patch.cc_addr = b.cc;
     if (b.subject !== undefined) patch.subject = b.subject;
     if (b.body !== undefined) patch.body = b.body;
-    const { data, error } = await supabaseAdmin
+    if (b.sendClaimedBy !== undefined) {
+      patch.send_claimed_by = b.sendClaimedBy;
+      patch.send_claimed_at = b.sendClaimedBy ? new Date().toISOString() : null;
+    }
+    let { data, error } = await supabaseAdmin
       .from("shared_drafts")
       .update(patch)
       .eq("id", req.params.id)
       .select("*")
       .single();
+    // Migration de revendication d'envoi non encore appliquée (colonnes
+    // send_claimed_*) : on réessaie sans elles pour rester en mode dégradé.
+    if (error && (error as { code?: string }).code === "42703") {
+      delete patch.send_claimed_by;
+      delete patch.send_claimed_at;
+      ({ data, error } = await supabaseAdmin
+        .from("shared_drafts")
+        .update(patch)
+        .eq("id", req.params.id)
+        .select("*")
+        .single());
+    }
     if (error) throw error;
     res.json(serialize(data));
   } catch (err) {

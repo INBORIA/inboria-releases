@@ -8,7 +8,7 @@ import {
   Inbox, Clock, Eye, AlertTriangle, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
   MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
-  FolderKanban, Folder, FolderPlus, ExternalLink, Users,
+  FolderKanban, Folder, FolderPlus, ExternalLink, Users, Hand,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -326,6 +326,15 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
         applyingDraftRef.current = false;
       }, 0);
     },
+    onClosedByOther: (who: string) => {
+      // Un collègue a envoyé le mail : on ferme le composer pour éviter un double envoi.
+      setReplyOpen(false);
+      setReplyText("");
+      setReplyTo("");
+      setReplySubject("");
+      setReplyAttachments([]);
+      toast({ title: t("inbox.sharedDraftSentByOther", "{{name}} a envoyé ce mail.", { name: who }) });
+    },
   });
   // Pousse les modifications locales du composer vers les autres éditeurs.
   useEffect(() => {
@@ -333,6 +342,16 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     sharedDraft.sync({ to: replyTo, cc: "", subject: replySubject, body: replyText });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyTo, replySubject, replyText, sharedDraft.active]);
+  // T005 — coordination « qui envoie » sur brouillon partagé.
+  const draftClaimerName = (() => {
+    const id = sharedDraft.sendClaimedBy;
+    if (!id || id === currentUserId) return "";
+    const m = (orgMembers || []).find((x: any) => x.userId === id);
+    const ed = sharedDraft.editors.find((e) => e.userId === id);
+    return m?.fullName || m?.email || ed?.name || id.slice(0, 6);
+  })();
+  const sendLockedByOther =
+    sharedDraft.active && !!sharedDraft.sendClaimedBy && sharedDraft.sendClaimedBy !== currentUserId;
 
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
@@ -1333,6 +1352,51 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                         </span>
                       </div>
                     )}
+                    {sharedDraft.active && (
+                      <div className="flex items-center gap-2 text-[11px]">
+                        {!sharedDraft.sendClaimedBy && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-6 text-[11px] gap-1 bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                            onClick={() => sharedDraft.claimSend()}
+                          >
+                            <Hand className="w-3 h-3" />
+                            {t("inbox.draftClaimSend", "C'est moi qui envoie")}
+                          </Button>
+                        )}
+                        {sharedDraft.sendClaimedBy === currentUserId && (
+                          <span className="flex items-center gap-1.5">
+                            <span className="text-primary">{t("inbox.draftYouSend", "C'est vous qui envoyez")}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 text-[11px] text-[#8b95a7] hover:text-white"
+                              onClick={() => sharedDraft.releaseSend()}
+                            >
+                              {t("inbox.draftRelease", "Libérer")}
+                            </Button>
+                          </span>
+                        )}
+                        {sharedDraft.sendClaimedBy && sharedDraft.sendClaimedBy !== currentUserId && (
+                          <span className="flex items-center gap-1.5">
+                            <span className="flex items-center gap-1 text-amber-400">
+                              <Hand className="w-3 h-3" />
+                              {t("inbox.draftSomeoneSends", "{{name}} va l'envoyer", { name: draftClaimerName })}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 text-[11px] text-[#8b95a7] hover:text-white"
+                              onClick={() => sharedDraft.claimSend()}
+                              title={t("inbox.draftTakeOverHint", "Reprendre l'envoi si ce collègue n'est plus disponible")}
+                            >
+                              {t("inbox.draftTakeOver", "Reprendre")}
+                            </Button>
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 {connections && connections.length > 1 && (
@@ -1438,7 +1502,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       variant="outline"
                       size="sm"
                       className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
-                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
+                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim() || sendLockedByOther}
                       onClick={() => setScheduleDialogOpen(true)}
                       data-testid="button-schedule-send"
                     >
@@ -1448,7 +1512,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <Button
                       size="sm"
                       className="gap-1.5 h-7 text-[11px]"
-                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
+                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim() || sendLockedByOther}
+                      title={sendLockedByOther ? t("inbox.draftSomeoneSends", "{{name}} va l'envoyer", { name: draftClaimerName }) : undefined}
                       onClick={() => {
                         onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments, replyConnectionId || undefined, replyProjectId || undefined);
                         if (sharedDraft.active) sharedDraft.remove();
@@ -1477,6 +1542,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   projectId={replyProjectId || undefined}
                   attachments={replyAttachments}
                   onScheduled={() => {
+                    // Envoi programmé : on prévient les autres éditeurs et on
+                    // supprime le brouillon partagé (même logique que l'envoi direct).
+                    if (sharedDraft.active) sharedDraft.remove();
                     setReplyText("");
                     setReplyTo("");
                     setReplySubject("");

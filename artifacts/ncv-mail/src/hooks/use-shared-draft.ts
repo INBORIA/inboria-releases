@@ -19,6 +19,8 @@ interface DraftDto extends DraftFields {
   id: string;
   updatedBy: string;
   updatedAt: string;
+  sendClaimedBy?: string | null;
+  sendClaimedAt?: string | null;
 }
 
 // Couleur déterministe par utilisateur (même logique que la presence des commentaires).
@@ -38,6 +40,8 @@ interface UseSharedDraftOptions {
   name?: string | null;
   // Appelé quand le contenu distant (autre éditeur) doit être appliqué au composer.
   onRemote: (fields: DraftFields, by: string) => void;
+  // Appelé quand un autre membre a envoyé le mail (le composer doit se fermer).
+  onClosedByOther?: (name: string) => void;
 }
 
 /**
@@ -54,12 +58,15 @@ export function useSharedDraft({
   currentUserId,
   name,
   onRemote,
+  onClosedByOther,
 }: UseSharedDraftOptions) {
   const [active, setActive] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
   const [editors, setEditors] = useState<DraftEditor[]>([]);
   const [lastEditor, setLastEditor] = useState<{ name: string; at: number } | null>(null);
   const [saving, setSaving] = useState(false);
+  // T005 — revendication d'envoi : id du membre qui « prend l'envoi » (null = personne).
+  const [sendClaimedBy, setSendClaimedBy] = useState<string | null>(null);
 
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const lastSyncedRef = useRef<string>("");
@@ -67,6 +74,8 @@ export function useSharedDraft({
   const saveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onRemoteRef = useRef(onRemote);
   onRemoteRef.current = onRemote;
+  const onClosedByOtherRef = useRef(onClosedByOther);
+  onClosedByOtherRef.current = onClosedByOther;
   const myInfoRef = useRef<{ name: string; color: string }>({ name: "", color: "" });
 
   // Réinitialise tout quand on change de mail.
@@ -75,6 +84,7 @@ export function useSharedDraft({
     setDraftId(null);
     setEditors([]);
     setLastEditor(null);
+    setSendClaimedBy(null);
     lastSyncedRef.current = "";
   }, [emailId]);
 
@@ -113,6 +123,7 @@ export function useSharedDraft({
         if (lastSyncedRef.current === "") {
           lastSyncedRef.current = JSON.stringify(seed);
         }
+        setSendClaimedBy(draft.sendClaimedBy ?? null);
         setDraftId(draft.id);
         setActive(true);
       } catch {
@@ -127,11 +138,21 @@ export function useSharedDraft({
     setDraftId(null);
     setEditors([]);
     setLastEditor(null);
+    setSendClaimedBy(null);
     lastSyncedRef.current = "";
   }, []);
 
   const remove = useCallback(async () => {
     const id = draftId;
+    // Prévient les autres éditeurs que le mail vient d'être envoyé (fermeture
+    // automatique de leur composer -> anti double-envoi).
+    channelRef.current
+      ?.send({
+        type: "broadcast",
+        event: "sent",
+        payload: { by: currentUserId, name: myInfoRef.current.name },
+      })
+      .catch(() => {});
     deactivate();
     if (id) {
       try {
@@ -140,7 +161,41 @@ export function useSharedDraft({
         /* noop */
       }
     }
-  }, [draftId, deactivate]);
+  }, [draftId, deactivate, currentUserId]);
+
+  // T005 — « C'est moi qui envoie » : revendique l'envoi (verrouille les autres).
+  const claimSend = useCallback(async () => {
+    if (!draftId || !currentUserId) return;
+    setSendClaimedBy(currentUserId);
+    channelRef.current
+      ?.send({ type: "broadcast", event: "claim", payload: { by: currentUserId, claimedBy: currentUserId } })
+      .catch(() => {});
+    try {
+      await authJson(`api/drafts/${draftId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ sendClaimedBy: currentUserId }),
+      });
+    } catch {
+      /* noop */
+    }
+  }, [draftId, currentUserId]);
+
+  // « Libérer » : rend la main pour que quelqu'un d'autre puisse envoyer.
+  const releaseSend = useCallback(async () => {
+    if (!draftId) return;
+    setSendClaimedBy(null);
+    channelRef.current
+      ?.send({ type: "broadcast", event: "claim", payload: { by: currentUserId, claimedBy: null } })
+      .catch(() => {});
+    try {
+      await authJson(`api/drafts/${draftId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ sendClaimedBy: null }),
+      });
+    } catch {
+      /* noop */
+    }
+  }, [draftId, currentUserId]);
 
   // Canal realtime : presence des éditeurs + broadcast des modifications.
   useEffect(() => {
@@ -176,6 +231,14 @@ export function useSharedDraft({
         lastSyncedRef.current = JSON.stringify(fields);
         setLastEditor({ name: String(payload.name ?? "…"), at: Date.now() });
         onRemoteRef.current(fields, String(payload.by ?? ""));
+      })
+      .on("broadcast", { event: "claim" }, ({ payload }: { payload?: Record<string, unknown> }) => {
+        if (!payload) return;
+        setSendClaimedBy((payload.claimedBy as string | null) ?? null);
+      })
+      .on("broadcast", { event: "sent" }, ({ payload }: { payload?: Record<string, unknown> }) => {
+        if (!payload || payload.by === currentUserId) return;
+        onClosedByOtherRef.current?.(String(payload.name ?? "…"));
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -233,5 +296,18 @@ export function useSharedDraft({
     };
   }, []);
 
-  return { active, draftId, editors, lastEditor, saving, activate, deactivate, sync, remove };
+  return {
+    active,
+    draftId,
+    editors,
+    lastEditor,
+    saving,
+    sendClaimedBy,
+    activate,
+    deactivate,
+    sync,
+    remove,
+    claimSend,
+    releaseSend,
+  };
 }
