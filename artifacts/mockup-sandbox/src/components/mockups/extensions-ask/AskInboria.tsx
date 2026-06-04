@@ -316,11 +316,12 @@ export function AskInboria() {
             >
               {/* Sidebar Inboria */}
               <div className="hidden md:flex flex-col w-[176px] border-r border-[#1f2937] bg-[#0d1117]">
-                <div className="flex items-center gap-2 px-3 h-11 border-b border-[#1f2937]">
-                  <span className="w-6 h-6 rounded-md bg-gradient-to-br from-[#8b5cf6] to-[#d946ef] flex items-center justify-center shrink-0">
-                    <Sparkles className="w-3 h-3 text-white" />
-                  </span>
-                  <b className="text-[14px] text-[#e7ecf5]">Inbor<span className="text-[#b79bff]">ia</span></b>
+                <div className="flex items-center justify-center px-3 h-14 border-b border-[#1f2937]">
+                  <img
+                    src={`${import.meta.env.BASE_URL}inboria-logo.png`}
+                    alt="Inboria"
+                    className="h-9 w-auto object-contain"
+                  />
                 </div>
                 <nav className="flex-1 px-2 py-2 space-y-px overflow-hidden">
                   {INBORIA_NAV.map((item) => (
@@ -339,14 +340,21 @@ export function AskInboria() {
 
               {/* Contenu app — le mail de Marie ouvert dans Inboria */}
               <div className="flex-1 flex flex-col min-w-0">
-                {/* Topbar app (groupée à droite, calquée sur l'app) */}
-                <div className="flex items-center gap-2 px-4 h-11 border-b border-[#1f2937]">
+                {/* Topbar app — VRAI header Inboria (calqué sur dashboard-layout /
+                    animated-demo) : tout groupé à droite, accent cyan/bleu. */}
+                <div className="flex items-center gap-2 px-4 h-14 border-b border-[#1f2937]">
                   <div className="flex-1" />
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#8b5cf6]/[0.12] border border-[#8b5cf6]/25 text-[11px] font-medium text-[#b79bff] shrink-0">
-                    <Sparkles className="w-3 h-3" />
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyan-500/[0.08] border border-cyan-400/20 text-[11px] font-medium text-cyan-200 shrink-0">
+                    <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-cyan-500/15 border border-cyan-400/30">
+                      <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
+                    </span>
                     <span className="hidden sm:inline">Demander à Inboria</span>
                   </div>
                   <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[#b8c5d6] shrink-0"><Bell className="w-3.5 h-3.5" /></div>
+                  <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[11px] font-medium text-[#b8c5d6] shrink-0">
+                    <Sparkles className="w-3 h-3 text-cyan-300" />
+                    <span className="max-w-[160px] truncate">44 traités aujourd'hui</span>
+                  </div>
                   <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[#b8c5d6] shrink-0"><Sun className="w-3.5 h-3.5" /></div>
                   <div className="hidden sm:flex items-center justify-center h-7 px-2 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#b8c5d6] shrink-0">FR</div>
                   <div className="flex items-center justify-center h-7 w-7 rounded-full bg-[#1e3a5f] text-[11px] font-semibold text-[#2d7dd2] shrink-0">J</div>
@@ -386,10 +394,10 @@ export function AskInboria() {
                   </div>
 
                   {/* Résumé Inboria */}
-                  <div className="mt-3 rounded-lg border border-[#8b5cf6]/25 bg-[#8b5cf6]/[0.08] px-3 py-2.5">
+                  <div className="mt-3 rounded-lg border border-cyan-400/25 bg-cyan-500/[0.08] px-3 py-2.5">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Sparkles className="w-3 h-3 text-[#b79bff]" />
-                      <span className="text-[10px] font-semibold text-[#b79bff]">Résumé Inboria</span>
+                      <Sparkles className="w-3 h-3 text-cyan-300" />
+                      <span className="text-[10px] font-semibold text-cyan-300">Résumé Inboria</span>
                     </div>
                     <p className="text-[11px] text-[#cdd6e4] leading-snug">
                       Marie relance sur son devis de rénovation cuisine (sans réponse depuis 5 jours) et demande le montant et un délai.
