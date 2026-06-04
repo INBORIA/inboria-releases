@@ -1407,7 +1407,106 @@
       "howDesc": "No cal remenar pels menús: un cop hàgiu iniciat sessió, Inboria us acompanya per activar l’extensió que trieu en pocs minuts.",
       "ctaTitle": "A punt per provar Inboria a la vostra bústia?",
       "ctaDesc": "Creeu el vostre compte i activeu l’extensió que trieu avui mateix.",
-      "cta": "Comenceu gratuïtament"
+      "cta": "Comenceu gratuïtament",
+      "demo": {
+        "eyebrow": "Inboria s'invita a la vostra missatgeria",
+        "subtitle": "Obriu un correu → feu clic a « Demanar a Inboria » → o obriu l'app completa. Sense canviar els vostres hàbits.",
+        "caption": "Demostració animada — Inboria respon a Gmail i Outlook, i després obre l'app completa amb un clic.",
+        "ask": "Demanar a Inboria",
+        "openInInboria": "Obrir a Inboria",
+        "clear": "Esborrar",
+        "logout": "Desconnexió",
+        "newMessage": "Nou missatge",
+        "navFolders": "Les meves carpetes",
+        "webmail": {
+          "inbox": "Bandeja d'entrada",
+          "followed": "Seguiments",
+          "sent": "Enviats",
+          "drafts": "Esborranys",
+          "archives": "Arxius"
+        },
+        "mail": {
+          "subject": "Re: Pressupost reforma cuina",
+          "from": "Marie Lemoine",
+          "meta": "a mi — fa 5 dies",
+          "p1": "Hola,",
+          "p2": "Heu pogut mirar la meva sol·licitud de pressupost per a la reforma de la cuina? No he tingut resposta des del nostre últim intercanvi.",
+          "p3": "Podeu confirmar-me l'import i un termini possible? Gràcies d'avançat.",
+          "signoff": "Ben cordialment,\nMarie",
+          "attachment": "pressupost-cuina.pdf"
+        },
+        "greeting": "Hola 👋 Sóc Inboria. Feu-me una pregunta sobre aquest correu, o utilitzeu els accessos directes d'aquí dalt.",
+        "chips": [
+          "Resumir aquest correu",
+          "Proposar una resposta",
+          "Què he de fer?"
+        ],
+        "thinking": "Inboria està pensant…",
+        "answer": "Aquí teniu les accions a preveure per aquest correu :\n\n1. Respondre a Marie — el seu pressupost espera des de fa 5 dies.\n2. Confirmar l'import i un termini.\n3. Reenviar l'adjunt pressupost-cuina.pdf.\n\nVoleu que redacti la resposta?",
+        "composerPlaceholder": "Feu la vostra pregunta a Inboria…",
+        "searchPlaceholder": "Cercar un correu, un contacte…",
+        "refresh": "Actualitzar",
+        "newEmail": "Nou correu",
+        "autopilotPill": "Inboria · 3 accions avui",
+        "bannerBold": "Inboria ha classificat la vostra bústia aquest matí.",
+        "bannerRest": "12 correus a tractar, 32 classificats automàticament per categoria.",
+        "urgent": "Urgent",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Pressupost reforma cuina",
+            "preview": "Podeu confirmar l'import i un termini?",
+            "cat": "Pressuposts"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validació del bon de comanda",
+            "preview": "Tot és correcte per la nostra banda, podem començar.",
+            "cat": "Clients"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Pregunta sobre la entrega",
+            "preview": "Quin és el termini per la comanda #5821?",
+            "cat": "Clients"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Candidatura — Desenvolupadora",
+            "preview": "CV + portafoli en fitxer adjunt.",
+            "cat": "RRHH"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Factura #2026-0418 a pagar",
+            "preview": "Termini en 5 dies — 1 240 € TTC.",
+            "cat": "Factures"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Pagament rebut: 1 240 €",
+            "preview": "La transferència ha estat acreditada correctament.",
+            "cat": "Factures"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Proposta de col·laboració",
+            "preview": "Disponible per a un intercanvi aquesta setmana?",
+            "cat": "Socis"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Setmanal IA — les novetats de la setmana.",
+            "cat": "Butlletins"
+          }
+        ],
+        "browserExtension": "Extensió",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Els vostres correus electrònics arriben classificats",

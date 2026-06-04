@@ -1407,7 +1407,106 @@
       "howDesc": "Nav nepieciešams meklēt izvēlnēs: pēc pieslēgšanās Inboria palīdz Jums dažu minūšu laikā aktivizēt izvēlēto paplašinājumu.",
       "ctaTitle": "Vai esat gatavs izmēģināt Inboria savā e-pastā?",
       "ctaDesc": "Izveidojiet savu kontu un aktivizējiet izvēlēto paplašinājumu jau šodien.",
-      "cta": "Sākt bez maksas"
+      "cta": "Sākt bez maksas",
+      "demo": {
+        "eyebrow": "Inboria ielaujas Jūsu e-pastā",
+        "subtitle": "Atveriet e-pastu → noklikšķiniet uz « Lūgt Inboria » → vai atveriet pilno lietotni. Neskatoties uz Jūsu ieradumiem.",
+        "caption": "Animēta demonstrācija — Inboria atbild Gmail un Outlook, pēc tam ar vienu klikšķi atver pilno lietotni.",
+        "ask": "Lūgt Inboria",
+        "openInInboria": "Atvērt Inboria",
+        "clear": "Notīrīt",
+        "logout": "Izrakstīties",
+        "newMessage": "Jauns ziņojums",
+        "navFolders": "Mani mapes",
+        "webmail": {
+          "inbox": "Ienākošie",
+          "followed": "Sekotie",
+          "sent": "Nosūtītie",
+          "drafts": "Melnraksti",
+          "archives": "Arhīvi"
+        },
+        "mail": {
+          "subject": "Re: Piedāvājums virtuves renovācijai",
+          "from": "Marie Lemoine",
+          "meta": "man — pirms 5 dienām",
+          "p1": "Sveiki,",
+          "p2": "Vai Jūs varējāt apskatīt manu piedāvājumu virtuves renovācijai? Es neesmu saņēmis atbildi kopš mūsu pēdējās sarunas.",
+          "p3": "Vai Jūs varētu apstiprināt summu un iespējamo termiņu? Paldies iepriekš.",
+          "signoff": "Ar cieņu,\nMarie",
+          "attachment": "piedāvājums-virtuvei.pdf"
+        },
+        "greeting": "Sveiki 👋 Es esmu Inboria. Uzdodiet man jautājumu par šo e-pastu vai izmantojiet iepriekš minētos īsinājumus.",
+        "chips": [
+          "Kopsavilkums par šo e-pastu",
+          "Ieteikt atbildi",
+          "Ko man darīt?"
+        ],
+        "thinking": "Inboria domā…",
+        "answer": "Šeit ir darbības, kas jāveic šim e-pastam:\n\n1. Atbildēt Marie — viņas piedāvājums gaida jau 5 dienas.\n2. Apstiprināt summu un termiņu.\n3. Nosūtīt pielikumu piedāvājums-virtuvei.pdf.\n\nVai Jūs vēlaties, lai es uzrakstu atbildi?",
+        "composerPlaceholder": "Uzdodiet savu jautājumu Inboria…",
+        "searchPlaceholder": "Meklēt e-pastu, kontaktu…",
+        "refresh": "Atjaunot",
+        "newEmail": "Jauns e-pasts",
+        "autopilotPill": "Inboria · 3 darbības šodien",
+        "bannerBold": "Inboria šorīt ir sakārtojusi Jūsu iesūtnes.",
+        "bannerRest": "12 e-pasti jāapstrādā, 32 automātiski klasificēti pa kategorijām.",
+        "urgent": "Steidzami",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Piedāvājums virtuves renovācijai",
+            "preview": "Vai Jūs varētu apstiprināt summu un termiņu?",
+            "cat": "Piedāvājumi"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Pasūtījuma apstiprinājums",
+            "preview": "Viss ir labi no mūsu puses, varam sākt.",
+            "cat": "Klienti"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Jautājums par piegādi",
+            "preview": "Kāds ir termiņš pasūtījumam #5821?",
+            "cat": "Klienti"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Pieteikums — Izstrādātāja",
+            "preview": "CV + portfelis pielikumā.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Rēķins #2026-0418 jāmaksā",
+            "preview": "Termiņš 5 dienu laikā — 1 240 € ar PVN.",
+            "cat": "Rēķini"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Maksājums saņemts: 1 240 €",
+            "preview": "Pārskaitījums ir veiksmīgi ieskaitīts.",
+            "cat": "Rēķini"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Sadarbības piedāvājums",
+            "preview": "Vai esat pieejams sarunām šonedēļ?",
+            "cat": "Partneri"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "IA nedēļas pārskats — jaunumi no nedēļas.",
+            "cat": "Jaunumi"
+          }
+        ],
+        "browserExtension": "Pārlūkprogrammas paplašinājums",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Jūsu e-pasti ierodas sakārtoti",

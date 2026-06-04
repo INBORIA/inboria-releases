@@ -1407,7 +1407,106 @@
       "howDesc": "不必在選單中反覆尋找：登入後，Inboria 會引導您在幾分鐘內啟用您選擇的擴充功能。",
       "ctaTitle": "準備好在您的信箱中試用 Inboria 了嗎？",
       "ctaDesc": "立即建立您的帳戶，並啟用您選擇的擴充功能。",
-      "cta": "免費開始"
+      "cta": "免費開始",
+      "demo": {
+        "eyebrow": "Inboria 進入您的郵件系統",
+        "subtitle": "打開郵件 → 點擊「請求 Inboria」 → 或打開完整應用程式。無需改變您的習慣。",
+        "caption": "動畫演示 — Inboria 在 Gmail 和 Outlook 中回應，然後一鍵打開完整應用程式。",
+        "ask": "請求 Inboria",
+        "openInInboria": "在 Inboria 中打開",
+        "clear": "清除",
+        "logout": "登出",
+        "newMessage": "新郵件",
+        "navFolders": "我的資料夾",
+        "webmail": {
+          "inbox": "收件箱",
+          "followed": "關注",
+          "sent": "已發送",
+          "drafts": "草稿",
+          "archives": "檔案"
+        },
+        "mail": {
+          "subject": "Re: 廚房翻新報價",
+          "from": "Marie Lemoine",
+          "meta": "給我 — 5 天前",
+          "p1": "您好，",
+          "p2": "您有查看我對廚房翻新的報價請求嗎？自我們上次交流以來我沒有收到回覆。",
+          "p3": "您能否確認金額和可能的時間？提前謝謝您。",
+          "signoff": "此致敬禮，\nMarie",
+          "attachment": "devis-cuisine.pdf"
+        },
+        "greeting": "您好 👋 我是 Inboria。請問您對這封郵件有什麼問題，或使用上面的快捷方式。",
+        "chips": [
+          "總結這封郵件",
+          "建議回覆",
+          "我該怎麼做？"
+        ],
+        "thinking": "Inboria 正在思考…",
+        "answer": "以下是這封郵件的預期行動：\n\n1. 回覆 Marie — 她的報價已等待 5 天。\n2. 確認金額和時間。\n3. 重新發送附件 devis-cuisine.pdf。\n\n您希望我撰寫回覆嗎？",
+        "composerPlaceholder": "向 Inboria 提問…",
+        "searchPlaceholder": "搜尋郵件、聯絡人…",
+        "refresh": "刷新",
+        "newEmail": "新郵件",
+        "autopilotPill": "Inboria · 今天 3 個行動",
+        "bannerBold": "Inboria 今天早上已整理您的郵箱。",
+        "bannerRest": "12 封郵件待處理，32 封已自動分類。",
+        "urgent": "緊急",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: 廚房翻新報價",
+            "preview": "您能確認金額和時間嗎？",
+            "cat": "報價"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "訂單確認",
+            "preview": "我們這邊一切正常，可以開始了。",
+            "cat": "客戶"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "關於交貨的問題",
+            "preview": "訂單 #5821 的交貨時間是多久？",
+            "cat": "客戶"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "申請 — 開發者",
+            "preview": "簡歷 + 作品集在附件中。",
+            "cat": "人力資源"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "發票 #2026-0418 待支付",
+            "preview": "到期日為 5 天內 — 1,240 € 含稅。",
+            "cat": "發票"
+          },
+          {
+            "from": "Stripe",
+            "subject": "付款已收到：1,240 €",
+            "preview": "轉帳已成功入帳。",
+            "cat": "發票"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "合作提案",
+            "preview": "本週有空進行交流嗎？",
+            "cat": "合作夥伴"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "每週 AI — 本週新消息。",
+            "cat": "電子報"
+          }
+        ],
+        "browserExtension": "擴充功能",
+        "dateUnits": {
+          "h": "小時",
+          "d": "天"
+        }
+      }
     },
     "home": {
       "heroTitle1": "您的電子郵件會被分類",

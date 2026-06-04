@@ -1407,7 +1407,106 @@
       "howDesc": "Không cần mất công tìm trong menu: sau khi đăng nhập, Inboria sẽ hướng dẫn Quý khách kích hoạt tiện ích phù hợp chỉ trong vài phút.",
       "ctaTitle": "Sẵn sàng dùng thử Inboria trên hệ thống email của Quý khách?",
       "ctaDesc": "Tạo tài khoản và kích hoạt tiện ích phù hợp với Quý khách ngay hôm nay.",
-      "cta": "Bắt đầu miễn phí"
+      "cta": "Bắt đầu miễn phí",
+      "demo": {
+        "eyebrow": "Inboria tham gia vào hộp thư của Quý khách",
+        "subtitle": "Mở một email → nhấp vào « Yêu cầu Inboria » → hoặc mở ứng dụng đầy đủ. Không thay đổi thói quen của Quý khách.",
+        "caption": "Trình diễn hoạt hình — Inboria trả lời trong Gmail & Outlook, sau đó mở ứng dụng đầy đủ chỉ với một cú nhấp chuột.",
+        "ask": "Yêu cầu Inboria",
+        "openInInboria": "Mở trong Inboria",
+        "clear": "Xóa",
+        "logout": "Đăng xuất",
+        "newMessage": "Tin nhắn mới",
+        "navFolders": "Thư mục của tôi",
+        "webmail": {
+          "inbox": "Hộp thư đến",
+          "followed": "Theo dõi",
+          "sent": "Đã gửi",
+          "drafts": "Bản nháp",
+          "archives": "Lưu trữ"
+        },
+        "mail": {
+          "subject": "Re: Yêu cầu báo giá cải tạo bếp",
+          "from": "Marie Lemoine",
+          "meta": "cho tôi — cách đây 5 ngày",
+          "p1": "Xin chào,",
+          "p2": "Quý khách đã xem xét yêu cầu báo giá cho việc cải tạo bếp của tôi chưa? Tôi chưa nhận được phản hồi kể từ lần trao đổi cuối cùng.",
+          "p3": "Quý khách có thể xác nhận số tiền và thời gian có thể không? Cảm ơn trước.",
+          "signoff": "Trân trọng,\nMarie",
+          "attachment": "yêu-cầu-báo-gía-cải-tạo-bếp.pdf"
+        },
+        "greeting": "Xin chào 👋 Tôi là Inboria. Quý khách hãy đặt câu hỏi cho tôi về email này, hoặc sử dụng các phím tắt ở trên.",
+        "chips": [
+          "Tóm tắt email này",
+          "Đề xuất một phản hồi",
+          "Tôi nên làm gì?"
+        ],
+        "thinking": "Inboria đang suy nghĩ…",
+        "answer": "Dưới đây là các hành động cần thực hiện cho email này:\n\n1. Trả lời Marie — yêu cầu báo giá của cô ấy đã chờ đợi 5 ngày.\n2. Xác nhận số tiền và thời gian.\n3. Gửi lại tệp đính kèm yêu-cầu-báo-gía-cải-tạo-bếp.pdf.\n\nQuý khách có muốn tôi soạn thảo phản hồi không?",
+        "composerPlaceholder": "Đặt câu hỏi của Quý khách cho Inboria…",
+        "searchPlaceholder": "Tìm kiếm một email, một liên hệ…",
+        "refresh": "Làm mới",
+        "newEmail": "Email mới",
+        "autopilotPill": "Inboria · 3 hành động hôm nay",
+        "bannerBold": "Inboria đã sắp xếp hộp thư của Quý khách sáng nay.",
+        "bannerRest": "12 email cần xử lý, 32 email đã được phân loại tự động.",
+        "urgent": "Khẩn cấp",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Yêu cầu báo giá cải tạo bếp",
+            "preview": "Quý khách có thể xác nhận số tiền và thời gian không?",
+            "cat": "Yêu cầu báo giá"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Xác nhận đơn đặt hàng",
+            "preview": "Mọi thứ đều ổn từ phía chúng tôi, chúng tôi có thể bắt đầu.",
+            "cat": "Khách hàng"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Câu hỏi về giao hàng",
+            "preview": "Thời gian giao hàng cho đơn hàng #5821 là bao lâu?",
+            "cat": "Khách hàng"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Đơn ứng tuyển — Lập trình viên",
+            "preview": "CV + portfolio đính kèm.",
+            "cat": "Nhân sự"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Hóa đơn #2026-0418 cần thanh toán",
+            "preview": "Hạn thanh toán trong 5 ngày — 1 240 € TTC.",
+            "cat": "Hóa đơn"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Thanh toán đã nhận: 1 240 €",
+            "preview": "Chuyển khoản đã được ghi có.",
+            "cat": "Hóa đơn"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Đề xuất hợp tác",
+            "preview": "Có sẵn để trao đổi trong tuần này không?",
+            "cat": "Đối tác"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Hàng tuần IA — các tin tức mới nhất trong tuần.",
+            "cat": "Bản tin"
+          }
+        ],
+        "browserExtension": "Tiện ích mở rộng",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Email của Quý khách đến được phân loại",

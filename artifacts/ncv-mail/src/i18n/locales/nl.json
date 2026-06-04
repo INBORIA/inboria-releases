@@ -1417,7 +1417,106 @@
       "howDesc": "U hoeft niet in menu's te zoeken: zodra u bent ingelogd, helpt Inboria u om in enkele minuten de extensie van uw keuze te activeren.",
       "ctaTitle": "Klaar om Inboria in uw mailbox te proberen?",
       "ctaDesc": "Maak uw account aan en activeer vandaag nog de extensie van uw keuze.",
-      "cta": "Gratis starten"
+      "cta": "Gratis starten",
+      "demo": {
+        "eyebrow": "Inboria nodigt uit in uw inbox",
+        "subtitle": "Open een e-mail → klik op « Vraag aan Inboria » → of open de volledige app. Zonder uw gewoonten te veranderen.",
+        "caption": "Geanimeerde demonstratie — Inboria reageert in Gmail & Outlook, en opent de volledige app met één klik.",
+        "ask": "Vraag aan Inboria",
+        "openInInboria": "Open in Inboria",
+        "clear": "Wissen",
+        "logout": "Uitloggen",
+        "newMessage": "Nieuw bericht",
+        "navFolders": "Mijn mappen",
+        "webmail": {
+          "inbox": "Inbox",
+          "followed": "Volgen",
+          "sent": "Verzonden",
+          "drafts": "Concepten",
+          "archives": "Archieven"
+        },
+        "mail": {
+          "subject": "Re: Offerte keukenrenovatie",
+          "from": "Marie Lemoine",
+          "meta": "aan mij — 5 dagen geleden",
+          "p1": "Hallo,",
+          "p2": "Heeft u mijn verzoek om een offerte voor de keukenrenovatie kunnen bekijken? Ik heb geen reactie ontvangen sinds onze laatste uitwisseling.",
+          "p3": "Kunt u het bedrag en een mogelijke termijn bevestigen? Alvast bedankt.",
+          "signoff": "Met vriendelijke groet,\nMarie",
+          "attachment": "offerte-keuken.pdf"
+        },
+        "greeting": "Hallo 👋 Ik ben Inboria. Stel me een vraag over deze e-mail, of gebruik de snelkoppelingen hierboven.",
+        "chips": [
+          "Samenvatten van deze e-mail",
+          "Een antwoord voorstellen",
+          "Wat moet ik doen?"
+        ],
+        "thinking": "Inboria denkt na…",
+        "answer": "Hier zijn de acties die u voor deze e-mail moet overwegen:\n\n1. Beantwoord Marie — haar offerte wacht al 5 dagen.\n2. Bevestig het bedrag en een termijn.\n3. Stuur de bijlage offerte-keuken.pdf opnieuw.\n\nWilt u dat ik het antwoord opstel?",
+        "composerPlaceholder": "Stel uw vraag aan Inboria…",
+        "searchPlaceholder": "Zoek een e-mail, een contact…",
+        "refresh": "Vernieuwen",
+        "newEmail": "Nieuwe e-mail",
+        "autopilotPill": "Inboria · 3 acties vandaag",
+        "bannerBold": "Inboria heeft uw inbox vanmorgen gesorteerd.",
+        "bannerRest": "12 e-mails te verwerken, 32 automatisch geclassificeerd per categorie.",
+        "urgent": "Urgent",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Offerte keukenrenovatie",
+            "preview": "Kunt u het bedrag en een termijn bevestigen?",
+            "cat": "Offertes"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validatie van de bestelbon",
+            "preview": "Alles is goed van onze kant, we kunnen beginnen.",
+            "cat": "Klanten"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Vraag over de levering",
+            "preview": "Wat is de termijn voor de bestelling #5821?",
+            "cat": "Klanten"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Sollicitatie — Ontwikkelaar",
+            "preview": "CV + portfolio in bijlage.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Factuur #2026-0418 te betalen",
+            "preview": "Vervaldatum over 5 dagen — 1 240 € incl. btw.",
+            "cat": "Facturen"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Betaling ontvangen: 1 240 €",
+            "preview": "De overboeking is goed bijgeschreven.",
+            "cat": "Facturen"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Voorstel voor samenwerking",
+            "preview": "Beschikbaar voor een gesprek deze week?",
+            "cat": "Partners"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Wekelijkse IA — de nieuwtjes van de week.",
+            "cat": "Nieuwsbrieven"
+          }
+        ],
+        "browserExtension": "Browserextensie",
+        "dateUnits": {
+          "h": "u",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Uw e-mails komen gesorteerd binnen",

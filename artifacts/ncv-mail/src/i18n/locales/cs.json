@@ -1407,7 +1407,106 @@
       "howDesc": "Nemusíte nic složitě hledat v nabídkách: po přihlášení Vás Inboria provede aktivací zvoleného rozšíření během několika minut.",
       "ctaTitle": "Jste připraveni vyzkoušet Inboria ve své e-mailové schránce?",
       "ctaDesc": "Vytvořte si účet a aktivujte si rozšíření podle svého výběru ještě dnes.",
-      "cta": "Začít zdarma"
+      "cta": "Začít zdarma",
+      "demo": {
+        "eyebrow": "Inboria se připojuje k vaší poště",
+        "subtitle": "Otevřete e-mail → klikněte na „Požádat Inboria“ → nebo otevřete plnou aplikaci. Bez změny vašich zvyklostí.",
+        "caption": "Animovaná ukázka — Inboria odpovídá v Gmailu a Outlooku, poté otevře plnou aplikaci jedním kliknutím.",
+        "ask": "Požádat Inboria",
+        "openInInboria": "Otevřít v Inboria",
+        "clear": "Vymazat",
+        "logout": "Odhlásit se",
+        "newMessage": "Nová zpráva",
+        "navFolders": "Moje složky",
+        "webmail": {
+          "inbox": "Doručená pošta",
+          "followed": "Sledované",
+          "sent": "Odeslané",
+          "drafts": "Koncepty",
+          "archives": "Archivy"
+        },
+        "mail": {
+          "subject": "Re: Nabídka na renovaci kuchyně",
+          "from": "Marie Lemoine",
+          "meta": "mě — před 5 dny",
+          "p1": "Dobrý den,",
+          "p2": "Měli jste možnost se podívat na mou žádost o nabídku na renovaci kuchyně? Od našeho posledního rozhovoru jsem nedostal žádnou odpověď.",
+          "p3": "Můžete mi prosím potvrdit částku a možný termín? Děkuji předem.",
+          "signoff": "S pozdravem,\nMarie",
+          "attachment": "nabídka-kuchyně.pdf"
+        },
+        "greeting": "Dobrý den 👋 Jsem Inboria. Zeptejte se mě na tuto zprávu, nebo použijte výše uvedené zkratky.",
+        "chips": [
+          "Shrnout tento e-mail",
+          "Navrhnout odpověď",
+          "Co mám dělat?"
+        ],
+        "thinking": "Inboria přemýšlí…",
+        "answer": "Zde jsou akce, které je třeba provést pro tento e-mail:\n\n1. Odpovědět Marii — její nabídka čeká 5 dní.\n2. Potvrdit částku a termín.\n3. Znovu poslat přílohu nabídka-kuchyně.pdf.\n\nChcete, abych napsal odpověď?",
+        "composerPlaceholder": "Zeptejte se Inboria…",
+        "searchPlaceholder": "Hledat e-mail, kontakt…",
+        "refresh": "Obnovit",
+        "newEmail": "Nový e-mail",
+        "autopilotPill": "Inboria · 3 akce dnes",
+        "bannerBold": "Inboria dnes ráno uspořádala vaši poštu.",
+        "bannerRest": "12 e-mailů k vyřízení, 32 automaticky zařazeno do kategorií.",
+        "urgent": "Naléhavé",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Nabídka na renovaci kuchyně",
+            "preview": "Můžete potvrdit částku a termín?",
+            "cat": "Nabídky"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Schválení objednávky",
+            "preview": "Všechno je v pořádku z naší strany, můžeme začít.",
+            "cat": "Klienti"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Dotaz na dodání",
+            "preview": "Jaký je termín pro objednávku #5821?",
+            "cat": "Klienti"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Žádost — Vývojářka",
+            "preview": "Životopis + portfolio v příloze.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Faktura #2026-0418 k úhradě",
+            "preview": "Splatnost za 5 dní — 1 240 € vč. DPH.",
+            "cat": "Faktury"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Platba přijata: 1 240 €",
+            "preview": "Převod byl úspěšně připsán.",
+            "cat": "Faktury"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Návrh spolupráce",
+            "preview": "Jste k dispozici na schůzku tento týden?",
+            "cat": "Partneři"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Týdenní AI — novinky týdne.",
+            "cat": "Zpravodaje"
+          }
+        ],
+        "browserExtension": "Rozšíření",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Vaše e-maily přicházejí tříděné",

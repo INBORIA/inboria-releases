@@ -1444,7 +1444,106 @@
       "howDesc": "No digging through menus: once you’re signed in, Inboria walks you through enabling the extension of your choice in minutes.",
       "ctaTitle": "Ready to try Inboria on your mailbox?",
       "ctaDesc": "Create your account and turn on the extension of your choice today.",
-      "cta": "Get started for free"
+      "cta": "Get started for free",
+      "demo": {
+        "eyebrow": "Inboria comes to your inbox",
+        "subtitle": "Open an email → click “Ask Inboria” → or open the full app. Without changing your habits.",
+        "caption": "Animated demo — Inboria replies inside Gmail & Outlook, then opens the full app in one click.",
+        "ask": "Ask Inboria",
+        "openInInboria": "Open in Inboria",
+        "clear": "Clear",
+        "logout": "Log out",
+        "newMessage": "New message",
+        "navFolders": "My folders",
+        "webmail": {
+          "inbox": "Inbox",
+          "followed": "Starred",
+          "sent": "Sent",
+          "drafts": "Drafts",
+          "archives": "Archive"
+        },
+        "mail": {
+          "subject": "Re: Kitchen renovation quote",
+          "from": "Marie Lemoine",
+          "meta": "to me — 5 days ago",
+          "p1": "Hello,",
+          "p2": "Have you had a chance to look at my quote request for the kitchen renovation? I haven't heard back since we last spoke.",
+          "p3": "Could you confirm the amount and a possible timeline? Thanks in advance.",
+          "signoff": "Kind regards,\nMarie",
+          "attachment": "kitchen-quote.pdf"
+        },
+        "greeting": "Hi 👋 I'm Inboria. Ask me anything about this email, or use the shortcuts above.",
+        "chips": [
+          "Summarize this email",
+          "Suggest a reply",
+          "What should I do?"
+        ],
+        "thinking": "Inboria is thinking…",
+        "answer": "Here are the actions to take for this email:\n\n1. Reply to Marie — her quote has been waiting for 5 days.\n2. Confirm the amount and a timeline.\n3. Resend the attachment kitchen-quote.pdf.\n\nWould you like me to draft the reply?",
+        "composerPlaceholder": "Ask Inboria a question…",
+        "searchPlaceholder": "Search an email, a contact…",
+        "refresh": "Refresh",
+        "newEmail": "New email",
+        "autopilotPill": "Inboria · 3 actions today",
+        "bannerBold": "Inboria sorted your inbox this morning.",
+        "bannerRest": "12 emails to handle, 32 automatically sorted by category.",
+        "urgent": "Urgent",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Kitchen renovation quote",
+            "preview": "Could you confirm the amount and a timeline?",
+            "cat": "Quotes"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Purchase order approval",
+            "preview": "All good on our side, we can go ahead.",
+            "cat": "Clients"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Question about delivery",
+            "preview": "What's the lead time for order #5821?",
+            "cat": "Clients"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Application — Developer",
+            "preview": "Resume + portfolio attached.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Invoice #2026-0418 to pay",
+            "preview": "Due in 5 days — €1,240 incl. tax.",
+            "cat": "Invoices"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Payment received: €1,240",
+            "preview": "The transfer has been credited.",
+            "cat": "Invoices"
+          },
+          {
+            "from": "Partner X",
+            "subject": "Partnership proposal",
+            "preview": "Available for a chat this week?",
+            "cat": "Partners"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Weekly AI — this week's news.",
+            "cat": "Newsletters"
+          }
+        ],
+        "browserExtension": "Extension",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Your emails arrive sorted",

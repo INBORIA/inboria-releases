@@ -1407,7 +1407,106 @@
       "howDesc": "Nie trzeba przeszukiwać menu: po zalogowaniu Inboria poprowadzi Pana/Panią przez aktywację wybranego rozszerzenia w kilka minut.",
       "ctaTitle": "Gotowy/-a wypróbować Inboria w swojej skrzynce pocztowej?",
       "ctaDesc": "Załóż konto i aktywuj wybrane rozszerzenie już dziś.",
-      "cta": "Zacznij za darmo"
+      "cta": "Zacznij za darmo",
+      "demo": {
+        "eyebrow": "Inboria wkracza do Twojej skrzynki",
+        "subtitle": "Otwórz maila → kliknij „Zapytaj Inboria” → lub otwórz pełną aplikację. Bez zmiany swoich nawyków.",
+        "caption": "Animowana demonstracja — Inboria odpowiada w Gmailu i Outlooku, a następnie otwiera pełną aplikację jednym kliknięciem.",
+        "ask": "Zapytaj Inboria",
+        "openInInboria": "Otwórz w Inboria",
+        "clear": "Wyczyść",
+        "logout": "Wylogowanie",
+        "newMessage": "Nowa wiadomość",
+        "navFolders": "Moje foldery",
+        "webmail": {
+          "inbox": "Skrzynka odbiorcza",
+          "followed": "Obserwowane",
+          "sent": "Wysłane",
+          "drafts": "Szkice",
+          "archives": "Archiwa"
+        },
+        "mail": {
+          "subject": "Re: Wycenę remontu kuchni",
+          "from": "Marie Lemoine",
+          "meta": "do mnie — 5 dni temu",
+          "p1": "Dzień dobry,",
+          "p2": "Czy mogłaś spojrzeć na moją prośbę o wycenę remontu kuchni? Nie otrzymałem odpowiedzi od naszej ostatniej wymiany.",
+          "p3": "Czy możesz potwierdzić kwotę i możliwy termin? Z góry dziękuję.",
+          "signoff": "Z poważaniem,\nMarie",
+          "attachment": "wycena-kuchni.pdf"
+        },
+        "greeting": "Dzień dobry 👋 Jestem Inboria. Zadaj mi pytanie dotyczące tego maila lub skorzystaj z powyższych skrótów.",
+        "chips": [
+          "Podsumuj ten mail",
+          "Zaproponuj odpowiedź",
+          "Co powinienem zrobić?"
+        ],
+        "thinking": "Inboria myśli…",
+        "answer": "Oto działania do podjęcia w związku z tym mailem:\n\n1. Odpowiedzieć Marie — jej wycena czeka od 5 dni.\n2. Potwierdzić kwotę i termin.\n3. Przesłać załącznik wycena-kuchni.pdf.\n\nCzy chcesz, żebym napisał odpowiedź?",
+        "composerPlaceholder": "Zadaj swoje pytanie Inboria…",
+        "searchPlaceholder": "Szukaj maila, kontaktu…",
+        "refresh": "Odśwież",
+        "newEmail": "Nowy email",
+        "autopilotPill": "Inboria · 3 działania dzisiaj",
+        "bannerBold": "Inboria posortowała Twoją skrzynkę dzisiaj rano.",
+        "bannerRest": "12 emaili do przetworzenia, 32 automatycznie sklasyfikowane według kategorii.",
+        "urgent": "Pilne",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Wycenę remontu kuchni",
+            "preview": "Czy możesz potwierdzić kwotę i termin?",
+            "cat": "Wyceny"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Walidacja zamówienia",
+            "preview": "Wszystko jest w porządku z naszej strony, możemy rozpocząć.",
+            "cat": "Klienci"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Pytanie dotyczące dostawy",
+            "preview": "Jaki jest termin realizacji zamówienia #5821?",
+            "cat": "Klienci"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Aplikacja — Programistka",
+            "preview": "CV + portfolio w załączniku.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Faktura #2026-0418 do zapłaty",
+            "preview": "Termin w ciągu 5 dni — 1 240 € z VAT.",
+            "cat": "Faktury"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Płatność otrzymana: 1 240 €",
+            "preview": "Przelew został poprawnie zaksięgowany.",
+            "cat": "Faktury"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Propozycja współpracy",
+            "preview": "Dostępny na rozmowę w tym tygodniu?",
+            "cat": "Partnerzy"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Tygodniowy AI — nowości z tygodnia.",
+            "cat": "Newslettery"
+          }
+        ],
+        "browserExtension": "Rozszerzenie",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Państwa e-maile przychodzą posegregowane",

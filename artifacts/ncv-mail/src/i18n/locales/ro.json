@@ -1407,7 +1407,106 @@
       "howDesc": "Nu este nevoie să căutați prin meniuri: odată conectat, Inboria vă ghidează pentru a activa extensia dorită în doar câteva minute.",
       "ctaTitle": "Sunteți gata să încercați Inboria în mesageria dumneavoastră?",
       "ctaDesc": "Creați-vă contul și activați extensia dorită chiar de astăzi.",
-      "cta": "Începeți gratuit"
+      "cta": "Începeți gratuit",
+      "demo": {
+        "eyebrow": "Inboria se alătură căsuței dumneavoastră poștale",
+        "subtitle": "Deschideți un email → faceți clic pe « Cereți de la Inboria » → sau deschideți aplicația completă. Fără a vă schimba obiceiurile.",
+        "caption": "Demonstrație animată — Inboria răspunde în Gmail & Outlook, apoi deschide aplicația completă cu un clic.",
+        "ask": "Cereți de la Inboria",
+        "openInInboria": "Deschideți în Inboria",
+        "clear": "Șterge",
+        "logout": "Deconectare",
+        "newMessage": "Mesaj nou",
+        "navFolders": "Dosarele mele",
+        "webmail": {
+          "inbox": "Căsuța de primire",
+          "followed": "Urmărite",
+          "sent": "Trimise",
+          "drafts": "Brouillon",
+          "archives": "Arhive"
+        },
+        "mail": {
+          "subject": "Re: Ofertă renovare bucătărie",
+          "from": "Marie Lemoine",
+          "meta": "către mine — acum 5 zile",
+          "p1": "Bună ziua,",
+          "p2": "Ați reușit să analizați cererea mea de ofertă pentru renovarea bucătăriei? Nu am primit răspuns de la ultima noastră discuție.",
+          "p3": "Puteți să-mi confirmați suma și un termen posibil? Vă mulțumesc anticipat.",
+          "signoff": "Cu stimă,\nMarie",
+          "attachment": "oferta-renovare-bucatarie.pdf"
+        },
+        "greeting": "Bună ziua 👋 Eu sunt Inboria. Puneți-mi o întrebare despre acest email sau folosiți scurtăturile de mai sus.",
+        "chips": [
+          "Rezumați acest email",
+          "Propuneți un răspuns",
+          "Ce ar trebui să fac?"
+        ],
+        "thinking": "Inboria se gândește…",
+        "answer": "Iată acțiunile de prevăzut pentru acest email :\n\n1. Răspundeți lui Marie — oferta ei așteaptă de 5 zile.\n2. Confirmați suma și un termen.\n3. Retrimiteți atașamentul oferta-renovare-bucatarie.pdf.\n\nDoriți să redactez răspunsul?",
+        "composerPlaceholder": "Puneți întrebarea dumneavoastră lui Inboria…",
+        "searchPlaceholder": "Căutați un email, un contact…",
+        "refresh": "Actualizați",
+        "newEmail": "Email nou",
+        "autopilotPill": "Inboria · 3 acțiuni astăzi",
+        "bannerBold": "Inboria a organizat căsuța dumneavoastră poștală în această dimineață.",
+        "bannerRest": "12 emailuri de procesat, 32 clasificate automat pe categorii.",
+        "urgent": "Urgent",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Ofertă renovare bucătărie",
+            "preview": "Puteți confirma suma și un termen?",
+            "cat": "Ofertă"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validarea comenzii",
+            "preview": "Totul este în regulă din partea noastră, putem începe.",
+            "cat": "Clienți"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Întrebare despre livrare",
+            "preview": "Care este termenul pentru comanda #5821?",
+            "cat": "Clienți"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Candidatură — Dezvoltator",
+            "preview": "CV + portofoliu în atașament.",
+            "cat": "Resurse Umane"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Factură #2026-0418 de plată",
+            "preview": "Scadență în 5 zile — 1 240 € TVA inclus.",
+            "cat": "Facturi"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Plată primită: 1 240 €",
+            "preview": "Transferul a fost creditat cu succes.",
+            "cat": "Facturi"
+          },
+          {
+            "from": "Partener X",
+            "subject": "Propunere de colaborare",
+            "preview": "Disponibil pentru o discuție săptămâna aceasta?",
+            "cat": "Parteneri"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Săptămâna IA — noutățile săptămânii.",
+            "cat": "Buletine informative"
+          }
+        ],
+        "browserExtension": "Extensie",
+        "dateUnits": {
+          "h": "h",
+          "d": "z"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Emailurile dumneavoastră sosesc sortate",

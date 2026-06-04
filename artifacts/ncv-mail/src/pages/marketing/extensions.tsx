@@ -3,6 +3,7 @@ import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { Mail, MailPlus, Globe, Smartphone, Puzzle, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
+import { AskInboriaDemo } from "@/components/marketing/ask-inboria-demo";
 
 export default function Extensions() {
   const { t } = useTranslation();
@@ -30,6 +31,12 @@ export default function Extensions() {
           <p className="mt-4 text-[16px] text-[#b8c5d6] max-w-2xl mx-auto">
             {t("marketing.extensions.heroDesc")}
           </p>
+        </div>
+      </section>
+
+      <section className="border-t border-[#1f2937]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <AskInboriaDemo />
         </div>
       </section>
 

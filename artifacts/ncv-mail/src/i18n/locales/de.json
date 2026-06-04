@@ -1417,7 +1417,106 @@
       "howDesc": "Kein mühsames Suchen in Menüs: Sobald Sie angemeldet sind, begleitet Inboria Sie dabei, die Erweiterung Ihrer Wahl in wenigen Minuten zu aktivieren.",
       "ctaTitle": "Bereit, Inboria mit Ihrer Mail-Lösung auszuprobieren?",
       "ctaDesc": "Erstellen Sie Ihr Konto und aktivieren Sie noch heute die Erweiterung Ihrer Wahl.",
-      "cta": "Kostenlos starten"
+      "cta": "Kostenlos starten",
+      "demo": {
+        "eyebrow": "Inboria lädt Sie in Ihr Postfach ein",
+        "subtitle": "Öffnen Sie eine E-Mail → klicken Sie auf „Inboria anfragen“ → oder öffnen Sie die vollständige App. Ohne Ihre Gewohnheiten zu ändern.",
+        "caption": "Animierte Demonstration — Inboria antwortet in Gmail & Outlook und öffnet dann die vollständige App mit einem Klick.",
+        "ask": "Inboria anfragen",
+        "openInInboria": "In Inboria öffnen",
+        "clear": "Löschen",
+        "logout": "Abmelden",
+        "newMessage": "Neue Nachricht",
+        "navFolders": "Meine Ordner",
+        "webmail": {
+          "inbox": "Posteingang",
+          "followed": "Verfolgt",
+          "sent": "Gesendet",
+          "drafts": "Entwürfe",
+          "archives": "Archive"
+        },
+        "mail": {
+          "subject": "Re: Angebot Küchenrenovierung",
+          "from": "Marie Lemoine",
+          "meta": "an mich — vor 5 Tagen",
+          "p1": "Guten Tag,",
+          "p2": "Haben Sie meine Anfrage für das Angebot zur Küchenrenovierung prüfen können? Ich habe seit unserem letzten Austausch keine Rückmeldung erhalten.",
+          "p3": "Könnten Sie mir den Betrag und einen möglichen Zeitraum bestätigen? Vielen Dank im Voraus.",
+          "signoff": "Mit freundlichen Grüßen,\nMarie",
+          "attachment": "angebot-kueche.pdf"
+        },
+        "greeting": "Guten Tag 👋 Ich bin Inboria. Stellen Sie mir eine Frage zu dieser E-Mail oder nutzen Sie die obigen Shortcuts.",
+        "chips": [
+          "Diese E-Mail zusammenfassen",
+          "Eine Antwort vorschlagen",
+          "Was soll ich tun?"
+        ],
+        "thinking": "Inboria denkt nach…",
+        "answer": "Hier sind die Maßnahmen, die für diese E-Mail vorgesehen sind:\n\n1. An Marie antworten — ihr Angebot wartet seit 5 Tagen.\n2. Den Betrag und einen Zeitraum bestätigen.\n3. Die Anlage angebot-kueche.pdf zurücksenden.\n\nMöchten Sie, dass ich die Antwort formuliere?",
+        "composerPlaceholder": "Stellen Sie Ihre Frage an Inboria…",
+        "searchPlaceholder": "Eine E-Mail, einen Kontakt suchen…",
+        "refresh": "Aktualisieren",
+        "newEmail": "Neue E-Mail",
+        "autopilotPill": "Inboria · 3 Aktionen heute",
+        "bannerBold": "Inboria hat Ihr Postfach heute Morgen sortiert.",
+        "bannerRest": "12 E-Mails zu bearbeiten, 32 automatisch nach Kategorie sortiert.",
+        "urgent": "Dringend",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Angebot Küchenrenovierung",
+            "preview": "Könnten Sie den Betrag und einen Zeitraum bestätigen?",
+            "cat": "Angebote"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Genehmigung des Bestellformulars",
+            "preview": "Alles ist von unserer Seite in Ordnung, wir können starten.",
+            "cat": "Kunden"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Frage zur Lieferung",
+            "preview": "Wie lange ist der Zeitraum für die Bestellung #5821?",
+            "cat": "Kunden"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Bewerbung — Entwicklerin",
+            "preview": "Lebenslauf + Portfolio im Anhang.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Rechnung #2026-0418 zu begleichen",
+            "preview": "Fälligkeit in 5 Tagen — 1.240 € inkl. MwSt.",
+            "cat": "Rechnungen"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Zahlung erhalten: 1.240 €",
+            "preview": "Die Überweisung wurde gutgeschrieben.",
+            "cat": "Rechnungen"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Vorschlag zur Zusammenarbeit",
+            "preview": "Sind Sie diese Woche für einen Austausch verfügbar?",
+            "cat": "Partner"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Wöchentliche IA — die Neuigkeiten der Woche.",
+            "cat": "Newsletter"
+          }
+        ],
+        "browserExtension": "Erweiterung",
+        "dateUnits": {
+          "h": "h",
+          "d": "t"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Ihre E-Mails kommen sortiert an",

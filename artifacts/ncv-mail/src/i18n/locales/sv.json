@@ -1407,7 +1407,106 @@
       "howDesc": "Du behöver inte leta i menyerna: när du har loggat in hjälper Inboria dig att aktivera det tillägg du vill ha på bara några minuter.",
       "ctaTitle": "Redo att testa Inboria i din e-post?",
       "ctaDesc": "Skapa ditt konto och aktivera det tillägg du vill ha redan idag.",
-      "cta": "Kom igång gratis"
+      "cta": "Kom igång gratis",
+      "demo": {
+        "eyebrow": "Inboria bjuder in i din mejlbox",
+        "subtitle": "Öppna ett mejl → klicka på « Fråga Inboria » → eller öppna hela appen. Utan att ändra dina vanor.",
+        "caption": "Animerad demonstration — Inboria svarar i Gmail & Outlook, och öppnar sedan hela appen med ett klick.",
+        "ask": "Fråga Inboria",
+        "openInInboria": "Öppna i Inboria",
+        "clear": "Rensa",
+        "logout": "Logga ut",
+        "newMessage": "Nytt meddelande",
+        "navFolders": "Mina mappar",
+        "webmail": {
+          "inbox": "Inkorg",
+          "followed": "Följda",
+          "sent": "Skickade",
+          "drafts": "Utkast",
+          "archives": "Arkiv"
+        },
+        "mail": {
+          "subject": "Re: Offert för köksrenovering",
+          "from": "Marie Lemoine",
+          "meta": "till mig — för 5 dagar sedan",
+          "p1": "Hej,",
+          "p2": "Har du haft möjlighet att titta på min offertförfrågan för köksrenoveringen? Jag har inte fått något svar sedan vårt senaste utbyte.",
+          "p3": "Kan du bekräfta beloppet och en möjlig tidsram? Tack på förhand.",
+          "signoff": "Med vänliga hälsningar,\nMarie",
+          "attachment": "offert-kok.pdf"
+        },
+        "greeting": "Hej 👋 Jag är Inboria. Ställ mig en fråga om detta mejl, eller använd genvägarna ovan.",
+        "chips": [
+          "Sammanfatta detta mejl",
+          "Föreslå ett svar",
+          "Vad ska jag göra?"
+        ],
+        "thinking": "Inboria tänker…",
+        "answer": "Här är de åtgärder som bör vidtas för detta mejl :\n\n1. Svara Marie — hennes offert har väntat i 5 dagar.\n2. Bekräfta beloppet och en tidsram.\n3. Skicka bifogad offert-kok.pdf igen.\n\nVill du att jag skriver svaret?",
+        "composerPlaceholder": "Ställ din fråga till Inboria…",
+        "searchPlaceholder": "Sök efter ett mejl, en kontakt…",
+        "refresh": "Uppdatera",
+        "newEmail": "Nytt mejl",
+        "autopilotPill": "Inboria · 3 åtgärder idag",
+        "bannerBold": "Inboria har sorterat din inkorg i morse.",
+        "bannerRest": "12 mejl att hantera, 32 klassificerade automatiskt efter kategori.",
+        "urgent": "Brådskande",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Offert för köksrenovering",
+            "preview": "Kan du bekräfta beloppet och en tidsram?",
+            "cat": "Offert"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validering av beställningsbekräftelse",
+            "preview": "Allt är bra från vår sida, vi kan starta.",
+            "cat": "Kunder"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Fråga om leverans",
+            "preview": "Vad är tidsramen för beställning #5821?",
+            "cat": "Kunder"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Ansökan — Utvecklare",
+            "preview": "CV + portfolio bifogad.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Faktura #2026-0418 att betala",
+            "preview": "Förfallodag om 5 dagar — 1 240 € inklusive moms.",
+            "cat": "Fakturor"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Betalning mottagen: 1 240 €",
+            "preview": "Överföringen har registrerats.",
+            "cat": "Fakturor"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Förslag på samarbete",
+            "preview": "Tillgänglig för ett samtal denna vecka?",
+            "cat": "Partners"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Veckans AI — nyheter för veckan.",
+            "cat": "Nyhetsbrev"
+          }
+        ],
+        "browserExtension": "Tillägg",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Dina e-postmeddelanden kommer sorterade",

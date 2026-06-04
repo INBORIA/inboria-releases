@@ -1407,7 +1407,106 @@
       "howDesc": "Valikoita ei tarvitse penkoa: kun olette kirjautuneet sisään, Inboria ohjaa teitä ottamaan haluamanne laajennuksen käyttöön muutamassa minuutissa.",
       "ctaTitle": "Valmiina kokeilemaan Inboriaa sähköpostissanne?",
       "ctaDesc": "Luokaa tilinne ja ottakaa haluamanne laajennus käyttöön jo tänään.",
-      "cta": "Aloita maksutta"
+      "cta": "Aloita maksutta",
+      "demo": {
+        "eyebrow": "Inboria vierailee sähköpostissasi",
+        "subtitle": "Avaa sähköposti → napsauta « Kysy Inborialta » → tai avaa koko sovellus. Ilman tapojesi muuttamista.",
+        "caption": "Animoitu esittely — Inboria vastaa Gmailissa ja Outlookissa, ja avaa koko sovelluksen yhdellä napsautuksella.",
+        "ask": "Kysy Inborialta",
+        "openInInboria": "Avaa Inboriassa",
+        "clear": "Tyhjennä",
+        "logout": "Kirjaudu ulos",
+        "newMessage": "Uusi viesti",
+        "navFolders": "Omat kansiot",
+        "webmail": {
+          "inbox": "Saapuneet",
+          "followed": "Seuratut",
+          "sent": "Lähetetyt",
+          "drafts": "Luonnokset",
+          "archives": "Arkistot"
+        },
+        "mail": {
+          "subject": "Re: Tarjous keittiöremontista",
+          "from": "Marie Lemoine",
+          "meta": "minulle — 5 päivää sitten",
+          "p1": "Hei,",
+          "p2": "Oletteko ehtineet katsoa tarjouspyyntöni keittiöremontista? En ole saanut vastausta viimeisestä keskustelustamme.",
+          "p3": "Voisitteko vahvistaa summan ja mahdollisen aikarajan? Kiitos etukäteen.",
+          "signoff": "Ystävällisin terveisin,\nMarie",
+          "attachment": "tarjous-keittio.pdf"
+        },
+        "greeting": "Hei 👋 Olen Inboria. Kysy minulta kysymys tästä sähköpostista tai käytä yllä olevia pikakuvakkeita.",
+        "chips": [
+          "Tiivistä tämä sähköposti",
+          "Ehdota vastausta",
+          "Mitä minun pitäisi tehdä?"
+        ],
+        "thinking": "Inboria miettii…",
+        "answer": "Tässä ovat toimenpiteet, jotka on suunniteltava tälle sähköpostille:\n\n1. Vastaa Marielle — hänen tarjouksensa on odottanut 5 päivää.\n2. Vahvista summa ja aikaraja.\n3. Lähetä liite tarjous-keittio.pdf uudelleen.\n\nHaluatko, että kirjoitan vastauksen?",
+        "composerPlaceholder": "Kysy kysymyksesi Inborialta…",
+        "searchPlaceholder": "Etsi sähköpostia, kontaktia…",
+        "refresh": "Päivitä",
+        "newEmail": "Uusi sähköposti",
+        "autopilotPill": "Inboria · 3 toimenpidettä tänään",
+        "bannerBold": "Inboria on järjestänyt postilaatikkosi tänä aamuna.",
+        "bannerRest": "12 sähköpostia käsiteltävänä, 32 luokiteltu automaattisesti kategoriaan.",
+        "urgent": "Kiireellinen",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Tarjous keittiöremontista",
+            "preview": "Voisitteko vahvistaa summan ja aikarajan?",
+            "cat": "Tarjoukset"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Tilauksen vahvistus",
+            "preview": "Kaikki on kunnossa meidän puoleltamme, voimme aloittaa.",
+            "cat": "Asiakkaat"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Kysymys toimituksesta",
+            "preview": "Mikä on aikaraja tilaukselle #5821?",
+            "cat": "Asiakkaat"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Hakemus — Kehittäjä",
+            "preview": "CV + portfolio liitteenä.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Lasku #2026-0418 maksettavaksi",
+            "preview": "Eräpäivä 5 päivän kuluttua — 1 240 € sis. alv.",
+            "cat": "Laskut"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Maksu vastaanotettu: 1 240 €",
+            "preview": "Siirto on hyvitetty.",
+            "cat": "Laskut"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Yhteistyöehdotus",
+            "preview": "Onko aikaa keskustelulle tällä viikolla?",
+            "cat": "Kumppanit"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Viikoittainen IA — viikon uutiset.",
+            "cat": "Uutiskirjeet"
+          }
+        ],
+        "browserExtension": "Laajennus",
+        "dateUnits": {
+          "h": "t",
+          "d": "p"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Sähköpostisi saapuvat lajiteltuina",

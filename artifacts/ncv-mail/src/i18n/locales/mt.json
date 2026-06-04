@@ -1407,7 +1407,106 @@
       "howDesc": "M’hemmx għalfejn tfittxu fil-menus: ladarba tikkonnettjaw, Inboria jiggwidakom biex tattivaw l-estensjoni tal-għażla tagħkom fi ftit minuti.",
       "ctaTitle": "Lesti biex tippruvaw Inboria fuq l-email tagħkom?",
       "ctaDesc": "Oħolqu l-kont tagħkom u attivaw l-estensjoni tal-għażla tagħkom mil-lum.",
-      "cta": "Ibdew b’xejn"
+      "cta": "Ibdew b’xejn",
+      "demo": {
+        "eyebrow": "Inboria s'invite dans votre messagerie",
+        "subtitle": "Oħloq mail → ikklikkja « Staqsi lil Inboria » → jew oħloq l-app sħiħa. Mingħajr ma tibdil l-abitudni tiegħek.",
+        "caption": "Dimostrazzjoni animata — Inboria tirrispondi f'Gmail & Outlook, imbagħad tiftaħ l-app sħiħa bi klik wieħed.",
+        "ask": "Staqsi lil Inboria",
+        "openInInboria": "Iftaħ f'Inboria",
+        "clear": "Ħassar",
+        "logout": "Disconnessione",
+        "newMessage": "Messaġġ ġdid",
+        "navFolders": "Id-dokumenti tiegħi",
+        "webmail": {
+          "inbox": "Boċċa ta' riċevuta",
+          "followed": "Segwiti",
+          "sent": "Mibgħuta",
+          "drafts": "Bozza",
+          "archives": "Arki"
+        },
+        "mail": {
+          "subject": "Re: Devis ta' rinnovazzjoni tal-kċina",
+          "from": "Marie Lemoine",
+          "meta": "għandi — ilu 5 ijiem",
+          "p1": "Bongu,",
+          "p2": "Ilni nara jekk stajt tħares lejn it-talba tiegħi għal deċiżjoni għall-innovazzjoni tal-kċina? Ma kelli l-ebda rispons minn meta kelli l-aħħar scamb.",
+          "p3": "Tista' tikkonferma l-ammont u perjodu possibbli? Grazzi minn qabel.",
+          "signoff": "Tislijiet,\nMarie",
+          "attachment": "devis-kċina.pdf"
+        },
+        "greeting": "Bongu 👋 Jien Inboria. Staqsi mistoqsija dwar dan il-mail, jew uża l-kombinazzjonijiet hawn fuq.",
+        "chips": [
+          "Irrisumi dan il-mail",
+          "Proponi risposta",
+          "X'għandi nagħmel?"
+        ],
+        "thinking": "Inboria qed taħseb…",
+        "answer": "Hawn huma l-azzjonijiet li għandhom isiru għal dan il-mail :\n\n1. Irrispondi lil Marie — id-deċiżjoni tagħha qed tistenna minn 5 ijiem.\n2. Ikun konfirmat l-ammont u perjodu.\n3. Irreġistra l-fajl ta' anness devis-kċina.pdf.\n\nTixtieq li nikteb ir-risposta?",
+        "composerPlaceholder": "Staqsi mistoqsija lil Inboria…",
+        "searchPlaceholder": "Fittex email, kuntatt…",
+        "refresh": "Aġġorna",
+        "newEmail": "Email ġdid",
+        "autopilotPill": "Inboria · 3 azzjonijiet illum",
+        "bannerBold": "Inboria sorted your inbox this morning.",
+        "bannerRest": "12 emails to process, 32 automatically sorted by category.",
+        "urgent": "Urgenti",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Devis ta' rinnovazzjoni tal-kċina",
+            "preview": "Tista' tikkonferma l-ammont u perjodu?",
+            "cat": "Devis"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validazzjoni tal-bon ta' ordni",
+            "preview": "Kollox huwa tajjeb min-naħa tagħna, nistgħu nibdew.",
+            "cat": "Klijenti"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Mistoqsija dwar il-kunsinna",
+            "preview": "X'hemm il-perjodu għall-ordni #5821?",
+            "cat": "Klijenti"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Applikazzjoni — Żviluppatur",
+            "preview": "CV + portfolio fl-anness.",
+            "cat": "RH"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Fattura #2026-0418 li għandha tiġi solvuta",
+            "preview": "Skadenza fi 5 ijiem — 1 240 € TTC.",
+            "cat": "Fatturi"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Ħlas riċevut: 1 240 €",
+            "preview": "Il-viremen ġie kreditat tajjeb.",
+            "cat": "Fatturi"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Proposta ta' kollaborazzjoni",
+            "preview": "Disponibbli għal skambju din il-ġimgħa?",
+            "cat": "Partenari"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Hebdo IA — l-aħbarijiet tal-ġimgħa.",
+            "cat": "Newsletters"
+          }
+        ],
+        "browserExtension": "Estensjoni",
+        "dateUnits": {
+          "h": "h",
+          "d": "ġ"
+        }
+      }
     },
     "home": {
       "heroTitle1": "L-emails Tagħkom jaslu mħarrġa",

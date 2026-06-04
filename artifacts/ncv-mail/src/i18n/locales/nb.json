@@ -1407,7 +1407,106 @@
       "howDesc": "Du trenger ikke lete i menyer: Når du er logget inn, hjelper Inboria deg med å aktivere utvidelsen du ønsker på noen få minutter.",
       "ctaTitle": "Klar til å prøve Inboria i e-postløsningen din?",
       "ctaDesc": "Opprett kontoen din og aktiver utvidelsen du ønsker allerede i dag.",
-      "cta": "Kom i gang gratis"
+      "cta": "Kom i gang gratis",
+      "demo": {
+        "eyebrow": "Inboria inviterer seg inn i innboksen din",
+        "subtitle": "Åpne en e-post → klikk « Be om Inboria » → eller åpne den komplette appen. Uten å endre vanene dine.",
+        "caption": "Animasjonsdemonstrasjon — Inboria svarer i Gmail & Outlook, og åpner deretter den komplette appen med ett klikk.",
+        "ask": "Be om Inboria",
+        "openInInboria": "Åpne i Inboria",
+        "clear": "Tøm",
+        "logout": "Logg ut",
+        "newMessage": "Ny melding",
+        "navFolders": "Mine mapper",
+        "webmail": {
+          "inbox": "Innboks",
+          "followed": "Følgde",
+          "sent": "Sendt",
+          "drafts": "Kladdar",
+          "archives": "Arkiv"
+        },
+        "mail": {
+          "subject": "Re: Tilbud på kjøkkenrenovering",
+          "from": "Marie Lemoine",
+          "meta": "til meg — for 5 dager siden",
+          "p1": "Hei,",
+          "p2": "Har du hatt mulighet til å se på forespørselen min om tilbud på kjøkkenrenovering? Jeg har ikke fått noe svar siden vårt siste utveksling.",
+          "p3": "Kan du bekrefte beløpet og en mulig tidsramme? Takk på forhånd.",
+          "signoff": "Med vennlig hilsen,\nMarie",
+          "attachment": "tilbud-kjokken.pdf"
+        },
+        "greeting": "Hei 👋 Jeg er Inboria. Still meg et spørsmål om denne e-posten, eller bruk snarveiene ovenfor.",
+        "chips": [
+          "Oppsummer denne e-posten",
+          "Foreslå et svar",
+          "Hva skal jeg gjøre?"
+        ],
+        "thinking": "Inboria tenker…",
+        "answer": "Her er handlingene som må gjøres for denne e-posten:\n\n1. Svar til Marie — hennes tilbud har ventet i 5 dager.\n2. Bekreft beløpet og en tidsramme.\n3. Send vedlegget tilbud-kjokken.pdf på nytt.\n\nVil du at jeg skal skrive svaret?",
+        "composerPlaceholder": "Still spørsmålet ditt til Inboria…",
+        "searchPlaceholder": "Søk etter en e-post, en kontakt…",
+        "refresh": "Oppdater",
+        "newEmail": "Ny e-post",
+        "autopilotPill": "Inboria · 3 handlinger i dag",
+        "bannerBold": "Inboria har sortert innboksen din i morges.",
+        "bannerRest": "12 e-poster å behandle, 32 klassifisert automatisk etter kategori.",
+        "urgent": "Haster",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Tilbud på kjøkkenrenovering",
+            "preview": "Kan du bekrefte beløpet og en tidsramme?",
+            "cat": "Tilbud"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Godkjenning av bestillingsbekreftelse",
+            "preview": "Alt er i orden fra vår side, vi kan sette i gang.",
+            "cat": "Kunder"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Spørsmål om levering",
+            "preview": "Hva er tidsrammen for bestillingen #5821?",
+            "cat": "Kunder"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Søknad — Utvikler",
+            "preview": "CV + portefølje vedlagt.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Faktura #2026-0418 å betale",
+            "preview": "Forfall om 5 dager — 1 240 € inkl. mva.",
+            "cat": "Fakturaer"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Betaling mottatt: 1 240 €",
+            "preview": "Overføringen har blitt kreditert.",
+            "cat": "Fakturaer"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Forslag til samarbeid",
+            "preview": "Tilgjengelig for en samtale denne uken?",
+            "cat": "Partnere"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Ukentlig IA — nyhetene fra uken.",
+            "cat": "Nyhetsbrev"
+          }
+        ],
+        "browserExtension": "Utvidelse",
+        "dateUnits": {
+          "h": "t",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Dine e-poster ankommer sortert",

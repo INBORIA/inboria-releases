@@ -1407,7 +1407,106 @@
       "howDesc": "Nereikia naršyti po meniu: prisijungus Inboria padės vos per kelias minutes aktyvuoti pasirinktą plėtinį.",
       "ctaTitle": "Pasiruošę išbandyti Inboria savo el. pašte?",
       "ctaDesc": "Sukurkite savo paskyrą ir aktyvuokite pasirinktą plėtinį jau šiandien.",
-      "cta": "Pradėti nemokamai"
+      "cta": "Pradėti nemokamai",
+      "demo": {
+        "eyebrow": "Inboria kviečia Jūsų pašto dėžutėje",
+        "subtitle": "Atidarykite laišką → spustelėkite „Prašyti Inboria“ → arba atidarykite visą programą. Nepriklausomai nuo Jūsų įpročių.",
+        "caption": "Animuota demonstracija — Inboria atsako Gmail ir Outlook, tada atidaro visą programą vienu spustelėjimu.",
+        "ask": "Prašyti Inboria",
+        "openInInboria": "Atidaryti Inboria",
+        "clear": "Ištrinti",
+        "logout": "Atsijungti",
+        "newMessage": "Naujas laiškas",
+        "navFolders": "Mano aplankai",
+        "webmail": {
+          "inbox": "Gautieji",
+          "followed": "Sekami",
+          "sent": "Išsiųsti",
+          "drafts": "Juodraščiai",
+          "archives": "Archyvai"
+        },
+        "mail": {
+          "subject": "Re: Pasiūlymas virtuvės renovacijai",
+          "from": "Marie Lemoine",
+          "meta": "man — prieš 5 dienas",
+          "p1": "Sveiki,",
+          "p2": "Ar galėjote peržiūrėti mano pasiūlymą dėl virtuvės renovacijos? Nesu gavęs atsakymo nuo mūsų paskutinio pokalbio.",
+          "p3": "Ar galite patvirtinti sumą ir galimą terminą? Iš anksto dėkoju.",
+          "signoff": "Pagarbiai,\nMarie",
+          "attachment": "pasiūlymas-virtuvei.pdf"
+        },
+        "greeting": "Sveiki 👋 Aš esu Inboria. Užduokite man klausimą apie šį laišką arba naudokite aukščiau pateiktus sparčiuosius klavišus.",
+        "chips": [
+          "Apibendrinti šį laišką",
+          "Pasiūlyti atsakymą",
+          "Ką turėčiau daryti?"
+        ],
+        "thinking": "Inboria galvoja…",
+        "answer": "Štai veiksmai, kurių reikia imtis dėl šio laiško :\n\n1. Atsakyti Marie — jos pasiūlymas laukia 5 dienas.\n2. Patvirtinti sumą ir terminą.\n3. Išsiųsti priedą pasiūlymas-virtuvei.pdf.\n\nAr norėtumėte, kad parašyčiau atsakymą?",
+        "composerPlaceholder": "Užduokite savo klausimą Inboria…",
+        "searchPlaceholder": "Ieškoti laiško, kontakto…",
+        "refresh": "Atnaujinti",
+        "newEmail": "Naujas laiškas",
+        "autopilotPill": "Inboria · 3 veiksmai šiandien",
+        "bannerBold": "Inboria šiandien ryte sutvarkė Jūsų pašto dėžutę.",
+        "bannerRest": "12 laiškų, kuriuos reikia apdoroti, 32 automatiškai klasifikuoti pagal kategoriją.",
+        "urgent": "Skubus",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Pasiūlymas virtuvės renovacijai",
+            "preview": "Ar galite patvirtinti sumą ir terminą?",
+            "cat": "Pasiūlymai"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Užsakymo patvirtinimas",
+            "preview": "Viskas gerai iš mūsų pusės, galime pradėti.",
+            "cat": "Klientai"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Klausimas dėl pristatymo",
+            "preview": "Koks terminas užsakymui #5821?",
+            "cat": "Klientai"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Prašymas — Programuotoja",
+            "preview": "CV + portfolio priede.",
+            "cat": "ŽM"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Sąskaita #2026-0418, kurią reikia apmokėti",
+            "preview": "Terminas per 5 dienas — 1 240 € su PVM.",
+            "cat": "Sąskaitos"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Mokėjimas gautas: 1 240 €",
+            "preview": "Pervedimas buvo sėkmingai įskaitytas.",
+            "cat": "Sąskaitos"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Bendradarbiavimo pasiūlymas",
+            "preview": "Ar esate prieinamas pokalbiui šią savaitę?",
+            "cat": "Partneriai"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "IA savaitinis — naujienos iš savaitės.",
+            "cat": "Naujienlaiškiai"
+          }
+        ],
+        "browserExtension": "Naršyklės plėtinys",
+        "dateUnits": {
+          "h": "val",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Jūsų el. laiškai atvyksta rūšiuoti",

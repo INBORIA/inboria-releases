@@ -1407,7 +1407,106 @@
       "howDesc": "Tidak perlu mencari-cari di menu: setelah terhubung, Inboria memandu Anda untuk mengaktifkan ekstensi pilihan Anda hanya dalam beberapa menit.",
       "ctaTitle": "Siap mencoba Inboria di layanan email Anda?",
       "ctaDesc": "Buat akun Anda dan aktifkan ekstensi pilihan Anda mulai hari ini.",
-      "cta": "Mulai gratis"
+      "cta": "Mulai gratis",
+      "demo": {
+        "eyebrow": "Inboria hadir di kotak masuk Anda",
+        "subtitle": "Buka email → klik « Minta kepada Inboria » → atau buka aplikasi lengkap. Tanpa mengubah kebiasaan Anda.",
+        "caption": "Demonstrasi animasi — Inboria menjawab di Gmail & Outlook, lalu membuka aplikasi lengkap dengan satu klik.",
+        "ask": "Minta kepada Inboria",
+        "openInInboria": "Buka di Inboria",
+        "clear": "Bersihkan",
+        "logout": "Keluar",
+        "newMessage": "Pesan baru",
+        "navFolders": "Folder saya",
+        "webmail": {
+          "inbox": "Kotak masuk",
+          "followed": "Diikuti",
+          "sent": "Terkirim",
+          "drafts": "Draf",
+          "archives": "Arsip"
+        },
+        "mail": {
+          "subject": "Re: Penawaran renovasi dapur",
+          "from": "Marie Lemoine",
+          "meta": "kepada saya — 5 hari yang lalu",
+          "p1": "Halo,",
+          "p2": "Apakah Anda sudah melihat permintaan penawaran saya untuk renovasi dapur? Saya belum menerima balasan sejak percakapan terakhir kita.",
+          "p3": "Bisakah Anda mengonfirmasi jumlah dan kemungkinan tenggat waktu? Terima kasih sebelumnya.",
+          "signoff": "Salam hormat,\nMarie",
+          "attachment": "penawaran-renovasi-dapur.pdf"
+        },
+        "greeting": "Halo 👋 Saya Inboria. Ajukan pertanyaan tentang email ini, atau gunakan pintasan di atas.",
+        "chips": [
+          "Ringkas email ini",
+          "Usulkan balasan",
+          "Apa yang harus saya lakukan?"
+        ],
+        "thinking": "Inboria sedang berpikir…",
+        "answer": "Berikut adalah tindakan yang perlu diambil untuk email ini :\n\n1. Balas kepada Marie — penawarannya sudah menunggu selama 5 hari.\n2. Konfirmasi jumlah dan tenggat waktu.\n3. Kirim ulang lampiran penawaran-renovasi-dapur.pdf.\n\nApakah Anda ingin saya menulis balasannya?",
+        "composerPlaceholder": "Ajukan pertanyaan Anda kepada Inboria…",
+        "searchPlaceholder": "Cari email, kontak…",
+        "refresh": "Segarkan",
+        "newEmail": "Email baru",
+        "autopilotPill": "Inboria · 3 tindakan hari ini",
+        "bannerBold": "Inboria telah menyortir kotak masuk Anda pagi ini.",
+        "bannerRest": "12 email untuk diproses, 32 diklasifikasikan secara otomatis berdasarkan kategori.",
+        "urgent": "Penting",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Penawaran renovasi dapur",
+            "preview": "Bisakah Anda mengonfirmasi jumlah dan tenggat waktu?",
+            "cat": "Penawaran"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validasi pesanan",
+            "preview": "Semua baik dari pihak kami, kita bisa mulai.",
+            "cat": "Klien"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Pertanyaan tentang pengiriman",
+            "preview": "Berapa lama tenggat untuk pesanan #5821?",
+            "cat": "Klien"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Lamaran — Pengembang",
+            "preview": "CV + portofolio terlampir.",
+            "cat": "SDM"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Faktur #2026-0418 untuk dibayar",
+            "preview": "Batas waktu dalam 5 hari — 1.240 € termasuk pajak.",
+            "cat": "Faktur"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Pembayaran diterima: 1.240 €",
+            "preview": "Transfer telah berhasil dikreditkan.",
+            "cat": "Faktur"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Usulan kolaborasi",
+            "preview": "Tersedia untuk diskusi minggu ini?",
+            "cat": "Mitra"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Hebdo IA — berita terbaru minggu ini.",
+            "cat": "Newsletter"
+          }
+        ],
+        "browserExtension": "Ekstensi",
+        "dateUnits": {
+          "h": "j",
+          "d": "h"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Email Anda tiba terurut",

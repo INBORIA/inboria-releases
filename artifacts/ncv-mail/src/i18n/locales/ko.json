@@ -1407,7 +1407,106 @@
       "howDesc": "메뉴를 일일이 찾을 필요가 없습니다. 로그인 후 Inboria가 몇 분 안에 원하는 확장 프로그램을 활성화할 수 있도록 안내해 드립니다.",
       "ctaTitle": "사용 중인 메일함에서 Inboria를 사용해 볼 준비가 되셨습니까?",
       "ctaDesc": "지금 계정을 만들고 원하는 확장 프로그램을 바로 활성화하십시오.",
-      "cta": "무료로 시작하기"
+      "cta": "무료로 시작하기",
+      "demo": {
+        "eyebrow": "Inboria가 귀하의 메일함에 초대합니다",
+        "subtitle": "메일 열기 → « Inboria에 요청하기 » 클릭 → 또는 전체 앱 열기. 습관을 바꾸지 않고.",
+        "caption": "애니메이션 데모 — Inboria가 Gmail 및 Outlook에서 응답하고, 클릭 한 번으로 전체 앱을 엽니다.",
+        "ask": "Inboria에 요청하기",
+        "openInInboria": "Inboria에서 열기",
+        "clear": "지우기",
+        "logout": "로그아웃",
+        "newMessage": "새 메시지",
+        "navFolders": "내 폴더",
+        "webmail": {
+          "inbox": "받은 편지함",
+          "followed": "팔로우",
+          "sent": "보낸 편지",
+          "drafts": "임시 보관함",
+          "archives": "아카이브"
+        },
+        "mail": {
+          "subject": "Re: 주방 리노베이션 견적",
+          "from": "Marie Lemoine",
+          "meta": "나에게 — 5일 전",
+          "p1": "안녕하세요,",
+          "p2": "주방 리노베이션 견적 요청을 확인하셨나요? 마지막 교환 이후로 답변을 받지 못했습니다.",
+          "p3": "금액과 가능한 기한을 확인해 주실 수 있나요? 미리 감사합니다.",
+          "signoff": "감사합니다,\nMarie",
+          "attachment": "견적-주방.pdf"
+        },
+        "greeting": "안녕하세요 👋 저는 Inboria입니다. 이 메일에 대해 질문해 주세요, 또는 위의 단축키를 사용하세요.",
+        "chips": [
+          "이 메일 요약하기",
+          "답변 제안하기",
+          "무엇을 해야 하나요?"
+        ],
+        "thinking": "Inboria가 생각 중입니다…",
+        "answer": "이 메일에 대해 예상되는 작업은 다음과 같습니다:\n\n1. Marie에게 답변하기 — 그녀의 견적이 5일 동안 기다리고 있습니다.\n2. 금액과 기한 확인하기.\n3. 첨부 파일 견적-주방.pdf 다시 보내기.\n\n답변을 작성해 드릴까요?",
+        "composerPlaceholder": "Inboria에 질문하세요…",
+        "searchPlaceholder": "이메일, 연락처 검색…",
+        "refresh": "새로 고침",
+        "newEmail": "새 이메일",
+        "autopilotPill": "Inboria · 오늘 3개의 작업",
+        "bannerBold": "Inboria가 오늘 아침 귀하의 메일함을 정리했습니다.",
+        "bannerRest": "처리할 이메일 12개, 자동으로 분류된 이메일 32개.",
+        "urgent": "긴급",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: 주방 리노베이션 견적",
+            "preview": "금액과 기한을 확인해 주실 수 있나요?",
+            "cat": "견적"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "주문서 승인",
+            "preview": "우리 쪽은 모두 괜찮습니다, 시작할 수 있습니다.",
+            "cat": "고객"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "배송에 대한 질문",
+            "preview": "#5821 주문의 기한은 얼마인가요?",
+            "cat": "고객"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "지원서 — 개발자",
+            "preview": "이력서 + 포트폴리오 첨부.",
+            "cat": "인사"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "청구서 #2026-0418 결제 필요",
+            "preview": "기한은 5일 후 — 1,240 € 포함.",
+            "cat": "청구서"
+          },
+          {
+            "from": "Stripe",
+            "subject": "결제 완료: 1,240 €",
+            "preview": "송금이 잘 처리되었습니다.",
+            "cat": "청구서"
+          },
+          {
+            "from": "파트너 X",
+            "subject": "협업 제안",
+            "preview": "이번 주에 교환할 수 있나요?",
+            "cat": "파트너"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "주간 AI — 이번 주의 새로운 소식.",
+            "cat": "뉴스레터"
+          }
+        ],
+        "browserExtension": "브라우저 확장",
+        "dateUnits": {
+          "h": "시간",
+          "d": "일"
+        }
+      }
     },
     "home": {
       "heroTitle1": "귀하의 이메일이 정렬되어 도착합니다.",

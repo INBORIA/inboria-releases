@@ -1407,7 +1407,106 @@
       "howDesc": "Ní gá cuardach a dhéanamh sna roghchláir: a luaithe a bhíonn sibh ceangailte, treoraíonn Inboria sibh chun an eisínteacht is rogha libh a ghníomhachtú i gceann cúpla nóiméad.",
       "ctaTitle": "Réidh le Inboria a thriail ar bhur gcóras ríomhphoist?",
       "ctaDesc": "Cruthaigh bhur gcuntas agus gníomhachtaigh an eisínteacht is rogha libh inniu féin.",
-      "cta": "Tosaigh saor in aisce"
+      "cta": "Tosaigh saor in aisce",
+      "demo": {
+        "eyebrow": "Inboria s'invite dans votre messagerie",
+        "subtitle": "Oscail mail → cliceáil « Iarr ar Inboria » → nó oscail an aip iomlán. Gan do nósanna a athrú.",
+        "caption": "Taispeántas beo — freagraíonn Inboria i Gmail & Outlook, ansin osclaíonn sé an aip iomlán le cliceáil amháin.",
+        "ask": "Iarr ar Inboria",
+        "openInInboria": "Oscail i Inboria",
+        "clear": "Glan",
+        "logout": "Logáil amach",
+        "newMessage": "Teachtaireacht nua",
+        "navFolders": "Mo chásanna",
+        "webmail": {
+          "inbox": "Bosca isteach",
+          "followed": "Leantaí",
+          "sent": "Seolta",
+          "drafts": "Dréachtaí",
+          "archives": "Cartlanna"
+        },
+        "mail": {
+          "subject": "Re: Devis rénovation cuisine",
+          "from": "Marie Lemoine",
+          "meta": "dom — 5 lá ó shin",
+          "p1": "Dia dhuit,",
+          "p2": "An bhfuaireas tú an deis mo iarratas ar dhearbhú a dhéanamh maidir le hathchóiriú na cistine? Ní bhfuair mé freagra ó d'aistriú deireanach.",
+          "p3": "An féidir leat an méid agus sprioc-am a dhearbhú? Go raibh maith agat roimh ré.",
+          "signoff": "Le meas,\nMarie",
+          "attachment": "devis-cuisine.pdf"
+        },
+        "greeting": "Dia dhuit 👋 Is mise Inboria. Cuir ceist orm faoi seo mail, nó bain úsáid as na gearrthóga thuas.",
+        "chips": [
+          "Comhoibriú leis an mail seo",
+          "Mol freagra",
+          "Cad ba chóir dom a dhéanamh?"
+        ],
+        "thinking": "Inboria ag smaoineamh…",
+        "answer": "Seo na gníomhartha atá le déanamh don mail seo :\n\n1. Freagair do Marie — tá a dearbhú ag fanacht le 5 lá.\n2. Dearbhaigh an méid agus sprioc-am.\n3. Seol ar ais an comhoiriúnacht devis-cuisine.pdf.\n\nAn bhfuil tú ag iarraidh orm freagra a scríobh?",
+        "composerPlaceholder": "Cuir do cheist chuig Inboria…",
+        "searchPlaceholder": "Cuardaigh mail, teagmháil…",
+        "refresh": "Athnuachan",
+        "newEmail": "Ríomhphost nua",
+        "autopilotPill": "Inboria · 3 gníomhartha inniu",
+        "bannerBold": "Rinne Inboria do bhosca a shórtáil ar maidin.",
+        "bannerRest": "12 ríomhphoist le déileáil, 32 a rangú go huathoibríoch de réir catagóire.",
+        "urgent": "Tábhachtach",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Devis rénovation cuisine",
+            "preview": "An féidir leat an méid agus sprioc-am a dhearbhú?",
+            "cat": "Devis"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validation du bon de commande",
+            "preview": "Tá gach rud ceart ar ár taobh, is féidir linn tosú.",
+            "cat": "Clients"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Question sur la livraison",
+            "preview": "Cad é an sprioc-am don ordú #5821?",
+            "cat": "Clients"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Candidature — Développeuse",
+            "preview": "CV + portfóilió san iattach.",
+            "cat": "RH"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Facture #2026-0418 à régler",
+            "preview": "Échéance dans 5 jours — 1 240 € TTC.",
+            "cat": "Factures"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Paiement reçu : 1 240 €",
+            "preview": "Tá an t-aistriú creidiúnaithe go maith.",
+            "cat": "Factures"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Proposition de collaboration",
+            "preview": "Ar fáil le haghaidh comhoibrithe an tseachtain seo?",
+            "cat": "Partenaires"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Hebdo IA — na nuacht is déanaí na seachtaine.",
+            "cat": "Newsletters"
+          }
+        ],
+        "browserExtension": "Breiseán",
+        "dateUnits": {
+          "h": "u",
+          "d": "l"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Tagann bhur ríomhphoist a shórtáil",

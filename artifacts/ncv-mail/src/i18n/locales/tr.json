@@ -1407,7 +1407,106 @@
       "howDesc": "Menülerde kaybolmanıza gerek yok: bağlandıktan sonra Inboria, seçtiğiniz uzantıyı birkaç dakika içinde etkinleştirmeniz için size rehberlik eder.",
       "ctaTitle": "Inboria'yı e-posta altyapınızda denemeye hazır mısınız?",
       "ctaDesc": "Hesabınızı oluşturun ve seçtiğiniz uzantıyı hemen bugün etkinleştirin.",
-      "cta": "Ücretsiz başlayın"
+      "cta": "Ücretsiz başlayın",
+      "demo": {
+        "eyebrow": "Inboria, mesajınıza davet ediyor",
+        "subtitle": "Bir e-posta açın → « Inboria'dan Talep Et » butonuna tıklayın → veya tam uygulamayı açın. Alışkanlıklarınızı değiştirmeden.",
+        "caption": "Animasyonlu gösterim — Inboria, Gmail ve Outlook'ta yanıt verir, ardından bir tıklama ile tam uygulamayı açar.",
+        "ask": "Inboria'dan Talep Et",
+        "openInInboria": "Inboria'da Aç",
+        "clear": "Temizle",
+        "logout": "Çıkış",
+        "newMessage": "Yeni mesaj",
+        "navFolders": "Klasörlerim",
+        "webmail": {
+          "inbox": "Gelen Kutusu",
+          "followed": "Takip Edilenler",
+          "sent": "Gönderilenler",
+          "drafts": "Taslaklar",
+          "archives": "Arşivler"
+        },
+        "mail": {
+          "subject": "Re: Mutfak yenileme teklifi",
+          "from": "Marie Lemoine",
+          "meta": "bana — 5 gün önce",
+          "p1": "Merhaba,",
+          "p2": "Mutfak yenileme teklifi için talebimi inceleyebildiniz mi? Son görüşmemizden beri bir geri dönüş almadım.",
+          "p3": "Miktarı ve olası bir süreyi onaylayabilir misiniz? Şimdiden teşekkürler.",
+          "signoff": "Saygılarımla,\nMarie",
+          "attachment": "mutfak-teklifi.pdf"
+        },
+        "greeting": "Merhaba 👋 Ben Inboria. Bu e-posta hakkında bana bir soru sorun veya yukarıdaki kısayolları kullanın.",
+        "chips": [
+          "Bu e-postayı özetle",
+          "Bir yanıt öner",
+          "Ne yapmalıyım?"
+        ],
+        "thinking": "Inboria düşünüyor…",
+        "answer": "Bu e-posta için planlanması gereken işlemler:\n\n1. Marie'ye yanıt verin — teklifi 5 gündür bekliyor.\n2. Miktarı ve bir süreyi onaylayın.\n3. Ek olarak mutfak-teklifi.pdf dosyasını yeniden gönderin.\n\nYanıtı yazmamı ister misiniz?",
+        "composerPlaceholder": "Inboria'ya sorunuzu sorun…",
+        "searchPlaceholder": "Bir e-posta, bir kişi arayın…",
+        "refresh": "Yenile",
+        "newEmail": "Yeni e-posta",
+        "autopilotPill": "Inboria · Bugün 3 işlem",
+        "bannerBold": "Inboria, bu sabah gelen kutunuzu düzenledi.",
+        "bannerRest": "12 e-posta işlenmeyi bekliyor, 32 otomatik olarak kategoriye ayrıldı.",
+        "urgent": "Acelesi Var",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Mutfak yenileme teklifi",
+            "preview": "Miktarı ve bir süreyi onaylayabilir misiniz?",
+            "cat": "Teklifler"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Sipariş onayı",
+            "preview": "Bizim tarafımızdan her şey tamam, başlayabiliriz.",
+            "cat": "Müşteriler"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Teslimat hakkında soru",
+            "preview": "Sipariş #5821 için süre nedir?",
+            "cat": "Müşteriler"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Başvuru — Geliştirici",
+            "preview": "CV + portföy ekli.",
+            "cat": "İK"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Fatura #2026-0418 ödenecek",
+            "preview": "Son tarih 5 gün içinde — 1.240 € KDV dahil.",
+            "cat": "Faturalar"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Ödeme alındı: 1.240 €",
+            "preview": "Havale başarıyla alındı.",
+            "cat": "Faturalar"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "İşbirliği teklifi",
+            "preview": "Bu hafta bir görüşmeye uygun musunuz?",
+            "cat": "Ortaklar"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Haftalık AI — haftanın yenilikleri.",
+            "cat": "Bültenler"
+          }
+        ],
+        "browserExtension": "Tarayıcı Eklentisi",
+        "dateUnits": {
+          "h": "s",
+          "d": "g"
+        }
+      }
     },
     "home": {
       "heroTitle1": "E-postalarınız sıralı olarak gelir",

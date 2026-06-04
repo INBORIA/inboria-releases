@@ -1407,7 +1407,106 @@
       "howDesc": "Nem kell a menükben keresgélnie: a bejelentkezés után az Inboria néhány perc alatt végigvezeti Önt a választott bővítmény aktiválásán.",
       "ctaTitle": "Készen áll arra, hogy kipróbálja az Inboria-t a levelezésében?",
       "ctaDesc": "Hozza létre fiókját, és aktiválja még ma az Önnek megfelelő bővítményt.",
-      "cta": "Kezdje el ingyen"
+      "cta": "Kezdje el ingyen",
+      "demo": {
+        "eyebrow": "Az Inboria megjelenik az Ön levelezésében",
+        "subtitle": "Nyisson meg egy e-mailt → kattintson a „Kérdezze meg az Inboria-t” → vagy nyissa meg a teljes alkalmazást. Anélkül, hogy megváltoztatná szokásait.",
+        "caption": "Animált bemutató — Az Inboria válaszol a Gmailben és az Outlookban, majd egy kattintással megnyitja a teljes alkalmazást.",
+        "ask": "Kérdezze meg az Inboria-t",
+        "openInInboria": "Megnyitás az Inboria-ban",
+        "clear": "Törlés",
+        "logout": "Kijelentkezés",
+        "newMessage": "Új üzenet",
+        "navFolders": "Saját mappáim",
+        "webmail": {
+          "inbox": "Beérkező levelek",
+          "followed": "Követett",
+          "sent": "Elküldött",
+          "drafts": "Piszkozatok",
+          "archives": "Archívumok"
+        },
+        "mail": {
+          "subject": "Re: Konyha felújítási ajánlat",
+          "from": "Marie Lemoine",
+          "meta": "nekem — 5 napja",
+          "p1": "Üdvözlöm,",
+          "p2": "Meg tudta nézni a konyha felújítási ajánlat iránti kérelmemet? Az utolsó beszélgetésünk óta nem kaptam választ.",
+          "p3": "Meg tudná erősíteni az összeget és egy lehetséges határidőt? Előre is köszönöm.",
+          "signoff": "Tisztelettel,\nMarie",
+          "attachment": "konyha-felujitas.pdf"
+        },
+        "greeting": "Üdvözlöm 👋 Én az Inboria vagyok. Tegyen fel egy kérdést erről az e-mailről, vagy használja a fenti gyorsbillentyűket.",
+        "chips": [
+          "Összefoglalni ezt az e-mailt",
+          "Javasoljon választ",
+          "Mit tegyek?"
+        ],
+        "thinking": "Az Inboria gondolkodik…",
+        "answer": "Íme a teendők ezzel az e-maillel kapcsolatban:\n\n1. Válaszoljon Marie-nak — az ajánlata 5 napja várakozik.\n2. Erősítse meg az összeget és egy határidőt.\n3. Küldje el újra a mellékletet konyha-felujitas.pdf.\n\nSzeretné, ha megírnám a választ?",
+        "composerPlaceholder": "Tegye fel kérdését az Inboria-nak…",
+        "searchPlaceholder": "Keresés egy e-mailben, egy kapcsolattartóban…",
+        "refresh": "Frissítés",
+        "newEmail": "Új e-mail",
+        "autopilotPill": "Inboria · 3 teendő ma",
+        "bannerBold": "Az Inboria ma reggel rendezte a postaládáját.",
+        "bannerRest": "12 e-mailt kell kezelni, 32 automatikusan kategorizálva.",
+        "urgent": "Sürgős",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Konyha felújítási ajánlat",
+            "preview": "Meg tudná erősíteni az összeget és egy határidőt?",
+            "cat": "Ajánlatok"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "A megrendelés érvényesítése",
+            "preview": "Minden rendben van a mi oldalunkon, elindíthatjuk.",
+            "cat": "Ügyfelek"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Kérdés a szállítással kapcsolatban",
+            "preview": "Mennyi a határidő a #5821 számú rendeléshez?",
+            "cat": "Ügyfelek"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Jelentkezés — Fejlesztő",
+            "preview": "Önéletrajz + portfólió mellékelve.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Számla #2026-0418 kifizetése",
+            "preview": "Határidő 5 napon belül — 1 240 € bruttó.",
+            "cat": "Számlák"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Fizetés megérkezett: 1 240 €",
+            "preview": "A banki átutalás sikeresen jóvá lett írva.",
+            "cat": "Számlák"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Együttműködési javaslat",
+            "preview": "Elérhető egy beszélgetésre ezen a héten?",
+            "cat": "Partnerek"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Heti IA — a hét újdonságai.",
+            "cat": "Hírlevelek"
+          }
+        ],
+        "browserExtension": "Böngészőbővítmény",
+        "dateUnits": {
+          "h": "ó",
+          "d": "n"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Az Ön e-mailjei rendezve érkeznek",

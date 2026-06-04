@@ -1407,7 +1407,106 @@
       "howDesc": "メニューを探し回る必要はありません。ログイン後、Inboria がご希望の拡張機能の有効化を数分で完了できるよう、手順に沿ってご案内します。",
       "ctaTitle": "メール環境で Inboria を試してみませんか？",
       "ctaDesc": "今すぐアカウントを作成し、ご希望の拡張機能を有効化してください。",
-      "cta": "無料で始める"
+      "cta": "無料で始める",
+      "demo": {
+        "eyebrow": "Inboriaがあなたのメールボックスに登場",
+        "subtitle": "メールを開く → 「Inboriaに依頼する」をクリック → または完全なアプリを開く。習慣を変えずに。",
+        "caption": "アニメーションデモ — InboriaがGmailとOutlookで応答し、ワンクリックで完全なアプリを開きます。",
+        "ask": "Inboriaに依頼する",
+        "openInInboria": "Inboriaで開く",
+        "clear": "クリア",
+        "logout": "ログアウト",
+        "newMessage": "新しいメッセージ",
+        "navFolders": "私のフォルダ",
+        "webmail": {
+          "inbox": "受信トレイ",
+          "followed": "フォロー中",
+          "sent": "送信済み",
+          "drafts": "下書き",
+          "archives": "アーカイブ"
+        },
+        "mail": {
+          "subject": "Re: キッチン改修の見積もり",
+          "from": "Marie Lemoine",
+          "meta": "私に — 5日前",
+          "p1": "こんにちは、",
+          "p2": "キッチン改修の見積もり依頼を確認していただけましたか？最後のやり取りから返事がありません。",
+          "p3": "金額と可能な納期を確認していただけますか？事前にありがとうございます。",
+          "signoff": "敬具,\nMarie",
+          "attachment": "devis-cuisine.pdf"
+        },
+        "greeting": "こんにちは👋 私はInboriaです。このメールについて質問してください、または上記のショートカットを使用してください。",
+        "chips": [
+          "このメールを要約する",
+          "返信を提案する",
+          "私は何をすべきですか？"
+        ],
+        "thinking": "Inboriaが考えています…",
+        "answer": "このメールに対するアクションは以下の通りです：\n\n1. Marieに返信する — 彼女の見積もりは5日間待っています。\n2. 金額と納期を確認する。\n3. 添付ファイルdevis-cuisine.pdfを再送する。\n\n返信を作成しましょうか？",
+        "composerPlaceholder": "Inboriaに質問をしてください…",
+        "searchPlaceholder": "メール、連絡先を検索…",
+        "refresh": "更新",
+        "newEmail": "新しいメール",
+        "autopilotPill": "Inboria · 今日は3つのアクション",
+        "bannerBold": "Inboriaが今朝あなたのメールボックスを整理しました。",
+        "bannerRest": "処理すべきメールが12通、カテゴリー別に自動的に分類されたメールが32通あります。",
+        "urgent": "緊急",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: キッチン改修の見積もり",
+            "preview": "金額と納期を確認できますか？",
+            "cat": "見積もり"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "注文書の承認",
+            "preview": "こちらは問題ありません、開始できます。",
+            "cat": "クライアント"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "配送に関する質問",
+            "preview": "注文#5821の納期はどのくらいですか？",
+            "cat": "クライアント"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "応募 — 開発者",
+            "preview": "履歴書とポートフォリオを添付しました。",
+            "cat": "人事"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "請求書 #2026-0418 の支払い",
+            "preview": "期限は5日後 — 1,240 € 税込。",
+            "cat": "請求書"
+          },
+          {
+            "from": "Stripe",
+            "subject": "支払い受領：1,240 €",
+            "preview": "振込が正常に入金されました。",
+            "cat": "請求書"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "コラボレーションの提案",
+            "preview": "今週お話しすることは可能ですか？",
+            "cat": "パートナー"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "AI週間 — 今週の新機能。",
+            "cat": "ニュースレター"
+          }
+        ],
+        "browserExtension": "ブラウザ拡張",
+        "dateUnits": {
+          "h": "時間",
+          "d": "日"
+        }
+      }
     },
     "home": {
       "heroTitle1": "あなたのメールは整理されて届きます",

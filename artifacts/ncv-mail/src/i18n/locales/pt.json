@@ -1407,7 +1407,106 @@
       "howDesc": "Não precisa de procurar nos menus: depois de iniciar sessão, o Inboria acompanha-o para ativar a extensão da sua escolha em poucos minutos.",
       "ctaTitle": "Pronto para experimentar o Inboria na sua caixa de correio?",
       "ctaDesc": "Crie a sua conta e ative hoje mesmo a extensão da sua escolha.",
-      "cta": "Começar gratuitamente"
+      "cta": "Começar gratuitamente",
+      "demo": {
+        "eyebrow": "Inboria se convida para sua caixa de entrada",
+        "subtitle": "Abra um e-mail → clique em « Pedir ao Inboria » → ou abra o aplicativo completo. Sem mudar seus hábitos.",
+        "caption": "Demonstração animada — Inboria responde no Gmail & Outlook, e depois abre o aplicativo completo com um clique.",
+        "ask": "Pedir ao Inboria",
+        "openInInboria": "Abrir no Inboria",
+        "clear": "Limpar",
+        "logout": "Sair",
+        "newMessage": "Nova mensagem",
+        "navFolders": "Minhas pastas",
+        "webmail": {
+          "inbox": "Caixa de entrada",
+          "followed": "Seguidos",
+          "sent": "Enviados",
+          "drafts": "Rascunhos",
+          "archives": "Arquivos"
+        },
+        "mail": {
+          "subject": "Re: Orçamento para reforma da cozinha",
+          "from": "Marie Lemoine",
+          "meta": "para mim — há 5 dias",
+          "p1": "Olá,",
+          "p2": "Você conseguiu olhar meu pedido de orçamento para a reforma da cozinha? Não recebi retorno desde nossa última conversa.",
+          "p3": "Você pode me confirmar o valor e um prazo possível? Agradeço antecipadamente.",
+          "signoff": "Atenciosamente,\nMarie",
+          "attachment": "orçamento-cozinha.pdf"
+        },
+        "greeting": "Olá 👋 Eu sou o Inboria. Faça-me uma pergunta sobre este e-mail, ou use os atalhos acima.",
+        "chips": [
+          "Resumir este e-mail",
+          "Propor uma resposta",
+          "O que devo fazer?"
+        ],
+        "thinking": "Inboria está pensando…",
+        "answer": "Aqui estão as ações a serem previstas para este e-mail :\n\n1. Responder a Marie — seu orçamento está aguardando há 5 dias.\n2. Confirmar o valor e um prazo.\n3. Reenviar o anexo orçamento-cozinha.pdf.\n\nVocê gostaria que eu redigisse a resposta?",
+        "composerPlaceholder": "Faça sua pergunta ao Inboria…",
+        "searchPlaceholder": "Pesquisar um e-mail, um contato…",
+        "refresh": "Atualizar",
+        "newEmail": "Novo e-mail",
+        "autopilotPill": "Inboria · 3 ações hoje",
+        "bannerBold": "Inboria organizou sua caixa de entrada esta manhã.",
+        "bannerRest": "12 e-mails a serem tratados, 32 classificados automaticamente por categoria.",
+        "urgent": "Urgente",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Orçamento para reforma da cozinha",
+            "preview": "Você pode confirmar o valor e um prazo?",
+            "cat": "Orçamentos"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validação do pedido",
+            "preview": "Está tudo certo do nosso lado, podemos iniciar.",
+            "cat": "Clientes"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Pergunta sobre a entrega",
+            "preview": "Qual é o prazo para o pedido #5821?",
+            "cat": "Clientes"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Candidatura — Desenvolvedora",
+            "preview": "CV + portfólio em anexo.",
+            "cat": "RH"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Fatura #2026-0418 a ser paga",
+            "preview": "Vencimento em 5 dias — 1 240 € TTC.",
+            "cat": "Faturas"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Pagamento recebido: 1 240 €",
+            "preview": "A transferência foi devidamente creditada.",
+            "cat": "Faturas"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Proposta de colaboração",
+            "preview": "Disponível para uma conversa esta semana?",
+            "cat": "Parceiros"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Semanal de IA — as novidades da semana.",
+            "cat": "Newsletters"
+          }
+        ],
+        "browserExtension": "Extensão",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Os seus emails chegam organizados",

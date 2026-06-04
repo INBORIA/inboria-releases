@@ -23,3 +23,14 @@ into the Réception **tabs**, but the demo still listed them in the sidebar.
 - Tab row 1 = boxes (Réception/Indésirables/Corbeille/comptes); row 2 = team &
   productivity (Partagées/Assignés/Reportés/Tâches/Dossiers équipe/Relances/Archives).
 Reuse existing i18n keys + lucide icons already used by the real components.
+
+A **second** marketing demo now exists: `components/marketing/ask-inboria-demo.tsx`
+(the "Ask Inboria" animation on the `/extensions` page). It is the same kind of
+hand-coded replica of the dashboard sidebar + inbox rows and drifts the same way —
+keep it in sync too. Its i18n lives under `marketing.extensions.demo.*` and it reuses
+`sidebar.*` keys for the nav. **Pattern for these demos:** keep only non-linguistic
+metadata (row colors, sorted/unread/urgent flags) as a const array in the component,
+and route every visible string through `t()` (arrays via `{ returnObjects: true }` +
+`Array.isArray` guard). Dates are a number + localized unit (`dateUnits.h`/`.d`), the
+language badge is derived from `i18n.language`, and the logo is imported via
+`@assets/...png` (NOT `BASE_URL`). New i18n keys must be added to all 43 locale files.

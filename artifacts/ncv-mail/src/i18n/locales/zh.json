@@ -1407,7 +1407,106 @@
       "howDesc": "无需在菜单中反复查找：连接后，Inboria 将引导您在几分钟内启用您选择的扩展。",
       "ctaTitle": "准备好在您的邮箱中试用 Inboria 了吗？",
       "ctaDesc": "立即创建账户，并启用您选择的扩展。",
-      "cta": "免费开始"
+      "cta": "免费开始",
+      "demo": {
+        "eyebrow": "Inboria 进入您的邮件",
+        "subtitle": "打开邮件 → 点击「向 Inboria 询问」 → 或打开完整应用。无需改变您的习惯。",
+        "caption": "动画演示 — Inboria 在 Gmail 和 Outlook 中响应，然后一键打开完整应用。",
+        "ask": "向 Inboria 询问",
+        "openInInboria": "在 Inboria 中打开",
+        "clear": "清除",
+        "logout": "注销",
+        "newMessage": "新邮件",
+        "navFolders": "我的文件夹",
+        "webmail": {
+          "inbox": "收件箱",
+          "followed": "关注",
+          "sent": "已发送",
+          "drafts": "草稿",
+          "archives": "档案"
+        },
+        "mail": {
+          "subject": "Re: 厨房翻新报价",
+          "from": "Marie Lemoine",
+          "meta": "给我 — 5 天前",
+          "p1": "您好，",
+          "p2": "您能查看一下我关于厨房翻新的报价请求吗？自我们上次交流以来我没有收到回复。",
+          "p3": "您能确认金额和可能的时间吗？谢谢您。",
+          "signoff": "此致，\nMarie",
+          "attachment": "报价-厨房.pdf"
+        },
+        "greeting": "您好 👋 我是 Inboria。请问我可以为您解答关于此邮件的问题，或使用上面的快捷方式。",
+        "chips": [
+          "总结此邮件",
+          "建议回复",
+          "我该怎么做？"
+        ],
+        "thinking": "Inboria 正在思考…",
+        "answer": "以下是针对此邮件的预期操作：\n\n1. 回复 Marie — 她的报价已等待 5 天。\n2. 确认金额和时间。\n3. 重新发送附件 报价-厨房.pdf。\n\n您希望我撰写回复吗？",
+        "composerPlaceholder": "向 Inboria 提问…",
+        "searchPlaceholder": "搜索邮件、联系人…",
+        "refresh": "刷新",
+        "newEmail": "新邮件",
+        "autopilotPill": "Inboria · 今天 3 个操作",
+        "bannerBold": "Inboria 今天早上整理了您的邮箱。",
+        "bannerRest": "12 封邮件待处理，32 封已自动分类。",
+        "urgent": "紧急",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: 厨房翻新报价",
+            "preview": "您能确认金额和时间吗？",
+            "cat": "报价"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "订单确认",
+            "preview": "我们这边一切正常，可以开始了。",
+            "cat": "客户"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "关于交货的问题",
+            "preview": "订单 #5821 的交货时间是多久？",
+            "cat": "客户"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "申请 — 开发者",
+            "preview": "简历 + 作品集附在邮件中。",
+            "cat": "人力资源"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "发票 #2026-0418 待支付",
+            "preview": "到期时间为 5 天 — 1,240 € 含税。",
+            "cat": "发票"
+          },
+          {
+            "from": "Stripe",
+            "subject": "付款已收到：1,240 €",
+            "preview": "转账已成功入账。",
+            "cat": "发票"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "合作提案",
+            "preview": "本周有时间交流吗？",
+            "cat": "合作伙伴"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "每周 AI — 本周的新动态。",
+            "cat": "通讯"
+          }
+        ],
+        "browserExtension": "浏览器扩展",
+        "dateUnits": {
+          "h": "小时",
+          "d": "天"
+        }
+      }
     },
     "home": {
       "heroTitle1": "您的邮件按类别整理",

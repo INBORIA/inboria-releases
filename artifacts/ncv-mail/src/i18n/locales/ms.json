@@ -1407,7 +1407,106 @@
       "howDesc": "Tidak perlu mencari-cari dalam menu: sebaik sahaja anda log masuk, Inboria membimbing anda untuk mengaktifkan sambungan pilihan anda dalam beberapa minit.",
       "ctaTitle": "Sedia untuk mencuba Inboria pada perkhidmatan e-mel anda?",
       "ctaDesc": "Cipta akaun anda dan aktifkan sambungan pilihan anda mulai hari ini.",
-      "cta": "Mulakan secara percuma"
+      "cta": "Mulakan secara percuma",
+      "demo": {
+        "eyebrow": "Inboria hadir dalam peti surat anda",
+        "subtitle": "Buka emel → klik « Minta kepada Inboria » → atau buka aplikasi penuh. Tanpa mengubah tabiat anda.",
+        "caption": "Demontrasi animasi — Inboria menjawab dalam Gmail & Outlook, kemudian membuka aplikasi penuh dengan satu klik.",
+        "ask": "Minta kepada Inboria",
+        "openInInboria": "Buka dalam Inboria",
+        "clear": "Kosongkan",
+        "logout": "Log keluar",
+        "newMessage": "Mesej baharu",
+        "navFolders": "Folder saya",
+        "webmail": {
+          "inbox": "Peti masuk",
+          "followed": "Diikuti",
+          "sent": "Dihantar",
+          "drafts": "Draf",
+          "archives": "Arkib"
+        },
+        "mail": {
+          "subject": "Re: Sebut harga pengubahsuaian dapur",
+          "from": "Marie Lemoine",
+          "meta": "kepada saya — 5 hari yang lalu",
+          "p1": "Salam,",
+          "p2": "Adakah anda telah melihat permintaan sebut harga saya untuk pengubahsuaian dapur? Saya belum menerima maklum balas sejak perbincangan terakhir kita.",
+          "p3": "Bolehkah anda mengesahkan jumlah dan tempoh yang mungkin? Terima kasih di atas bantuan anda.",
+          "signoff": "Dengan hormat,\nMarie",
+          "attachment": "sebut-harga-dapur.pdf"
+        },
+        "greeting": "Salam 👋 Saya Inboria. Sila ajukan soalan kepada saya mengenai emel ini, atau gunakan pintasan di atas.",
+        "chips": [
+          "Ringkaskan emel ini",
+          "Cadangkan jawapan",
+          "Apa yang perlu saya lakukan?"
+        ],
+        "thinking": "Inboria sedang berfikir…",
+        "answer": "Berikut adalah tindakan yang perlu diambil untuk emel ini :\n\n1. Balas kepada Marie — sebut harganya telah menunggu selama 5 hari.\n2. Sahkan jumlah dan tempoh.\n3. Hantar semula lampiran sebut-harga-dapur.pdf.\n\nAdakah anda mahu saya menulis jawapan?",
+        "composerPlaceholder": "Ajukan soalan anda kepada Inboria…",
+        "searchPlaceholder": "Cari emel, kontak…",
+        "refresh": "Segarkan",
+        "newEmail": "Emel baharu",
+        "autopilotPill": "Inboria · 3 tindakan hari ini",
+        "bannerBold": "Inboria telah menyusun peti anda pagi ini.",
+        "bannerRest": "12 emel untuk diproses, 32 diklasifikasikan secara automatik mengikut kategori.",
+        "urgent": "Penting",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Sebut harga pengubahsuaian dapur",
+            "preview": "Bolehkah anda mengesahkan jumlah dan tempoh?",
+            "cat": "Sebut harga"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Pengesahan pesanan",
+            "preview": "Semua baik dari pihak kami, kita boleh mulakan.",
+            "cat": "Pelanggan"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Soalan mengenai penghantaran",
+            "preview": "Apakah tempoh untuk pesanan #5821?",
+            "cat": "Pelanggan"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Permohonan — Pembangun",
+            "preview": "CV + portfolio dilampirkan.",
+            "cat": "Sumber Manusia"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Invois #2026-0418 untuk dibayar",
+            "preview": "Tarikh akhir dalam 5 hari — 1 240 € termasuk cukai.",
+            "cat": "Invois"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Pembayaran diterima: 1 240 €",
+            "preview": "Pemindahan telah berjaya dikreditkan.",
+            "cat": "Invois"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Cadangan kerjasama",
+            "preview": "Tersedia untuk perbincangan minggu ini?",
+            "cat": "Rakan Kongsi"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Hebdo IA — berita terkini minggu ini.",
+            "cat": "Buletin"
+          }
+        ],
+        "browserExtension": "Sambungan",
+        "dateUnits": {
+          "h": "j",
+          "d": "h"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Emel anda tiba teratur",

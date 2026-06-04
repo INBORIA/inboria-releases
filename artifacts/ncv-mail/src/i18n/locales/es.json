@@ -1417,7 +1417,106 @@
       "howDesc": "No necesita buscar entre los menús: una vez conectado, Inboria le acompaña para activar la extensión que elija en solo unos minutos.",
       "ctaTitle": "¿Listo para probar Inboria en su correo?",
       "ctaDesc": "Cree su cuenta y active hoy mismo la extensión que prefiera.",
-      "cta": "Empezar gratis"
+      "cta": "Empezar gratis",
+      "demo": {
+        "eyebrow": "Inboria se invita a su mensajería",
+        "subtitle": "Abra un correo → haga clic en « Pedir a Inboria » → o abra la app completa. Sin cambiar sus hábitos.",
+        "caption": "Demostración animada — Inboria responde en Gmail y Outlook, luego abre la app completa con un clic.",
+        "ask": "Pedir a Inboria",
+        "openInInboria": "Abrir en Inboria",
+        "clear": "Borrar",
+        "logout": "Cerrar sesión",
+        "newMessage": "Nuevo mensaje",
+        "navFolders": "Mis carpetas",
+        "webmail": {
+          "inbox": "Bandeja de entrada",
+          "followed": "Seguidos",
+          "sent": "Enviados",
+          "drafts": "Borradores",
+          "archives": "Archivos"
+        },
+        "mail": {
+          "subject": "Re: Presupuesto renovación cocina",
+          "from": "Marie Lemoine",
+          "meta": "hace 5 días — a mí",
+          "p1": "Hola,",
+          "p2": "¿Ha podido revisar mi solicitud de presupuesto para la renovación de la cocina? No he tenido respuesta desde nuestro último intercambio.",
+          "p3": "¿Puede confirmarme el monto y un posible plazo? Gracias de antemano.",
+          "signoff": "Atentamente,\nMarie",
+          "attachment": "presupuesto-cocina.pdf"
+        },
+        "greeting": "Hola 👋 Soy Inboria. Hágame una pregunta sobre este correo, o utilice los accesos directos de arriba.",
+        "chips": [
+          "Resumir este correo",
+          "Proponer una respuesta",
+          "¿Qué debo hacer?"
+        ],
+        "thinking": "Inboria está pensando…",
+        "answer": "Aquí están las acciones a prever para este correo:\n\n1. Responder a Marie — su presupuesto está pendiente desde hace 5 días.\n2. Confirmar el monto y un plazo.\n3. Reenviar el archivo adjunto presupuesto-cocina.pdf.\n\n¿Desea que redacte la respuesta?",
+        "composerPlaceholder": "Haga su pregunta a Inboria…",
+        "searchPlaceholder": "Buscar un correo, un contacto…",
+        "refresh": "Actualizar",
+        "newEmail": "Nuevo correo",
+        "autopilotPill": "Inboria · 3 acciones hoy",
+        "bannerBold": "Inboria ha organizado su bandeja esta mañana.",
+        "bannerRest": "12 correos por tratar, 32 clasificados automáticamente por categoría.",
+        "urgent": "Urgente",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Presupuesto renovación cocina",
+            "preview": "¿Puede confirmar el monto y un plazo?",
+            "cat": "Presupuestos"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Validación del pedido",
+            "preview": "Todo está bien de nuestro lado, podemos comenzar.",
+            "cat": "Clientes"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Pregunta sobre la entrega",
+            "preview": "¿Cuál es el plazo para el pedido #5821?",
+            "cat": "Clientes"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Candidatura — Desarrolladora",
+            "preview": "CV + portfolio adjunto.",
+            "cat": "RRHH"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Factura #2026-0418 a pagar",
+            "preview": "Vencimiento en 5 días — 1 240 € IVA incluido.",
+            "cat": "Facturas"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Pago recibido: 1 240 €",
+            "preview": "La transferencia ha sido acreditada correctamente.",
+            "cat": "Facturas"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Propuesta de colaboración",
+            "preview": "¿Disponible para un intercambio esta semana?",
+            "cat": "Socios"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Semanal de IA — las novedades de la semana.",
+            "cat": "Boletines"
+          }
+        ],
+        "browserExtension": "Extensión",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Tus correos llegan clasificados",

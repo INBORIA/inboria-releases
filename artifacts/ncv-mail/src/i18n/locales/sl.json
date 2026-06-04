@@ -1407,7 +1407,106 @@
       "howDesc": "Ni vam treba brskati po menijih: ko se povežete, Vas Inboria v nekaj minutah vodi pri aktivaciji razširitve po Vaši izbiri.",
       "ctaTitle": "Ste pripravljeni preizkusiti Inboria v svoji e-pošti?",
       "ctaDesc": "Ustvarite svoj račun in aktivirajte razširitev po Vaši izbiri že danes.",
-      "cta": "Začnite brezplačno"
+      "cta": "Začnite brezplačno",
+      "demo": {
+        "eyebrow": "Inboria se vabi v vašo pošto",
+        "subtitle": "Odprite e-pošto → kliknite « Vprašajte Inboria » → ali odprite celotno aplikacijo. Brez spremembe vaših navad.",
+        "caption": "Animirana predstavitev — Inboria odgovarja v Gmailu in Outlooku, nato pa odpre celotno aplikacijo z enim klikom.",
+        "ask": "Vprašajte Inboria",
+        "openInInboria": "Odpri v Inboria",
+        "clear": "Počisti",
+        "logout": "Odjava",
+        "newMessage": "Nova sporočila",
+        "navFolders": "Moji mapi",
+        "webmail": {
+          "inbox": "Prejeto",
+          "followed": "Spremljana",
+          "sent": "Poslano",
+          "drafts": "Osnutki",
+          "archives": "Arhivi"
+        },
+        "mail": {
+          "subject": "Re: Ponudba za prenovo kuhinje",
+          "from": "Marie Lemoine",
+          "meta": "meni — pred 5 dnevi",
+          "p1": "Pozdravljeni,",
+          "p2": "Ste lahko pogledali mojo prošnjo za ponudbo za prenovo kuhinje? Nisem dobila odgovora od našega zadnjega pogovora.",
+          "p3": "Lahko mi potrdite znesek in morebitni rok? Hvala vnaprej.",
+          "signoff": "Lep pozdrav,\nMarie",
+          "attachment": "ponudba-kuhinja.pdf"
+        },
+        "greeting": "Pozdravljeni 👋 Sem Inboria. Postavite mi vprašanje o tej e-pošti ali uporabite zgoraj navedene bližnjice.",
+        "chips": [
+          "Povzetek te e-pošte",
+          "Predlagaj odgovor",
+          "Kaj naj naredim?"
+        ],
+        "thinking": "Inboria razmišlja…",
+        "answer": "Tukaj so ukrepi, ki jih je treba izvesti za to e-pošto:\n\n1. Odgovorite Marie — njena ponudba čaka že 5 dni.\n2. Potrdite znesek in rok.\n3. Ponovno pošljite priponko ponudba-kuhinja.pdf.\n\nŽelite, da napišem odgovor?",
+        "composerPlaceholder": "Postavite svoje vprašanje Inboria…",
+        "searchPlaceholder": "Išči e-pošto, stik…",
+        "refresh": "Osveži",
+        "newEmail": "Nova e-pošta",
+        "autopilotPill": "Inboria · 3 ukrepi danes",
+        "bannerBold": "Inboria je danes zjutraj razvrstila vašo pošto.",
+        "bannerRest": "12 e-pošt sporočil za obdelavo, 32 samodejno razvrščenih po kategorijah.",
+        "urgent": "Nujno",
+        "inbox": [
+          {
+            "from": "Marie Lemoine",
+            "subject": "Re: Ponudba za prenovo kuhinje",
+            "preview": "Lahko potrdite znesek in rok?",
+            "cat": "Ponudbe"
+          },
+          {
+            "from": "Thomas Bernard",
+            "subject": "Potrditev naročila",
+            "preview": "Vse je v redu z naše strani, lahko začnemo.",
+            "cat": "Stranke"
+          },
+          {
+            "from": "Sophie Caron",
+            "subject": "Vprašanje o dostavi",
+            "preview": "Kakšen je rok za naročilo #5821?",
+            "cat": "Stranke"
+          },
+          {
+            "from": "Léa Dubois",
+            "subject": "Prijava — Razvijalka",
+            "preview": "CV + portfelj v priponki.",
+            "cat": "HR"
+          },
+          {
+            "from": "Compta Légère",
+            "subject": "Račun #2026-0418 za plačilo",
+            "preview": "Rok v 5 dneh — 1 240 € z DDV.",
+            "cat": "Računi"
+          },
+          {
+            "from": "Stripe",
+            "subject": "Plačilo prejeto: 1 240 €",
+            "preview": "Nakazilo je bilo uspešno knjiženo.",
+            "cat": "Računi"
+          },
+          {
+            "from": "Partenaire X",
+            "subject": "Predlog za sodelovanje",
+            "preview": "Na voljo za pogovor ta teden?",
+            "cat": "Partnerji"
+          },
+          {
+            "from": "AlphaSignal",
+            "subject": "NVIDIA Robot Planner: 19x Speed Jump",
+            "preview": "Tedenski AI — novosti tega tedna.",
+            "cat": "Novice"
+          }
+        ],
+        "browserExtension": "Razširitev",
+        "dateUnits": {
+          "h": "h",
+          "d": "d"
+        }
+      }
     },
     "home": {
       "heroTitle1": "Vaša e-pošta prihaja razvrščena",
