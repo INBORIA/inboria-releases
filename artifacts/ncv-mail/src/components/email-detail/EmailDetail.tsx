@@ -563,7 +563,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               <span
                 key={p.userId}
                 title={p.name}
-                className="w-5 h-5 rounded-full border border-background flex items-center justify-center text-[9px] font-semibold text-white"
+                className="w-5 h-5 rounded-full border border-background flex items-center justify-center text-[9px] font-semibold text-[#fff]"
                 style={{ backgroundColor: p.color }}
               >
                 {(p.name || "?")[0].toUpperCase()}
