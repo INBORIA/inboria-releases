@@ -2,49 +2,72 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+// Seul le français (langue de repli / fallbackLng) est embarqué au démarrage.
+// Les 42 autres langues sont chargées À LA DEMANDE (un chunk par langue généré
+// par Vite via import.meta.glob) : la 1ʳᵉ ouverture ne télécharge plus ~9 Mo de
+// traductions inutiles mais seulement le français + la langue réellement active.
 import fr from "./locales/fr.json";
-import en from "./locales/en.json";
-import nl from "./locales/nl.json";
-import de from "./locales/de.json";
-import es from "./locales/es.json";
-import it from "./locales/it.json";
-import pt from "./locales/pt.json";
-import pl from "./locales/pl.json";
-import ro from "./locales/ro.json";
-import sv from "./locales/sv.json";
-import da from "./locales/da.json";
-import fi from "./locales/fi.json";
-import hu from "./locales/hu.json";
-import cs from "./locales/cs.json";
-import tr from "./locales/tr.json";
-import ja from "./locales/ja.json";
-import ko from "./locales/ko.json";
-import vi from "./locales/vi.json";
-import th from "./locales/th.json";
-import id from "./locales/id.json";
-import ms from "./locales/ms.json";
-import el from "./locales/el.json";
-import uk from "./locales/uk.json";
-import et from "./locales/et.json";
-import zh from "./locales/zh.json";
-import zhTw from "./locales/zh-TW.json";
-import lt from "./locales/lt.json";
-import sr from "./locales/sr.json";
-import ru from "./locales/ru.json";
-import he from "./locales/he.json";
-import ar from "./locales/ar.json";
-import hr from "./locales/hr.json";
-import sk from "./locales/sk.json";
-import sl from "./locales/sl.json";
-import lv from "./locales/lv.json";
-import mt from "./locales/mt.json";
-import bg from "./locales/bg.json";
-import nb from "./locales/nb.json";
-import ca from "./locales/ca.json";
-import ga from "./locales/ga.json";
-import ur from "./locales/ur.json";
-import hi from "./locales/hi.json";
-import km from "./locales/km.json";
+
+export const SUPPORTED_LNGS = [
+  "fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi",
+  "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et",
+  "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt",
+  "bg", "nb", "ca", "ga", "ur", "hi", "km",
+] as const;
+
+// Un loader paresseux par fichier de langue (Vite crée un chunk séparé pour
+// chacun). `{ import: "default" }` => le loader renvoie directement l'objet JSON.
+const localeLoaders = import.meta.glob("./locales/*.json", {
+  import: "default",
+}) as Record<string, () => Promise<Record<string, unknown>>>;
+
+const loaded = new Set<string>(["fr"]);
+const inflight = new Map<string, Promise<void>>();
+
+function normalizeCode(lng: string): string {
+  if (!lng) return "fr";
+  // i18next peut renvoyer « en-US » ; on ne garde que la base SAUF le chinois
+  // traditionnel (seule variante régionale distincte de nos fichiers). On couvre
+  // tous les alias « traditionnel » comme le fait LanguageSwitcher pour que le
+  // bon fichier (zh-TW.json, Traditionnel) soit chargé et jamais zh.json (Simplifié).
+  const lower = lng.toLowerCase();
+  if (
+    lower === "zh-tw" ||
+    lower === "zh_tw" ||
+    lower === "zh-hant" ||
+    lower === "zh-hk"
+  ) {
+    return "zh-TW";
+  }
+  return lng.split("-")[0];
+}
+
+// Charge (une seule fois) le bundle d'une langue et l'enregistre dans i18next.
+// Idempotent et anti-doublon (Map inflight) ; silencieux en cas d'échec réseau
+// (on garde le repli français plutôt que de planter l'UI).
+export async function ensureLanguageLoaded(lng: string): Promise<void> {
+  const code = normalizeCode(lng);
+  if (loaded.has(code)) return;
+  const existing = inflight.get(code);
+  if (existing) return existing;
+
+  const loader = localeLoaders[`./locales/${code}.json`];
+  if (!loader) return;
+
+  const p = loader()
+    .then((data) => {
+      i18n.addResourceBundle(code, "translation", data, true, true);
+      loaded.add(code);
+    })
+    .catch(() => {
+      /* repli français conservé */
+    })
+    .finally(() => {
+      inflight.delete(code);
+    });
+  inflight.set(code, p);
+  return p;
+}
 
 i18n
   .use(LanguageDetector)
@@ -52,51 +75,9 @@ i18n
   .init({
     resources: {
       fr: { translation: fr },
-      en: { translation: en },
-      nl: { translation: nl },
-      de: { translation: de },
-      es: { translation: es },
-      it: { translation: it },
-      pt: { translation: pt },
-      pl: { translation: pl },
-      ro: { translation: ro },
-      sv: { translation: sv },
-      da: { translation: da },
-      fi: { translation: fi },
-      hu: { translation: hu },
-      cs: { translation: cs },
-      tr: { translation: tr },
-      ja: { translation: ja },
-      ko: { translation: ko },
-      vi: { translation: vi },
-      th: { translation: th },
-      id: { translation: id },
-      ms: { translation: ms },
-      el: { translation: el },
-      uk: { translation: uk },
-      et: { translation: et },
-      zh: { translation: zh },
-      "zh-TW": { translation: zhTw },
-      lt: { translation: lt },
-      sr: { translation: sr },
-      ru: { translation: ru },
-      he: { translation: he },
-      ar: { translation: ar },
-      hr: { translation: hr },
-      sk: { translation: sk },
-      sl: { translation: sl },
-      lv: { translation: lv },
-      mt: { translation: mt },
-      bg: { translation: bg },
-      nb: { translation: nb },
-      ca: { translation: ca },
-      ga: { translation: ga },
-      ur: { translation: ur },
-      hi: { translation: hi },
-      km: { translation: km },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg", "nb", "ca", "ga", "ur", "hi", "km"],
+    supportedLngs: [...SUPPORTED_LNGS],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {
@@ -107,6 +88,30 @@ i18n
       lookupLocalStorage: "inboria-lang",
       caches: ["localStorage"],
     },
+    react: {
+      // Pas de Suspense : les langues arrivent en asynchrone, on rend
+      // immédiatement avec le repli français puis on re-rend dès que le
+      // bundle de la langue active est ajouté (« added »).
+      useSuspense: false,
+      bindI18nStore: "added",
+    },
   });
+
+// Charge la langue détectée au boot (si ≠ fr) puis toute langue choisie ensuite.
+i18n.on("languageChanged", (lng) => {
+  void ensureLanguageLoaded(lng);
+});
+// Au boot, on lit d'abord la préférence stockée brute (clé « inboria-lang ») :
+// elle conserve le code complet « zh-TW » alors que i18n.resolvedLanguage peut
+// l'écraser en « zh » (à cause de load:"languageOnly") → mauvais fichier chargé.
+let bootLng = i18n.language || i18n.resolvedLanguage || "fr";
+try {
+  if (typeof localStorage !== "undefined") {
+    bootLng = localStorage.getItem("inboria-lang") || bootLng;
+  }
+} catch {
+  /* localStorage indisponible (mode privé) → on garde la langue i18next */
+}
+void ensureLanguageLoaded(bootLng);
 
 export default i18n;
