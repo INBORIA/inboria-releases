@@ -95,6 +95,7 @@ export function AskInboria() {
   }, [clearTimers, reducedMotion]);
 
   useEffect(() => {
+    setStep(8); return; // TEMP DEBUG
     if (reducedMotion) { setStep(6); return; }
     runCycle();
     return clearTimers;
@@ -353,7 +354,7 @@ export function AskInboria() {
                   <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[#b8c5d6] shrink-0"><Bell className="w-3.5 h-3.5" /></div>
                   <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[11px] font-medium text-[#b8c5d6] shrink-0">
                     <Sparkles className="w-3 h-3 text-cyan-300" />
-                    <span className="max-w-[160px] truncate">44 traités aujourd'hui</span>
+                    <span className="max-w-[180px] truncate">Inboria · 3 actions aujourd'hui</span>
                   </div>
                   <div className="hidden sm:flex items-center justify-center h-7 w-7 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[#b8c5d6] shrink-0"><Sun className="w-3.5 h-3.5" /></div>
                   <div className="hidden sm:flex items-center justify-center h-7 px-2 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#b8c5d6] shrink-0">FR</div>
