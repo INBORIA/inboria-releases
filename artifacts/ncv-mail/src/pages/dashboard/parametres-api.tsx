@@ -135,8 +135,8 @@ export default function ParametresApi() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
         <div className="flex items-center gap-2">
           <Link href="/dashboard/parametres">
-            <Button variant="ghost" size="sm" className="h-7 px-2">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("common.back", "Retour")}
+            <Button variant="ghost" size="sm" className="h-7 px-2" title={t("common.back", "Retour")} aria-label={t("common.back", "Retour")}>
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

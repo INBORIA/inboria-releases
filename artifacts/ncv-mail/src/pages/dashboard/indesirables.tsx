@@ -423,10 +423,11 @@ export default function Indesirables() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedEmailId(null)}
+              title={t("common.back", "Retour")}
+              aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.back", "Retour")}
+              <ChevronLeft className="w-3.5 h-3.5" />
             </Button>
           </div>
 
@@ -546,10 +547,11 @@ export default function Indesirables() {
             <Button
               variant="ghost"
               size="sm"
+              title={t("common.back", "Retour")}
+              aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.back", "Retour")}
+              <ChevronLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

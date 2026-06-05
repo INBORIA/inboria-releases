@@ -781,9 +781,11 @@ function ProjectDetailView({
             variant="ghost"
             size="sm"
             onClick={onBack}
+            title={t("common.back")}
+            aria-label={t("common.back")}
             className="text-[#b8c5d6] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
+            <ArrowLeft className="w-3.5 h-3.5" />
           </Button>
           <p className="text-[12px] text-[#b8c5d6]">Projet introuvable.</p>
         </div>
@@ -826,9 +828,11 @@ function ProjectDetailView({
             variant="ghost"
             size="sm"
             onClick={onBack}
+            title={t("common.back")}
+            aria-label={t("common.back")}
             className="text-[#b8c5d6] hover:text-white gap-1.5 h-7 text-[12px]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
+            <ArrowLeft className="w-3.5 h-3.5" />
           </Button>
           <Button
             variant="outline"

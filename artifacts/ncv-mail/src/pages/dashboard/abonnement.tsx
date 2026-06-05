@@ -197,8 +197,8 @@ export default function Abonnement() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-inbox">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("sidebar.inbox", "Boîte de réception")}
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-inbox" title={t("sidebar.inbox", "Boîte de réception")} aria-label={t("sidebar.inbox", "Boîte de réception")}>
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

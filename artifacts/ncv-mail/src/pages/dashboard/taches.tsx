@@ -1062,10 +1062,11 @@ export default function Taches() {
                 {/* Barre retour */}
                 <button
                   onClick={() => { setEmailDetailTask(null); setShowComments(false); }}
+                  title={t("common.back", "Retour")}
+                  aria-label={t("common.back", "Retour")}
                   className="flex items-center gap-1.5 px-4 py-2 text-[12px] text-[#8b95a7] hover:text-white hover:bg-white/[0.04] border-b border-[#1f2937] transition-colors"
                 >
                   <ChevronRight className="w-3 h-3 rotate-180" />
-                  {t("common.back", "Retour")}
                 </button>
                 {/* Bloc tâche */}
                 <div className="px-4 py-3 border-b border-[#1f2937] flex items-start gap-3">

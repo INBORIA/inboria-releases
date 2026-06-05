@@ -179,8 +179,8 @@ export default function ParametresSla() {
       <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         <div>
           <Link href={back.href}>
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t(back.labelKey, back.labelFallback)}
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" title={t(back.labelKey, back.labelFallback)} aria-label={t(back.labelKey, back.labelFallback)}>
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

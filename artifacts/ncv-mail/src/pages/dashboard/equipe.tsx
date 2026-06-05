@@ -303,9 +303,10 @@ export default function Equipe() {
               size="sm"
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
               data-testid="back-to-settings"
+              title={t(back.labelKey, back.labelFallback)}
+              aria-label={t(back.labelKey, back.labelFallback)}
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t(back.labelKey, back.labelFallback)}
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

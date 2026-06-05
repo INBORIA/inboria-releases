@@ -1026,8 +1026,8 @@ export default function ParametresMonCompte() {
         {!isOrgMember && (
           <div className="mb-2">
             <Link href="/dashboard/parametres">
-              <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
-                <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("common.back", "Retour")}
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" title={t("common.back", "Retour")} aria-label={t("common.back", "Retour")}>
+                <ArrowLeft className="w-3.5 h-3.5" />
               </Button>
             </Link>
           </div>

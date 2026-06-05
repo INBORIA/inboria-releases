@@ -76,8 +76,8 @@ export default function ParametresAdministration() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
         <div>
           <Link href="/dashboard/parametres">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-settings">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("common.back", "Retour")}
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-settings" title={t("common.back", "Retour")} aria-label={t("common.back", "Retour")}>
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

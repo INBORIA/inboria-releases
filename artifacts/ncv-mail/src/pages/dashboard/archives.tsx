@@ -498,10 +498,11 @@ export default function Archives() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedCategory(null)}
+              title={t("common.back", "Retour")}
+              aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.back", "Retour")}
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
             <div className="flex-1" />
             <span className="text-[11px] text-[#b8c5d6]">{t("archives.emailCount", { count: selectedEmails.length })}</span>

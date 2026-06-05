@@ -280,10 +280,11 @@ export default function Corbeille() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedEmailId(null)}
+              title={t("trash.title")}
+              aria-label={t("trash.title")}
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("trash.title")}
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </div>
 
@@ -386,10 +387,11 @@ export default function Corbeille() {
             <Button
               variant="ghost"
               size="sm"
+              title={t("common.back", "Retour")}
+              aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.back", "Retour")}
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

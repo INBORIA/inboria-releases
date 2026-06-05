@@ -521,10 +521,11 @@ export default function MesDossiers() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedFolderId(null)}
+              title={t("common.back", "Retour")}
+              aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-[#b8c5d6] hover:text-white text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("common.back", "Retour")}
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
             <div className="flex-1" />
             <Button
