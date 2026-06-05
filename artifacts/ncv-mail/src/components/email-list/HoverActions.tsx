@@ -5,6 +5,7 @@ import {
   Reply,
   Forward,
   ListTodo,
+  UserPlus,
   Mail,
   MailOpen,
   Clock,
@@ -27,6 +28,9 @@ export type HoverActionsCb = {
   onReply: () => void;
   onForward: () => void;
   onCreateTask: () => void;
+  // Optionnel : ouvre le formulaire complet (titre + projet + Assigner à)
+  // pour créer une tâche d'équipe. Le bouton n'apparaît que si fourni.
+  onCreateAndAssignTask?: () => void;
   onToggleRead: () => void;
   onSnooze: (hours: number, label: string) => void;
   onArchive: () => void;
@@ -107,6 +111,9 @@ function HoverActionsImpl({
       <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD} onClick={click(cb.onReply)}><Reply className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD} onClick={click(cb.onForward)}><Forward className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD} onClick={click(cb.onCreateTask)}><ListTodo className="w-3.5 h-3.5" /></button>
+      {cb.onCreateAndAssignTask && (
+        <button className={btn} title={t("inbox.createAndAssignTask", "Créer et assigner…")} onMouseDown={stopMD} onClick={click(cb.onCreateAndAssignTask)}><UserPlus className="w-3.5 h-3.5" /></button>
+      )}
       <button className={btn} title={isUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")} onMouseDown={stopMD} onClick={click(cb.onToggleRead)}>
         {isUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
       </button>

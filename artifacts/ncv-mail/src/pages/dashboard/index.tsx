@@ -3972,6 +3972,12 @@ export default function Dashboard() {
   const selectedIdsRef = useRef(selectedIds);
   useEffect(() => { selectedIdsRef.current = selectedIds; }, [selectedIds]);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
+  // Dialog « Créer et assigner… » — même formulaire que le mail ouvert
+  // (titre + projet + Assigner à), ouvert depuis survol ou clic droit.
+  const [assignTaskEmailId, setAssignTaskEmailId] = useState<number | null>(null);
+  const [assignTaskTitle, setAssignTaskTitle] = useState("");
+  const [assignTaskProjectId, setAssignTaskProjectId] = useState("none");
+  const [assignTaskAssignees, setAssignTaskAssignees] = useState<string[]>([]);
   const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
   const [folderSubmenuOpen, setFolderSubmenuOpen] = useState(false);
   const [projectSubmenuOpen, setProjectSubmenuOpen] = useState(false);
@@ -4869,6 +4875,35 @@ export default function Dashboard() {
     );
   };
 
+  // Ouvre le formulaire complet « Créer et assigner… » (titre + projet +
+  // Assigner à) pré-rempli depuis le mail — permet une tâche d'équipe
+  // directement depuis le survol ou le clic droit (parité avec le mail ouvert).
+  const openAssignTaskDialog = (id: number) => {
+    const email = findEmailAnywhere(id);
+    setAssignTaskEmailId(id);
+    setAssignTaskTitle(email?.subject ? `${t("inbox.handlePrefix")} ${email.subject}`.slice(0, 200) : "");
+    setAssignTaskProjectId((email as any)?.projectId || "none");
+    setAssignTaskAssignees([]);
+  };
+
+  const closeAssignTaskDialog = () => {
+    setAssignTaskEmailId(null);
+    setAssignTaskTitle("");
+    setAssignTaskProjectId("none");
+    setAssignTaskAssignees([]);
+  };
+
+  const submitAssignTaskDialog = async () => {
+    if (assignTaskEmailId == null || !assignTaskTitle.trim()) return;
+    await handleCreateTask(
+      assignTaskEmailId,
+      assignTaskTitle.trim(),
+      assignTaskProjectId !== "none" ? assignTaskProjectId : undefined,
+      assignTaskAssignees,
+    );
+    closeAssignTaskDialog();
+  };
+
   // Auto-advance (style Superhuman) : quand on archive / supprime / reporte le
   // mail actuellement ouvert, on enchaîne automatiquement sur le mail suivant
   // (plus ancien) de la liste active, au lieu de revenir à une liste vide. Si
@@ -5417,6 +5452,10 @@ export default function Dashboard() {
             <button onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <ListTodo className="w-3.5 h-3.5" />{t("inbox.createTask", "Créer une tâche")}
+            </button>
+            <button onClick={() => { openAssignTaskDialog(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <UserPlus className="w-3.5 h-3.5" />{t("inbox.createAndAssignTask", "Créer et assigner…")}
             </button>
             <button onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
@@ -6755,6 +6794,7 @@ export default function Dashboard() {
                                   onReply: () => handleQuickReply(email.id),
                                   onForward: () => handleQuickForward(email.id),
                                   onCreateTask: () => handleQuickCreateTask(email.id),
+                                  onCreateAndAssignTask: () => openAssignTaskDialog(email.id),
                                   onToggleRead: () => handleToggleRead(email.id),
                                   onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
                                   onArchive: () => handleArchive(email.id),
@@ -6874,6 +6914,7 @@ export default function Dashboard() {
                               onReply: () => handleQuickReply(email.id),
                               onForward: () => handleQuickForward(email.id),
                               onCreateTask: () => handleQuickCreateTask(email.id),
+                              onCreateAndAssignTask: () => openAssignTaskDialog(email.id),
                               onToggleRead: () => handleToggleRead(email.id),
                               onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
                               onArchive: () => handleArchive(email.id),
@@ -7031,6 +7072,7 @@ export default function Dashboard() {
                                   onReply: () => handleQuickReply(email.id),
                                   onForward: () => handleQuickForward(email.id),
                                   onCreateTask: () => handleQuickCreateTask(email.id),
+                                  onCreateAndAssignTask: () => openAssignTaskDialog(email.id),
                                   onToggleRead: () => handleToggleRead(email.id),
                                   onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
                                   onArchive: () => handleArchive(email.id),
@@ -7116,6 +7158,70 @@ export default function Dashboard() {
           </div>
         ) : null}
       </MailReadingPane>
+
+      <Dialog open={assignTaskEmailId != null} onOpenChange={(o) => { if (!o) closeAssignTaskDialog(); }}>
+        <DialogContent className="bg-card border-border max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white text-[14px]">
+              <UserPlus className="w-4 h-4 text-cyan-400" />
+              {t("inbox.createAndAssignTask", "Créer et assigner…")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.taskTitle")}</label>
+              <Input
+                value={assignTaskTitle}
+                onChange={(e) => setAssignTaskTitle(e.target.value)}
+                placeholder={t("inbox.taskTitlePlaceholder")}
+                className="bg-background border-border text-white text-[12px] h-8"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
+              <Select value={assignTaskProjectId} onValueChange={setAssignTaskProjectId}>
+                <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
+                  <SelectValue placeholder={t("inbox.noProject")} />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
+                  {(projects || []).map((p: any) => (
+                    <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("tasks.assignTo", "Assigner à")}</label>
+              <TaskAssigneePicker
+                members={(orgMembers as any[]) || []}
+                currentUserId={(profile as any)?.id || null}
+                value={assignTaskAssignees}
+                onChange={setAssignTaskAssignees}
+              />
+            </div>
+            <div className="flex items-center gap-2 justify-end pt-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeAssignTaskDialog}
+                className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
+              >
+                {t("common.cancel")}
+              </Button>
+              <Button
+                size="sm"
+                className="gap-1.5 h-7 text-[11px]"
+                disabled={!assignTaskTitle.trim()}
+                onClick={submitAssignTaskDialog}
+              >
+                <ListTodo className="w-3 h-3" />
+                {t("followup.create")}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {showShortcutsHelp && (
         <div
