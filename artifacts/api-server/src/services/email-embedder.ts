@@ -19,6 +19,7 @@ const APPROX_CHARS_PER_TOKEN = 4;
 let embedRunning = false;
 let chunksTableMissingWarned = false;
 let chunksColumnMissingWarned = false;
+let chunksOrphanWarned = false;
 
 let dailyTokenCounter = { dayKey: "", tokensUsed: 0 };
 
@@ -227,6 +228,27 @@ export async function processEmailEmbeddings(
         { err: msg },
         "[email-embedder] email_chunks schema drift — apply migrations/2026_05_03_email_chunks.sql in Supabase Dashboard.",
       );
+    }
+    // Erreurs PERMANENTES : ne jamais retenter (sinon boucle infinie +
+    // appels OpenAI gaspillés à chaque cycle). On renvoie "skipped" pour
+    // que l'appelant marque le mail comme traité et le sorte de la file.
+    //  - 23503 / foreign key : mail orphelin (compte ou boîte supprimé).
+    //  - 22P02 / invalid input syntax : contenu/embedding non sérialisable.
+    const code = (error as { code?: string }).code;
+    const isPermanent =
+      code === "23503" ||
+      code === "22P02" ||
+      /violates foreign key constraint/i.test(msg) ||
+      /invalid input syntax/i.test(msg);
+    if (isPermanent) {
+      if (!chunksOrphanWarned) {
+        chunksOrphanWarned = true;
+        logger.warn(
+          { err: msg, emailId: email.id },
+          "[email-embedder] permanent upsert error (orphan/malformed) — skipping without retry",
+        );
+      }
+      return "skipped";
     }
     logger.warn(
       { err: msg, emailId: email.id },
