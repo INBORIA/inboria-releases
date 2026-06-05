@@ -31,6 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw, Copy, Download, Chrome } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
@@ -1368,19 +1369,22 @@ export default function ParametresMonCompte() {
                   </AlertDialog>
 
 
-                  {selectedProvider && (
-                    <div className="p-4 border border-primary/20 rounded-lg bg-primary/5 space-y-3">
-                      <div className="flex items-center gap-2">
-                        {(() => {
-                          const prov = IMAP_PROVIDERS.find(p => p.id === selectedProvider);
-                          return prov ? (
-                            <>
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px] ${prov.color}`}>{prov.letter}</div>
-                              <h4 className="font-medium text-[13px] text-white">{t("settings.connectProvider", { name: prov.id === "autre" ? t("settings.other") : prov.name })}</h4>
-                            </>
-                          ) : null;
-                        })()}
-                      </div>
+                  <Dialog open={!!selectedProvider} onOpenChange={(open) => { if (!open) { setSelectedProvider(null); setConnectError(""); setImapEmail(""); setImapPassword(""); setImapHost(""); setImapPort(""); } }}>
+                    <DialogContent className="max-w-md bg-card border-border max-h-[85vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="text-[14px] text-white flex items-center gap-2">
+                          {(() => {
+                            const prov = IMAP_PROVIDERS.find(p => p.id === selectedProvider);
+                            return prov ? (
+                              <>
+                                <span className={`w-7 h-7 rounded-lg inline-flex items-center justify-center font-bold text-[10px] ${prov.color}`}>{prov.letter}</span>
+                                {t("settings.connectProvider", { name: prov.id === "autre" ? t("settings.other") : prov.name })}
+                              </>
+                            ) : null;
+                          })()}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-3">
 
                       {connectError && (
                         <div className="flex items-start gap-2 p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-[12px] text-red-400">
@@ -1522,7 +1526,8 @@ export default function ParametresMonCompte() {
                         </Button>
                       </div>
                     </div>
-                  )}
+                    </DialogContent>
+                  </Dialog>
                 </>
               )}
             </div>
