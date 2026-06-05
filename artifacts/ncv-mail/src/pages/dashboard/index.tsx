@@ -25,6 +25,7 @@ import {
   getGetCategoryCountsQueryKey,
   getGetInboxHealthQueryKey,
   useListProjects,
+  useListTasks,
   useGetProfile,
   useRecategorizeUncategorized,
   useBulkUpdateEmails,
@@ -3872,6 +3873,26 @@ export default function Dashboard() {
   });
   const projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
 
+  // Compteur « Tâches équipe » — nombre de tâches d'équipe non terminées
+  // (status !== "done"), affiché en badge sur l'onglet comme ses voisins
+  // (Boîtes partagées / Mails assignés / Projets). Chargé seulement si une
+  // organisation existe (un solo n'a pas de tâches d'équipe).
+  const { data: teamTasksData } = useListTasks(
+    { scope: "team" } as any,
+    { query: { enabled: !!(myOrg as any)?.id, refetchInterval: 60_000, placeholderData: (prev: any) => prev } as any },
+  );
+  // Même filtre que /dashboard/taches?scope=team (taches.tsx L699-704) :
+  // tâches assignées à quelqu'un d'AUTRE que l'utilisateur courant ET non
+  // terminées. Garantit que la pastille = le nombre affiché sur la page.
+  const teamTasksOpenCount = Array.isArray(teamTasksData)
+    ? (teamTasksData as any[]).filter(
+        (tk) =>
+          tk?.assignedToUserId &&
+          tk.assignedToUserId !== (profile as any)?.id &&
+          tk?.status !== "done",
+      ).length
+    : 0;
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -6332,6 +6353,9 @@ export default function Dashboard() {
               >
                 <CheckSquare className="w-3 h-3" />
                 {t("inbox.teamTasks", "Tâches équipe")}
+                {teamTasksOpenCount > 0 && (
+                  <span className="text-[10px] tabular-nums bg-white/10 text-white px-1.5 py-0.5 rounded-full">{teamTasksOpenCount}</span>
+                )}
               </Link>
               {/* Onglet Projets — déplacé depuis la sidebar (équipe).
                   Page standalone /dashboard/projets (kanban), même pattern
