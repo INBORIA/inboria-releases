@@ -5449,10 +5449,6 @@ export default function Dashboard() {
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <Forward className="w-3.5 h-3.5" />{t("inbox.forward", "Transférer")}
             </button>
-            <button onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
-              <ListTodo className="w-3.5 h-3.5" />{t("inbox.createTask", "Créer une tâche")}
-            </button>
             <button onClick={() => { openAssignTaskDialog(contextMenu.emailId); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <UserPlus className="w-3.5 h-3.5" />{t("inbox.createAndAssignTask", "Créer et assigner…")}

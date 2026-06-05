@@ -110,9 +110,13 @@ function HoverActionsImpl({
       <button className={btn} title={t("inbox.openEmail")} onMouseDown={stopMD} onClick={click(cb.onOpen)}><ChevronRight className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD} onClick={click(cb.onReply)}><Reply className="w-3.5 h-3.5" /></button>
       <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD} onClick={click(cb.onForward)}><Forward className="w-3.5 h-3.5" /></button>
-      <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD} onClick={click(cb.onCreateTask)}><ListTodo className="w-3.5 h-3.5" /></button>
-      {cb.onCreateAndAssignTask && (
+      {cb.onCreateAndAssignTask ? (
+        // Quand l'assignation est disponible (Réception), un seul bouton tâche :
+        // « Créer et assigner… » couvre les deux cas (perso si aucun assigné,
+        // équipe si on choisit un collègue). Évite le doublon avec « Créer une tâche ».
         <button className={btn} title={t("inbox.createAndAssignTask", "Créer et assigner…")} onMouseDown={stopMD} onClick={click(cb.onCreateAndAssignTask)}><UserPlus className="w-3.5 h-3.5" /></button>
+      ) : (
+        <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD} onClick={click(cb.onCreateTask)}><ListTodo className="w-3.5 h-3.5" /></button>
       )}
       <button className={btn} title={isUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")} onMouseDown={stopMD} onClick={click(cb.onToggleRead)}>
         {isUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
