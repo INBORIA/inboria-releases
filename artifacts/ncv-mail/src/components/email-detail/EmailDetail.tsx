@@ -88,6 +88,20 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
   const safeName =
     (subject || "mail").replace(/[^a-zA-Z0-9._\- ]+/g, "_").slice(0, 60).trim() || "mail";
   const filename = `${safeName}-${emailId}.eml`;
+  // Blob-URL pre-telechargee pour le glisser-dehors. dataTransfer n'est
+  // modifiable QUE pendant dragstart (synchrone) : on prepare donc l'URL au
+  // survol / a l'appui pour qu'elle soit prete au demarrage du glisser.
+  const emlBlobUrl = useRef<string | null>(null);
+  const fetchingEml = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (emlBlobUrl.current) {
+        URL.revokeObjectURL(emlBlobUrl.current);
+        emlBlobUrl.current = null;
+      }
+    };
+  }, []);
 
   const fetchEmlBlob = useCallback(async (): Promise<Blob | null> => {
     try {
@@ -120,38 +134,39 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
     }
   }, [fetchEmlBlob, filename, toast]);
 
-  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement). On
-  // pre-fetche le .eml au moment du dragstart et on expose son URL via
-  // l'attribut DownloadURL. Si la pre-fetch n'a pas le temps de finir avant
-  // que le navigateur ne lise les donnees, le drag tombera mais le bouton
-  // reste utilisable.
+  // Pre-telecharge le .eml pour qu'il soit pret au prochain glisser.
+  const prefetchEml = useCallback(() => {
+    if (emlBlobUrl.current || fetchingEml.current) return;
+    fetchingEml.current = true;
+    void (async () => {
+      try {
+        const blob = await fetchEmlBlob();
+        if (blob) emlBlobUrl.current = URL.createObjectURL(blob);
+      } finally {
+        fetchingEml.current = false;
+      }
+    })();
+  }, [fetchEmlBlob]);
+
+  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement).
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLButtonElement>) => {
-      // Chromium-only API ; ignoree par les autres navigateurs.
+      const ready = emlBlobUrl.current;
+      if (!ready) {
+        // Pas encore pret : on amorce la pre-fetch pour le prochain essai et on
+        // laisse tomber ce glisser (le bouton « Exporter » reste utilisable).
+        prefetchEml();
+        e.preventDefault();
+        return;
+      }
       e.dataTransfer.effectAllowed = "copy";
-      // Placeholder immediat : on met le filename / mime pour que le drag
-      // demarre, puis on remplace par la vraie URL des qu'on l'a.
       try {
-        e.dataTransfer.setData(
-          "DownloadURL",
-          `message/rfc822:${filename}:about:blank`,
-        );
+        e.dataTransfer.setData("DownloadURL", `message/rfc822:${filename}:${ready}`);
       } catch {
         /* noop */
       }
-      void (async () => {
-        const blob = await fetchEmlBlob();
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        try {
-          e.dataTransfer.setData("DownloadURL", `message/rfc822:${filename}:${url}`);
-        } catch {
-          /* noop */
-        }
-        setTimeout(() => URL.revokeObjectURL(url), 30_000);
-      })();
     },
-    [fetchEmlBlob, filename],
+    [filename, prefetchEml],
   );
 
   const onExportCsv = useCallback(async () => {
@@ -175,6 +190,8 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           size="sm"
           draggable
           onDragStart={onDragStart}
+          onMouseEnter={prefetchEml}
+          onPointerDown={prefetchEml}
           className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
           disabled={busy}
           title={t("emailExport.dragHint")}
