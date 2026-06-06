@@ -1200,11 +1200,11 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       (adminTeamCtx
         ? supabaseAdmin
             .from("emails")
-            .select("sender, subject, snoozed_until, priority")
+            .select("id, sender, subject, snoozed_until, priority")
             .eq("is_private", false)
         : supabaseAdmin
             .from("emails")
-            .select("sender, subject, snoozed_until, priority")
+            .select("id, sender, subject, snoozed_until, priority")
       )
         .or(emailScopeFilter)
         .gt("snoozed_until", nowIso)
@@ -1213,7 +1213,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       // Programmés à envoyer (scheduled status, scheduled_send_at futur).
       supabaseAdmin
         .from("emails")
-        .select("recipient, subject, scheduled_send_at")
+        .select("id, recipient, subject, scheduled_send_at")
         .eq("user_id", userId)
         .eq("status", "scheduled")
         .gt("scheduled_send_at", nowIso)
@@ -1251,7 +1251,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       // (pas de leak des mails marqués privés par un coéquipier).
       supabaseAdmin
         .from("followups")
-        .select("status, due_date, ai_suggestion, emails(sender, subject)")
+        .select("status, due_date, ai_suggestion, emails(id, sender, subject)")
         .eq("user_id", userId)
         .neq("status", "termine")
         .order("created_at", { ascending: false })
@@ -1963,7 +1963,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const when = fmtShortDate(e.snoozed_until);
         const subj = truncate(e.subject || "(sans objet)", 70);
         const sender = truncate(e.sender || "(inconnu)", 50);
-        memoryLines.push(`- reveil ${when} : ${sender} — ${subj}`);
+        const ref = e.id ? ` [mail#${e.id}]` : "";
+        memoryLines.push(`- reveil ${when} : ${sender} — ${subj}${ref}`);
       }
       memoryLines.push("");
     }
@@ -1974,7 +1975,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const when = fmtAppt(e.scheduled_send_at, false);
         const subj = truncate(e.subject || "(sans objet)", 70);
         const to = truncate(e.recipient || "(inconnu)", 50);
-        memoryLines.push(`- ${when} a ${to} : ${subj}`);
+        const ref = e.id ? ` [mail#${e.id}]` : "";
+        memoryLines.push(`- ${when} a ${to} : ${subj}${ref}`);
       }
       memoryLines.push("");
     }
@@ -2046,7 +2048,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const em = (f as any).emails || {};
         const subj = truncate(em.subject || "(sans objet)", 60);
         const sender = truncate(em.sender || "(inconnu)", 40);
-        memoryLines.push(`- ${status} ${sender} — ${subj}${due}${ai}`);
+        const ref = em.id ? ` [mail#${em.id}]` : "";
+        memoryLines.push(`- ${status} ${sender} — ${subj}${due}${ai}${ref}`);
       }
       memoryLines.push("");
     }
