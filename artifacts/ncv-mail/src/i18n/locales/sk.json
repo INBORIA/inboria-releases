@@ -2322,7 +2322,9 @@
     "remove": "Odstrániť",
     "maxSize": "Max 10 MB na súbor",
     "uploading": "Nahrávanie prebieha...",
-    "count": "{{count}} príloha(y)"
+    "count": "{{count}} príloha(y)",
+    "dropHere": "Položte súbory sem na pripojenie",
+    "dragOutHint": "Kliknite na stiahnutie alebo presuňte na plochu"
   },
   "cookies": {
     "title": "Správa súborov cookies",

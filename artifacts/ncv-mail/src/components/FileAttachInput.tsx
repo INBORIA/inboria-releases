@@ -28,6 +28,39 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const dragDepth = useRef(0);
+
+  function hasFiles(e: React.DragEvent): boolean {
+    return Array.from(e.dataTransfer?.types || []).includes("Files");
+  }
+
+  function onDragEnter(e: React.DragEvent) {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    dragDepth.current += 1;
+    setDragOver(true);
+  }
+
+  function onDragOver(e: React.DragEvent) {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  }
+
+  function onDragLeave(e: React.DragEvent) {
+    if (!hasFiles(e)) return;
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setDragOver(false);
+  }
+
+  function onDrop(e: React.DragEvent) {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    dragDepth.current = 0;
+    setDragOver(false);
+    handleFiles(e.dataTransfer.files);
+  }
 
   async function handleFiles(selected: FileList | null) {
     if (!selected || selected.length === 0) return;
@@ -94,7 +127,18 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
   }
 
   return (
-    <div>
+    <div
+      onDragEnter={onDragEnter}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      className="relative rounded transition-colors"
+      style={
+        dragOver
+          ? { outline: "2px dashed #2d7dd2", outlineOffset: 2, background: "rgba(45,125,210,0.06)" }
+          : undefined
+      }
+    >
       <input
         ref={inputRef}
         type="file"
@@ -118,6 +162,16 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
         {uploading ? <Loader2 size={14} className="animate-spin" /> : <Paperclip size={14} />}
         <span>{t("attachments.attachFile")}</span>
       </button>
+
+      {dragOver && (
+        <div
+          className="flex items-center gap-1.5 mt-2 px-3 py-2 rounded text-xs pointer-events-none"
+          style={{ color: "#2d7dd2", background: "rgba(45,125,210,0.08)", border: "1px dashed #2d7dd2" }}
+        >
+          <Paperclip size={13} />
+          <span>{t("attachments.dropHere", "Déposez les fichiers ici pour les joindre")}</span>
+        </div>
+      )}
 
       {error && (
         <p className="text-xs mt-1" style={{ color: "#e74c3c" }}>{error}</p>

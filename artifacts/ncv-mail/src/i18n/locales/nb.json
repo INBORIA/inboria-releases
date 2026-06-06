@@ -2322,7 +2322,9 @@
     "remove": "Fjern",
     "maxSize": "Maks 10 MB per fil",
     "uploading": "Opplasting pågår...",
-    "count": "{{count}} vedlegg"
+    "count": "{{count}} vedlegg",
+    "dropHere": "Slipp filer her for å legge ved",
+    "dragOutHint": "Klikk for å laste ned, eller dra til skrivebordet"
   },
   "cookies": {
     "title": "Håndtering av informasjonskapsler",

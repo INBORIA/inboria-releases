@@ -2322,7 +2322,9 @@
     "remove": "Bain",
     "maxSize": "Max 10 Mo in aghaidh comhad",
     "uploading": "Uaslódáil ar siúl...",
-    "count": "{{count}} comhad ceangailte"
+    "count": "{{count}} comhad ceangailte",
+    "dropHere": "Scaoil comhaid anseo le ceangal",
+    "dragOutHint": "Cliceáil le híoslódáil, nó tarraing chuig an deasc"
   },
   "cookies": {
     "title": "Bainistíocht fianán",

@@ -2322,7 +2322,9 @@
     "remove": "Hapus",
     "maxSize": "Maks 10 Mo per file",
     "uploading": "Mengunggah...",
-    "count": "{{count}} lampiran"
+    "count": "{{count}} lampiran",
+    "dropHere": "Letakkan file di sini untuk melampirkan",
+    "dragOutHint": "Klik untuk mengunduh, atau seret ke desktop"
   },
   "cookies": {
     "title": "Pengelolaan cookie",

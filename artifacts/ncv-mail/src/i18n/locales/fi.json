@@ -2322,7 +2322,9 @@
     "remove": "Poista",
     "maxSize": "Max 10 Mt per tiedosto",
     "uploading": "Lataus käynnissä...",
-    "count": "{{count}} liitetiedostoa"
+    "count": "{{count}} liitetiedostoa",
+    "dropHere": "Pudota tiedostot tähän liittääksesi ne",
+    "dragOutHint": "Napsauta ladataksesi tai vedä työpöydälle"
   },
   "cookies": {
     "title": "Evästeiden hallinta",

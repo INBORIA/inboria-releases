@@ -2322,7 +2322,9 @@
     "remove": "Gỡ bỏ",
     "maxSize": "Tối đa 10 MB cho mỗi tệp",
     "uploading": "Đang tải lên...",
-    "count": "{{count}} tệp đính kèm"
+    "count": "{{count}} tệp đính kèm",
+    "dropHere": "Thả tệp vào đây để đính kèm",
+    "dragOutHint": "Nhấp để tải xuống, hoặc kéo ra màn hình"
   },
   "cookies": {
     "title": "Quản lý cookie",

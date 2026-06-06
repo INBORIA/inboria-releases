@@ -2322,7 +2322,9 @@
     "remove": "移除",
     "maxSize": "每个文件最大 10 MB",
     "uploading": "上传中...",
-    "count": "{{count}} 个附件"
+    "count": "{{count}} 个附件",
+    "dropHere": "请将文件拖放到此处以附加",
+    "dragOutHint": "点击下载，或拖动到桌面"
   },
   "cookies": {
     "title": "Cookie 管理",

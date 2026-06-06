@@ -2332,7 +2332,9 @@
     "remove": "Verwijderen",
     "maxSize": "Max 10 MB per bestand",
     "uploading": "Uploaden...",
-    "count": "{{count}} bijlage(n)"
+    "count": "{{count}} bijlage(n)",
+    "dropHere": "Zet bestanden hier neer om bij te voegen",
+    "dragOutHint": "Klik om te downloaden, of sleep naar het bureaublad"
   },
   "cookies": {
     "title": "Cookiebeheer",

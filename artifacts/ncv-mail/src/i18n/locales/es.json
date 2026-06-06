@@ -2332,7 +2332,9 @@
     "remove": "Eliminar",
     "maxSize": "Máx 10 MB por archivo",
     "uploading": "Cargando...",
-    "count": "{{count}} adjunto(s)"
+    "count": "{{count}} adjunto(s)",
+    "dropHere": "Suelte los archivos aquí para adjuntarlos",
+    "dragOutHint": "Haga clic para descargar, o arrastre al escritorio"
   },
   "cookies": {
     "title": "Gestión de cookies",

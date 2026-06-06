@@ -2322,7 +2322,9 @@
     "remove": "제거",
     "maxSize": "파일당 최대 10MB",
     "uploading": "업로드 중...",
-    "count": "{{count}}개의 첨부파일"
+    "count": "{{count}}개의 첨부파일",
+    "dropHere": "첨부하려면 파일을 여기에 놓으십시오",
+    "dragOutHint": "다운로드하려면 클릭하거나 바탕화면으로 끌어다 놓으십시오"
   },
   "cookies": {
     "title": "쿠키 관리",

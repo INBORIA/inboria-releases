@@ -34,6 +34,42 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
 
   if (!attachments || attachments.length === 0) return null;
 
+  async function fetchAttachmentBlob(att: Attachment): Promise<Blob | null> {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const url = `${import.meta.env.BASE_URL}api/attachments/${att.id}/download`;
+      const res = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      if (!res.ok) return null;
+      return await res.blob();
+    } catch {
+      return null;
+    }
+  }
+
+  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement). On
+  // pre-fetche le fichier au dragstart et on expose son URL via DownloadURL.
+  function onAttachmentDragStart(e: React.DragEvent, att: Attachment) {
+    e.dataTransfer.effectAllowed = "copy";
+    const ct = att.content_type || "application/octet-stream";
+    try {
+      e.dataTransfer.setData("DownloadURL", `${ct}:${att.filename}:about:blank`);
+    } catch {
+      /* noop */
+    }
+    void (async () => {
+      const blob = await fetchAttachmentBlob(att);
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      try {
+        e.dataTransfer.setData("DownloadURL", `${ct}:${att.filename}:${url}`);
+      } catch {
+        /* noop */
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    })();
+  }
+
   async function downloadAttachment(att: Attachment, preview = false) {
     setDownloading(att.id);
     try {
@@ -83,6 +119,8 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
           return (
             <div
               key={att.id}
+              draggable={!disableDownload}
+              onDragStart={disableDownload ? undefined : (e) => onAttachmentDragStart(e, att)}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs group transition-colors"
               style={{
                 background: "#1a2332",
@@ -91,6 +129,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
                 maxWidth: 240,
                 cursor: disableDownload ? "default" : "pointer",
               }}
+              title={disableDownload ? undefined : t("attachments.dragOutHint", "Cliquez pour télécharger, ou glissez vers le bureau")}
               onClick={disableDownload ? undefined : () => downloadAttachment(att, canPreview)}
             >
               <Icon size={16} style={{ color: "#2d7dd2", flexShrink: 0 }} />

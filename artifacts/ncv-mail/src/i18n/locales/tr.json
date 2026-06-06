@@ -2322,7 +2322,9 @@
     "remove": "Kaldır",
     "maxSize": "Dosya başına maksimum 10 Mo",
     "uploading": "Yükleniyor...",
-    "count": "{{count}} ek dosya"
+    "count": "{{count}} ek dosya",
+    "dropHere": "Eklemek için dosyaları buraya bırakın",
+    "dragOutHint": "İndirmek için tıklayın veya masaüstüne sürükleyin"
   },
   "cookies": {
     "title": "Çerez yönetimi",

@@ -2322,7 +2322,9 @@
     "remove": "Rimuovere",
     "maxSize": "Max 10 MB per file",
     "uploading": "Caricamento in corso...",
-    "count": "{{count}} allegato(i)"
+    "count": "{{count}} allegato(i)",
+    "dropHere": "Rilasci i file qui per allegarli",
+    "dragOutHint": "Clicchi per scaricare o trascini sul desktop"
   },
   "cookies": {
     "title": "Gestione dei cookie",

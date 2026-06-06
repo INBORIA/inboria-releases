@@ -2322,7 +2322,9 @@
     "remove": "Retirar",
     "maxSize": "Màx 10 Mo per fitxer",
     "uploading": "Càrrega en curs...",
-    "count": "{{count}} fitxer(s) adjunt(s)"
+    "count": "{{count}} fitxer(s) adjunt(s)",
+    "dropHere": "Deixeu els fitxers aquí per adjuntar-los",
+    "dragOutHint": "Cliqueu per descarregar, o arrossegueu al vostre escriptori"
   },
   "cookies": {
     "title": "Gestió de galetes",

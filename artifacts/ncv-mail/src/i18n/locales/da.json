@@ -2322,7 +2322,9 @@
     "remove": "Fjern",
     "maxSize": "Max 10 MB pr. fil",
     "uploading": "Upload i gang...",
-    "count": "{{count}} vedhæftning(er)"
+    "count": "{{count}} vedhæftning(er)",
+    "dropHere": "Slip filer her for at vedhæfte",
+    "dragOutHint": "Klik for at downloade, eller træk til skrivebordet"
   },
   "cookies": {
     "title": "Cookiehåndtering",

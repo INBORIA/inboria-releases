@@ -2322,7 +2322,9 @@
     "remove": "Usuń",
     "maxSize": "Maks 10 MB na plik",
     "uploading": "Przesyłanie w toku...",
-    "count": "{{count}} załączony(e) plik(i)"
+    "count": "{{count}} załączony(e) plik(i)",
+    "dropHere": "Upuść pliki tutaj, aby je dołączyć",
+    "dragOutHint": "Kliknij, aby pobrać, lub przeciągnij na pulpit"
   },
   "cookies": {
     "title": "Zarządzanie plikami cookie",

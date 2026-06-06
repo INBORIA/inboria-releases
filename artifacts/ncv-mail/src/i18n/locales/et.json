@@ -2322,7 +2322,9 @@
     "remove": "Eemalda",
     "maxSize": "Max 10 MB faili kohta",
     "uploading": "Laadimine käib...",
-    "count": "{{count}} manust"
+    "count": "{{count}} manust",
+    "dropHere": "Pange failid siia, et lisada",
+    "dragOutHint": "Klõpsake allalaadimiseks või lohistage töölauale"
   },
   "cookies": {
     "title": "Küpsiste haldamine",

@@ -2322,7 +2322,9 @@
     "remove": "Îndepărtați",
     "maxSize": "Max 10 Mo per fișier",
     "uploading": "Încărcare în curs...",
-    "count": "{{count}} fișier(e) atașat(e)"
+    "count": "{{count}} fișier(e) atașat(e)",
+    "dropHere": "Lăsați fișierele aici pentru a le atașa",
+    "dragOutHint": "Faceți clic pentru a descărca sau trageți pe desktop"
   },
   "cookies": {
     "title": "Gestionarea cookie-urilor",

@@ -2322,7 +2322,9 @@
     "remove": "Ta bort",
     "maxSize": "Max 10 MB per fil",
     "uploading": "Uppladdning pågår...",
-    "count": "{{count}} bifogad(e) fil(er)"
+    "count": "{{count}} bifogad(e) fil(er)",
+    "dropHere": "Släpp filer här för att bifoga",
+    "dragOutHint": "Klicka för att ladda ner, eller dra till skrivbordet"
   },
   "cookies": {
     "title": "Cookiehantering",

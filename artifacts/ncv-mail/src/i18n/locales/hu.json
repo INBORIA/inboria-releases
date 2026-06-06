@@ -2322,7 +2322,9 @@
     "remove": "Eltávolítás",
     "maxSize": "Max 10 MB fájlonként",
     "uploading": "Feltöltés folyamatban...",
-    "count": "{{count}} csatolt fájl(ok)"
+    "count": "{{count}} csatolt fájl(ok)",
+    "dropHere": "Húzza ide a fájlokat csatoláshoz",
+    "dragOutHint": "Kattintson a letöltéshez, vagy húzza az asztalra"
   },
   "cookies": {
     "title": "Süti kezelés",

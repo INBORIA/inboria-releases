@@ -2322,7 +2322,9 @@
     "remove": "Odstrani",
     "maxSize": "Maks 10 MB na datoteko",
     "uploading": "Nalagam...",
-    "count": "{{count}} priponka(e)"
+    "count": "{{count}} priponka(e)",
+    "dropHere": "Spustite datoteke tukaj za priponke",
+    "dragOutHint": "Kliknite za prenos ali povlecite na namizje"
   },
   "cookies": {
     "title": "Upravljanje s piškotki",

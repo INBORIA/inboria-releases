@@ -2346,7 +2346,9 @@
     "remove": "Remove",
     "maxSize": "Max 10 MB per file",
     "uploading": "Uploading...",
-    "count": "{{count}} attachment(s)"
+    "count": "{{count}} attachment(s)",
+    "dropHere": "Drop files here to attach them",
+    "dragOutHint": "Click to download, or drag to your desktop"
   },
   "cookies": {
     "title": "Cookie Management",

@@ -2322,7 +2322,9 @@
     "remove": "Buang",
     "maxSize": "Maks 10 Mo setiap fail",
     "uploading": "Muat naik sedang berlangsung...",
-    "count": "{{count}} lampiran"
+    "count": "{{count}} lampiran",
+    "dropHere": "Letak fail di sini untuk lampirkan",
+    "dragOutHint": "Klik untuk muat turun, atau seret ke desktop"
   },
   "cookies": {
     "title": "Pengurusan kuki",

@@ -2322,7 +2322,9 @@
     "remove": "Pašalinti",
     "maxSize": "Maks 10 MB vienam failui",
     "uploading": "Įkeliama...",
-    "count": "{{count}} prisegtas(-i) failas(-ai)"
+    "count": "{{count}} prisegtas(-i) failas(-ai)",
+    "dropHere": "Numeskite failus čia, kad pridėtumėte",
+    "dragOutHint": "Spustelėkite, kad atsisiųstumėte, arba vilkite į darbalaukį"
   },
   "cookies": {
     "title": "Slapukų valdymas",

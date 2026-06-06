@@ -2322,7 +2322,9 @@
     "remove": "Noņemt",
     "maxSize": "Maks. 10 MB uz failu",
     "uploading": "Augšupielāde notiek...",
-    "count": "{{count}} pielikums(-i)"
+    "count": "{{count}} pielikums(-i)",
+    "dropHere": "Nometiet failus šeit, lai pievienotu",
+    "dragOutHint": "Klikšķiniet, lai lejupielādētu, vai velciet uz darbvirsmu"
   },
   "cookies": {
     "title": "Sīkdatņu pārvaldība",

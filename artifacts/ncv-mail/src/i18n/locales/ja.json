@@ -2322,7 +2322,9 @@
     "remove": "削除",
     "maxSize": "ファイルごとに最大10MB",
     "uploading": "アップロード中...",
-    "count": "{{count}} 添付ファイル"
+    "count": "{{count}} 添付ファイル",
+    "dropHere": "ファイルをここにドロップして添付します",
+    "dragOutHint": "クリックしてダウンロード、またはデスクトップにドラッグします"
   },
   "cookies": {
     "title": "クッキーの管理",

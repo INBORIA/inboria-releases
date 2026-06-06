@@ -2332,7 +2332,9 @@
     "remove": "Entfernen",
     "maxSize": "Max 10 MB pro Datei",
     "uploading": "Hochladen...",
-    "count": "{{count}} Anhang(ä)e"
+    "count": "{{count}} Anhang(ä)e",
+    "dropHere": "Dateien hier ablegen, um sie anzuhängen",
+    "dragOutHint": "Klicken Sie zum Herunterladen oder auf den Desktop ziehen"
   },
   "cookies": {
     "title": "Cookie-Verwaltung",

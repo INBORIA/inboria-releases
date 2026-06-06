@@ -2336,7 +2336,9 @@
     "remove": "Retirer",
     "maxSize": "Max 10 Mo par fichier",
     "uploading": "Upload en cours...",
-    "count": "{{count}} pièce(s) jointe(s)"
+    "count": "{{count}} pièce(s) jointe(s)",
+    "dropHere": "Déposez les fichiers ici pour les joindre",
+    "dragOutHint": "Cliquez pour télécharger, ou glissez vers le bureau"
   },
   "cookies": {
     "title": "Gestion des cookies",

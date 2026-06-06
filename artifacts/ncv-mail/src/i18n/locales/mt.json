@@ -2322,7 +2322,9 @@
     "remove": "Neħħi",
     "maxSize": "Max 10 Mo għal kull fajl",
     "uploading": "Upload għaddej...",
-    "count": "{{count}} fajl(i) magħqudin"
+    "count": "{{count}} fajl(i) magħqudin",
+    "dropHere": "Qiegħed il-fajls hawn biex iżżid",
+    "dragOutHint": "Ikklikkja biex tniżżel, jew iġbed lejn id-desktop"
   },
   "cookies": {
     "title": "Ġestjoni tal-cookies",
