@@ -749,7 +749,7 @@ export default function Taches() {
         />
       )}
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-[1600px]">
-        {!detailOpen && <BackToInboxButton />}
+        {!detailOpen && <BackToInboxButton iconOnly />}
         {!detailOpen && (
         <>
         {/* Onglets Mes tâches / Équipe + actions à droite (Nouvelle tâche /
