@@ -207,9 +207,8 @@
       return readJson(r).then(function (data) {
         if (!r.ok)
           throw new Error(data.error || "Inboria est momentanément indisponible.");
-        var reply = cleanReply(data.reply || "");
         history.push({ role: "assistant", content: data.reply || "" });
-        return reply;
+        return data.reply || "";
       });
     });
   }
@@ -218,21 +217,206 @@
     if (!text) return "";
     return text
       .replace(/```inboria-draft\s*([\s\S]*?)```/g, function (_m, inner) {
-        var b = inner.match(/body:\s*([\s\S]*)/i);
-        return b ? "\n" + b[1].trim() : inner.trim();
+        return "\n" + extractDraftBody(inner);
       })
       .replace(/```[a-z-]*\s*([\s\S]*?)```/g, function (_m, inner) {
         return inner.trim();
       })
-      // Ce pont affiche le brouillon / RDV en texte simple (pas de carte ni de
-      // boutons Envoyer / Modifier / Bloquer) : on retire la consigne du prompt
-      // qui renvoie l'utilisateur vers ces boutons inexistants ici.
+      // Les blocs RDV restent en texte simple (pas de carte) : on retire la
+      // consigne du prompt qui renvoie vers des boutons inexistants ici.
       .replace(
         /Cliquez sur [^.]*\b(?:Envoyer|Modifier|Bloquer)\b[^.]*\.(?:\s*(?:Inboria|Le RDV)[^.]*\.)?/gi,
         "",
       )
       .replace(/\n{3,}/g, "\n\n")
       .trim();
+  }
+
+  // Extrait proprement le corps d'un bloc inboria-draft (gère "body: |" + indentation).
+  function extractDraftBody(inner) {
+    var m = inner.match(/body:\s*\|?[ \t]*\r?\n([\s\S]*)$/i);
+    if (!m) {
+      var m2 = inner.match(/body:\s*(.*)$/i);
+      return m2 ? m2[1].trim() : inner.trim();
+    }
+    var lines = m[1].replace(/\s+$/, "").split(/\r?\n/);
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (l.trim()) {
+        var n = l.match(/^[ \t]*/)[0].length;
+        if (n < min) min = n;
+      }
+    });
+    if (!isFinite(min)) min = 0;
+    return lines
+      .map(function (l) {
+        return l.slice(min);
+      })
+      .join("\n")
+      .trim();
+  }
+
+  // Repère un brouillon de réponse et en extrait to / subject / body + intro.
+  function parseDraft(raw) {
+    if (!raw) return null;
+    var m = raw.match(/```inboria-draft\s*([\s\S]*?)```/);
+    if (!m) return null;
+    var inner = m[1];
+    var to = (inner.match(/^[ \t]*to:\s*(.+)$/im) || [])[1] || "";
+    var subject = (inner.match(/^[ \t]*subject:\s*(.+)$/im) || [])[1] || "";
+    var body = extractDraftBody(inner);
+    var intro = raw
+      .slice(0, m.index)
+      .replace(
+        /Cliquez sur [^.]*\b(?:Envoyer|Modifier|Bloquer)\b[^.]*\.(?:\s*(?:Inboria|Le RDV)[^.]*\.)?/gi,
+        "",
+      )
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+    return { to: to.trim(), subject: subject.trim(), body: body, intro: intro };
+  }
+
+  // Carte brouillon avec vrais boutons « Envoyer » + « Modifier dans Inboria ».
+  function renderDraftCard(draft) {
+    var box = $("messages");
+    var card = document.createElement("div");
+    card.className = "msg bot";
+
+    if (draft.intro) {
+      var intro = document.createElement("div");
+      intro.style.marginBottom = "8px";
+      renderMailRefs(intro, draft.intro);
+      card.appendChild(intro);
+    }
+
+    var preview = document.createElement("div");
+    preview.style.cssText =
+      "white-space:pre-wrap;border:1px solid rgba(148,163,184,.25);" +
+      "background:rgba(148,163,184,.08);border-radius:8px;padding:10px;" +
+      "font-size:13px;line-height:1.5;margin-bottom:8px;";
+    if (draft.subject) {
+      var subj = document.createElement("div");
+      subj.style.cssText = "font-weight:600;margin-bottom:6px;";
+      subj.textContent = "Objet : " + draft.subject;
+      preview.appendChild(subj);
+    }
+    var bodyEl = document.createElement("div");
+    renderMailRefs(bodyEl, draft.body);
+    preview.appendChild(bodyEl);
+    card.appendChild(preview);
+
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:8px;align-items:center;flex-wrap:wrap;";
+
+    var sendBtn = document.createElement("button");
+    sendBtn.type = "button";
+    sendBtn.textContent = "Envoyer";
+    sendBtn.style.cssText =
+      "padding:6px 14px;border:none;border-radius:8px;background:#22d3ee;" +
+      "color:#06283d;font-weight:700;font-size:13px;cursor:pointer;";
+
+    var editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.textContent = "Modifier dans Inboria";
+    editBtn.style.cssText =
+      "padding:6px 14px;border:1px solid rgba(34,211,238,.45);border-radius:8px;" +
+      "background:transparent;color:#22d3ee;font-weight:600;font-size:13px;cursor:pointer;";
+
+    var status = document.createElement("div");
+    status.style.cssText = "font-size:12px;margin-top:6px;";
+
+    sendBtn.onclick = function () {
+      sendDraft(draft, sendBtn, editBtn, status);
+    };
+    editBtn.onclick = function () {
+      openDraftInApp();
+    };
+
+    row.appendChild(sendBtn);
+    row.appendChild(editBtn);
+    card.appendChild(row);
+    card.appendChild(status);
+
+    box.appendChild(card);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // « Modifier dans Inboria » : ouvre le mail dans l'app (ou le tableau de bord).
+  function openDraftInApp() {
+    if (currentEmailId) {
+      openMailById(currentEmailId);
+      return;
+    }
+    post("open", { url: INBORIA_BASE + "/dashboard?from=extension" });
+  }
+
+  // Extrait une adresse email pure depuis "Nom <email>" ou une chaîne email.
+  function extractEmail(s) {
+    if (!s) return "";
+    var m = String(s).match(/<([^>]+)>/);
+    var cand = (m ? m[1] : s).trim();
+    var mm = cand.match(/[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+/);
+    return mm ? mm[0] : "";
+  }
+
+  // Envoie le brouillon via Inboria (compte connecté), en réponse à l'expéditeur.
+  function sendDraft(draft, btn, editBtn, status) {
+    var to = extractEmail(draft.to) || extractEmail(currentContext.from) || "";
+    if (!to) {
+      status.textContent =
+        "⚠️ Destinataire introuvable. Ouvrez le mail puis réessayez.";
+      status.style.color = "#f87171";
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Envoi…";
+    status.textContent = "";
+    var payload = {
+      to: to,
+      subject: draft.subject || "(sans objet)",
+      body: draft.body,
+    };
+    if (currentEmailId) payload.replyToEmailId = currentEmailId;
+    apiFetch("/api/emails/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) {
+        return readJson(r).then(function (data) {
+          if (!r.ok) throw new Error(data.error || "Échec de l'envoi.");
+          btn.textContent = "✓ Envoyé";
+          if (editBtn) editBtn.disabled = true;
+          status.textContent = "Réponse envoyée par Inboria.";
+          status.style.color = "#34d399";
+        });
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        btn.textContent = "Envoyer";
+        if (
+          /not authenticated|refresh failed|401|invalid or expired token|authentication failed/i.test(
+            String(err && err.message),
+          )
+        ) {
+          clearSession();
+          show("login");
+          return;
+        }
+        status.textContent =
+          "⚠️ " + (err && err.message ? err.message : "Erreur.");
+        status.style.color = "#f87171";
+      });
+  }
+
+  // Affiche la réponse : carte brouillon (avec boutons) si présente, sinon texte.
+  function renderAssistantReply(raw) {
+    var draft = parseDraft(raw);
+    if (draft && draft.body) {
+      renderDraftCard(draft);
+      return;
+    }
+    addMessage("bot", cleanReply(raw) || "(réponse vide)");
   }
 
   // Résout l'id interne Inboria du mail courant (si on a un identifiant).
@@ -330,7 +514,7 @@
     callChat(msg)
       .then(function (reply) {
         typing.remove();
-        addMessage("bot", reply || "(réponse vide)");
+        renderAssistantReply(reply);
       })
       .catch(function (err) {
         typing.remove();
