@@ -332,6 +332,19 @@ export async function restorePersistedQueryCache(): Promise<void> {
   if (!emailsPersister) return;
   // Lecture synchrone (pas de verrou gotrue) → restauration toujours < 700 ms.
   const userId = readCurrentUserIdSync();
+  // Diagnostic décisif (temporaire) : état BRUT du blob persisté AVANT restore.
+  // Tranche entre « sauvegarde qui ne tient pas » (blob ABSENT) et « mauvaise
+  // étiquette » (buster stocké ≠ attendu).
+  try {
+    const raw = window.localStorage.getItem(PERSIST_CACHE_KEY);
+    let storedBuster = "none";
+    if (raw) { try { storedBuster = (JSON.parse(raw) as any)?.buster ?? "?"; } catch { storedBuster = "unparseable"; } }
+    console.info(
+      `[inboria] boot: blob=${raw ? raw.length + "o" : "ABSENT"} storedBuster=${storedBuster} expected=${CACHE_BUSTER}:${userId.slice(0, 8)}`,
+    );
+  } catch (e) {
+    console.info(`[inboria] boot: localStorage INACCESSIBLE (${(e as Error)?.name}) — iframe sandbox ?`);
+  }
   const persistOptions = buildPersistOptions(userId);
   try {
     await persistQueryClientRestore(persistOptions as any);
@@ -409,6 +422,9 @@ function teardownPersistedCache(): void {
 function CacheCleanup() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Diagnostic (temporaire) : tout évènement d'auth. Révèle un SIGNED_OUT
+      // intempestif (verrou gotrue) qui viderait le cache → MISS au reload suivant.
+      console.info(`[inboria] auth event: ${event} uid=${session?.user?.id?.slice(0, 8) ?? "none"}`);
       if (event === "SIGNED_OUT") {
         teardownPersistedCache();
         queryClient.clear();
