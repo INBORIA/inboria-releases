@@ -316,6 +316,11 @@ function readCurrentUserIdSync(): string {
 // session apparaît.
 let _persistOwnerId: string | null = null;
 let _persistUnsub: (() => void) | null = null;
+// Dernier compte connu (survit à la déconnexion, dans la mémoire de l'onglet
+// uniquement). Permet de reconnaître une RECONNEXION du MÊME compte pour garder
+// les mails déjà en mémoire → aucune squelette/clignotement. Réinitialisé à null
+// dès qu'un AUTRE compte se connecte (la mémoire est alors purgée).
+let _lastOwnerId: string | null = null;
 
 function buildPersistOptions(userId: string) {
   return {
@@ -332,19 +337,6 @@ export async function restorePersistedQueryCache(): Promise<void> {
   if (!emailsPersister) return;
   // Lecture synchrone (pas de verrou gotrue) → restauration toujours < 700 ms.
   const userId = readCurrentUserIdSync();
-  // Diagnostic décisif (temporaire) : état BRUT du blob persisté AVANT restore.
-  // Tranche entre « sauvegarde qui ne tient pas » (blob ABSENT) et « mauvaise
-  // étiquette » (buster stocké ≠ attendu).
-  try {
-    const raw = window.localStorage.getItem(PERSIST_CACHE_KEY);
-    let storedBuster = "none";
-    if (raw) { try { storedBuster = (JSON.parse(raw) as any)?.buster ?? "?"; } catch { storedBuster = "unparseable"; } }
-    console.info(
-      `[inboria] boot: blob=${raw ? raw.length + "o" : "ABSENT"} storedBuster=${storedBuster} expected=${CACHE_BUSTER}:${userId.slice(0, 8)}`,
-    );
-  } catch (e) {
-    console.info(`[inboria] boot: localStorage INACCESSIBLE (${(e as Error)?.name}) — iframe sandbox ?`);
-  }
   const persistOptions = buildPersistOptions(userId);
   try {
     await persistQueryClientRestore(persistOptions as any);
@@ -354,21 +346,9 @@ export async function restorePersistedQueryCache(): Promise<void> {
   try {
     _persistUnsub = persistQueryClientSubscribe(persistOptions as any);
     _persistOwnerId = userId;
+    if (userId !== "anon") _lastOwnerId = userId;
   } catch {
     // Non fatal : la persistance future est simplement désactivée.
-  }
-  // Diagnostic (temporaire) : confirme depuis la console du navigateur si la
-  // restauration a réellement repeuplé la liste des mails (cache HIT) ou non
-  // (cache MISS → squelette attendu). À retirer une fois le clignotement réglé.
-  try {
-    const n = queryClient
-      .getQueryCache()
-      .findAll({ predicate: (q: any) => q.queryKey?.[0] === "/api/emails" }).length;
-    console.info(
-      `[inboria] restore cache: ${n > 0 ? "HIT" : "MISS"} (owner=${userId.slice(0, 8)}, emailsQueries=${n})`,
-    );
-  } catch {
-    /* noop */
   }
 }
 
@@ -389,19 +369,24 @@ export function syncPersistedCacheOwner(userId: string): void {
     try { _persistUnsub(); } catch { /* noop */ }
     _persistUnsub = null;
   }
-  // SÉCURITÉ B2B : tout changement de propriétaire purge cache mémoire + persisté
-  // AVANT de réabonner. Cela couvre le passage "anon" → realId (où la mémoire
-  // restaurée au boot peut provenir d'un blob `v*:anon` laissé par un AUTRE compte
-  // sur un poste partagé). On ne ré-étiquette JAMAIS des mails d'origine incertaine ;
-  // le tableau de bord recharge depuis le réseau, étiqueté au bon compte.
-  queryClient.clear();
-  try { window.localStorage.removeItem(PERSIST_CACHE_KEY); } catch { /* noop */ }
+  // RECONNEXION DU MÊME COMPTE (déconnexion → reconnexion sans recharger la page) :
+  // les mails sont encore en mémoire vive (on ne les a PAS purgés à la déconnexion).
+  // On garde donc la mémoire telle quelle → aucun squelette, réaffichage instantané.
+  // Tout AUTRE cas (compte DIFFÉRENT, ou origine incertaine "anon" au boot d'un poste
+  // partagé) purge cache mémoire + persisté AVANT de réabonner : un compte ne voit
+  // JAMAIS, même brièvement, les mails d'un autre.
+  const sameAccountReconnect = userId === _lastOwnerId;
+  if (!sameAccountReconnect) {
+    queryClient.clear();
+    try { window.localStorage.removeItem(PERSIST_CACHE_KEY); } catch { /* noop */ }
+  }
   const persistOptions = buildPersistOptions(userId);
   // Sauvegarde immédiate sous le nouveau buster, puis réabonnement continu.
   try { void persistQueryClientSave(persistOptions as any); } catch { /* noop */ }
   try {
     _persistUnsub = persistQueryClientSubscribe(persistOptions as any);
     _persistOwnerId = userId;
+    _lastOwnerId = userId;
   } catch {
     /* noop */
   }
@@ -422,17 +407,21 @@ function teardownPersistedCache(): void {
 function CacheCleanup() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Diagnostic (temporaire) : tout évènement d'auth. Révèle un SIGNED_OUT
-      // intempestif (verrou gotrue) qui viderait le cache → MISS au reload suivant.
-      console.info(`[inboria] auth event: ${event} uid=${session?.user?.id?.slice(0, 8) ?? "none"}`);
       if (event === "SIGNED_OUT") {
+        // On retient le compte qui se déconnecte (mémoire de l'onglet) pour
+        // reconnaître une reconnexion du MÊME compte → réaffichage instantané.
+        if (_persistOwnerId) _lastOwnerId = _persistOwnerId;
+        // On coupe l'écriture sur disque ET on efface le blob disque (rien des
+        // mails ne reste sur le disque après déconnexion — confidentialité).
         teardownPersistedCache();
-        queryClient.clear();
         try {
           window.localStorage.removeItem(PERSIST_CACHE_KEY);
         } catch {
           // Storage may be unavailable in private mode — non fatal.
         }
+        // On NE vide PAS la mémoire vive (queryClient) : si le même compte se
+        // reconnecte dans cette fenêtre, ses mails sont réaffichés sans squelette.
+        // Un AUTRE compte qui se connecte purgera la mémoire (cf. syncPersistedCacheOwner).
         return;
       }
       // Toute session présente (login frais, refresh jeton, session initiale) :

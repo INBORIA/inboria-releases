@@ -67,6 +67,27 @@ ne prouve pas la provenance ; seule la purge au changement d'identité garantit 
 compte ne voit jamais les mails d'un autre. Diagnostic console `[inboria] restore
 cache: HIT/MISS` (temporaire) pour vérifier en prod.
 
+**PIÈGE racine #3 — le squelette ne venait PLUS du cache, mais de la déconnexion** :
+après les fixes buster/re-key, la matrice de repro réelle (confirmée par l'utilisateur +
+témoins console temporaires `[inboria] boot/restore/auth event`) était : Ctrl+R connecté =
+PAS de squelette (cache HIT, ~19 listes restaurées), redémarrage app = PAS de squelette,
+**déconnexion→reconnexion = squelette**. Cause : `SIGNED_OUT` purgeait mémoire+disque
+(sécurité) → à la reconnexion (SPA, sans rechargement) la liste se re-fetchait réellement
+→ squelette LÉGITIME. Ne pas chasser une « théorie cache miss » : prouver d'abord, par
+témoin, si le blob disque existe au boot (taille + buster stocké vs attendu) ET si un
+`SIGNED_OUT` intempestif (verrou gotrue) vide le cache. Ici les deux étaient sains.
+**Décision produit (validée user, revue architecte PASS)** : à `SIGNED_OUT` on garde la
+mémoire VIVE (queryClient PAS vidé) pour réafficher instantanément le MÊME compte qui se
+reconnecte dans la fenêtre ; on efface toujours le blob DISQUE + on coupe l'abonnement
+(confidentialité : rien sur disque post-logout). Variable module `_lastOwnerId` (mémoire
+onglet) survit au logout ; à `SIGNED_IN`, `syncPersistedCacheOwner` ne purge la mémoire que
+si `userId !== _lastOwnerId` (compte DIFFÉRENT). **Why** : le seul moment où un squelette
+restait était le re-fetch post-logout ; le supprimer sans rouvrir la faille inter-comptes
+exige de distinguer « même compte » (garder RAM) de « autre compte » (purger RAM+disque).
+**How to apply** : rétention RAM post-logout = compromis assumé (attaquant local même
+onglet) ; ne JAMAIS étendre au disque. Tout nouveau cache user-scopé doit purger sur
+changement d'identité, pas sur la simple déconnexion.
+
 **Complément anti-flash — squelette RETARDÉ** : le cache seul réduit le flash mais
 n'élimine pas les cas où `isLoading` est vrai une fraction de seconde (cache absent
 après déconnexion, restore qui rate la 1ʳᵉ frame, gros chunk dashboard). Un squelette
