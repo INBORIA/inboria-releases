@@ -24,14 +24,39 @@ interface DraftDto extends DraftFields {
   sendClaimedAt?: string | null;
 }
 
-// Couleur déterministe par utilisateur (même logique que la presence des commentaires).
+// Couleur déterministe par utilisateur, renvoyée en HEXADÉCIMAL (#rrggbb).
+// Important : y-prosemirror colore la sélection distante via `${color}70` (alpha hex) ;
+// un `hsl(...)` produirait `hsl(...)70` invalide → sélections invisibles. D'où le hex.
 export function colorForUser(userId: string): string {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
     hash = userId.charCodeAt(i) + ((hash << 5) - hash);
   }
   const hue = Math.abs(hash * 31) % 360;
-  return `hsl(${hue}, 70%, 60%)`;
+  return hslToHex(hue, 70, 60);
+}
+
+// Convertit une couleur HSL en #rrggbb.
+function hslToHex(h: number, s: number, l: number): string {
+  const sN = s / 100;
+  const lN = l / 100;
+  const c = (1 - Math.abs(2 * lN - 1)) * sN;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = lN - c / 2;
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  if (h < 60) [r, g, b] = [c, x, 0];
+  else if (h < 120) [r, g, b] = [x, c, 0];
+  else if (h < 180) [r, g, b] = [0, c, x];
+  else if (h < 240) [r, g, b] = [0, x, c];
+  else if (h < 300) [r, g, b] = [x, 0, c];
+  else [r, g, b] = [c, 0, x];
+  const toHex = (v: number) =>
+    Math.round((v + m) * 255)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 interface UseSharedDraftOptions {

@@ -28,6 +28,8 @@ type Props = {
   canSeed: boolean;
   userName: string;
   userColor: string;
+  /** Autres éditeurs présents en direct (hors soi) pour la barre de présence. */
+  peers?: { userId: string; name: string; color: string }[];
   onChange: (html: string) => void;
   minHeight?: number;
 };
@@ -46,6 +48,7 @@ export function CollaborativeComposer({
   canSeed,
   userName,
   userColor,
+  peers = [],
   onChange,
   minHeight = 480,
 }: Props) {
@@ -225,9 +228,30 @@ export function CollaborativeComposer({
         >
           <Eraser className="w-3.5 h-3.5" />
         </button>
-        <span className="ml-auto flex items-center gap-1.5 text-[10px] text-primary/80">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          {t("inbox.draftLiveCoedit", "Co-édition en direct")}
+        <span className="ml-auto flex items-center gap-2">
+          <span
+            className="flex items-center gap-1 text-[10px] text-white/90 rounded-full pl-1 pr-2 py-0.5"
+            style={{ backgroundColor: `${userColor}22`, border: `1px solid ${userColor}` }}
+            title={t("inbox.draftYou", "Vous")}
+          >
+            <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: userColor }} />
+            {t("inbox.draftYou", "Vous")}
+          </span>
+          {peers.map((p) => (
+            <span
+              key={p.userId}
+              className="flex items-center gap-1 text-[10px] text-white/90 rounded-full pl-1 pr-2 py-0.5 max-w-[120px]"
+              style={{ backgroundColor: `${p.color}22`, border: `1px solid ${p.color}` }}
+              title={p.name}
+            >
+              <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+              <span className="truncate">{p.name}</span>
+            </span>
+          ))}
+          <span className="flex items-center gap-1 text-[10px] text-primary/80">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            {t("inbox.draftLiveCoedit", "Co-édition en direct")}
+          </span>
         </span>
       </div>
       <EditorContent editor={editor} />

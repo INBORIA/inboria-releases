@@ -1500,6 +1500,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       }
                       userName={myPresenceName}
                       userColor={myColor}
+                      peers={sharedDraft.editors}
                       onChange={setReplyText}
                       minHeight={480}
                     />
