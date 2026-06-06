@@ -755,3 +755,41 @@ body[style*="overflow"] {
 .signature-editor li {
   margin: 0.1rem 0;
 }
+
+/* Éditeur collaboratif (TipTap/Yjs) — curseurs colorés en direct des autres rédacteurs. */
+.collab-editor .ProseMirror {
+  outline: none;
+}
+.collab-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #5a6270;
+}
+/* Caret coloré d'un éditeur distant. */
+.collaboration-cursor__caret {
+  position: relative;
+  margin-left: -1px;
+  margin-right: -1px;
+  border-left: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  word-break: normal;
+  pointer-events: none;
+}
+/* Étiquette avec le nom de l'éditeur distant, au-dessus du caret. */
+.collaboration-cursor__label {
+  position: absolute;
+  top: -1.4em;
+  left: -1px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 3px 3px 3px 0;
+  padding: 2px 5px;
+  color: #0c0c10;
+  user-select: none;
+  pointer-events: none;
+}

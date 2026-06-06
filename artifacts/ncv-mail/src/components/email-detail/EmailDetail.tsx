@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SignatureEditor } from "@/components/signature/signature-editor";
+import { CollaborativeComposer } from "@/components/email-detail/CollaborativeComposer";
+import { colorForUser } from "@/hooks/use-shared-draft";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
@@ -312,16 +314,26 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
   // T005 — brouillon partagé / co-rédaction temps réel (boîtes partagées / mails assignés).
   const applyingDraftRef = useRef(false);
+  // Corps initial à injecter dans l'éditeur collaboratif (premier rédacteur / éditeur seul).
+  const collabInitialBodyRef = useRef("");
+  const myColor = colorForUser(currentUserId || "");
   const sharedDraft = useSharedDraft({
     emailId: email?.id,
     sharedMailboxId: email?.sharedMailboxId || null,
     currentUserId: currentUserId || null,
     name: myPresenceName,
-    onRemote: (f: DraftFields) => {
+    // Le corps est co-édité via Yjs (CRDT) ; le hook ne synchronise que to/sujet.
+    bodyCollaborative: true,
+    onRemote: (f: DraftFields, by: string) => {
       applyingDraftRef.current = true;
       setReplyTo(f.to);
       setReplySubject(f.subject);
-      setReplyText(f.body);
+      // Le corps n'est appliqué qu'au chargement initial (amorçage de l'éditeur) ;
+      // les modifs distantes du corps passent ensuite par Yjs, pas par ici.
+      if (by === "load") {
+        collabInitialBodyRef.current = f.body;
+        setReplyText(f.body);
+      }
       setTimeout(() => {
         applyingDraftRef.current = false;
       }, 0);
@@ -336,6 +348,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       toast({ title: t("inbox.sharedDraftSentByOther", "{{name}} a envoyé ce mail.", { name: who }) });
     },
   });
+  // Réinitialise le corps initial de co-édition à chaque changement de mail,
+  // pour éviter de réamorcer l'éditeur d'un brouillon avec le corps d'un autre.
+  useEffect(() => {
+    collabInitialBodyRef.current = "";
+  }, [email?.id]);
   // Pousse les modifications locales du composer vers les autres éditeurs.
   useEffect(() => {
     if (!sharedDraft.active || applyingDraftRef.current) return;
@@ -1471,13 +1488,30 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 </div>
                 <div>
                   <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
-                  <SignatureEditor
-                    value={replyText}
-                    onChange={setReplyText}
-                    placeholder={t("inbox.replyPlaceholder")}
-                    hideHint
-                    minHeight={480}
-                  />
+                  {sharedDraft.active && sharedDraft.draftId ? (
+                    <CollaborativeComposer
+                      key={sharedDraft.draftId}
+                      draftId={sharedDraft.draftId}
+                      initialHtml={collabInitialBodyRef.current || replyText}
+                      canSeed={
+                        !sharedDraft.createdBy ||
+                        sharedDraft.createdBy === currentUserId ||
+                        sharedDraft.editors.length === 0
+                      }
+                      userName={myPresenceName}
+                      userColor={myColor}
+                      onChange={setReplyText}
+                      minHeight={480}
+                    />
+                  ) : (
+                    <SignatureEditor
+                      value={replyText}
+                      onChange={setReplyText}
+                      placeholder={t("inbox.replyPlaceholder")}
+                      hideHint
+                      minHeight={480}
+                    />
+                  )}
                 </div>
                 <div className="flex items-center gap-2 justify-between">
                   <div className="flex items-center gap-2">

@@ -17,6 +17,7 @@ export interface DraftEditor {
 
 interface DraftDto extends DraftFields {
   id: string;
+  createdBy?: string | null;
   updatedBy: string;
   updatedAt: string;
   sendClaimedBy?: string | null;
@@ -24,7 +25,7 @@ interface DraftDto extends DraftFields {
 }
 
 // Couleur déterministe par utilisateur (même logique que la presence des commentaires).
-function colorForUser(userId: string): string {
+export function colorForUser(userId: string): string {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
     hash = userId.charCodeAt(i) + ((hash << 5) - hash);
@@ -38,6 +39,10 @@ interface UseSharedDraftOptions {
   sharedMailboxId?: string | null;
   currentUserId?: string | null;
   name?: string | null;
+  // Quand true, le corps du message est co-édité via Yjs (CRDT) côté composer :
+  // le hook NE synchronise alors plus le champ `body` (ni broadcast ni PATCH),
+  // il ne gère que destinataire / sujet + présence + verrou d'envoi.
+  bodyCollaborative?: boolean;
   // Appelé quand le contenu distant (autre éditeur) doit être appliqué au composer.
   onRemote: (fields: DraftFields, by: string) => void;
   // Appelé quand un autre membre a envoyé le mail (le composer doit se fermer).
@@ -57,11 +62,13 @@ export function useSharedDraft({
   sharedMailboxId,
   currentUserId,
   name,
+  bodyCollaborative,
   onRemote,
   onClosedByOther,
 }: UseSharedDraftOptions) {
   const [active, setActive] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [createdBy, setCreatedBy] = useState<string | null>(null);
   const [editors, setEditors] = useState<DraftEditor[]>([]);
   const [lastEditor, setLastEditor] = useState<{ name: string; at: number } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -82,6 +89,7 @@ export function useSharedDraft({
   useEffect(() => {
     setActive(false);
     setDraftId(null);
+    setCreatedBy(null);
     setEditors([]);
     setLastEditor(null);
     setSendClaimedBy(null);
@@ -124,6 +132,7 @@ export function useSharedDraft({
           lastSyncedRef.current = JSON.stringify(seed);
         }
         setSendClaimedBy(draft.sendClaimedBy ?? null);
+        setCreatedBy(draft.createdBy ?? currentUserId ?? null);
         setDraftId(draft.id);
         setActive(true);
       } catch {
@@ -136,6 +145,7 @@ export function useSharedDraft({
   const deactivate = useCallback(() => {
     setActive(false);
     setDraftId(null);
+    setCreatedBy(null);
     setEditors([]);
     setLastEditor(null);
     setSendClaimedBy(null);
@@ -228,7 +238,11 @@ export function useSharedDraft({
           subject: String(payload.subject ?? ""),
           body: String(payload.body ?? ""),
         };
-        lastSyncedRef.current = JSON.stringify(fields);
+        // L'anti-écho doit comparer la MÊME forme que celle émise par sync() :
+        // en mode co-édition le corps est exclu, sinon on garde le payload complet.
+        lastSyncedRef.current = JSON.stringify(
+          bodyCollaborative ? { to: fields.to, cc: fields.cc, subject: fields.subject } : fields,
+        );
         setLastEditor({ name: String(payload.name ?? "…"), at: Date.now() });
         onRemoteRef.current(fields, String(payload.by ?? ""));
       })
@@ -256,7 +270,12 @@ export function useSharedDraft({
   const sync = useCallback(
     (fields: DraftFields) => {
       if (!active || !draftId) return;
-      const json = JSON.stringify(fields);
+      // En mode co-édition, le corps est géré par Yjs : on ne synchronise ici
+      // que destinataire / sujet (le champ body est exclu du broadcast ET du PATCH).
+      const payload: Partial<DraftFields> = bodyCollaborative
+        ? { to: fields.to, cc: fields.cc, subject: fields.subject }
+        : fields;
+      const json = JSON.stringify(payload);
       if (json === lastSyncedRef.current) return; // écho d'une modif distante, ou rien de neuf
       lastSyncedRef.current = json;
 
@@ -266,7 +285,7 @@ export function useSharedDraft({
           ?.send({
             type: "broadcast",
             event: "patch",
-            payload: { by: currentUserId, name: myInfoRef.current.name, ...fields },
+            payload: { by: currentUserId, name: myInfoRef.current.name, ...payload },
           })
           .catch(() => {});
       }, 250);
@@ -277,7 +296,7 @@ export function useSharedDraft({
         try {
           await authJson(`api/drafts/${draftId}`, {
             method: "PATCH",
-            body: JSON.stringify(fields),
+            body: JSON.stringify(payload),
           });
         } catch {
           /* noop */
@@ -285,7 +304,7 @@ export function useSharedDraft({
         setSaving(false);
       }, 900);
     },
-    [active, draftId, currentUserId],
+    [active, draftId, currentUserId, bodyCollaborative],
   );
 
   // Nettoyage des timers au démontage.
@@ -299,6 +318,7 @@ export function useSharedDraft({
   return {
     active,
     draftId,
+    createdBy,
     editors,
     lastEditor,
     saving,
