@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "@/i18n";
-import App from "./App";
+import App, { restorePersistedQueryCache } from "./App";
 import "./index.css";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -141,8 +141,19 @@ if (isPaymentsEnabled() && typeof document !== "undefined") {
   document.head.appendChild(script);
 }
 
-createRoot(document.getElementById("root")!).render(
-  <ErrorBoundary>
-    <App />
-  </ErrorBoundary>,
+function mountApp() {
+  createRoot(document.getElementById("root")!).render(
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>,
+  );
+}
+
+// On restaure le cache des listes de mails (localStorage) AVANT le 1er rendu
+// pour que la Réception s'affiche instantanément à la connexion, sans squelette
+// gris. Garde-fou : si la restauration traîne (>700 ms) ou échoue, on démarre
+// l'app quand même — jamais d'écran bloqué en attendant le cache.
+const restoreGuard = new Promise<void>((resolve) => setTimeout(resolve, 700));
+Promise.race([restorePersistedQueryCache().catch(() => {}), restoreGuard]).finally(
+  mountApp,
 );

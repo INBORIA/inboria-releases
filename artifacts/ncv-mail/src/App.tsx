@@ -2,6 +2,11 @@ import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wo
 import { useEffect, useLayoutEffect, lazy, Suspense } from "react";
 import { getStoredNcvTheme } from "@/lib/inbox-theme";
 import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from "@tanstack/react-query-persist-client";
 import { getGetProfileQueryKey, useGetMyOrganisation, getGetMyOrganisationQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -226,9 +231,76 @@ const queryClient = new QueryClient({
   },
 });
 
-// PersistQueryClientProvider temporarily disabled: hydration suspected of
-// breaking the app on page reload (ref: dev preview blank-after-reload bug).
-// Re-enable once root cause is confirmed and a safer hydration path exists.
+// ---------------------------------------------------------------------------
+// Cache persistant des listes d'emails (anti-clignotement à la connexion).
+//
+// Problème résolu : à chaque connexion / rechargement, la mémoire de l'app est
+// vide → la liste des mails affichait un squelette gris pendant 1-2 s le temps
+// de l'aller-retour réseau. On enregistre donc le résultat des listes de mails
+// dans le navigateur (localStorage) pour le ré-afficher INSTANTANÉMENT au
+// rechargement suivant, pendant qu'une mise à jour silencieuse tourne en
+// arrière-plan (stale-while-revalidate).
+//
+// Sécurité (ancien bug d'écran blanc au rechargement) : on ne persiste QUE les
+// requêtes de liste de mails réussies (clé `/api/emails`). Le profil, l'orga et
+// l'auth ne sont JAMAIS persistés → aucun risque de réhydrater une donnée au
+// mauvais format dans un composant critique. `buster` (CACHE_BUSTER) purge tout
+// le cache stocké quand on le change (ex. après un changement de format).
+const emailsPersister =
+  typeof window !== "undefined"
+    ? createSyncStoragePersister({
+        storage: window.localStorage,
+        key: PERSIST_CACHE_KEY,
+        throttleTime: 1000,
+      })
+    : null;
+
+const shouldDehydrateEmailsQuery = (query: {
+  queryKey: readonly unknown[];
+  state: { status: string };
+}) => query.state.status === "success" && query.queryKey?.[0] === "/api/emails";
+
+/**
+ * Restaure le cache des listes de mails depuis le navigateur AVANT le premier
+ * rendu (appelé depuis main.tsx), puis abonne le client pour ré-enregistrer le
+ * cache à chaque changement. Tolérant aux pannes : si la restauration échoue ou
+ * traîne, on n'empêche jamais l'app de démarrer (garde-fou côté main.tsx).
+ *
+ * ISOLATION DES COMPTES (sécurité B2B) : le cache stocké est étiqueté avec
+ * l'identifiant de l'utilisateur connecté via `buster`. Si le cache présent
+ * dans ce navigateur a été écrit par un AUTRE compte (ex. poste partagé, session
+ * expirée sans déconnexion explicite), le `buster` ne correspond pas →
+ * `persistQueryClientRestore` jette ce cache au lieu de l'afficher. Un compte ne
+ * peut donc jamais voir, même brièvement, les mails d'un autre.
+ */
+export async function restorePersistedQueryCache(): Promise<void> {
+  if (!emailsPersister) return;
+  let userId = "anon";
+  try {
+    const { data } = await supabase.auth.getSession();
+    userId = data.session?.user?.id ?? "anon";
+  } catch {
+    // Session illisible — on traite comme anonyme (rien de sensible restauré).
+  }
+  const persistOptions = {
+    queryClient,
+    persister: emailsPersister,
+    maxAge: ONE_DAY,
+    // buster lié à l'utilisateur : tout cache d'un autre compte est ignoré.
+    buster: `${CACHE_BUSTER}:${userId}`,
+    dehydrateOptions: { shouldDehydrateQuery: shouldDehydrateEmailsQuery },
+  };
+  try {
+    await persistQueryClientRestore(persistOptions as any);
+  } catch {
+    // Cache corrompu ou incompatible — on ignore, l'app charge depuis le réseau.
+  }
+  try {
+    persistQueryClientSubscribe(persistOptions as any);
+  } catch {
+    // Non fatal : la persistance future est simplement désactivée.
+  }
+}
 
 /**
  * Clears React Query cache (memory + persisted) when the user signs out so
