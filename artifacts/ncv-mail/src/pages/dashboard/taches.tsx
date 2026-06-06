@@ -31,7 +31,7 @@ import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import {
   Calendar, Mail, Mail as MailIcon, MailOpen, Trash2, Sparkles, Download,
   Reply, Send, Wand2, Loader2, Plus, RotateCcw, CheckCircle2,
-  Check, X, ChevronRight, CheckSquare, Square,
+  Check, X, ChevronRight, ArrowLeft, CheckSquare, Square,
   Forward, UserPlus, Copy, Type as TypeIcon, ExternalLink,
   Clock, Archive, Printer,
 } from "lucide-react";
@@ -1066,7 +1066,7 @@ export default function Taches() {
                   aria-label={t("common.back", "Retour")}
                   className="flex items-center gap-1.5 px-4 py-2 text-[12px] text-[#8b95a7] hover:text-white hover:bg-white/[0.04] border-b border-[#1f2937] transition-colors"
                 >
-                  <ChevronRight className="w-3 h-3 rotate-180" />
+                  <ArrowLeft className="w-3.5 h-3.5" />
                 </button>
                 {/* Bloc tâche */}
                 <div className="px-4 py-3 border-b border-[#1f2937] flex items-start gap-3">
