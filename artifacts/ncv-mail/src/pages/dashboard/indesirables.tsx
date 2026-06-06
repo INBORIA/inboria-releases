@@ -24,7 +24,7 @@ import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { removeEmailOptimistic } from "@/lib/optimistic-email";
-import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download, Check } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download, Check } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -427,7 +427,7 @@ export default function Indesirables() {
               aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </div>
 
@@ -551,7 +551,7 @@ export default function Indesirables() {
               aria-label={t("common.back", "Retour")}
               className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>
