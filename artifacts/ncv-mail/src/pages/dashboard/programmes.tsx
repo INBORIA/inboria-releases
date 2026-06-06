@@ -194,7 +194,7 @@ export default function Programmes() {
         showHeaderCollapseToggle={false}
       />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
-        <BackToInboxButton />
+        <BackToInboxButton iconOnly />
         <section>
           <div className="flex items-center gap-2 mb-3">
             <CalendarClock className="w-5 h-5 text-[color:var(--mail-text-meta,#b8c5d6)]" />
