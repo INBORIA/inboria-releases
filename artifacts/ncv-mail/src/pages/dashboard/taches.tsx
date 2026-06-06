@@ -2,7 +2,6 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
-import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import {
@@ -31,7 +30,7 @@ import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import {
   Calendar, Mail, Mail as MailIcon, MailOpen, Trash2, Sparkles, Download,
   Reply, Send, Wand2, Loader2, Plus, RotateCcw, CheckCircle2,
-  Check, X, ChevronRight, ArrowLeft, CheckSquare, Square,
+  Check, X, ArrowLeft, CheckSquare, Square,
   Forward, UserPlus, Copy, Type as TypeIcon, ExternalLink,
   Clock, Archive, Printer,
 } from "lucide-react";
@@ -146,7 +145,6 @@ export default function Taches() {
   // rendu en opacity-0 pour éviter le flash position basse → haute.
   // Convention partagée — cf. replit.md "menu contextuel auto-flip".
   const [menuPlacement, setMenuPlacement] = useState<{ top: number; left: number; maxHeight: number } | null>(null);
-  const [showComments, setShowComments] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const taskSelectionMode = selectedTaskIds.size > 0;
 
@@ -164,7 +162,7 @@ export default function Taches() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (emailDetailTask) { setEmailDetailTask(null); setShowComments(false); return; }
+        if (emailDetailTask) { setEmailDetailTask(null); return; }
         setSelectedTaskIds(new Set());
       }
     };
@@ -502,7 +500,7 @@ export default function Taches() {
   // actions email-liées agissent sur task.emailId ; onDelete supprime
   // la TÂCHE (pas le mail) car on est sur la page Tâches.
   const buildTaskHoverCb = (task: any): HoverActionsCb => ({
-    onOpen: () => { setEmailDetailTask(task); setShowComments(false); },
+    onOpen: () => { setEmailDetailTask(task); },
     onReply: () => openReplyForTask(task),
     onForward: () => openForwardForTask(task),
     onCreateTask: () => handleEmailCreateTaskFromTask(task),
@@ -679,7 +677,6 @@ export default function Taches() {
     if (!target) return;
     openTaskHandledRef.current = wantedId;
     setEmailDetailTask(target);
-    setShowComments(false);
     // Clean URL (keep pathname + hash).
     sp.delete("openTask");
     const qs = sp.toString();
@@ -899,8 +896,8 @@ export default function Taches() {
                           return;
                         }
                         // Ouverture/fermeture du panneau détail
-                        if (isOpen) { setEmailDetailTask(null); setShowComments(false); }
-                        else { setEmailDetailTask(task); setShowComments(false); }
+                        if (isOpen) { setEmailDetailTask(null); }
+                        else { setEmailDetailTask(task); }
                       }}
                       onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(task.id); } }}
                       onContextMenu={(e) => handleTaskContextMenu(e, task.id)}
@@ -1061,7 +1058,7 @@ export default function Taches() {
               <div data-detail-panel className="rounded-lg border border-[#1f2937] bg-white/[0.02] flex flex-col overflow-hidden">
                 {/* Barre retour */}
                 <button
-                  onClick={() => { setEmailDetailTask(null); setShowComments(false); }}
+                  onClick={() => { setEmailDetailTask(null); }}
                   title={t("common.back", "Retour")}
                   aria-label={t("common.back", "Retour")}
                   className="flex items-center gap-1.5 px-4 py-2 text-[12px] text-[#8b95a7] hover:text-white hover:bg-white/[0.04] border-b border-[#1f2937] transition-colors"
@@ -1095,7 +1092,7 @@ export default function Taches() {
                     </div>
                   </div>
                   <button
-                    onClick={() => { setEmailDetailTask(null); setShowComments(false); }}
+                    onClick={() => { setEmailDetailTask(null); }}
                     className="p-1.5 rounded text-[#8b95a7] hover:text-white hover:bg-white/[0.06]"
                     title={t("common.close", "Fermer")}
                   >
@@ -1138,22 +1135,6 @@ export default function Taches() {
                         </div>
                       )}
 
-                      {emailDetailTask.emailId && (
-                        <div className="pt-2 border-t border-[#1f2937]">
-                          <button
-                            onClick={() => setShowComments((v) => !v)}
-                            className="flex items-center gap-1.5 text-[11px] text-[#8b95a7] hover:text-white transition-colors"
-                          >
-                            <ChevronRight className={`w-3 h-3 transition-transform ${showComments ? "rotate-90" : ""}`} />
-                            {t("inbox.commentsTitle", "Commentaires internes")}
-                          </button>
-                          {showComments && (
-                            <div className="mt-2">
-                              <EmailComments emailId={emailDetailTask.emailId} />
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-[#1f2937]">
@@ -1275,7 +1256,7 @@ export default function Taches() {
                   {hasEmail && (
                     <>
                       <button
-                        onClick={() => { setEmailDetailTask(ctxTask); setShowComments(false); setContextMenu(null); }}
+                        onClick={() => { setEmailDetailTask(ctxTask); setContextMenu(null); }}
                         className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
                       >
                         <Mail className="w-3.5 h-3.5" />
