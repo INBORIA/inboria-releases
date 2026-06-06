@@ -6852,6 +6852,21 @@ export default function Dashboard() {
                 })()
               ) : inboxMode === "shared" ? (
                 <>
+                  {!selectedEmail && (
+                    <div className="mb-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setInboxMode("personal")}
+                        title={t("common.back", "Retour")}
+                        aria-label={t("common.back", "Retour")}
+                        className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+                        data-testid="shared-back-to-inbox"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  )}
                   {/* Vue Partagées « type Missive » — 2 sélecteurs serveur :
                       Pris en charge par + Statut. Filtres exhaustifs sur tout
                       l'historique de la boîte (sauf statut ≠ Tous, qui

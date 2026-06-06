@@ -530,10 +530,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
           onClick={onBack}
           className="flex items-center gap-1 text-[12px] h-7 px-2 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
           title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
+          aria-label={t("common.back", "Retour")}
           data-testid="button-back-to-inbox"
         >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t("common.back", "Retour")}
+          <ArrowLeft className="w-3.5 h-3.5" />
         </button>
         <div className="flex-1" />
         {(() => {
