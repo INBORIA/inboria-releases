@@ -88,6 +88,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useRowDragOut } from "@/hooks/use-row-drag-out";
 import { ToastAction } from "@/components/ui/toast";
 import SnoozeButton from "@/components/wave1/SnoozeButton";
 import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
@@ -266,6 +267,7 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
   const [rowLocation] = useLocation();
   const isClassicMirror = rowLocation.includes("inbox-classic");
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
+  const dragOut = useRowDragOut(email.id, email.subject);
 
   // Étape 4 refonte Superhuman — ligne d'email aplatie style maquette :
   // dot non-lu | avatar | expéditeur | sujet — extrait — catégorie | temps
@@ -317,8 +319,18 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
         )}
       </div>
 
-      {/* Avatar — bleu */}
-      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+      {/* Avatar — bleu. Sert aussi de poignée pour glisser le mail vers le
+          bureau (fichier .eml, Chromium) sans déclencher la sélection au lasso. */}
+      <div
+        className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0 cursor-grab active:cursor-grabbing"
+        title={t("emailExport.dragHint", "Glisser vers le bureau pour enregistrer en .eml")}
+        draggable={dragOut.draggable}
+        onDragStart={dragOut.onDragStart}
+        onMouseEnter={dragOut.onMouseEnter}
+        onPointerDown={dragOut.onPointerDown}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
         <span className="text-primary text-[11px] font-semibold">
           {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
         </span>

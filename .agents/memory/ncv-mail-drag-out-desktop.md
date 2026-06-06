@@ -24,6 +24,16 @@ synchronously; if not ready, `preventDefault()` and prefetch for the next try.
 Auth: the download endpoint needs a Bearer token, so a bare endpoint URL in
 DownloadURL won't work — the blob URL sidesteps that.
 
+## Dragging a whole email from a LIST row
+Reusable hook `src/hooks/use-row-drag-out.ts` (fetches `.eml` via authFetch,
+same prefetch-on-hover/pointerdown pattern). Wire its props onto the row's
+AVATAR element, NOT the whole row — the list rows already use mousedown-drag for
+rubber-band multi-select (`onDragSelectStart`), so a full-row HTML5 `draggable`
+collides with it. The avatar handle gets `onMouseDown`/`onClick` stopPropagation
+so it neither starts the lasso nor opens the mail; its `onDragStart` also
+stopPropagations. Reference wiring: Réception (`pages/dashboard/index.tsx`
+EmailRowImpl). Roll out to other list pages (envoyes, programmes, …) the same way.
+
 ## Environment gotcha (why "it doesn't work in DEV")
 **Why:** drag-to-desktop is blocked from the Replit workspace preview because the
 app runs in an embedded (sandboxed/cross-origin) iframe; the drag never reaches
