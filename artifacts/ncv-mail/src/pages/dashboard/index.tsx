@@ -115,6 +115,27 @@ import { SearchAutocomplete, type AutocompleteItem } from "@/components/email-li
 // mail serait perdu. On ne nettoie qu'une fois le détail du mail réellement chargé
 // (clearPendingEmailId, appelé depuis un effet sur selectedEmail). TTL 2 min en
 // garde-fou pour ne jamais rouvrir un mail lors d'une visite bien ultérieure.
+// Drapeau de chargement RETARDÉ — anti-clignotement. Beaucoup de chargements de
+// liste sont très courts (cache mémoire/persisté chaud, refetch quasi instantané,
+// chunk déjà téléchargé). Afficher un squelette gris qui apparaît puis disparaît
+// en <300 ms EST précisément le « clignotement » que l'utilisateur perçoit. On ne
+// renvoie donc `true` que si `active` reste vrai en CONTINU pendant `delayMs`.
+// En dessous, l'appelant n'affiche rien (placeholder calme) plutôt qu'un squelette
+// qui flashe. Les chargements réellement longs (>delayMs) affichent le squelette
+// qui reste alors assez longtemps pour ne plus être perçu comme un flash.
+function useDelayedFlag(active: boolean, delayMs: number): boolean {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (!active) {
+      setShown(false);
+      return;
+    }
+    const id = window.setTimeout(() => setShown(true), delayMs);
+    return () => window.clearTimeout(id);
+  }, [active, delayMs]);
+  return active && shown;
+}
+
 function peekPendingEmailId(): number | null {
   try {
     if (typeof window === "undefined") return null;
@@ -3683,6 +3704,12 @@ export default function Dashboard() {
     ...(smartSort ? { sort: "smart" as const } : {}),
   }, { query: { placeholderData: (prev: any) => prev, staleTime: 120_000 } as any });
 
+  // Anti-clignotement : on n'affiche le squelette gris que si le chargement
+  // dépasse ~280 ms. En dessous (cache chaud, refetch instantané), rien de gris
+  // ne flashe. Voir useDelayedFlag.
+  const showEmailSkeleton = useDelayedFlag(emailsLoading, 280);
+  const showSharedSkeleton = useDelayedFlag(sharedEmailsLoading, 280);
+
   useEffect(() => {
     if (emailsData) {
       const paged = emailsData as PaginatedEmails;
@@ -6861,7 +6888,7 @@ export default function Dashboard() {
                     </div>
                   )}
                   {sharedEmailsLoading ? (
-                    <EmailRowSkeleton count={10} />
+                    showSharedSkeleton ? <EmailRowSkeleton count={10} /> : <div className="min-h-[200px]" />
                   ) : !selectedSharedMailboxId ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Users className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
@@ -7002,7 +7029,7 @@ export default function Dashboard() {
 
                   <div className="space-y-1">
                     {emailsLoading ? (
-                      <EmailRowSkeleton count={12} />
+                      showEmailSkeleton ? <EmailRowSkeleton count={12} /> : <div className="min-h-[200px]" />
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                         {crmFilter === "hubspot" ? (

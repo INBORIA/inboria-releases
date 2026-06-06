@@ -37,3 +37,14 @@ la garde de 700 ms de `main.tsx` → app démarre sans cache → squelette gris
 réapparaît. Lire l'id user en SYNCHRONE depuis localStorage (`sb-<ref>-auth-token`,
 gérer le préfixe `base64-`) via `readCurrentUserIdSync()`. Règle générale : tout
 ce qui s'exécute avant le 1er rendu doit éviter le verrou gotrue.
+
+**Complément anti-flash — squelette RETARDÉ** : le cache seul réduit le flash mais
+n'élimine pas les cas où `isLoading` est vrai une fraction de seconde (cache absent
+après déconnexion, restore qui rate la 1ʳᵉ frame, gros chunk dashboard). Un squelette
+qui apparaît <300 ms puis disparaît EST le clignotement perçu. Fix : hook
+`useDelayedFlag(active, delayMs)` (timeout ~280 ms) — on n'affiche `EmailRowSkeleton`
+que si le chargement dépasse le délai ; en dessous on rend un placeholder vide calme
+(`<div min-h>`), pas de gris. **Why** : un squelette bref EST le flash, pas un fetch
+lent. **How to apply** : appliquer le même pattern (drapeau retardé + placeholder
+calme) à toute nouvelle liste mails (Envoyés/Programmés/Reportés/Tâches/Archives/
+Mes dossiers/Partagées) plutôt que de gater le squelette directement sur `isLoading`.
