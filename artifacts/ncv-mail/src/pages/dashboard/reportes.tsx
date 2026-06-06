@@ -590,10 +590,12 @@ export default function Reportes() {
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <BellOff className="w-4 h-4 text-[#b8c5d6]" />
               Emails reportés
+              {(paged?.total || snoozedEmails.length) > 0 && (
+                <span className="text-[11px] font-normal text-[color:var(--mail-text-meta,#b8c5d6)]">
+                  ({paged?.total || snoozedEmails.length})
+                </span>
+              )}
             </h1>
-            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-              {(paged?.total || snoozedEmails.length)} email{(paged?.total || snoozedEmails.length) > 1 ? "s" : ""} reporté{(paged?.total || snoozedEmails.length) > 1 ? "s" : ""}
-            </p>
           </div>
         </div>
 

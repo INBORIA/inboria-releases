@@ -570,10 +570,12 @@ export default function Envoyes() {
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <Send className="w-4 h-4 text-[#b8c5d6]" />
               {t("sent.title")}
+              {(paged?.total || sentEmails.length) > 0 && (
+                <span className="text-[11px] font-normal text-[color:var(--mail-text-meta,#b8c5d6)]">
+                  ({paged?.total || sentEmails.length})
+                </span>
+              )}
             </h1>
-            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-              {t("sent.emailsSentCount", { count: paged?.total || sentEmails.length })}
-            </p>
           </div>
           <Button
             variant="outline"

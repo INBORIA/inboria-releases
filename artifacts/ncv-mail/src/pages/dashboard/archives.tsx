@@ -798,9 +798,16 @@ export default function Archives() {
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton iconOnly />
         <div className="mb-5">
-          <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>
+          <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
+            {t("archives.title")}
+            {(paged?.total || archivedEmails.length) > 0 && (
+              <span className="text-[11px] font-normal text-[color:var(--mail-text-meta,#b8c5d6)]">
+                ({paged?.total || archivedEmails.length})
+              </span>
+            )}
+          </h1>
           <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-            {t("archives.archivedByAI")} {t("archives.emailCount", { count: paged?.total || archivedEmails.length })}
+            {t("archives.archivedByAI")}
           </p>
         </div>
 
