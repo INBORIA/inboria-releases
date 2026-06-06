@@ -543,6 +543,22 @@
     "teamTasks": "Задачи команды",
     "assignedFilter": {
       "all": "Вся команда"
+    },
+    "classicInboxLink": "Старая почта",
+    "help": {
+      "comingSoonDesc": "Интегрированный центр помощи скоро появится. Пока что свяжитесь с нами через Настройки.",
+      "comingSoonTitle": "Онлайн-помощь — скоро доступна",
+      "tooltip": "Помощь (скоро доступна)"
+    },
+    "sections": {
+      "important": "Важно",
+      "other": "Прочее"
+    },
+    "shortcuts": {
+      "commands": "Команды",
+      "done": "Завершено",
+      "navigate": "Навигация",
+      "reply": "Ответить"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Объединение в процессе…",
       "mergedToast": "{{count}} письмо(а) перемещено(ы) в « {{target}} »",
       "close": "Закрыть",
-      "detecting": "Анализ в процессе…"
+      "detecting": "Анализ в процессе…",
+      "clusterLine": "{{count}} категорий с именем «{{name}}»",
+      "clusterMergeAll": "Объединить всё в одну",
+      "clusterMergeConfirmDesc": "Все электронные письма будут переназначены в одну категорию «{{name}}» (ту, которая уже содержит больше всего писем). {{deleted}} другие копии будут удалены. Действие необратимо.",
+      "clusterMergeConfirmTitle": "Объединить {{count}} категорий «{{name}}»?",
+      "clusterMergedToast": "{{count}} электронное(ые) письмо(а) объединено(ы) — {{deleted}} дубликат(ы) удалено(ы)",
+      "clusterTotalEmails": "Всего {{count}} электронных писем",
+      "clustersDesc": "Несколько категорий имеют одинаковое имя — часто создаются параллельно при сортировке. Одного объединения достаточно, чтобы всё сгруппировать.",
+      "clustersTitle": "Точные дубликаты",
+      "pairsTitle": "Похожие имена (для проверки)"
     },
     "sections": {
       "byPack": "Пакет {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Синхронизация контактов, учётных записей и возможностей Salesforce.",
       "salesforceSandbox": "Подключить организацию Sandbox (test.salesforce.com)",
       "privacy": "Конфиденциальность и доступ команды",
-      "privacyDesc": "Ваши личные электронные письма и журнал администраторских запросов"
+      "privacyDesc": "Ваши личные электронные письма и журнал администраторских запросов",
+      "calendars": "Календари",
+      "calendarsDesc": "Подключить Google Calendar и Outlook Calendar"
     },
     "b2bSection": "B2B надёжность",
     "slaCard": "SLA для общих почтовых ящиков",
@@ -1269,7 +1296,9 @@
       "enrollError": "Невозможно начать регистрацию"
     },
     "preferredVideoTitle": "Видеоконференция по умолчанию",
-    "preferredVideoDesc": "Пожалуйста, выберите поставщика видеоконференций по умолчанию для новых встреч. Meet требует подключённого календаря Google; Teams требует Outlook. Jitsi работает без аккаунта."
+    "preferredVideoDesc": "Пожалуйста, выберите поставщика видеоконференций по умолчанию для новых встреч. Meet требует подключённого календаря Google; Teams требует Outlook. Jitsi работает без аккаунта.",
+    "meetingRemindersDesc": "Inboria отправляет вежливое напоминание контакту через 48 часов после предложения встречи, оставшегося без ответа.",
+    "meetingRemindersTitle": "Автоматические напоминания о встречах"
   },
   "subscription": {
     "title": "Управляйте Вашей подпиской",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (ссылка Inboria, без аккаунта)",
     "videoMeet": "Google Meet (требуется календарь Google)",
     "videoTeams": "Microsoft Teams (требуется календарь Outlook)",
-    "videoJoin": "Присоединиться к видеоконференции"
+    "videoJoin": "Присоединиться к видеоконференции",
+    "bulkConfirmed": "{{count}} подтверждённая(ые) встреча(и)",
+    "bulkDismissed": "{{count}} проигнорированное(ые) предложение(я)",
+    "confirmSelected": "Подтвердить выбранное",
+    "dismissSelected": "Игнорировать выбранное",
+    "multi": {
+      "addParticipants": "Добавить участников",
+      "candidateSlots": "Предложенные временные слоты",
+      "externalParticipants": "Внешние участники",
+      "findCommonSlot": "Найти общий временной слот",
+      "internalParticipants": "Внутренние участники",
+      "lastReminder": "Последнее напоминание",
+      "multiStatus": {
+        "confirmed": "Подтверждено",
+        "declined": "Отклонено",
+        "partially_confirmed": "Частично подтверждено",
+        "pending": "В ожидании"
+      },
+      "neverReminded": "Без напоминаний",
+      "noCommonSlot": "Общий временной слот не найден в выбранном окне.",
+      "optional": "Необязательно",
+      "participantStatus": {
+        "accepted": "Принято",
+        "declined": "Отклонено",
+        "pending": "В ожидании",
+        "tentative": "Предварительно"
+      },
+      "participantsLabel": "Участники (разделены запятой или новой строкой)",
+      "remindParticipant": "Напомнить",
+      "remindSent": "Напоминание отправлено",
+      "required": "Обязательно",
+      "send": "Отправить приглашения",
+      "sent": "{{count}} отправленное(ые) приглашение(я)",
+      "title": "Мульти-участники"
+    },
+    "selectAll": "Выбрать всё",
+    "selectedCount": "{{count}} выбранное(ые)",
+    "statusConfirmedShort": "Подтверждено",
+    "statusCounter": "Получено встречное предложение",
+    "statusCounterMonth": "Встречное предложение",
+    "statusCounterShort": "Встречное предложение",
+    "statusDeclined": "Отклонено контактом",
+    "statusDeclinedMonth": "Отклонено",
+    "statusDeclinedShort": "Отклонено",
+    "statusPending": "Ожидание ответа",
+    "statusPendingMonth": "В ожидании",
+    "statusPendingShort": "В ожидании",
+    "syncFailed": "Синхронизация не удалась",
+    "viewDetails": "Просмотреть детали"
   },
   "supportChat": {
     "title": "Ассистент Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Сохранить как шаблон",
     "savedAsTemplate": "Письмо сохранено как шаблон",
     "suggestNameWithAI": "Предложить имя с Inboria",
-    "suggestNameShort": "Предложить"
+    "suggestNameShort": "Предложить",
+    "insertTemplate": "Вставить шаблон",
+    "pickerNoMatch": "Нет шаблонов, соответствующих вашему запросу.",
+    "pickerSearch": "Поиск шаблона…",
+    "pickerTitle": "Выбрать шаблон"
   },
   "rules": {
     "title": "Автоматические правила",
@@ -3090,7 +3171,10 @@
     "createdHint": "Скопируйте его сейчас — он больше никогда не будет показан.",
     "dismissCreated": "Я скопировал ключ",
     "usageTitle": "Пример использования",
-    "rateLimitNotice": "Лимит: 60 запросов / минуту / ключ."
+    "rateLimitNotice": "Лимит: 60 запросов / минуту / ключ.",
+    "deletePermanently": "Удалить навсегда",
+    "deletePermanentlyConfirm": "Удалить навсегда этот отозванный ключ? Это действие необратимо.",
+    "deletedToast": "Ключ удалён навсегда"
   },
   "webhooks": {
     "title": "Исходящие вебхуки",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Метаданные (отправитель, тема, дата, статус)",
     "dragHint": "Перетащите в папку для экспорта в .eml (Chrome/Edge), или нажмите для выбора формата",
     "chromeHint": "💡 В Chrome/Edge окно спросит, куда сохранить файл."
+  },
+  "calendars": {
+    "connectFailedDesc": "Пожалуйста, попробуйте снова.",
+    "connectFailedTitle": "Подключение не удалось",
+    "connectGoogle": "Подключить Google Calendar",
+    "connectGoogleDesc": "Чтение событий и запись новых встреч.",
+    "connectOutlook": "Подключить Outlook Calendar",
+    "connectOutlookDesc": "Чтение событий и запись новых встреч.",
+    "connectedToastDesc": "Синхронизация активна.",
+    "connectedToastTitle": "Календарь подключен",
+    "disconnect": "Отключить",
+    "disconnectFailed": "Удаление невозможно",
+    "disconnectedToast": "Календарь отключен",
+    "empty": "На данный момент нет подключённых календарей.",
+    "help": "Inboria использует ваши календари для проверки доступности и создания встреч, запланированных через Inboria.",
+    "schemaMissing": "Таблица calendar_accounts ещё не создана в базе. Выполните миграцию 2026_05_09_calendar_accounts.sql в Supabase.",
+    "statusConnected": "Подключено",
+    "statusReauth": "Требуется повторное подключение",
+    "subtitle": "Подключите Google Calendar или Outlook Calendar, чтобы Inboria могла видеть вашу доступность и записывать ваши встречи.",
+    "title": "Подключённые календари"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} непрочитанных · {{total}} всего",
+    "filters": {
+      "agenda": "Повестка",
+      "all": "Все",
+      "inboria": "Inboria",
+      "mails": "Письма",
+      "system": "Система",
+      "team": "Команда",
+      "unread": "Непрочитанные"
+    },
+    "sourceAgenda": "Повестка",
+    "system": "Система"
   }
 }

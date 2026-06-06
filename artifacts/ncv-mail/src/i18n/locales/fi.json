@@ -543,6 +543,22 @@
     "teamTasks": "Tiimin tehtävät",
     "assignedFilter": {
       "all": "Koko tiimi"
+    },
+    "classicInboxLink": "Vanha saapuneet",
+    "help": {
+      "comingSoonDesc": "Integroitu ohjekeskus on tulossa pian. Sillä välin ota yhteyttä Asetuksista.",
+      "comingSoonTitle": "Verkko-ohje — tulossa pian",
+      "tooltip": "Ohje (tulossa pian)"
+    },
+    "sections": {
+      "important": "Tärkeä",
+      "other": "Muut"
+    },
+    "shortcuts": {
+      "commands": "Komennot",
+      "done": "Valmis",
+      "navigate": "Navigoi",
+      "reply": "Vastaa"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Yhdistetään...",
       "mergedToast": "{{count}} sähköpostia siirretty « {{target}} »:iin",
       "close": "Sulje",
-      "detecting": "Analysoidaan..."
+      "detecting": "Analysoidaan...",
+      "clusterLine": "{{count}} kategoriaa nimeltä « {{name}} »",
+      "clusterMergeAll": "Yhdistä kaikki yhdeksi",
+      "clusterMergeConfirmDesc": "Kaikki sähköpostit siirretään yhteen kategoriaan « {{name}} » (joka sisältää jo eniten sähköposteja). {{deleted}} muut kopiot poistetaan. Toimenpide on peruuttamaton.",
+      "clusterMergeConfirmTitle": "Yhdistetäänkö {{count}} kategoriaa « {{name}} »?",
+      "clusterMergedToast": "{{count}} sähköpostia yhdistetty — {{deleted}} kaksoiskappaletta poistettu",
+      "clusterTotalEmails": "{{count}} sähköpostia yhteensä",
+      "clustersDesc": "Useilla kategorioilla on sama nimi — usein luotu rinnakkain lajittelun aikana. Yksi yhdistäminen riittää kaiken yhdistämiseen.",
+      "clustersTitle": "Tarkat kaksoiskappaleet",
+      "pairsTitle": "Samankaltaiset nimet (tarkistettavaksi)"
     },
     "sections": {
       "byPack": "Paketti {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforcen kontaktien, tilien ja mahdollisuuksien synkronointi.",
       "salesforceSandbox": "Yhdistä Sandbox-org (test.salesforce.com)",
       "privacy": "Yksityisyys ja tiimin pääsy",
-      "privacyDesc": "Yksityiset sähköpostinne ja ylläpitäjän tarkastuspäiväkirja"
+      "privacyDesc": "Yksityiset sähköpostinne ja ylläpitäjän tarkastuspäiväkirja",
+      "calendars": "Kalenterit",
+      "calendarsDesc": "Yhdistä Google- ja Outlook-kalenteri"
     },
     "b2bSection": "B2B-uskottavuus",
     "slaCard": "Jaettujen laatikoiden SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "Rekisteröintiä ei voitu aloittaa"
     },
     "preferredVideoTitle": "Oletusvideoneuvottelu",
-    "preferredVideoDesc": "Valitse uusien tapaamisten oletusvideopalveluntarjoaja. Meet vaatii yhdistetyn Google-kalenterin; Teams vaatii Outlookin. Jitsi toimii ilman tiliä."
+    "preferredVideoDesc": "Valitse uusien tapaamisten oletusvideopalveluntarjoaja. Meet vaatii yhdistetyn Google-kalenterin; Teams vaatii Outlookin. Jitsi toimii ilman tiliä.",
+    "meetingRemindersDesc": "Inboria lähettää kohteliaan muistutuksen yhteyshenkilölle 48 tuntia ehdotetun tapaamisen jälkeen, jos vastausta ei ole saatu.",
+    "meetingRemindersTitle": "Automaattiset tapaamismuistutukset"
   },
   "subscription": {
     "title": "Hallinnoi tilaustanne",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria-linkki, ilman tiliä)",
     "videoMeet": "Google Meet (Google-kalenteri vaaditaan)",
     "videoTeams": "Microsoft Teams (Outlook-kalenteri vaaditaan)",
-    "videoJoin": "Liity videoneuvotteluun"
+    "videoJoin": "Liity videoneuvotteluun",
+    "bulkConfirmed": "{{count}} vahvistettu tapaaminen",
+    "bulkDismissed": "{{count}} ehdotusta ohitettu",
+    "confirmSelected": "Vahvista valinta",
+    "dismissSelected": "Ohita valinta",
+    "multi": {
+      "addParticipants": "Lisää osallistujia",
+      "candidateSlots": "Ehdotetut ajat",
+      "externalParticipants": "Ulkopuoliset osallistujat",
+      "findCommonSlot": "Etsi yhteinen aika",
+      "internalParticipants": "Sisäiset osallistujat",
+      "lastReminder": "Viimeinen muistutus",
+      "multiStatus": {
+        "confirmed": "Vahvistettu",
+        "declined": "Hylätty",
+        "partially_confirmed": "Osittain vahvistettu",
+        "pending": "Odottaa"
+      },
+      "neverReminded": "Ei muistutuksia",
+      "noCommonSlot": "Ei yhteistä aikaa valitulla aikavälillä.",
+      "optional": "Valinnainen",
+      "participantStatus": {
+        "accepted": "Hyväksytty",
+        "declined": "Hylätty",
+        "pending": "Odottaa",
+        "tentative": "Epävarma"
+      },
+      "participantsLabel": "Osallistujat (eroteltu pilkulla tai rivinvaihdolla)",
+      "remindParticipant": "Muistuta",
+      "remindSent": "Muistutus lähetetty",
+      "required": "Pakollinen",
+      "send": "Lähetä kutsut",
+      "sent": "{{count}} kutsua lähetetty",
+      "title": "Moniosallistujat"
+    },
+    "selectAll": "Valitse kaikki",
+    "selectedCount": "{{count}} valittu",
+    "statusConfirmedShort": "Vahvistettu",
+    "statusCounter": "Vastatarjous vastaanotettu",
+    "statusCounterMonth": "Vastatarjous",
+    "statusCounterShort": "Vastatarjous",
+    "statusDeclined": "Hylätty yhteyshenkilön toimesta",
+    "statusDeclinedMonth": "Hylätty",
+    "statusDeclinedShort": "Hylätty",
+    "statusPending": "Odottaa vastausta",
+    "statusPendingMonth": "Odottaa",
+    "statusPendingShort": "Odottaa",
+    "syncFailed": "Synkronointi epäonnistui",
+    "viewDetails": "Näytä tiedot"
   },
   "supportChat": {
     "title": "Inboria-avustaja",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Tallenna mallina",
     "savedAsTemplate": "Sähköposti tallennettu mallina",
     "suggestNameWithAI": "Ehdota nimeä Inboria:lla",
-    "suggestNameShort": "Ehdota"
+    "suggestNameShort": "Ehdota",
+    "insertTemplate": "Lisää malli",
+    "pickerNoMatch": "Yksikään malli ei vastaa hakua.",
+    "pickerSearch": "Etsi mallia…",
+    "pickerTitle": "Valitse malli"
   },
   "rules": {
     "title": "Automaattiset säännöt",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopioi se nyt — sitä ei näytetä enää koskaan.",
     "dismissCreated": "Olen kopioinut avaimen",
     "usageTitle": "Käyttöesimerkki",
-    "rateLimitNotice": "Raja: 60 pyyntöä / minuutti / avain."
+    "rateLimitNotice": "Raja: 60 pyyntöä / minuutti / avain.",
+    "deletePermanently": "Poista pysyvästi",
+    "deletePermanentlyConfirm": "Poistetaanko tämä peruutettu avain pysyvästi? Tämä toimenpide on peruuttamaton.",
+    "deletedToast": "Avain poistettu pysyvästi"
   },
   "webhooks": {
     "title": "Lähtevät webhookit",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metatiedot (lähettäjä, aihe, päivämäärä, tila)",
     "dragHint": "Vetäkää kansioon viedäksenne .eml-muotoon (Chrome/Edge), tai napsauttakaa valitaksenne muodon",
     "chromeHint": "💡 Chromessa/Edgessä ikkuna kysyy, mihin tiedosto tallennetaan."
+  },
+  "calendars": {
+    "connectFailedDesc": "Yritä uudelleen.",
+    "connectFailedTitle": "Yhteys epäonnistui",
+    "connectGoogle": "Yhdistä Google-kalenteri",
+    "connectGoogleDesc": "Lue tapahtumat ja kirjoita uudet tapaamiset.",
+    "connectOutlook": "Yhdistä Outlook-kalenteri",
+    "connectOutlookDesc": "Lue tapahtumat ja kirjoita uudet tapaamiset.",
+    "connectedToastDesc": "Synkronointi on aktiivinen.",
+    "connectedToastTitle": "Kalenteri yhdistetty",
+    "disconnect": "Katkaise yhteys",
+    "disconnectFailed": "Poisto epäonnistui",
+    "disconnectedToast": "Kalenteri irrotettu",
+    "empty": "Ei yhdistettyjä kalentereita tällä hetkellä.",
+    "help": "Inboria käyttää kalentereitasi tarkistaakseen saatavuutesi ja luodakseen tapaamiset Inboriasta.",
+    "schemaMissing": "Taulukkoa calendar_accounts ei ole vielä luotu tietokantaan. Suorita migraatio 2026_05_09_calendar_accounts.sql Supabasessa.",
+    "statusConnected": "Yhdistetty",
+    "statusReauth": "Yhdistä uudelleen",
+    "subtitle": "Yhdistä Google- tai Outlook-kalenteri, jotta Inboria näkee saatavuutesi ja kirjaa tapaamisesi.",
+    "title": "Yhdistetyt kalenterit"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} lukematonta · {{total}} yhteensä",
+    "filters": {
+      "agenda": "Aikataulu",
+      "all": "Kaikki",
+      "inboria": "Inboria",
+      "mails": "Sähköpostit",
+      "system": "Järjestelmä",
+      "team": "Tiimi",
+      "unread": "Lukemattomat"
+    },
+    "sourceAgenda": "Aikataulu",
+    "system": "Järjestelmä"
   }
 }

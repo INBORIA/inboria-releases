@@ -543,6 +543,22 @@
     "teamTasks": "Teamtaken",
     "assignedFilter": {
       "all": "Heel team"
+    },
+    "classicInboxLink": "Oude inbox",
+    "help": {
+      "comingSoonDesc": "De geïntegreerde helpdesk komt binnenkort. Neem ondertussen contact met ons op via Instellingen.",
+      "comingSoonTitle": "Online hulp — binnenkort beschikbaar",
+      "tooltip": "Hulp (binnenkort beschikbaar)"
+    },
+    "sections": {
+      "important": "Belangrijk",
+      "other": "Overige"
+    },
+    "shortcuts": {
+      "commands": "Commando's",
+      "done": "Voltooid",
+      "navigate": "Navigeren",
+      "reply": "Antwoorden"
     }
   },
   "sent": {
@@ -1074,7 +1090,16 @@
       "merging": "Samenvoegen…",
       "mergedToast": "{{count}} e-mail(s) verplaatst naar \"{{target}}\"",
       "close": "Sluiten",
-      "detecting": "Bezig met scannen…"
+      "detecting": "Bezig met scannen…",
+      "clusterLine": "{{count}} categorieën genaamd « {{name}} »",
+      "clusterMergeAll": "Alles samenvoegen tot één",
+      "clusterMergeConfirmDesc": "Alle e-mails worden toegewezen aan één categorie « {{name}} » (deze met de meeste e-mails). De {{deleted}} andere kopieën worden verwijderd. Onomkeerbare actie.",
+      "clusterMergeConfirmTitle": "De {{count}} categorieën « {{name}} » samenvoegen?",
+      "clusterMergedToast": "{{count}} e-mail(s) gegroepeerd — {{deleted}} duplicaat/duplicaten verwijderd",
+      "clusterTotalEmails": "{{count}} e-mails in totaal",
+      "clustersDesc": "Meerdere categorieën hebben dezelfde naam — vaak parallel aangemaakt tijdens sorteren. Eén samenvoeging is voldoende om alles te groeperen.",
+      "clustersTitle": "Exacte duplicaten",
+      "pairsTitle": "Vergelijkbare namen (te beoordelen)"
     },
     "sections": {
       "byPack": "Pakket {{name}}",
@@ -1246,7 +1271,9 @@
       "salesforceDesc": "Synchronisatie van Salesforce-contacten, accounts en kansen.",
       "salesforceSandbox": "Verbind een Sandbox-org (test.salesforce.com)",
       "privacy": "Privacy en teamtoegang",
-      "privacyDesc": "Je privé-e-mails en het logboek van admintoegang"
+      "privacyDesc": "Je privé-e-mails en het logboek van admintoegang",
+      "calendars": "Agenda's",
+      "calendarsDesc": "Google Calendar en Outlook Calendar verbinden"
     },
     "b2bSection": "B2B-geloofwaardigheid",
     "slaCard": "SLA's gedeelde mailboxen",
@@ -1279,7 +1306,9 @@
       "enrollError": "Kan registratie niet starten"
     },
     "preferredVideoTitle": "Standaard videovergadering",
-    "preferredVideoDesc": "Kies de standaard video-aanbieder voor nieuwe afspraken. Meet vereist een verbonden Google-agenda; Teams vereist Outlook. Jitsi werkt zonder account."
+    "preferredVideoDesc": "Kies de standaard video-aanbieder voor nieuwe afspraken. Meet vereist een verbonden Google-agenda; Teams vereist Outlook. Jitsi werkt zonder account.",
+    "meetingRemindersDesc": "Inboria stuurt een beleefde herinnering naar de contactpersoon 48 uur na een onbeantwoorde afspraakvoorstel.",
+    "meetingRemindersTitle": "Automatische afspraakherinneringen"
   },
   "subscription": {
     "title": "Beheer uw abonnement",
@@ -2676,7 +2705,55 @@
     "videoJitsi": "Jitsi (Inboria-link, zonder account)",
     "videoMeet": "Google Meet (Google-agenda vereist)",
     "videoTeams": "Microsoft Teams (Outlook-agenda vereist)",
-    "videoJoin": "Deelnemen aan videogesprek"
+    "videoJoin": "Deelnemen aan videogesprek",
+    "bulkConfirmed": "{{count}} afspraak/afspraken bevestigd",
+    "bulkDismissed": "{{count}} suggestie(s) genegeerd",
+    "confirmSelected": "Selectie bevestigen",
+    "dismissSelected": "Selectie negeren",
+    "multi": {
+      "addParticipants": "Deelnemers toevoegen",
+      "candidateSlots": "Voorgestelde tijdsloten",
+      "externalParticipants": "Externe deelnemers",
+      "findCommonSlot": "Gemeenschappelijk tijdslot zoeken",
+      "internalParticipants": "Interne deelnemers",
+      "lastReminder": "Laatste herinnering",
+      "multiStatus": {
+        "confirmed": "Bevestigd",
+        "declined": "Geweigerd",
+        "partially_confirmed": "Gedeeltelijk bevestigd",
+        "pending": "In afwachting"
+      },
+      "neverReminded": "Geen herinnering",
+      "noCommonSlot": "Geen gemeenschappelijk tijdslot gevonden binnen het gekozen venster.",
+      "optional": "Optioneel",
+      "participantStatus": {
+        "accepted": "Geaccepteerd",
+        "declined": "Geweigerd",
+        "pending": "In afwachting",
+        "tentative": "Voorlopig"
+      },
+      "participantsLabel": "Deelnemers (gescheiden door komma of nieuwe regel)",
+      "remindParticipant": "Herinneren",
+      "remindSent": "Herinnering verzonden",
+      "required": "Vereist",
+      "send": "Uitnodigingen verzenden",
+      "sent": "{{count}} uitnodiging(en) verzonden",
+      "title": "Meerdere deelnemers"
+    },
+    "selectAll": "Alles selecteren",
+    "selectedCount": "{{count}} geselecteerd",
+    "statusConfirmedShort": "Bevestigd",
+    "statusCounter": "Tegenvoorstel ontvangen",
+    "statusCounterMonth": "Tegenvoorstel",
+    "statusCounterShort": "Tegenvoorstel",
+    "statusDeclined": "Geweigerd door de contactpersoon",
+    "statusDeclinedMonth": "Geweigerd",
+    "statusDeclinedShort": "Geweigerd",
+    "statusPending": "In afwachting van antwoord",
+    "statusPendingMonth": "In afw.",
+    "statusPendingShort": "In afwachting",
+    "syncFailed": "Synchronisatie mislukt",
+    "viewDetails": "Details bekijken"
   },
   "supportChat": {
     "title": "Inboria Assistent",
@@ -4573,7 +4650,10 @@
     "openedBadge": "Geopend",
     "openedBadgeCount": "{{count}} keer geopend",
     "openedAtLabel": "Eerste opening: {{date}}",
-    "notOpenedYet": "Nog niet geopend"
+    "notOpenedYet": "Nog niet geopend",
+    "snoozedSectionEmpty": "Geen uitgestelde e-mails",
+    "snoozedSectionEmptyHint": "De e-mails die u uitstelt, verschijnen hier totdat ze weer actief worden.",
+    "snoozedSectionTitle": "Uitgestelde e-mails"
   },
   "templates": {
     "title": "Sjablonen",
@@ -4607,7 +4687,11 @@
     "saveAsTemplate": "Opslaan als sjabloon",
     "savedAsTemplate": "E-mail opgeslagen als sjabloon",
     "suggestNameWithAI": "Stel een naam voor met Inboria",
-    "suggestNameShort": "Voorstellen"
+    "suggestNameShort": "Voorstellen",
+    "insertTemplate": "Template invoegen",
+    "pickerNoMatch": "Geen template komt overeen met uw zoekopdracht.",
+    "pickerSearch": "Zoek een template…",
+    "pickerTitle": "Kies een template"
   },
   "rules": {
     "title": "Automatische regels",
@@ -4731,7 +4815,10 @@
     "createdHint": "Kopieer hem nu — hij wordt niet meer getoond.",
     "dismissCreated": "Ik heb de sleutel gekopieerd",
     "usageTitle": "Voorbeeld",
-    "rateLimitNotice": "Limiet: 60 verzoeken / minuut / sleutel."
+    "rateLimitNotice": "Limiet: 60 verzoeken / minuut / sleutel.",
+    "deletePermanently": "Definitief verwijderen",
+    "deletePermanentlyConfirm": "Deze ingetrokken sleutel definitief verwijderen? Deze actie is onomkeerbaar.",
+    "deletedToast": "Sleutel definitief verwijderd"
   },
   "webhooks": {
     "title": "Uitgaande webhooks",
@@ -5070,5 +5157,39 @@
     "csvDesc": "Metadata (afzender, onderwerp, datum, status)",
     "dragHint": "Sleep naar een map om als .eml te exporteren (Chrome/Edge), of klik om een formaat te kiezen",
     "chromeHint": "💡 In Chrome/Edge vraagt een venster waar het bestand moet worden opgeslagen."
+  },
+  "calendars": {
+    "connectFailedDesc": "Probeer het opnieuw.",
+    "connectFailedTitle": "Verbinding mislukt",
+    "connectGoogle": "Google Calendar verbinden",
+    "connectGoogleDesc": "Lezen van evenementen en schrijven van nieuwe afspraken.",
+    "connectOutlook": "Outlook Calendar verbinden",
+    "connectOutlookDesc": "Lezen van evenementen en schrijven van nieuwe afspraken.",
+    "connectedToastDesc": "Synchronisatie is actief.",
+    "connectedToastTitle": "Agenda verbonden",
+    "disconnect": "Verbinding verbreken",
+    "disconnectFailed": "Verwijderen mislukt",
+    "disconnectedToast": "Agenda ontkoppeld",
+    "empty": "Momenteel geen verbonden agenda's.",
+    "help": "Inboria gebruikt uw agenda's om uw beschikbaarheid te controleren en afspraken vanuit Inboria te maken.",
+    "schemaMissing": "De tabel calendar_accounts is nog niet aangemaakt in de database. Voer de migratie 2026_05_09_calendar_accounts.sql uit in Supabase.",
+    "statusConnected": "Verbonden",
+    "statusReauth": "Opnieuw verbinden",
+    "subtitle": "Verbind Google Calendar of Outlook Calendar zodat Inboria uw beschikbaarheid kan zien en afspraken kan maken.",
+    "title": "Verbonden agenda's"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} ongelezen · {{total}} in totaal",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Alles",
+      "inboria": "Inboria",
+      "mails": "E-mails",
+      "system": "Systeem",
+      "team": "Team",
+      "unread": "Ongelezen"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Systeem"
   }
 }

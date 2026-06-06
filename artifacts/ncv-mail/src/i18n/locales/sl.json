@@ -543,6 +543,22 @@
     "teamTasks": "Skupinske naloge",
     "assignedFilter": {
       "all": "Celotna ekipa"
+    },
+    "classicInboxLink": "Stara prejemna pošta",
+    "help": {
+      "comingSoonDesc": "Vgrajeni center za pomoč prihaja zelo kmalu. Medtem nas kontaktirajte iz Nastavitev.",
+      "comingSoonTitle": "Spletna pomoč — kmalu na voljo",
+      "tooltip": "Pomoč (kmalu na voljo)"
+    },
+    "sections": {
+      "important": "Pomembno",
+      "other": "Drugo"
+    },
+    "shortcuts": {
+      "commands": "Ukazi",
+      "done": "Končano",
+      "navigate": "Navigirajte",
+      "reply": "Odgovorite"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Združevanje poteka…",
       "mergedToast": "{{count}} e-poštno sporočilo(a) premaknjeno(na) v „{{target}}“",
       "close": "Zapri",
-      "detecting": "Analiza poteka…"
+      "detecting": "Analiza poteka…",
+      "clusterLine": "{{count}} kategorij z imenom « {{name}} »",
+      "clusterMergeAll": "Združite vse v eno",
+      "clusterMergeConfirmDesc": "Vsi e-poštni naslovi bodo dodeljeni eni kategoriji « {{name}} » (tisti, ki že vsebuje največ e-poštnih sporočil). {{deleted}} druge kopije bodo izbrisane. Nepovratno dejanje.",
+      "clusterMergeConfirmTitle": "Združite {{count}} kategorij « {{name}} »?",
+      "clusterMergedToast": "{{count}} e-poštnih sporočil združenih — {{deleted}} podvojenih izbrisanih",
+      "clusterTotalEmails": "{{count}} e-poštnih sporočil skupaj",
+      "clustersDesc": "Več kategorij ima isto ime — pogosto ustvarjene vzporedno s sortiranjem. Ena združitev zadostuje za vse.",
+      "clustersTitle": "Natančni dvojniki",
+      "pairsTitle": "Podobna imena (za pregled)"
     },
     "sections": {
       "byPack": "Paket {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Sinhronizacija stikov, računov in priložnosti Salesforce.",
       "salesforceSandbox": "Povežite Sandbox organizacijo (test.salesforce.com)",
       "privacy": "Zasebnost in dostop ekipe",
-      "privacyDesc": "Vaše zasebne e-pošte in dnevnik admin pregledov"
+      "privacyDesc": "Vaše zasebne e-pošte in dnevnik admin pregledov",
+      "calendars": "Koledarji",
+      "calendarsDesc": "Povežite Google Calendar in Outlook Calendar"
     },
     "b2bSection": "B2B kredibilnost",
     "slaCard": "SLA za skupne predale",
@@ -1269,7 +1296,9 @@
       "enrollError": "Zagon registracije ni mogoč"
     },
     "preferredVideoTitle": "Privzeti videosestanek",
-    "preferredVideoDesc": "Prosimo, izberite privzetega ponudnika videosestankov za nove sestanke. Meet zahteva povezan Googlov koledar; Teams zahteva Outlook. Jitsi deluje brez računa."
+    "preferredVideoDesc": "Prosimo, izberite privzetega ponudnika videosestankov za nove sestanke. Meet zahteva povezan Googlov koledar; Teams zahteva Outlook. Jitsi deluje brez računa.",
+    "meetingRemindersDesc": "Inboria pošlje vljuden opomnik kontaktu 48 ur po predlogu sestanka, ki ostane brez odgovora.",
+    "meetingRemindersTitle": "Samodejni opomniki za RDV"
   },
   "subscription": {
     "title": "Upravljajte svojo naročnino",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (povezava Inboria, brez računa)",
     "videoMeet": "Google Meet (potreben je Googlov koledar)",
     "videoTeams": "Microsoft Teams (potreben je Outlookov koledar)",
-    "videoJoin": "Pridružite se videosestanku"
+    "videoJoin": "Pridružite se videosestanku",
+    "bulkConfirmed": "{{count}} potrjen(i) RDV",
+    "bulkDismissed": "{{count}} prezrta predloga",
+    "confirmSelected": "Potrdite izbor",
+    "dismissSelected": "Prezrite izbor",
+    "multi": {
+      "addParticipants": "Dodajte udeležence",
+      "candidateSlots": "Predlagani termini",
+      "externalParticipants": "Zunanji udeleženci",
+      "findCommonSlot": "Poiščite skupni termin",
+      "internalParticipants": "Notranji udeleženci",
+      "lastReminder": "Zadnji opomnik",
+      "multiStatus": {
+        "confirmed": "Potrjeno",
+        "declined": "Zavrnjeno",
+        "partially_confirmed": "Delno potrjeno",
+        "pending": "V čakanju"
+      },
+      "neverReminded": "Brez opomnika",
+      "noCommonSlot": "Ni najdenega skupnega termina v izbranem oknu.",
+      "optional": "Neobvezno",
+      "participantStatus": {
+        "accepted": "Sprejeto",
+        "declined": "Zavrnjeno",
+        "pending": "V čakanju",
+        "tentative": "Predvideno"
+      },
+      "participantsLabel": "Udeleženci (ločeni z vejico ali novo vrstico)",
+      "remindParticipant": "Opomnite",
+      "remindSent": "Opomnik poslan",
+      "required": "Obvezno",
+      "send": "Pošljite vabila",
+      "sent": "{{count}} poslanih vabil",
+      "title": "Več udeležencev"
+    },
+    "selectAll": "Izberite vse",
+    "selectedCount": "{{count}} izbran(i)",
+    "statusConfirmedShort": "Potrjeno",
+    "statusCounter": "Prejet nasprotni predlog",
+    "statusCounterMonth": "Nasprotni predlog",
+    "statusCounterShort": "Nasprotni predlog",
+    "statusDeclined": "Zavrnjeno s strani kontakta",
+    "statusDeclinedMonth": "Zavrnjeno",
+    "statusDeclinedShort": "Zavrnjeno",
+    "statusPending": "Čakanje na odgovor",
+    "statusPendingMonth": "V čakanju",
+    "statusPendingShort": "V čakanju",
+    "syncFailed": "Sinhronizacija ni uspela",
+    "viewDetails": "Poglejte podrobnosti"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Shrani kot predlog",
     "savedAsTemplate": "E-pošta shranjena kot predlog",
     "suggestNameWithAI": "Predlagajte ime z Inboria",
-    "suggestNameShort": "Predlagati"
+    "suggestNameShort": "Predlagati",
+    "insertTemplate": "Vstavite predlogo",
+    "pickerNoMatch": "Nobena predloga ne ustreza vašemu iskanju.",
+    "pickerSearch": "Iščite predlogo…",
+    "pickerTitle": "Izberite predlogo"
   },
   "rules": {
     "title": "Samodejna pravila",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopirajte ga zdaj — nikoli več ne bo prikazan.",
     "dismissCreated": "Kopiral sem ključ",
     "usageTitle": "Primer uporabe",
-    "rateLimitNotice": "Omejitev: 60 zahtevkov / minuto / ključ."
+    "rateLimitNotice": "Omejitev: 60 zahtevkov / minuto / ključ.",
+    "deletePermanently": "Trajno izbrišite",
+    "deletePermanentlyConfirm": "Trajno izbrišete ta preklicani ključ? Ta dejanje je nepovratno.",
+    "deletedToast": "Ključ trajno izbrisan"
   },
   "webhooks": {
     "title": "Izhodni webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metapodatki (pošiljatelj, zadeva, datum, stanje)",
     "dragHint": "Prosimo povlecite v mapo za izvoz kot .eml (Chrome/Edge), ali kliknite za izbiro formata",
     "chromeHint": "💡 V Chromu/Edgeu bo okno vprašalo, kam shraniti datoteko."
+  },
+  "calendars": {
+    "connectFailedDesc": "Prosimo, poskusite znova.",
+    "connectFailedTitle": "Povezava ni uspela",
+    "connectGoogle": "Povežite Google Calendar",
+    "connectGoogleDesc": "Branje dogodkov in pisanje novih RDV.",
+    "connectOutlook": "Povežite Outlook Calendar",
+    "connectOutlookDesc": "Branje dogodkov in pisanje novih RDV.",
+    "connectedToastDesc": "Sinhronizacija je aktivna.",
+    "connectedToastTitle": "Koledar povezan",
+    "disconnect": "Prekinite povezavo",
+    "disconnectFailed": "Odstranitev ni možna",
+    "disconnectedToast": "Koledar prekinjen",
+    "empty": "Trenutno ni povezanih koledarjev.",
+    "help": "Inboria uporablja vaše koledarje za preverjanje razpoložljivosti in ustvarjanje dogovorjenih sestankov iz Inboria.",
+    "schemaMissing": "Tabela calendar_accounts še ni ustvarjena v bazi. Zaženite migracijo 2026_05_09_calendar_accounts.sql v Supabase.",
+    "statusConnected": "Povezano",
+    "statusReauth": "Ponovno povežite",
+    "subtitle": "Povežite Google Calendar ali Outlook Calendar, da Inboria vidi vaše razpoložljivosti in zabeleži vaše sestanke.",
+    "title": "Povezani koledarji"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} neprebranih · {{total}} skupaj",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Vse",
+      "inboria": "Inboria",
+      "mails": "E-pošta",
+      "system": "Sistem",
+      "team": "Ekipa",
+      "unread": "Neprebrane"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Sistem"
   }
 }

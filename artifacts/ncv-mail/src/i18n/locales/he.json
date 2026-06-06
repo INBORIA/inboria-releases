@@ -543,6 +543,22 @@
     "teamTasks": "משימות הצוות",
     "assignedFilter": {
       "all": "כל הצוות"
+    },
+    "classicInboxLink": "תיבת דואר נכנס קלאסית",
+    "help": {
+      "comingSoonDesc": "מרכז העזרה המשולב מגיע בקרוב. בינתיים, צור קשר דרך ההגדרות.",
+      "comingSoonTitle": "עזרה מקוונת — בקרוב",
+      "tooltip": "עזרה (בקרוב)"
+    },
+    "sections": {
+      "important": "חשוב",
+      "other": "אחרים"
+    },
+    "shortcuts": {
+      "commands": "פקודות",
+      "done": "בוצע",
+      "navigate": "ניווט",
+      "reply": "השב"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "מיזוג מתבצע…",
       "mergedToast": "{{count}} דוא״ל(ים) הועברו ל« {{target}} »",
       "close": "סגור",
-      "detecting": "ניתוח מתבצע…"
+      "detecting": "ניתוח מתבצע…",
+      "clusterLine": "{{count}} קטגוריות בשם « {{name}} »",
+      "clusterMergeAll": "מזג הכל לאחת",
+      "clusterMergeConfirmDesc": "כל האימיילים יוקצו מחדש לקטגוריה אחת « {{name}} » (זו שמכילה כבר את רוב האימיילים). {{deleted}} העותקים האחרים יימחקו. פעולה בלתי הפיכה.",
+      "clusterMergeConfirmTitle": "למזג את {{count}} הקטגוריות « {{name}} »?",
+      "clusterMergedToast": "{{count}} אימייל(ים) אוחדו — {{deleted}} כפילויות נמחקו",
+      "clusterTotalEmails": "{{count}} אימיילים בסך הכל",
+      "clustersDesc": "מספר קטגוריות נושאות את אותו שם — לעיתים קרובות נוצרות במקביל למיון. מיזוג אחד מספיק כדי לאחד הכל.",
+      "clustersTitle": "כפילויות מדויקות",
+      "pairsTitle": "שמות דומים (לסקירה)"
     },
     "sections": {
       "byPack": "חבילה {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "סנכרון של אנשי קשר, חשבונות והזדמנויות Salesforce.",
       "salesforceSandbox": "חבר ארגון Sandbox (test.salesforce.com)",
       "privacy": "פרטיות וגישה לצוות",
-      "privacyDesc": "המיילים הפרטיים שלך ורשומת הביקורים של המנהל"
+      "privacyDesc": "המיילים הפרטיים שלך ורשומת הביקורים של המנהל",
+      "calendars": "לוחות שנה",
+      "calendarsDesc": "חבר את Google Calendar ו-Outlook Calendar"
     },
     "b2bSection": "אמינות B2B",
     "slaCard": "SLA תיבות משותפות",
@@ -1269,7 +1296,9 @@
       "enrollError": "לא ניתן להתחיל את ההרשמה"
     },
     "preferredVideoTitle": "שיחת וידאו ברירת מחדל",
-    "preferredVideoDesc": "אנא בחרו את ספק שיחת הווידאו ברירת המחדל לפגישות חדשות. Meet דורש יומן Google מחובר; Teams דורש Outlook. Jitsi עובד ללא חשבון."
+    "preferredVideoDesc": "אנא בחרו את ספק שיחת הווידאו ברירת המחדל לפגישות חדשות. Meet דורש יומן Google מחובר; Teams דורש Outlook. Jitsi עובד ללא חשבון.",
+    "meetingRemindersDesc": "Inboria שולחת תזכורת מנומסת לאיש הקשר 48 שעות לאחר הצעת פגישה שנותרה ללא מענה.",
+    "meetingRemindersTitle": "תזכורות אוטומטיות לפגישות"
   },
   "subscription": {
     "title": "נהל את המנוי שלך",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (קישור Inboria, ללא חשבון)",
     "videoMeet": "Google Meet (נדרש יומן Google)",
     "videoTeams": "Microsoft Teams (נדרש יומן Outlook)",
-    "videoJoin": "הצטרפו לשיחת הווידאו"
+    "videoJoin": "הצטרפו לשיחת הווידאו",
+    "bulkConfirmed": "{{count}} פגישה מאושרת",
+    "bulkDismissed": "{{count}} הצעה התעלמה",
+    "confirmSelected": "אשר בחירה",
+    "dismissSelected": "התעלם מבחירה",
+    "multi": {
+      "addParticipants": "הוסף משתתפים",
+      "candidateSlots": "מועדים מוצעים",
+      "externalParticipants": "משתתפים חיצוניים",
+      "findCommonSlot": "חפש מועד משותף",
+      "internalParticipants": "משתתפים פנימיים",
+      "lastReminder": "תזכורת אחרונה",
+      "multiStatus": {
+        "confirmed": "מאושר",
+        "declined": "נדחה",
+        "partially_confirmed": "מאושר חלקית",
+        "pending": "ממתין"
+      },
+      "neverReminded": "ללא תזכורת",
+      "noCommonSlot": "לא נמצא מועד משותף בחלון שנבחר.",
+      "optional": "אופציונלי",
+      "participantStatus": {
+        "accepted": "התקבל",
+        "declined": "נדחה",
+        "pending": "ממתין",
+        "tentative": "זמני"
+      },
+      "participantsLabel": "משתתפים (מופרדים בפסיק או שורה חדשה)",
+      "remindParticipant": "שלח תזכורת",
+      "remindSent": "תזכורת נשלחה",
+      "required": "נדרש",
+      "send": "שלח הזמנות",
+      "sent": "{{count}} הזמנות נשלחו",
+      "title": "ריבוי משתתפים"
+    },
+    "selectAll": "בחר הכל",
+    "selectedCount": "{{count}} נבחר",
+    "statusConfirmedShort": "מאושר",
+    "statusCounter": "התקבלה הצעה נגדית",
+    "statusCounterMonth": "הצעה נגדית",
+    "statusCounterShort": "הצעה נגדית",
+    "statusDeclined": "נדחה על ידי איש הקשר",
+    "statusDeclinedMonth": "נדחה",
+    "statusDeclinedShort": "נדחה",
+    "statusPending": "ממתין לתשובה",
+    "statusPendingMonth": "ממתין",
+    "statusPendingShort": "ממתין",
+    "syncFailed": "סנכרון נכשל",
+    "viewDetails": "הצג פרטים"
   },
   "supportChat": {
     "title": "עוזר Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "שמור כתבנית",
     "savedAsTemplate": "דוא״ל נשמר כתבנית",
     "suggestNameWithAI": "הצע שם עם Inboria",
-    "suggestNameShort": "הצע"
+    "suggestNameShort": "הצע",
+    "insertTemplate": "הכנס תבנית",
+    "pickerNoMatch": "לא נמצאה תבנית התואמת לחיפוש שלך.",
+    "pickerSearch": "חפש תבנית…",
+    "pickerTitle": "בחר תבנית"
   },
   "rules": {
     "title": "כללים אוטומטיים",
@@ -3090,7 +3171,10 @@
     "createdHint": "העתק אותו עכשיו — הוא לא יופיע שוב.",
     "dismissCreated": "העתקתי את המפתח",
     "usageTitle": "דוגמת שימוש",
-    "rateLimitNotice": "מגבלה: 60 בקשות / דקה / מפתח."
+    "rateLimitNotice": "מגבלה: 60 בקשות / דקה / מפתח.",
+    "deletePermanently": "מחק לצמיתות",
+    "deletePermanentlyConfirm": "למחוק לצמיתות את המפתח שבוטל? פעולה זו בלתי הפיכה.",
+    "deletedToast": "המפתח נמחק לצמיתות"
   },
   "webhooks": {
     "title": "Webhooks יוצאים",
@@ -3412,5 +3496,39 @@
     "csvDesc": "מטא-נתונים (שולח, נושא, תאריך, סטטוס)",
     "dragHint": "אנא גררו לתיקייה לייצוא כ-.eml (Chrome/Edge), או לחצו לבחירת פורמט",
     "chromeHint": "💡 ב-Chrome/Edge יישאל היכן לשמור את הקובץ."
+  },
+  "calendars": {
+    "connectFailedDesc": "אנא נסה שוב.",
+    "connectFailedTitle": "החיבור נכשל",
+    "connectGoogle": "חבר את Google Calendar",
+    "connectGoogleDesc": "קריאת אירועים וכתיבת פגישות חדשות.",
+    "connectOutlook": "חבר את Outlook Calendar",
+    "connectOutlookDesc": "קריאת אירועים וכתיבת פגישות חדשות.",
+    "connectedToastDesc": "הסנכרון פעיל.",
+    "connectedToastTitle": "לוח שנה מחובר",
+    "disconnect": "נתק",
+    "disconnectFailed": "לא ניתן להסיר",
+    "disconnectedToast": "לוח שנה מנותק",
+    "empty": "אין לוחות שנה מחוברים כרגע.",
+    "help": "Inboria משתמשת בלוחות השנה שלך כדי לבדוק את הזמינות שלך וליצור פגישות שנקבעו מ-Inboria.",
+    "schemaMissing": "הטבלה calendar_accounts עדיין לא נוצרה בבסיס הנתונים. הפעל את המיגרציה 2026_05_09_calendar_accounts.sql ב-Supabase.",
+    "statusConnected": "מחובר",
+    "statusReauth": "יש להתחבר מחדש",
+    "subtitle": "חבר את Google Calendar או Outlook Calendar כדי ש-Inboria תראה את הזמינות שלך ותכניס את הפגישות שלך.",
+    "title": "לוחות שנה מחוברים"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} לא נקראו · {{total}} בסך הכל",
+    "filters": {
+      "agenda": "יומן",
+      "all": "הכל",
+      "inboria": "Inboria",
+      "mails": "מיילים",
+      "system": "מערכת",
+      "team": "צוות",
+      "unread": "לא נקראו"
+    },
+    "sourceAgenda": "יומן",
+    "system": "מערכת"
   }
 }

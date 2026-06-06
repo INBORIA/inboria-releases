@@ -543,6 +543,22 @@
     "teamTasks": "Завдання команди",
     "assignedFilter": {
       "all": "Вся команда"
+    },
+    "classicInboxLink": "Стара пошта",
+    "help": {
+      "comingSoonDesc": "Інтегрований центр допомоги скоро з'явиться. Тим часом, зв'яжіться з нами через Налаштування.",
+      "comingSoonTitle": "Онлайн-допомога — скоро доступна",
+      "tooltip": "Допомога (скоро доступна)"
+    },
+    "sections": {
+      "important": "Важливе",
+      "other": "Інше"
+    },
+    "shortcuts": {
+      "commands": "Команди",
+      "done": "Завершено",
+      "navigate": "Навігація",
+      "reply": "Відповісти"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Об'єднання триває…",
       "mergedToast": "{{count}} електронний(і) лист(и) переміщено(і) до « {{target}} »",
       "close": "Закрити",
-      "detecting": "Аналіз триває…"
+      "detecting": "Аналіз триває…",
+      "clusterLine": "{{count}} категорій з назвою «{{name}}»",
+      "clusterMergeAll": "Об'єднати все в одну",
+      "clusterMergeConfirmDesc": "Усі електронні листи будуть перенесені в одну категорію «{{name}}» (ту, що вже містить найбільше листів). {{deleted}} інші копії будуть видалені. Дія незворотна.",
+      "clusterMergeConfirmTitle": "Об'єднати {{count}} категорій «{{name}}»?",
+      "clusterMergedToast": "{{count}} листів об'єднано — {{deleted}} дублікатів видалено",
+      "clusterTotalEmails": "Всього {{count}} листів",
+      "clustersDesc": "Кілька категорій мають однакову назву — часто створюються паралельно під час сортування. Одне об'єднання достатньо для злиття всього.",
+      "clustersTitle": "Точні дублікати",
+      "pairsTitle": "Схожі назви (для перегляду)"
     },
     "sections": {
       "byPack": "Пакет {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Синхронізація контактів, акаунтів та можливостей Salesforce.",
       "salesforceSandbox": "Підключити організацію Sandbox (test.salesforce.com)",
       "privacy": "Конфіденційність та доступ команди",
-      "privacyDesc": "Ваші приватні електронні листи та журнал адміністративних консультацій"
+      "privacyDesc": "Ваші приватні електронні листи та журнал адміністративних консультацій",
+      "calendars": "Календарі",
+      "calendarsDesc": "Підключити Google Calendar та Outlook Calendar"
     },
     "b2bSection": "B2B довіра",
     "slaCard": "SLA спільних поштових скриньок",
@@ -1269,7 +1296,9 @@
       "enrollError": "Не вдалося розпочати реєстрацію"
     },
     "preferredVideoTitle": "Відеоконференція за замовчуванням",
-    "preferredVideoDesc": "Виберіть постачальника відеоконференцій за замовчуванням для нових зустрічей. Meet потребує підключеного календаря Google; Teams потребує Outlook. Jitsi працює без облікового запису."
+    "preferredVideoDesc": "Виберіть постачальника відеоконференцій за замовчуванням для нових зустрічей. Meet потребує підключеного календаря Google; Teams потребує Outlook. Jitsi працює без облікового запису.",
+    "meetingRemindersDesc": "Inboria надсилає ввічливе нагадування контакту через 48 годин після пропозиції зустрічі, яка залишилася без відповіді.",
+    "meetingRemindersTitle": "Автоматичні нагадування про зустрічі"
   },
   "subscription": {
     "title": "Керуйте своїм підпискою",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (посилання Inboria, без облікового запису)",
     "videoMeet": "Google Meet (потрібен календар Google)",
     "videoTeams": "Microsoft Teams (потрібен календар Outlook)",
-    "videoJoin": "Приєднатися до відеоконференції"
+    "videoJoin": "Приєднатися до відеоконференції",
+    "bulkConfirmed": "{{count}} підтверджених зустрічей",
+    "bulkDismissed": "{{count}} пропозицій проігноровано",
+    "confirmSelected": "Підтвердити вибране",
+    "dismissSelected": "Ігнорувати вибране",
+    "multi": {
+      "addParticipants": "Додати учасників",
+      "candidateSlots": "Запропоновані часові проміжки",
+      "externalParticipants": "Зовнішні учасники",
+      "findCommonSlot": "Знайти спільний час",
+      "internalParticipants": "Внутрішні учасники",
+      "lastReminder": "Останнє нагадування",
+      "multiStatus": {
+        "confirmed": "Підтверджено",
+        "declined": "Відхилено",
+        "partially_confirmed": "Частково підтверджено",
+        "pending": "Очікує на підтвердження"
+      },
+      "neverReminded": "Без нагадувань",
+      "noCommonSlot": "Спільний час не знайдено у вибраному вікні.",
+      "optional": "Необов'язково",
+      "participantStatus": {
+        "accepted": "Прийнято",
+        "declined": "Відхилено",
+        "pending": "Очікує на підтвердження",
+        "tentative": "Попередньо"
+      },
+      "participantsLabel": "Учасники (розділені комою або новим рядком)",
+      "remindParticipant": "Нагадати",
+      "remindSent": "Нагадування надіслано",
+      "required": "Обов'язково",
+      "send": "Надіслати запрошення",
+      "sent": "{{count}} запрошень надіслано",
+      "title": "Багато учасників"
+    },
+    "selectAll": "Вибрати все",
+    "selectedCount": "{{count}} вибрано",
+    "statusConfirmedShort": "Підтверджено",
+    "statusCounter": "Отримано зустрічну пропозицію",
+    "statusCounterMonth": "Зустрічна пропозиція",
+    "statusCounterShort": "Зустрічна пропозиція",
+    "statusDeclined": "Відхилено контактом",
+    "statusDeclinedMonth": "Відхилено",
+    "statusDeclinedShort": "Відхилено",
+    "statusPending": "Очікує на відповідь",
+    "statusPendingMonth": "Очікує",
+    "statusPendingShort": "Очікує",
+    "syncFailed": "Синхронізація не вдалася",
+    "viewDetails": "Переглянути деталі"
   },
   "supportChat": {
     "title": "Асистент Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Зберегти як шаблон",
     "savedAsTemplate": "Електронний лист збережено як шаблон",
     "suggestNameWithAI": "Запропонувати ім'я з Inboria",
-    "suggestNameShort": "Запропонувати"
+    "suggestNameShort": "Запропонувати",
+    "insertTemplate": "Вставити шаблон",
+    "pickerNoMatch": "Жоден шаблон не відповідає Вашому запиту.",
+    "pickerSearch": "Шукати шаблон…",
+    "pickerTitle": "Вибрати шаблон"
   },
   "rules": {
     "title": "Автоматичні правила",
@@ -3090,7 +3171,10 @@
     "createdHint": "Скопіюйте його зараз — він більше ніколи не буде показаний.",
     "dismissCreated": "Я скопіював ключ",
     "usageTitle": "Приклад використання",
-    "rateLimitNotice": "Ліміт: 60 запитів / хвилину / ключ."
+    "rateLimitNotice": "Ліміт: 60 запитів / хвилину / ключ.",
+    "deletePermanently": "Видалити назавжди",
+    "deletePermanentlyConfirm": "Видалити цю відкликану ключ назавжди? Ця дія незворотна.",
+    "deletedToast": "Ключ видалено назавжди"
   },
   "webhooks": {
     "title": "Вихідні вебхуки",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Метадані (відправник, тема, дата, статус)",
     "dragHint": "Перетягніть до теки для експорту в .eml (Chrome/Edge), або клацніть для вибору формату",
     "chromeHint": "💡 У Chrome/Edge вікно запитає, де зберегти файл."
+  },
+  "calendars": {
+    "connectFailedDesc": "Будь ласка, спробуйте ще раз.",
+    "connectFailedTitle": "Помилка підключення",
+    "connectGoogle": "Підключити Google Calendar",
+    "connectGoogleDesc": "Читання подій та запис нових зустрічей.",
+    "connectOutlook": "Підключити Outlook Calendar",
+    "connectOutlookDesc": "Читання подій та запис нових зустрічей.",
+    "connectedToastDesc": "Синхронізація активна.",
+    "connectedToastTitle": "Календар підключено",
+    "disconnect": "Відключити",
+    "disconnectFailed": "Неможливо видалити",
+    "disconnectedToast": "Календар відключено",
+    "empty": "Поки що жоден календар не підключено.",
+    "help": "Inboria використовує Ваші календарі для перевірки доступності та створення зустрічей з Inboria.",
+    "schemaMissing": "Таблиця calendar_accounts ще не створена в базі. Виконайте міграцію 2026_05_09_calendar_accounts.sql у Supabase.",
+    "statusConnected": "Підключено",
+    "statusReauth": "Потрібно перепідключити",
+    "subtitle": "Підключіть Google Calendar або Outlook Calendar, щоб Inboria бачила Вашу доступність та записувала зустрічі.",
+    "title": "Підключені календарі"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} непрочитаних · {{total}} всього",
+    "filters": {
+      "agenda": "Порядок денний",
+      "all": "Все",
+      "inboria": "Inboria",
+      "mails": "Листи",
+      "system": "Система",
+      "team": "Команда",
+      "unread": "Непрочитані"
+    },
+    "sourceAgenda": "Порядок денний",
+    "system": "Система"
   }
 }

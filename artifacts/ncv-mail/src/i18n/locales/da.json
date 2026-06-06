@@ -543,6 +543,22 @@
     "teamTasks": "Teamopgaver",
     "assignedFilter": {
       "all": "Hele holdet"
+    },
+    "classicInboxLink": "Gammel indbakke",
+    "help": {
+      "comingSoonDesc": "Det integrerede hjælpecenter kommer snart. I mellemtiden, kontakt os fra Indstillinger.",
+      "comingSoonTitle": "Online hjælp — kommer snart",
+      "tooltip": "Hjælp (kommer snart)"
+    },
+    "sections": {
+      "important": "Vigtigt",
+      "other": "Andre"
+    },
+    "shortcuts": {
+      "commands": "Kommandoer",
+      "done": "Færdig",
+      "navigate": "Naviger",
+      "reply": "Svar"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Sammenfletning i gang…",
       "mergedToast": "{{count}} e-mail(s) flyttet til « {{target}} »",
       "close": "Luk",
-      "detecting": "Analyse i gang…"
+      "detecting": "Analyse i gang…",
+      "clusterLine": "{{count}} kategorier navngivet « {{name}} »",
+      "clusterMergeAll": "Flet alle til én",
+      "clusterMergeConfirmDesc": "Alle emails vil blive tildelt én kategori « {{name}} » (den der allerede indeholder flest emails). De {{deleted}} andre kopier vil blive slettet. Uigenkaldelig handling.",
+      "clusterMergeConfirmTitle": "Flet de {{count}} kategorier « {{name}} »?",
+      "clusterMergedToast": "{{count}} email(s) samlet — {{deleted}} duplikat(er) slettet",
+      "clusterTotalEmails": "{{count}} emails i alt",
+      "clustersDesc": "Flere kategorier har samme navn — ofte oprettet parallelt under sortering. Én fletning er nok til at samle alt.",
+      "clustersTitle": "Nøjagtige duplikater",
+      "pairsTitle": "Lignende navne (til gennemgang)"
     },
     "sections": {
       "byPack": "Pakke {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Synkronisering af kontakter, konti og muligheder i Salesforce.",
       "salesforceSandbox": "Forbind en Sandbox-org (test.salesforce.com)",
       "privacy": "Privatliv og teamadgang",
-      "privacyDesc": "Dine private e-mails og loggen over admin-forespørgsler"
+      "privacyDesc": "Dine private e-mails og loggen over admin-forespørgsler",
+      "calendars": "Kalendere",
+      "calendarsDesc": "Forbind Google Kalender og Outlook Kalender"
     },
     "b2bSection": "B2B troværdighed",
     "slaCard": "SLA for delte indbakker",
@@ -1269,7 +1296,9 @@
       "enrollError": "Kunne ikke starte tilmeldingen"
     },
     "preferredVideoTitle": "Standard videomøde",
-    "preferredVideoDesc": "Vælg standardudbyder af videomøder til nye aftaler. Meet kræver en forbundet Google-kalender; Teams kræver Outlook. Jitsi fungerer uden konto."
+    "preferredVideoDesc": "Vælg standardudbyder af videomøder til nye aftaler. Meet kræver en forbundet Google-kalender; Teams kræver Outlook. Jitsi fungerer uden konto.",
+    "meetingRemindersDesc": "Inboria sender en høflig påmindelse til kontakten 48 timer efter et mødeforslag uden svar.",
+    "meetingRemindersTitle": "Automatiske mødepåmindelser"
   },
   "subscription": {
     "title": "Administrer dit abonnement",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria-link, uden konto)",
     "videoMeet": "Google Meet (Google-kalender kræves)",
     "videoTeams": "Microsoft Teams (Outlook-kalender kræves)",
-    "videoJoin": "Deltag i videomøde"
+    "videoJoin": "Deltag i videomøde",
+    "bulkConfirmed": "{{count}} bekræftet møde(r)",
+    "bulkDismissed": "{{count}} ignoreret forslag",
+    "confirmSelected": "Bekræft valgte",
+    "dismissSelected": "Ignorer valgte",
+    "multi": {
+      "addParticipants": "Tilføj deltagere",
+      "candidateSlots": "Foreslåede tidsrum",
+      "externalParticipants": "Eksterne deltagere",
+      "findCommonSlot": "Find fælles tidsrum",
+      "internalParticipants": "Interne deltagere",
+      "lastReminder": "Sidste påmindelse",
+      "multiStatus": {
+        "confirmed": "Bekræftet",
+        "declined": "Afvist",
+        "partially_confirmed": "Delvist bekræftet",
+        "pending": "Afventer"
+      },
+      "neverReminded": "Ingen påmindelse",
+      "noCommonSlot": "Ingen fælles tidsrum fundet i det valgte vindue.",
+      "optional": "Valgfri",
+      "participantStatus": {
+        "accepted": "Accepteret",
+        "declined": "Afvist",
+        "pending": "Afventer",
+        "tentative": "Foreløbig"
+      },
+      "participantsLabel": "Deltagere (adskilt med komma eller linjeskift)",
+      "remindParticipant": "Send påmindelse",
+      "remindSent": "Påmindelse sendt",
+      "required": "Påkrævet",
+      "send": "Send invitationer",
+      "sent": "{{count}} invitationer sendt",
+      "title": "Flere deltagere"
+    },
+    "selectAll": "Vælg alle",
+    "selectedCount": "{{count}} valgt(e)",
+    "statusConfirmedShort": "Bekræftet",
+    "statusCounter": "Modforslag modtaget",
+    "statusCounterMonth": "Modforslag",
+    "statusCounterShort": "Modforslag",
+    "statusDeclined": "Afvist af kontakt",
+    "statusDeclinedMonth": "Afvist",
+    "statusDeclinedShort": "Afvist",
+    "statusPending": "Afventer svar",
+    "statusPendingMonth": "Afv.",
+    "statusPendingShort": "Afventer",
+    "syncFailed": "Synkronisering mislykkedes",
+    "viewDetails": "Se detaljer"
   },
   "supportChat": {
     "title": "Assistent Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Gem som skabelon",
     "savedAsTemplate": "E-mail gemt som skabelon",
     "suggestNameWithAI": "Forslå et navn med Inboria",
-    "suggestNameShort": "Forslå"
+    "suggestNameShort": "Forslå",
+    "insertTemplate": "Indsæt skabelon",
+    "pickerNoMatch": "Ingen skabeloner matcher din søgning.",
+    "pickerSearch": "Søg efter en skabelon…",
+    "pickerTitle": "Vælg en skabelon"
   },
   "rules": {
     "title": "Automatiske regler",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopier den nu — den vil aldrig blive vist igen.",
     "dismissCreated": "Jeg har kopieret nøglen",
     "usageTitle": "Eksempel på brug",
-    "rateLimitNotice": "Grænse: 60 anmodninger / minut / nøgle."
+    "rateLimitNotice": "Grænse: 60 anmodninger / minut / nøgle.",
+    "deletePermanently": "Slet permanent",
+    "deletePermanentlyConfirm": "Slet denne tilbagekaldte nøgle permanent? Denne handling kan ikke fortrydes.",
+    "deletedToast": "Nøgle slettet permanent"
   },
   "webhooks": {
     "title": "Udgående webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadata (afsender, emne, dato, status)",
     "dragHint": "Træk til en mappe for at eksportere som .eml (Chrome/Edge), eller klik for at vælge format",
     "chromeHint": "💡 I Chrome/Edge spørger et vindue, hvor filen skal gemmes."
+  },
+  "calendars": {
+    "connectFailedDesc": "Prøv venligst igen.",
+    "connectFailedTitle": "Forbindelse mislykkedes",
+    "connectGoogle": "Forbind Google Kalender",
+    "connectGoogleDesc": "Læsning af begivenheder og skrivning af nye møder.",
+    "connectOutlook": "Forbind Outlook Kalender",
+    "connectOutlookDesc": "Læsning af begivenheder og skrivning af nye møder.",
+    "connectedToastDesc": "Synkronisering er aktiv.",
+    "connectedToastTitle": "Kalender forbundet",
+    "disconnect": "Afbryd forbindelse",
+    "disconnectFailed": "Kan ikke fjerne",
+    "disconnectedToast": "Kalender afbrudt",
+    "empty": "Ingen kalendere forbundet i øjeblikket.",
+    "help": "Inboria bruger dine kalendere til at kontrollere dine tilgængeligheder og oprette aftaler fra Inboria.",
+    "schemaMissing": "Tabellen calendar_accounts er endnu ikke oprettet i databasen. Kør migrationen 2026_05_09_calendar_accounts.sql i Supabase.",
+    "statusConnected": "Forbundet",
+    "statusReauth": "Skal genforbindes",
+    "subtitle": "Forbind Google Kalender eller Outlook Kalender, så Inboria kan se dine tilgængeligheder og oprette dine aftaler.",
+    "title": "Forbundne kalendere"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} ulæste · {{total}} i alt",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Alle",
+      "inboria": "Inboria",
+      "mails": "Mails",
+      "system": "System",
+      "team": "Team",
+      "unread": "Ulæste"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "System"
   }
 }

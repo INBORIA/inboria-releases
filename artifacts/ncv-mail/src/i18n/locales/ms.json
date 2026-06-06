@@ -543,6 +543,22 @@
     "teamTasks": "Tugas Pasukan",
     "assignedFilter": {
       "all": "Seluruh pasukan"
+    },
+    "classicInboxLink": "Peti masuk lama",
+    "help": {
+      "comingSoonDesc": "Pusat bantuan bersepadu akan datang tidak lama lagi. Sementara itu, hubungi kami dari Tetapan.",
+      "comingSoonTitle": "Bantuan dalam talian — akan datang",
+      "tooltip": "Bantuan (akan datang)"
+    },
+    "sections": {
+      "important": "Penting",
+      "other": "Lain-lain"
+    },
+    "shortcuts": {
+      "commands": "Perintah",
+      "done": "Selesai",
+      "navigate": "Navigasi",
+      "reply": "Balas"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Penggabungan sedang berlangsung…",
       "mergedToast": "{{count}} emel dipindahkan ke « {{target}} »",
       "close": "Tutup",
-      "detecting": "Analisis sedang berlangsung…"
+      "detecting": "Analisis sedang berlangsung…",
+      "clusterLine": "{{count}} kategori dinamakan « {{name}} »",
+      "clusterMergeAll": "Gabungkan semua menjadi satu",
+      "clusterMergeConfirmDesc": "Semua email akan dialihkan ke satu kategori « {{name}} » (yang sudah mengandungi paling banyak email). {{deleted}} salinan lain akan dipadam. Tindakan tidak boleh dipulihkan.",
+      "clusterMergeConfirmTitle": "Gabungkan {{count}} kategori « {{name}} »?",
+      "clusterMergedToast": "{{count}} email digabungkan — {{deleted}} pendua dipadam",
+      "clusterTotalEmails": "{{count}} email keseluruhan",
+      "clustersDesc": "Beberapa kategori mempunyai nama yang sama — sering dicipta secara selari semasa pengisihan. Satu gabungan sudah mencukupi untuk mengumpulkan semuanya.",
+      "clustersTitle": "Pendua tepat",
+      "pairsTitle": "Nama serupa (untuk disemak)"
     },
     "sections": {
       "byPack": "Pakej {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Penyelarasan kontak, akaun dan peluang Salesforce.",
       "salesforceSandbox": "Sambungkan org Sandbox (test.salesforce.com)",
       "privacy": "Privasi dan akses pasukan",
-      "privacyDesc": "Emel peribadi anda dan jurnal pemeriksaan admin"
+      "privacyDesc": "Emel peribadi anda dan jurnal pemeriksaan admin",
+      "calendars": "Kalender",
+      "calendarsDesc": "Sambungkan Google Calendar dan Outlook Calendar"
     },
     "b2bSection": "Kredibiliti B2B",
     "slaCard": "SLA kotak bersama",
@@ -1269,7 +1296,9 @@
       "enrollError": "Tidak dapat memulakan pendaftaran"
     },
     "preferredVideoTitle": "Mesyuarat video lalai",
-    "preferredVideoDesc": "Sila pilih pembekal mesyuarat video lalai anda untuk temu janji baharu. Meet memerlukan kalendar Google yang disambungkan; Teams memerlukan Outlook. Jitsi berfungsi tanpa akaun."
+    "preferredVideoDesc": "Sila pilih pembekal mesyuarat video lalai anda untuk temu janji baharu. Meet memerlukan kalendar Google yang disambungkan; Teams memerlukan Outlook. Jitsi berfungsi tanpa akaun.",
+    "meetingRemindersDesc": "Inboria menghantar peringatan sopan kepada kenalan 48 jam selepas cadangan janji temu tidak dijawab.",
+    "meetingRemindersTitle": "Peringatan automatik RDV"
   },
   "subscription": {
     "title": "Urus langganan anda",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (pautan Inboria, tanpa akaun)",
     "videoMeet": "Google Meet (memerlukan kalendar Google)",
     "videoTeams": "Microsoft Teams (memerlukan kalendar Outlook)",
-    "videoJoin": "Sertai mesyuarat video"
+    "videoJoin": "Sertai mesyuarat video",
+    "bulkConfirmed": "{{count}} RDV disahkan",
+    "bulkDismissed": "{{count}} cadangan diabaikan",
+    "confirmSelected": "Sahkan pilihan",
+    "dismissSelected": "Abaikan pilihan",
+    "multi": {
+      "addParticipants": "Tambah peserta",
+      "candidateSlots": "Slot dicadangkan",
+      "externalParticipants": "Peserta luar",
+      "findCommonSlot": "Cari slot bersama",
+      "internalParticipants": "Peserta dalaman",
+      "lastReminder": "Peringatan terakhir",
+      "multiStatus": {
+        "confirmed": "Disahkan",
+        "declined": "Ditolak",
+        "partially_confirmed": "Sebahagian disahkan",
+        "pending": "Menunggu"
+      },
+      "neverReminded": "Tiada peringatan",
+      "noCommonSlot": "Tiada slot bersama ditemui dalam tetingkap yang dipilih.",
+      "optional": "Pilihan",
+      "participantStatus": {
+        "accepted": "Diterima",
+        "declined": "Ditolak",
+        "pending": "Menunggu",
+        "tentative": "Sementara"
+      },
+      "participantsLabel": "Peserta (dipisahkan dengan koma atau baris baru)",
+      "remindParticipant": "Ingatkan semula",
+      "remindSent": "Peringatan dihantar",
+      "required": "Diperlukan",
+      "send": "Hantar jemputan",
+      "sent": "{{count}} jemputan dihantar",
+      "title": "Pelbagai peserta"
+    },
+    "selectAll": "Pilih semua",
+    "selectedCount": "{{count}} dipilih",
+    "statusConfirmedShort": "Disahkan",
+    "statusCounter": "Cadangan balas diterima",
+    "statusCounterMonth": "Cadangan balas",
+    "statusCounterShort": "Cadangan balas",
+    "statusDeclined": "Ditolak oleh kenalan",
+    "statusDeclinedMonth": "Ditolak",
+    "statusDeclinedShort": "Ditolak",
+    "statusPending": "Menunggu jawapan",
+    "statusPendingMonth": "Menunggu",
+    "statusPendingShort": "Menunggu",
+    "syncFailed": "Penyelarasan gagal",
+    "viewDetails": "Lihat butiran"
   },
   "supportChat": {
     "title": "Pembantu Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Simpan sebagai templat",
     "savedAsTemplate": "Email disimpan sebagai templat",
     "suggestNameWithAI": "Cadangkan nama dengan Inboria",
-    "suggestNameShort": "Cadangkan"
+    "suggestNameShort": "Cadangkan",
+    "insertTemplate": "Masukkan templat",
+    "pickerNoMatch": "Tiada templat yang sepadan dengan carian anda.",
+    "pickerSearch": "Cari templat…",
+    "pickerTitle": "Pilih templat"
   },
   "rules": {
     "title": "Peraturan automatik",
@@ -3090,7 +3171,10 @@
     "createdHint": "Salin sekarang — ia tidak akan dipaparkan lagi.",
     "dismissCreated": "Saya telah menyalin kunci",
     "usageTitle": "Contoh penggunaan",
-    "rateLimitNotice": "Had: 60 permintaan / minit / kunci."
+    "rateLimitNotice": "Had: 60 permintaan / minit / kunci.",
+    "deletePermanently": "Padam secara kekal",
+    "deletePermanentlyConfirm": "Padam kunci yang dibatalkan secara kekal? Tindakan ini tidak boleh dipulihkan.",
+    "deletedToast": "Kunci dipadam secara kekal"
   },
   "webhooks": {
     "title": "Webhook keluar",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadata (pengirim, subjek, tarikh, status)",
     "dragHint": "Sila seret ke folder untuk eksport sebagai .eml (Chrome/Edge), atau klik untuk memilih format",
     "chromeHint": "💡 Di Chrome/Edge, tetingkap akan bertanya di mana hendak menyimpan fail."
+  },
+  "calendars": {
+    "connectFailedDesc": "Sila cuba lagi.",
+    "connectFailedTitle": "Sambungan gagal",
+    "connectGoogle": "Sambungkan Google Calendar",
+    "connectGoogleDesc": "Baca acara dan tulis RDV baru.",
+    "connectOutlook": "Sambungkan Outlook Calendar",
+    "connectOutlookDesc": "Baca acara dan tulis RDV baru.",
+    "connectedToastDesc": "Penyelarasan aktif.",
+    "connectedToastTitle": "Kalender disambungkan",
+    "disconnect": "Putuskan sambungan",
+    "disconnectFailed": "Tidak dapat memadam",
+    "disconnectedToast": "Kalender diputuskan sambungan",
+    "empty": "Tiada kalender disambungkan buat masa ini.",
+    "help": "Inboria menggunakan kalender anda untuk memeriksa ketersediaan anda dan mencipta janji temu yang ditetapkan dari Inboria.",
+    "schemaMissing": "Jadual calendar_accounts belum dicipta dalam pangkalan data. Jalankan migrasi 2026_05_09_calendar_accounts.sql dalam Supabase.",
+    "statusConnected": "Disambungkan",
+    "statusReauth": "Perlu disambungkan semula",
+    "subtitle": "Sambungkan Google Calendar atau Outlook Calendar supaya Inboria dapat melihat ketersediaan anda dan mendaftarkan janji temu anda.",
+    "title": "Kalender disambungkan"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} belum dibaca · {{total}} keseluruhan",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Semua",
+      "inboria": "Inboria",
+      "mails": "Email",
+      "system": "Sistem",
+      "team": "Pasukan",
+      "unread": "Belum dibaca"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Sistem"
   }
 }

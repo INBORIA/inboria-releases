@@ -543,6 +543,22 @@
     "teamTasks": "Tarefas da equipe",
     "assignedFilter": {
       "all": "Toda a equipe"
+    },
+    "classicInboxLink": "Caixa de entrada antiga",
+    "help": {
+      "comingSoonDesc": "O centro de ajuda integrado está chegando em breve. Enquanto isso, entre em contato conosco nas Configurações.",
+      "comingSoonTitle": "Ajuda online — em breve disponível",
+      "tooltip": "Ajuda (em breve disponível)"
+    },
+    "sections": {
+      "important": "Importante",
+      "other": "Outros"
+    },
+    "shortcuts": {
+      "commands": "Comandos",
+      "done": "Concluído",
+      "navigate": "Navegar",
+      "reply": "Responder"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Fusão em curso…",
       "mergedToast": "{{count}} email(s) movidos para « {{target}} »",
       "close": "Fechar",
-      "detecting": "Análise em curso…"
+      "detecting": "Análise em curso…",
+      "clusterLine": "{{count}} categorias nomeadas « {{name}} »",
+      "clusterMergeAll": "Mesclar tudo em uma só",
+      "clusterMergeConfirmDesc": "Todos os emails serão reatribuídos a uma única categoria « {{name}} » (a que já contém mais emails). As {{deleted}} outras cópias serão excluídas. Ação irreversível.",
+      "clusterMergeConfirmTitle": "Mesclar as {{count}} categorias « {{name}} »?",
+      "clusterMergedToast": "{{count}} email(s) agrupado(s) — {{deleted}} duplicata(s) excluída(s)",
+      "clusterTotalEmails": "{{count}} emails no total",
+      "clustersDesc": "Várias categorias têm o mesmo nome — geralmente criadas em paralelo durante a triagem. Uma única fusão é suficiente para agrupar tudo.",
+      "clustersTitle": "Duplicatas exatas",
+      "pairsTitle": "Nomes semelhantes (a revisar)"
     },
     "sections": {
       "byPack": "Pacote {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Sincronização de contactos, contas e oportunidades Salesforce.",
       "salesforceSandbox": "Conectar uma org Sandbox (test.salesforce.com)",
       "privacy": "Privacidade e acesso à equipa",
-      "privacyDesc": "Os seus emails privados e o registo de consultas do administrador"
+      "privacyDesc": "Os seus emails privados e o registo de consultas do administrador",
+      "calendars": "Calendários",
+      "calendarsDesc": "Conectar Google Calendar e Outlook Calendar"
     },
     "b2bSection": "Credibilidade B2B",
     "slaCard": "SLA de caixas partilhadas",
@@ -1269,7 +1296,9 @@
       "enrollError": "Impossível iniciar o registo"
     },
     "preferredVideoTitle": "Videoconferência padrão",
-    "preferredVideoDesc": "Escolha o fornecedor de videoconferência padrão para os novos compromissos. Meet exige um calendário Google conectado; Teams exige Outlook. Jitsi funciona sem conta."
+    "preferredVideoDesc": "Escolha o fornecedor de videoconferência padrão para os novos compromissos. Meet exige um calendário Google conectado; Teams exige Outlook. Jitsi funciona sem conta.",
+    "meetingRemindersDesc": "Inboria envia um lembrete educado ao contato 48 h após uma proposta de compromisso sem resposta.",
+    "meetingRemindersTitle": "Lembretes automáticos de compromissos"
   },
   "subscription": {
     "title": "Gerir a sua subscrição",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (link Inboria, sem conta)",
     "videoMeet": "Google Meet (calendário Google obrigatório)",
     "videoTeams": "Microsoft Teams (calendário Outlook obrigatório)",
-    "videoJoin": "Entrar na videoconferência"
+    "videoJoin": "Entrar na videoconferência",
+    "bulkConfirmed": "{{count}} compromisso(s) confirmado(s)",
+    "bulkDismissed": "{{count}} sugestão(ões) ignorada(s)",
+    "confirmSelected": "Confirmar seleção",
+    "dismissSelected": "Ignorar seleção",
+    "multi": {
+      "addParticipants": "Adicionar participantes",
+      "candidateSlots": "Horários propostos",
+      "externalParticipants": "Participantes externos",
+      "findCommonSlot": "Buscar horário comum",
+      "internalParticipants": "Participantes internos",
+      "lastReminder": "Último lembrete",
+      "multiStatus": {
+        "confirmed": "Confirmado",
+        "declined": "Recusado",
+        "partially_confirmed": "Parcialmente confirmado",
+        "pending": "Pendente"
+      },
+      "neverReminded": "Nenhum lembrete",
+      "noCommonSlot": "Nenhum horário comum encontrado na janela escolhida.",
+      "optional": "Opcional",
+      "participantStatus": {
+        "accepted": "Aceito",
+        "declined": "Recusado",
+        "pending": "Pendente",
+        "tentative": "Provisório"
+      },
+      "participantsLabel": "Participantes (separados por vírgula ou nova linha)",
+      "remindParticipant": "Lembrar",
+      "remindSent": "Lembrete enviado",
+      "required": "Obrigatório",
+      "send": "Enviar convites",
+      "sent": "{{count}} convite(s) enviado(s)",
+      "title": "Multi-participantes"
+    },
+    "selectAll": "Selecionar tudo",
+    "selectedCount": "{{count}} selecionado(s)",
+    "statusConfirmedShort": "Confirmado",
+    "statusCounter": "Contra-proposta recebida",
+    "statusCounterMonth": "Contra-proposta",
+    "statusCounterShort": "Contra-proposta",
+    "statusDeclined": "Recusado pelo contato",
+    "statusDeclinedMonth": "Recusado",
+    "statusDeclinedShort": "Recusado",
+    "statusPending": "Aguardando resposta",
+    "statusPendingMonth": "Aguard.",
+    "statusPendingShort": "Pendente",
+    "syncFailed": "Sincronização falhou",
+    "viewDetails": "Ver detalhes"
   },
   "supportChat": {
     "title": "Assistente Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Guardar como modelo",
     "savedAsTemplate": "Email guardado como modelo",
     "suggestNameWithAI": "Sugerir um nome com Inboria",
-    "suggestNameShort": "Sugerir"
+    "suggestNameShort": "Sugerir",
+    "insertTemplate": "Inserir um modelo",
+    "pickerNoMatch": "Nenhum modelo corresponde à sua pesquisa.",
+    "pickerSearch": "Pesquisar um modelo…",
+    "pickerTitle": "Escolher um modelo"
   },
   "rules": {
     "title": "Regras automáticas",
@@ -3090,7 +3171,10 @@
     "createdHint": "Copie-a agora — não será exibida novamente.",
     "dismissCreated": "Copiei a chave",
     "usageTitle": "Exemplo de utilização",
-    "rateLimitNotice": "Limite: 60 requisições / minuto / chave."
+    "rateLimitNotice": "Limite: 60 requisições / minuto / chave.",
+    "deletePermanently": "Excluir permanentemente",
+    "deletePermanentlyConfirm": "Excluir permanentemente esta chave revogada? Esta ação é irreversível.",
+    "deletedToast": "Chave excluída permanentemente"
   },
   "webhooks": {
     "title": "Webhooks de saída",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadados (remetente, assunto, data, estado)",
     "dragHint": "Arraste para uma pasta para exportar como .eml (Chrome/Edge), ou clique para escolher o formato",
     "chromeHint": "💡 No Chrome/Edge, uma janela perguntará onde guardar o ficheiro."
+  },
+  "calendars": {
+    "connectFailedDesc": "Por favor, tente novamente.",
+    "connectFailedTitle": "Conexão falhou",
+    "connectGoogle": "Conectar Google Calendar",
+    "connectGoogleDesc": "Leitura de eventos e escrita de novos compromissos.",
+    "connectOutlook": "Conectar Outlook Calendar",
+    "connectOutlookDesc": "Leitura de eventos e escrita de novos compromissos.",
+    "connectedToastDesc": "A sincronização está ativa.",
+    "connectedToastTitle": "Calendário conectado",
+    "disconnect": "Desconectar",
+    "disconnectFailed": "Remoção impossível",
+    "disconnectedToast": "Calendário desconectado",
+    "empty": "Nenhum calendário conectado no momento.",
+    "help": "Inboria usa seus calendários para verificar suas disponibilidades e criar compromissos agendados a partir do Inboria.",
+    "schemaMissing": "A tabela calendar_accounts ainda não foi criada no banco de dados. Execute a migração 2026_05_09_calendar_accounts.sql no Supabase.",
+    "statusConnected": "Conectado",
+    "statusReauth": "Reconectar",
+    "subtitle": "Conecte o Google Calendar ou Outlook Calendar para que o Inboria veja suas disponibilidades e registre seus compromissos.",
+    "title": "Calendários conectados"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} não lidas · {{total}} no total",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Tudo",
+      "inboria": "Inboria",
+      "mails": "Emails",
+      "system": "Sistema",
+      "team": "Equipe",
+      "unread": "Não lidas"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Sistema"
   }
 }

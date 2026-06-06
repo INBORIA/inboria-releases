@@ -543,6 +543,22 @@
     "teamTasks": "Tascanna Foirne",
     "assignedFilter": {
       "all": "An fhoireann ar fad"
+    },
+    "classicInboxLink": "Seanchiste",
+    "help": {
+      "comingSoonDesc": "Tá an t-ionad cabhrach comhtháite ag teacht go han-luath. Idir an dá linn, déan teagmháil linn ó Shocruithe.",
+      "comingSoonTitle": "Cabhair ar líne — ar fáil go luath",
+      "tooltip": "Cabhair (ar fáil go luath)"
+    },
+    "sections": {
+      "important": "Tábhachtach",
+      "other": "Eile"
+    },
+    "shortcuts": {
+      "commands": "Orduithe",
+      "done": "Críochnaithe",
+      "navigate": "Nascleanúint",
+      "reply": "Freagair"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Ag comhoibriú...",
       "mergedToast": "{{count}} ríomhphost(í) aistrithe chuig « {{target}} »",
       "close": "Dún",
-      "detecting": "Ag anailís..."
+      "detecting": "Ag anailís...",
+      "clusterLine": "{{count}} catagóir darbh ainm « {{name}} »",
+      "clusterMergeAll": "Cumaisc gach rud in aon cheann amháin",
+      "clusterMergeConfirmDesc": "Athshannfar gach ríomhphost chuig catagóir amháin « {{name}} » (an ceann a bhfuil an líon is mó ríomhphoist ann cheana féin). Scriosfar na {{deleted}} cóipeanna eile. Gníomh dochúlaithe.",
+      "clusterMergeConfirmTitle": "Cumaisc na {{count}} catagóirí « {{name}} »?",
+      "clusterMergedToast": "{{count}} ríomhphost(a) athghrúpáilte — {{deleted}} dúblach(a) scriosta",
+      "clusterTotalEmails": "{{count}} ríomhphost san iomlán",
+      "clustersDesc": "Tá roinnt catagóirí leis an ainm céanna — cruthaíodh iad go minic go comhthreomhar le linn an tsórtála. Is leor cumasc amháin chun gach rud a athghrúpáil.",
+      "clustersTitle": "Dúblacha beacht",
+      "pairsTitle": "Ainmneacha cosúla (le hathbhreithniú)"
     },
     "sections": {
       "byPack": "Pacáiste {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Comhoiriúnú na gcontaetha, cuntais agus deiseanna Salesforce.",
       "salesforceSandbox": "Logáil isteach le heagraíocht Sandbox (test.salesforce.com)",
       "privacy": "Príobháideachas agus rochtain na foirne",
-      "privacyDesc": "Bhur ríomhphoist phríobháideacha agus an dialann comhoibrithe riaracháin"
+      "privacyDesc": "Bhur ríomhphoist phríobháideacha agus an dialann comhoibrithe riaracháin",
+      "calendars": "Féilirí",
+      "calendarsDesc": "Ceangail Google Calendar agus Outlook Calendar"
     },
     "b2bSection": "Creidiúnacht B2B",
     "slaCard": "SLA boscaí roinnte",
@@ -1269,7 +1296,9 @@
       "enrollError": "Ní féidir an clárú a thosú"
     },
     "preferredVideoTitle": "Cruinniú físe réamhshocraithe",
-    "preferredVideoDesc": "Le bhur dtoil, roghnaigh an soláthraí cruinnithe físe réamhshocraithe do na coinní nua. Éilíonn Meet féilire Google atá ceangailte; éilíonn Teams Outlook. Oibríonn Jitsi gan cuntas."
+    "preferredVideoDesc": "Le bhur dtoil, roghnaigh an soláthraí cruinnithe físe réamhshocraithe do na coinní nua. Éilíonn Meet féilire Google atá ceangailte; éilíonn Teams Outlook. Oibríonn Jitsi gan cuntas.",
+    "meetingRemindersDesc": "Seolann Inboria rabhadh béasach chuig an teagmháil 48 uair an chloig tar éis togra cruinnithe gan freagra.",
+    "meetingRemindersTitle": "Rabhaidh uathoibríocha CRB"
   },
   "subscription": {
     "title": "Bainistigh bhur síntiús",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (nasc Inboria, gan cuntas)",
     "videoMeet": "Google Meet (féilire Google ag teastáil)",
     "videoTeams": "Microsoft Teams (féilire Outlook ag teastáil)",
-    "videoJoin": "Glac páirt sa chruinniú físe"
+    "videoJoin": "Glac páirt sa chruinniú físe",
+    "bulkConfirmed": "{{count}} CRB deimhnithe",
+    "bulkDismissed": "{{count}} moladh neamhaird",
+    "confirmSelected": "Deimhnigh an roghnú",
+    "dismissSelected": "Neamhaird a dhéanamh den roghnú",
+    "multi": {
+      "addParticipants": "Cuir rannpháirtithe leis",
+      "candidateSlots": "Sliotáin mholta",
+      "externalParticipants": "Rannpháirtithe seachtracha",
+      "findCommonSlot": "Aimsiú sliotán coiteann",
+      "internalParticipants": "Rannpháirtithe inmheánacha",
+      "lastReminder": "An rabhadh deireanach",
+      "multiStatus": {
+        "confirmed": "Deimhnithe",
+        "declined": "Diúltaithe",
+        "partially_confirmed": "Páirteach deimhnithe",
+        "pending": "Ar feitheamh"
+      },
+      "neverReminded": "Gan rabhadh",
+      "noCommonSlot": "Níor aimsíodh aon sliotán coiteann sa fhuinneog roghnaithe.",
+      "optional": "Roghnach",
+      "participantStatus": {
+        "accepted": "Glactha",
+        "declined": "Diúltaithe",
+        "pending": "Ar feitheamh",
+        "tentative": "Sealadach"
+      },
+      "participantsLabel": "Rannpháirtithe (scartha le camóg nó líne nua)",
+      "remindParticipant": "Tabhair rabhadh",
+      "remindSent": "Rabhadh seolta",
+      "required": "Riachtanach",
+      "send": "Seol na cuirí",
+      "sent": "{{count}} cuireadh seolta",
+      "title": "Il-rannpháirtithe"
+    },
+    "selectAll": "Roghnaigh gach rud",
+    "selectedCount": "{{count}} roghnaithe",
+    "statusConfirmedShort": "Deimhnithe",
+    "statusCounter": "Frith-mholadh faighte",
+    "statusCounterMonth": "Frith-mholadh",
+    "statusCounterShort": "Frith-mholadh",
+    "statusDeclined": "Diúltaithe ag an teagmháil",
+    "statusDeclinedMonth": "Diúltaithe",
+    "statusDeclinedShort": "Diúltaithe",
+    "statusPending": "Ar feitheamh freagra",
+    "statusPendingMonth": "Ar feith.",
+    "statusPendingShort": "Ar feitheamh",
+    "syncFailed": "Teip ar shioncrónú",
+    "viewDetails": "Féach ar na sonraí"
   },
   "supportChat": {
     "title": "Cabhair Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Sábháil mar shamhla",
     "savedAsTemplate": "Ríomhphost sábháilte mar shamhla",
     "suggestNameWithAI": "Mol ainm le Inboria",
-    "suggestNameShort": "Mol"
+    "suggestNameShort": "Mol",
+    "insertTemplate": "Cuir teimpléad isteach",
+    "pickerNoMatch": "Níl aon teimpléad a oireann do do chuardach.",
+    "pickerSearch": "Cuardaigh teimpléad…",
+    "pickerTitle": "Roghnaigh teimpléad"
   },
   "rules": {
     "title": "Rialacha uathoibríocha",
@@ -3090,7 +3171,10 @@
     "createdHint": "Cóipigh í anois — ní bheidh sí le feiceáil arís.",
     "dismissCreated": "Cóipigh mé an eochair",
     "usageTitle": "Sampla úsáide",
-    "rateLimitNotice": "Teorainn: 60 iarratais / nóiméad / eochair."
+    "rateLimitNotice": "Teorainn: 60 iarratais / nóiméad / eochair.",
+    "deletePermanently": "Scrios go buan",
+    "deletePermanentlyConfirm": "Scrios an eochair aisghairthe seo go buan? Ní féidir an gníomh seo a chealú.",
+    "deletedToast": "Eochair scriosta go buan"
   },
   "webhooks": {
     "title": "Webhooks aschur",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Meiteashonraí (seoltóir, ábhar, dáta, stádas)",
     "dragHint": "Le bhur dtoil tarraingígí go fillteán le heaspórtáil mar .eml (Chrome/Edge), nó cliceáil chun formáid a roghnú",
     "chromeHint": "💡 Ar Chrome/Edge fiafróidh fuinneog cá sábhálfaí an comhad."
+  },
+  "calendars": {
+    "connectFailedDesc": "Déanaigí iarracht arís, le bhur dtoil.",
+    "connectFailedTitle": "Teip ar nascadh",
+    "connectGoogle": "Ceangail Google Calendar",
+    "connectGoogleDesc": "Léamh na n-imeachtaí agus scríobh na gcruinnithe nua.",
+    "connectOutlook": "Ceangail Outlook Calendar",
+    "connectOutlookDesc": "Léamh na n-imeachtaí agus scríobh na gcruinnithe nua.",
+    "connectedToastDesc": "Tá an sioncrónú gníomhach.",
+    "connectedToastTitle": "Féilire ceangailte",
+    "disconnect": "Dícheangail",
+    "disconnectFailed": "Ní féidir a bhaint",
+    "disconnectedToast": "Féilire dícheangailte",
+    "empty": "Níl aon fhéilire ceangailte faoi láthair.",
+    "help": "Úsáideann Inboria do fhéilirí chun do infhaighteacht a sheiceáil agus chun cruinnithe a chruthú ó Inboria.",
+    "schemaMissing": "Níl an tábla calendar_accounts cruthaithe fós sa bhunachar. Rith an imirce 2026_05_09_calendar_accounts.sql i Supabase.",
+    "statusConnected": "Ceangailte",
+    "statusReauth": "Athcheangail",
+    "subtitle": "Ceangail Google Calendar nó Outlook Calendar ionas go bhfeicfidh Inboria do infhaighteacht agus go gcuirfidh sé do chruinnithe ann.",
+    "title": "Féilirí ceangailte"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} neamhléite · {{total}} san iomlán",
+    "filters": {
+      "agenda": "Clár",
+      "all": "Gach rud",
+      "inboria": "Inboria",
+      "mails": "Ríomhphoist",
+      "system": "Córas",
+      "team": "Foireann",
+      "unread": "Neamhléite"
+    },
+    "sourceAgenda": "Clár",
+    "system": "Córas"
   }
 }

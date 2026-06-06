@@ -543,6 +543,22 @@
     "teamTasks": "Ομαδικές εργασίες",
     "assignedFilter": {
       "all": "Όλη η ομάδα"
+    },
+    "classicInboxLink": "Παλιό γραμματοκιβώτιο",
+    "help": {
+      "comingSoonDesc": "Το ενσωματωμένο κέντρο βοήθειας έρχεται πολύ σύντομα. Εν τω μεταξύ, επικοινωνήστε μαζί μας από τις Ρυθμίσεις.",
+      "comingSoonTitle": "Βοήθεια online — σύντομα διαθέσιμη",
+      "tooltip": "Βοήθεια (σύντομα διαθέσιμη)"
+    },
+    "sections": {
+      "important": "Σημαντικό",
+      "other": "Άλλα"
+    },
+    "shortcuts": {
+      "commands": "Εντολές",
+      "done": "Ολοκληρωμένο",
+      "navigate": "Πλοήγηση",
+      "reply": "Απάντηση"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Συγχώνευση σε εξέλιξη…",
       "mergedToast": "{{count}} email(s) μετακινήθηκαν στο « {{target}} »",
       "close": "Κλείσιμο",
-      "detecting": "Ανάλυση σε εξέλιξη…"
+      "detecting": "Ανάλυση σε εξέλιξη…",
+      "clusterLine": "{{count}} κατηγορίες με το όνομα «{{name}}»",
+      "clusterMergeAll": "Συγχώνευση όλων σε μία",
+      "clusterMergeConfirmDesc": "Όλα τα emails θα επανακατανεμηθούν σε μία κατηγορία «{{name}}» (αυτή που περιέχει ήδη τα περισσότερα emails). Οι {{deleted}} άλλες αντίγραφα θα διαγραφούν. Μη αναστρέψιμη ενέργεια.",
+      "clusterMergeConfirmTitle": "Συγχώνευση των {{count}} κατηγοριών «{{name}}»;",
+      "clusterMergedToast": "{{count}} email(s) συγκεντρωμένα — {{deleted}} διπλότυπο(α) διαγράφηκε(αν)",
+      "clusterTotalEmails": "{{count}} emails συνολικά",
+      "clustersDesc": "Πολλές κατηγορίες έχουν το ίδιο όνομα — συχνά δημιουργούνται παράλληλα με την ταξινόμηση. Μία συγχώνευση αρκεί για να συγκεντρωθούν όλα.",
+      "clustersTitle": "Ακριβή διπλότυπα",
+      "pairsTitle": "Παρόμοια ονόματα (προς αναθεώρηση)"
     },
     "sections": {
       "byPack": "Πακέτο {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Συγχρονισμός επαφών, λογαριασμών και ευκαιριών Salesforce.",
       "salesforceSandbox": "Συνδεθείτε σε μια οργανωτική Sandbox (test.salesforce.com)",
       "privacy": "Απόρρητο και πρόσβαση ομάδας",
-      "privacyDesc": "Τα ιδιωτικά σας emails και το ημερολόγιο των διαχειριστικών επισκέψεων"
+      "privacyDesc": "Τα ιδιωτικά σας emails και το ημερολόγιο των διαχειριστικών επισκέψεων",
+      "calendars": "Ημερολόγια",
+      "calendarsDesc": "Σύνδεση με Google Calendar και Outlook Calendar"
     },
     "b2bSection": "B2B Αξιοπιστία",
     "slaCard": "SLA κοινών θυρίδων",
@@ -1269,7 +1296,9 @@
       "enrollError": "Αδύνατη η εκκίνηση της διαδικασίας εγγραφής"
     },
     "preferredVideoTitle": "Προεπιλεγμένη βιντεοδιάσκεψη",
-    "preferredVideoDesc": "Επιλέξτε τον προεπιλεγμένο πάροχο βιντεοδιάσκεψης για τα νέα σας ραντεβού. Το Meet απαιτεί συνδεδεμένο ημερολόγιο Google· το Teams απαιτεί Outlook. Το Jitsi λειτουργεί χωρίς λογαριασμό."
+    "preferredVideoDesc": "Επιλέξτε τον προεπιλεγμένο πάροχο βιντεοδιάσκεψης για τα νέα σας ραντεβού. Το Meet απαιτεί συνδεδεμένο ημερολόγιο Google· το Teams απαιτεί Outlook. Το Jitsi λειτουργεί χωρίς λογαριασμό.",
+    "meetingRemindersDesc": "Το Inboria στέλνει μια ευγενική υπενθύμιση στην επαφή 48 ώρες μετά από μια πρόταση ραντεβού που δεν έχει απαντηθεί.",
+    "meetingRemindersTitle": "Αυτόματες υπενθυμίσεις RDV"
   },
   "subscription": {
     "title": "Διαχειριστείτε την συνδρομή σας",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (σύνδεσμος Inboria, χωρίς λογαριασμό)",
     "videoMeet": "Google Meet (απαιτείται ημερολόγιο Google)",
     "videoTeams": "Microsoft Teams (απαιτείται ημερολόγιο Outlook)",
-    "videoJoin": "Συμμετοχή στη βιντεοδιάσκεψη"
+    "videoJoin": "Συμμετοχή στη βιντεοδιάσκεψη",
+    "bulkConfirmed": "{{count}} επιβεβαιωμένο(α) RDV",
+    "bulkDismissed": "{{count}} αγνοημένη(ες) πρόταση(ες)",
+    "confirmSelected": "Επιβεβαίωση επιλογής",
+    "dismissSelected": "Αγνόηση επιλογής",
+    "multi": {
+      "addParticipants": "Προσθήκη συμμετεχόντων",
+      "candidateSlots": "Προτεινόμενα χρονικά διαστήματα",
+      "externalParticipants": "Εξωτερικοί συμμετέχοντες",
+      "findCommonSlot": "Αναζήτηση κοινού χρονικού διαστήματος",
+      "internalParticipants": "Εσωτερικοί συμμετέχοντες",
+      "lastReminder": "Τελευταία υπενθύμιση",
+      "multiStatus": {
+        "confirmed": "Επιβεβαιωμένο",
+        "declined": "Απορριφθέν",
+        "partially_confirmed": "Μερικώς επιβεβαιωμένο",
+        "pending": "Εκκρεμεί"
+      },
+      "neverReminded": "Καμία υπενθύμιση",
+      "noCommonSlot": "Δεν βρέθηκε κοινό χρονικό διάστημα στο επιλεγμένο παράθυρο.",
+      "optional": "Προαιρετικό",
+      "participantStatus": {
+        "accepted": "Αποδεκτό",
+        "declined": "Απορριφθέν",
+        "pending": "Εκκρεμεί",
+        "tentative": "Προσωρινό"
+      },
+      "participantsLabel": "Συμμετέχοντες (χωρισμένοι με κόμμα ή νέα γραμμή)",
+      "remindParticipant": "Υπενθύμιση",
+      "remindSent": "Υπενθύμιση αποσταλείσα",
+      "required": "Απαιτείται",
+      "send": "Αποστολή προσκλήσεων",
+      "sent": "{{count}} προσκλήσεις αποσταλείσες",
+      "title": "Πολλαπλοί συμμετέχοντες"
+    },
+    "selectAll": "Επιλογή όλων",
+    "selectedCount": "{{count}} επιλεγμένο(α)",
+    "statusConfirmedShort": "Επιβεβαιωμένο",
+    "statusCounter": "Λήφθηκε αντιπρόταση",
+    "statusCounterMonth": "Αντιπρόταση",
+    "statusCounterShort": "Αντιπρόταση",
+    "statusDeclined": "Απορρίφθηκε από την επαφή",
+    "statusDeclinedMonth": "Απορριφθέν",
+    "statusDeclinedShort": "Απορριφθέν",
+    "statusPending": "Αναμονή απάντησης",
+    "statusPendingMonth": "Εκκρεμεί",
+    "statusPendingShort": "Εκκρεμεί",
+    "syncFailed": "Αποτυχία συγχρονισμού",
+    "viewDetails": "Προβολή λεπτομερειών"
   },
   "supportChat": {
     "title": "Βοηθός Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Αποθήκευση ως πρότυπο",
     "savedAsTemplate": "Email αποθηκεύτηκε ως πρότυπο",
     "suggestNameWithAI": "Προτείνετε ένα όνομα με το Inboria",
-    "suggestNameShort": "Προτείνετε"
+    "suggestNameShort": "Προτείνετε",
+    "insertTemplate": "Εισαγωγή προτύπου",
+    "pickerNoMatch": "Κανένα πρότυπο δεν αντιστοιχεί στην αναζήτησή σας.",
+    "pickerSearch": "Αναζήτηση προτύπου…",
+    "pickerTitle": "Επιλογή προτύπου"
   },
   "rules": {
     "title": "Αυτόματοι κανόνες",
@@ -3090,7 +3171,10 @@
     "createdHint": "Αντιγράψτε το τώρα — δεν θα εμφανιστεί ξανά.",
     "dismissCreated": "Έχω αντιγράψει το κλειδί",
     "usageTitle": "Παράδειγμα χρήσης",
-    "rateLimitNotice": "Όριο: 60 αιτήματα / λεπτό / κλειδί."
+    "rateLimitNotice": "Όριο: 60 αιτήματα / λεπτό / κλειδί.",
+    "deletePermanently": "Οριστική διαγραφή",
+    "deletePermanentlyConfirm": "Οριστική διαγραφή αυτού του ανακληθέντος κλειδιού; Αυτή η ενέργεια είναι μη αναστρέψιμη.",
+    "deletedToast": "Κλειδί διαγράφηκε οριστικά"
   },
   "webhooks": {
     "title": "Εξερχόμενα Webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Μεταδεδομένα (αποστολέας, θέμα, ημερομηνία, κατάσταση)",
     "dragHint": "Σύρετε σε φάκελο για εξαγωγή ως .eml (Chrome/Edge), ή κάντε κλικ για επιλογή μορφής",
     "chromeHint": "💡 Σε Chrome/Edge, ένα παράθυρο θα σας ρωτήσει πού να αποθηκεύσετε το αρχείο."
+  },
+  "calendars": {
+    "connectFailedDesc": "Παρακαλώ δοκιμάστε ξανά.",
+    "connectFailedTitle": "Αποτυχία σύνδεσης",
+    "connectGoogle": "Σύνδεση με Google Calendar",
+    "connectGoogleDesc": "Ανάγνωση γεγονότων και εγγραφή νέων RDV.",
+    "connectOutlook": "Σύνδεση με Outlook Calendar",
+    "connectOutlookDesc": "Ανάγνωση γεγονότων και εγγραφή νέων RDV.",
+    "connectedToastDesc": "Ο συγχρονισμός είναι ενεργός.",
+    "connectedToastTitle": "Ημερολόγιο συνδεδεμένο",
+    "disconnect": "Αποσύνδεση",
+    "disconnectFailed": "Αδύνατη η διαγραφή",
+    "disconnectedToast": "Ημερολόγιο αποσυνδεδεμένο",
+    "empty": "Δεν υπάρχει συνδεδεμένο ημερολόγιο προς το παρόν.",
+    "help": "Το Inboria χρησιμοποιεί τα ημερολόγιά σας για να ελέγξει τις διαθεσιμότητές σας και να δημιουργήσει τα ραντεβού που έχουν οριστεί από το Inboria.",
+    "schemaMissing": "Ο πίνακας calendar_accounts δεν έχει δημιουργηθεί ακόμα στη βάση. Εκτελέστε τη μετανάστευση 2026_05_09_calendar_accounts.sql στο Supabase.",
+    "statusConnected": "Συνδεδεμένο",
+    "statusReauth": "Απαιτείται επανασύνδεση",
+    "subtitle": "Συνδέστε το Google Calendar ή το Outlook Calendar για να δει το Inboria τις διαθεσιμότητές σας και να καταγράψει τα ραντεβού σας.",
+    "title": "Συνδεδεμένα ημερολόγια"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} μη αναγνωσμένα · {{total}} συνολικά",
+    "filters": {
+      "agenda": "Ημερολόγιο",
+      "all": "Όλα",
+      "inboria": "Inboria",
+      "mails": "Emails",
+      "system": "Σύστημα",
+      "team": "Ομάδα",
+      "unread": "Μη αναγνωσμένα"
+    },
+    "sourceAgenda": "Ημερολόγιο",
+    "system": "Σύστημα"
   }
 }

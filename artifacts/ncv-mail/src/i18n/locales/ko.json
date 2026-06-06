@@ -543,6 +543,22 @@
     "teamTasks": "팀 작업",
     "assignedFilter": {
       "all": "전체 팀"
+    },
+    "classicInboxLink": "이전 받은 편지함",
+    "help": {
+      "comingSoonDesc": "통합 도움말 센터가 곧 제공됩니다. 그동안 설정에서 저희에게 연락하십시오.",
+      "comingSoonTitle": "온라인 도움말 — 곧 제공 예정",
+      "tooltip": "도움말 (곧 제공 예정)"
+    },
+    "sections": {
+      "important": "중요",
+      "other": "기타"
+    },
+    "shortcuts": {
+      "commands": "명령어",
+      "done": "완료",
+      "navigate": "탐색",
+      "reply": "답장"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "병합 중...",
       "mergedToast": "{{count}} 이메일이 « {{target}} »로 이동되었습니다.",
       "close": "닫기",
-      "detecting": "분석 중..."
+      "detecting": "분석 중...",
+      "clusterLine": "« {{name}} »라는 이름의 {{count}} 개의 카테고리",
+      "clusterMergeAll": "모두 하나로 병합",
+      "clusterMergeConfirmDesc": "모든 이메일이 하나의 « {{name}} » 카테고리로 재할당됩니다 (이미 가장 많은 이메일을 포함하고 있는 카테고리). {{deleted}} 개의 다른 복사본은 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "clusterMergeConfirmTitle": "« {{name}} » 카테고리 {{count}} 개를 병합하시겠습니까?",
+      "clusterMergedToast": "{{count}} 개의 이메일이 그룹화됨 — {{deleted}} 개의 중복 항목이 삭제됨",
+      "clusterTotalEmails": "총 {{count}} 개의 이메일",
+      "clustersDesc": "여러 카테고리가 동일한 이름을 가지고 있습니다 — 종종 분류 중에 병행하여 생성됩니다. 하나의 병합만으로 모든 것을 그룹화할 수 있습니다.",
+      "clustersTitle": "정확한 중복",
+      "pairsTitle": "유사한 이름 (검토 필요)"
     },
     "sections": {
       "byPack": "팩 {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforce의 연락처, 계정 및 기회 동기화.",
       "salesforceSandbox": "Sandbox(org) 연결 (test.salesforce.com)",
       "privacy": "개인정보 및 팀 접근",
-      "privacyDesc": "귀하의 개인 이메일 및 관리자 조회 기록"
+      "privacyDesc": "귀하의 개인 이메일 및 관리자 조회 기록",
+      "calendars": "캘린더",
+      "calendarsDesc": "Google Calendar 및 Outlook Calendar 연결"
     },
     "b2bSection": "B2B 신뢰성",
     "slaCard": "공유된 사서함 SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "등록을 시작할 수 없습니다."
     },
     "preferredVideoTitle": "기본 화상 회의",
-    "preferredVideoDesc": "새 약속의 기본 화상 회의 제공자를 선택하십시오. Meet은 연결된 Google 캘린더가 필요하며, Teams는 Outlook이 필요합니다. Jitsi는 계정 없이 사용할 수 있습니다."
+    "preferredVideoDesc": "새 약속의 기본 화상 회의 제공자를 선택하십시오. Meet은 연결된 Google 캘린더가 필요하며, Teams는 Outlook이 필요합니다. Jitsi는 계정 없이 사용할 수 있습니다.",
+    "meetingRemindersDesc": "Inboria는 응답이 없는 약속 제안 후 48시간 후에 연락처에 정중한 알림을 보냅니다.",
+    "meetingRemindersTitle": "자동 약속 알림"
   },
   "subscription": {
     "title": "구독 관리",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi(Inboria 링크, 계정 불필요)",
     "videoMeet": "Google Meet(Google 캘린더 필요)",
     "videoTeams": "Microsoft Teams(Outlook 캘린더 필요)",
-    "videoJoin": "화상 회의 참여"
+    "videoJoin": "화상 회의 참여",
+    "bulkConfirmed": "{{count}} 개의 약속이 확인되었습니다",
+    "bulkDismissed": "{{count}} 개의 제안이 무시되었습니다",
+    "confirmSelected": "선택 항목 확인",
+    "dismissSelected": "선택 항목 무시",
+    "multi": {
+      "addParticipants": "참가자 추가",
+      "candidateSlots": "제안된 시간대",
+      "externalParticipants": "외부 참가자",
+      "findCommonSlot": "공통 시간대 찾기",
+      "internalParticipants": "내부 참가자",
+      "lastReminder": "마지막 알림",
+      "multiStatus": {
+        "confirmed": "확인됨",
+        "declined": "거절됨",
+        "partially_confirmed": "부분적으로 확인됨",
+        "pending": "대기 중"
+      },
+      "neverReminded": "알림 없음",
+      "noCommonSlot": "선택한 시간대에 공통 시간대를 찾을 수 없습니다.",
+      "optional": "선택 사항",
+      "participantStatus": {
+        "accepted": "수락됨",
+        "declined": "거절됨",
+        "pending": "대기 중",
+        "tentative": "임시"
+      },
+      "participantsLabel": "참가자 (쉼표 또는 줄 바꿈으로 구분)",
+      "remindParticipant": "참가자에게 알림",
+      "remindSent": "알림 전송됨",
+      "required": "필수",
+      "send": "초대장 보내기",
+      "sent": "{{count}} 개의 초대장이 전송되었습니다",
+      "title": "다중 참가자"
+    },
+    "selectAll": "모두 선택",
+    "selectedCount": "{{count}} 개 선택됨",
+    "statusConfirmedShort": "확인됨",
+    "statusCounter": "대안 제안 수신됨",
+    "statusCounterMonth": "대안 제안",
+    "statusCounterShort": "대안 제안",
+    "statusDeclined": "연락처에 의해 거절됨",
+    "statusDeclinedMonth": "거절됨",
+    "statusDeclinedShort": "거절됨",
+    "statusPending": "응답 대기 중",
+    "statusPendingMonth": "대기 중",
+    "statusPendingShort": "대기 중",
+    "syncFailed": "동기화 실패",
+    "viewDetails": "세부 정보 보기"
   },
   "supportChat": {
     "title": "Inboria 어시스턴트",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "템플릿으로 저장",
     "savedAsTemplate": "이메일이 템플릿으로 저장되었습니다",
     "suggestNameWithAI": "Inboria로 이름 제안하기",
-    "suggestNameShort": "제안"
+    "suggestNameShort": "제안",
+    "insertTemplate": "템플릿 삽입",
+    "pickerNoMatch": "검색과 일치하는 템플릿이 없습니다.",
+    "pickerSearch": "템플릿 검색…",
+    "pickerTitle": "템플릿 선택"
   },
   "rules": {
     "title": "자동 규칙",
@@ -3090,7 +3171,10 @@
     "createdHint": "지금 복사하십시오 — 더 이상 표시되지 않습니다.",
     "dismissCreated": "키를 복사했습니다.",
     "usageTitle": "사용 예",
-    "rateLimitNotice": "제한: 60 요청 / 분 / 키."
+    "rateLimitNotice": "제한: 60 요청 / 분 / 키.",
+    "deletePermanently": "영구 삭제",
+    "deletePermanentlyConfirm": "이 취소된 키를 영구 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "deletedToast": "키가 영구 삭제되었습니다"
   },
   "webhooks": {
     "title": "아웃바운드 웹후크",
@@ -3412,5 +3496,39 @@
     "csvDesc": "메타데이터 (보낸 사람, 제목, 날짜, 상태)",
     "dragHint": "폴더로 끌어 .eml로 내보내거나 (Chrome/Edge), 클릭해 형식을 선택하십시오",
     "chromeHint": "💡 Chrome/Edge에서는 저장 위치를 묻는 창이 표시됩니다."
+  },
+  "calendars": {
+    "connectFailedDesc": "다시 시도하십시오.",
+    "connectFailedTitle": "연결 실패",
+    "connectGoogle": "Google Calendar 연결",
+    "connectGoogleDesc": "이벤트 읽기 및 새 약속 작성.",
+    "connectOutlook": "Outlook Calendar 연결",
+    "connectOutlookDesc": "이벤트 읽기 및 새 약속 작성.",
+    "connectedToastDesc": "동기화가 활성화되었습니다.",
+    "connectedToastTitle": "캘린더 연결됨",
+    "disconnect": "연결 해제",
+    "disconnectFailed": "삭제 불가",
+    "disconnectedToast": "캘린더 연결 해제됨",
+    "empty": "현재 연결된 캘린더가 없습니다.",
+    "help": "Inboria는 귀하의 캘린더를 사용하여 가용성을 확인하고 Inboria에서 예약된 약속을 생성합니다.",
+    "schemaMissing": "calendar_accounts 테이블이 아직 데이터베이스에 생성되지 않았습니다. Supabase에서 2026_05_09_calendar_accounts.sql 마이그레이션을 실행하십시오.",
+    "statusConnected": "연결됨",
+    "statusReauth": "다시 연결 필요",
+    "subtitle": "Inboria가 귀하의 가용성을 확인하고 약속을 기록할 수 있도록 Google Calendar 또는 Outlook Calendar를 연결하십시오.",
+    "title": "연결된 캘린더"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} 개의 읽지 않음 · 총 {{total}} 개",
+    "filters": {
+      "agenda": "일정",
+      "all": "모두",
+      "inboria": "Inboria",
+      "mails": "메일",
+      "system": "시스템",
+      "team": "팀",
+      "unread": "읽지 않음"
+    },
+    "sourceAgenda": "일정",
+    "system": "시스템"
   }
 }

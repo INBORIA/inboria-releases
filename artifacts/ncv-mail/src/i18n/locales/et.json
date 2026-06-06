@@ -543,6 +543,22 @@
     "teamTasks": "Meeskonna ülesanded",
     "assignedFilter": {
       "all": "Kogu meeskond"
+    },
+    "classicInboxLink": "Vana postkast",
+    "help": {
+      "comingSoonDesc": "Integreeritud abikeskus on peagi saadaval. Seniks võtke meiega ühendust Seadete kaudu.",
+      "comingSoonTitle": "Veebipõhine abi — peagi saadaval",
+      "tooltip": "Abi (peagi saadaval)"
+    },
+    "sections": {
+      "important": "Tähtis",
+      "other": "Muud"
+    },
+    "shortcuts": {
+      "commands": "Käsud",
+      "done": "Valmis",
+      "navigate": "Navigeeri",
+      "reply": "Vasta"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Ühendamine käib...",
       "mergedToast": "{{count}} e-kirja(d) liigutatud « {{target}} »-sse",
       "close": "Sulge",
-      "detecting": "Analüüs käib..."
+      "detecting": "Analüüs käib...",
+      "clusterLine": "{{count}} kategooriat nimega « {{name}} »",
+      "clusterMergeAll": "Ühenda kõik üheks",
+      "clusterMergeConfirmDesc": "Kõik e-kirjad määratakse ümber ühte kategooriasse « {{name}} » (see, mis sisaldab juba kõige rohkem e-kirju). {{deleted}} muud koopiad kustutatakse. Toiming on pöördumatu.",
+      "clusterMergeConfirmTitle": "Kas ühendada {{count}} kategooriat « {{name}} »?",
+      "clusterMergedToast": "{{count}} e-kirja ühendatud — {{deleted}} duplikaati kustutatud",
+      "clusterTotalEmails": "Kokku {{count}} e-kirja",
+      "clustersDesc": "Mitmel kategoorial on sama nimi — sageli loodud paralleelselt sorteerimise ajal. Üks ühendamine piisab kõigi ühendamiseks.",
+      "clustersTitle": "Täpsed duplikaadid",
+      "pairsTitle": "Sarnased nimed (ülevaatamiseks)"
     },
     "sections": {
       "byPack": "Pakett {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforce'i kontaktide, kontode ja võimaluste sünkroniseerimine.",
       "salesforceSandbox": "Ühendage Sandbox org (test.salesforce.com)",
       "privacy": "Privaatsus ja meeskonna juurdepääs",
-      "privacyDesc": "Teie isiklikud e-kirjad ja administraatori vaatamiste ajalugu"
+      "privacyDesc": "Teie isiklikud e-kirjad ja administraatori vaatamiste ajalugu",
+      "calendars": "Kalendrid",
+      "calendarsDesc": "Ühenda Google Calendar ja Outlook Calendar"
     },
     "b2bSection": "B2B usaldusväärsus",
     "slaCard": "Jagatud postkastide SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "Registreerimise alustamine ebaõnnestus"
     },
     "preferredVideoTitle": "Vaikimisi videokoosolek",
-    "preferredVideoDesc": "Valige uute kohtumiste jaoks vaikimisi videokoosoleku pakkuja. Meet nõuab ühendatud Google'i kalendrit; Teams nõuab Outlooki. Jitsi töötab ilma kontota."
+    "preferredVideoDesc": "Valige uute kohtumiste jaoks vaikimisi videokoosoleku pakkuja. Meet nõuab ühendatud Google'i kalendrit; Teams nõuab Outlooki. Jitsi töötab ilma kontota.",
+    "meetingRemindersDesc": "Inboria saadab viisakalt meeldetuletuse kontaktile 48 tundi pärast vastuseta jäänud kohtumise ettepanekut.",
+    "meetingRemindersTitle": "Automaatne kohtumiste meeldetuletus"
   },
   "subscription": {
     "title": "Halda oma tellimust",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria link, kontot pole vaja)",
     "videoMeet": "Google Meet (vajalik on Google'i kalender)",
     "videoTeams": "Microsoft Teams (vajalik on Outlooki kalender)",
-    "videoJoin": "Liitu videokoosolekuga"
+    "videoJoin": "Liitu videokoosolekuga",
+    "bulkConfirmed": "{{count}} kinnitatud kohtumine",
+    "bulkDismissed": "{{count}} ignoreeritud ettepanekut",
+    "confirmSelected": "Kinnitage valik",
+    "dismissSelected": "Ignoreeri valikut",
+    "multi": {
+      "addParticipants": "Lisage osalejad",
+      "candidateSlots": "Pakutud ajad",
+      "externalParticipants": "Välisosalejad",
+      "findCommonSlot": "Leidke ühine aeg",
+      "internalParticipants": "Sisesed osalejad",
+      "lastReminder": "Viimane meeldetuletus",
+      "multiStatus": {
+        "confirmed": "Kinnitatud",
+        "declined": "Tagasi lükatud",
+        "partially_confirmed": "Osaliselt kinnitatud",
+        "pending": "Ootel"
+      },
+      "neverReminded": "Pole meeldetuletatud",
+      "noCommonSlot": "Valitud ajavahemikus ei leitud ühist aega.",
+      "optional": "Valikuline",
+      "participantStatus": {
+        "accepted": "Vastu võetud",
+        "declined": "Tagasi lükatud",
+        "pending": "Ootel",
+        "tentative": "Ajutine"
+      },
+      "participantsLabel": "Osalejad (eralda komade või reavahetustega)",
+      "remindParticipant": "Meenuta",
+      "remindSent": "Meeldetuletus saadetud",
+      "required": "Nõutud",
+      "send": "Saada kutsed",
+      "sent": "{{count}} kutset saadetud",
+      "title": "Mitme osalejaga"
+    },
+    "selectAll": "Vali kõik",
+    "selectedCount": "{{count}} valitud",
+    "statusConfirmedShort": "Kinnitatud",
+    "statusCounter": "Vastupakkumine saadud",
+    "statusCounterMonth": "Vastupakkumine",
+    "statusCounterShort": "Vastupakkumine",
+    "statusDeclined": "Kontakt keeldus",
+    "statusDeclinedMonth": "Keeldutud",
+    "statusDeclinedShort": "Keeldutud",
+    "statusPending": "Ootel vastust",
+    "statusPendingMonth": "Ootel",
+    "statusPendingShort": "Ootel",
+    "syncFailed": "Sünkroonimine ebaõnnestus",
+    "viewDetails": "Vaata üksikasju"
   },
   "supportChat": {
     "title": "Inboria assistent",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Salvesta mallina",
     "savedAsTemplate": "E-kiri salvestatud mallina",
     "suggestNameWithAI": "Soovita nime Inboria abil",
-    "suggestNameShort": "Soovita"
+    "suggestNameShort": "Soovita",
+    "insertTemplate": "Sisesta mall",
+    "pickerNoMatch": "Teie otsingule ei vasta ükski mall.",
+    "pickerSearch": "Otsi malli…",
+    "pickerTitle": "Valige mall"
   },
   "rules": {
     "title": "Automaatreeglid",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopeerige see nüüd — seda ei kuvata enam kunagi.",
     "dismissCreated": "Olen kopeerinud võtme",
     "usageTitle": "Kasutuse näide",
-    "rateLimitNotice": "Piirang: 60 päringut / minut / võti."
+    "rateLimitNotice": "Piirang: 60 päringut / minut / võti.",
+    "deletePermanently": "Kustuta jäädavalt",
+    "deletePermanentlyConfirm": "Kas kustutada see tühistatud võti jäädavalt? See toiming on pöördumatu.",
+    "deletedToast": "Võti jäädavalt kustutatud"
   },
   "webhooks": {
     "title": "Väljaminevad veebihooked",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metaandmed (saatja, teema, kuupäev, olek)",
     "dragHint": "Lohistage kausta, et eksportida .eml-na (Chrome/Edge), või klõpsake vormingu valimiseks",
     "chromeHint": "💡 Chrome'is/Edge'is küsib aken, kuhu fail salvestada."
+  },
+  "calendars": {
+    "connectFailedDesc": "Palun proovige uuesti.",
+    "connectFailedTitle": "Ühendamine ebaõnnestus",
+    "connectGoogle": "Ühenda Google Calendar",
+    "connectGoogleDesc": "Loe sündmusi ja kirjuta uusi kohtumisi.",
+    "connectOutlook": "Ühenda Outlook Calendar",
+    "connectOutlookDesc": "Loe sündmusi ja kirjuta uusi kohtumisi.",
+    "connectedToastDesc": "Sünkroonimine on aktiivne.",
+    "connectedToastTitle": "Kalender ühendatud",
+    "disconnect": "Ühenda lahti",
+    "disconnectFailed": "Eemaldamine ebaõnnestus",
+    "disconnectedToast": "Kalender lahti ühendatud",
+    "empty": "Hetkel pole ühtegi kalendrit ühendatud.",
+    "help": "Inboria kasutab teie kalendreid, et kontrollida teie saadavust ja luua kohtumisi Inboria kaudu.",
+    "schemaMissing": "Tabelit calendar_accounts pole veel andmebaasis loodud. Käivitage migratsioon 2026_05_09_calendar_accounts.sql Supabase'is.",
+    "statusConnected": "Ühendatud",
+    "statusReauth": "Ühenda uuesti",
+    "subtitle": "Ühendage Google Calendar või Outlook Calendar, et Inboria näeks teie saadavust ja lisaks sinna kohtumisi.",
+    "title": "Ühendatud kalendrid"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} lugemata · kokku {{total}}",
+    "filters": {
+      "agenda": "Kava",
+      "all": "Kõik",
+      "inboria": "Inboria",
+      "mails": "Kirjad",
+      "system": "Süsteem",
+      "team": "Meeskond",
+      "unread": "Lugemata"
+    },
+    "sourceAgenda": "Kava",
+    "system": "Süsteem"
   }
 }

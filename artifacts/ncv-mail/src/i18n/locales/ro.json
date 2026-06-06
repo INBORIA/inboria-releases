@@ -543,6 +543,22 @@
     "teamTasks": "Sarcinile echipei",
     "assignedFilter": {
       "all": "Întreaga echipă"
+    },
+    "classicInboxLink": "Recepție veche",
+    "help": {
+      "comingSoonDesc": "Centrul de ajutor integrat va fi disponibil foarte curând. Între timp, contactați-ne din Setări.",
+      "comingSoonTitle": "Ajutor online — în curând disponibil",
+      "tooltip": "Ajutor (în curând disponibil)"
+    },
+    "sections": {
+      "important": "Important",
+      "other": "Altele"
+    },
+    "shortcuts": {
+      "commands": "Comenzi",
+      "done": "Terminat",
+      "navigate": "Navigați",
+      "reply": "Răspundeți"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Fuzionare în curs...",
       "mergedToast": "{{count}} email(uri) mutate în « {{target}} »",
       "close": "Închideți",
-      "detecting": "Analiză în curs..."
+      "detecting": "Analiză în curs...",
+      "clusterLine": "{{count}} categorii numite „{{name}}”",
+      "clusterMergeAll": "Fuzionați totul într-una singură",
+      "clusterMergeConfirmDesc": "Toate emailurile vor fi realocate unei singure categorii „{{name}}” (cea care conține deja cele mai multe emailuri). Cele {{deleted}} alte copii vor fi șterse. Acțiune ireversibilă.",
+      "clusterMergeConfirmTitle": "Fuzionați cele {{count}} categorii „{{name}}”?",
+      "clusterMergedToast": "{{count}} email(uri) grupat(e) — {{deleted}} duplicat(e) șters(e)",
+      "clusterTotalEmails": "{{count}} email(uri) în total",
+      "clustersDesc": "Mai multe categorii au același nume — adesea create în paralel cu trierea. O singură fuziune este suficientă pentru a le grupa pe toate.",
+      "clustersTitle": "Dubluri exacte",
+      "pairsTitle": "Nume similare (de revizuit)"
     },
     "sections": {
       "byPack": "Pachet {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Sincronizarea contactelor, conturilor și oportunităților Salesforce.",
       "salesforceSandbox": "Conectați un org Sandbox (test.salesforce.com)",
       "privacy": "Confidențialitate și acces echipă",
-      "privacyDesc": "Emailurile dumneavoastră private și jurnalul consultărilor admin"
+      "privacyDesc": "Emailurile dumneavoastră private și jurnalul consultărilor admin",
+      "calendars": "Calendare",
+      "calendarsDesc": "Conectați Google Calendar și Outlook Calendar"
     },
     "b2bSection": "Credibilitate B2B",
     "slaCard": "SLA căsuțe partajate",
@@ -1269,7 +1296,9 @@
       "enrollError": "Imposibil de început înrolarea"
     },
     "preferredVideoTitle": "Videoconferință implicită",
-    "preferredVideoDesc": "Alegeți furnizorul implicit de videoconferință pentru noile întâlniri. Meet necesită un calendar Google conectat; Teams necesită Outlook. Jitsi funcționează fără cont."
+    "preferredVideoDesc": "Alegeți furnizorul implicit de videoconferință pentru noile întâlniri. Meet necesită un calendar Google conectat; Teams necesită Outlook. Jitsi funcționează fără cont.",
+    "meetingRemindersDesc": "Inboria trimite un memento politicos contactului la 48 de ore după o propunere de întâlnire rămasă fără răspuns.",
+    "meetingRemindersTitle": "Reamintiri automate de RDV"
   },
   "subscription": {
     "title": "Gestionați abonamentul dumneavoastră",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (link Inboria, fără cont)",
     "videoMeet": "Google Meet (calendar Google necesar)",
     "videoTeams": "Microsoft Teams (calendar Outlook necesar)",
-    "videoJoin": "Alăturați-vă videoconferinței"
+    "videoJoin": "Alăturați-vă videoconferinței",
+    "bulkConfirmed": "{{count}} RDV confirmat(e)",
+    "bulkDismissed": "{{count}} sugestie(i) ignorată(e)",
+    "confirmSelected": "Confirmați selecția",
+    "dismissSelected": "Ignorați selecția",
+    "multi": {
+      "addParticipants": "Adăugați participanți",
+      "candidateSlots": "Intervale propuse",
+      "externalParticipants": "Participanți externi",
+      "findCommonSlot": "Căutați un interval comun",
+      "internalParticipants": "Participanți interni",
+      "lastReminder": "Ultima reamintire",
+      "multiStatus": {
+        "confirmed": "Confirmat",
+        "declined": "Refuzat",
+        "partially_confirmed": "Parțial confirmat",
+        "pending": "În așteptare"
+      },
+      "neverReminded": "Nicio reamintire",
+      "noCommonSlot": "Niciun interval comun găsit în fereastra aleasă.",
+      "optional": "Opțional",
+      "participantStatus": {
+        "accepted": "Acceptat",
+        "declined": "Refuzat",
+        "pending": "În așteptare",
+        "tentative": "Provizoriu"
+      },
+      "participantsLabel": "Participanți (separați prin virgulă sau linie nouă)",
+      "remindParticipant": "Reamintiți",
+      "remindSent": "Reamintire trimisă",
+      "required": "Necesar",
+      "send": "Trimiteți invitațiile",
+      "sent": "{{count}} invitație(i) trimisă(e)",
+      "title": "Multi-participanți"
+    },
+    "selectAll": "Selectați tot",
+    "selectedCount": "{{count}} selectat(e)",
+    "statusConfirmedShort": "Confirmat",
+    "statusCounter": "Contra-propunere primită",
+    "statusCounterMonth": "Contra-propunere",
+    "statusCounterShort": "Contra-propunere",
+    "statusDeclined": "Refuzat de contact",
+    "statusDeclinedMonth": "Refuzat",
+    "statusDeclinedShort": "Refuzat",
+    "statusPending": "În așteptarea răspunsului",
+    "statusPendingMonth": "În aștept.",
+    "statusPendingShort": "În așteptare",
+    "syncFailed": "Sincronizare eșuată",
+    "viewDetails": "Vizualizați detaliile"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Salvați ca șablon",
     "savedAsTemplate": "Email salvat ca șablon",
     "suggestNameWithAI": "Sugerați un nume cu Inboria",
-    "suggestNameShort": "Sugerați"
+    "suggestNameShort": "Sugerați",
+    "insertTemplate": "Introduceți un șablon",
+    "pickerNoMatch": "Niciun șablon nu corespunde căutării dumneavoastră.",
+    "pickerSearch": "Căutați un șablon…",
+    "pickerTitle": "Alegeți un șablon"
   },
   "rules": {
     "title": "Reguli automate",
@@ -3090,7 +3171,10 @@
     "createdHint": "Copiați-o acum — nu va mai fi afișată niciodată.",
     "dismissCreated": "Am copiat cheia",
     "usageTitle": "Exemplu de utilizare",
-    "rateLimitNotice": "Limită: 60 cereri / minut / cheie."
+    "rateLimitNotice": "Limită: 60 cereri / minut / cheie.",
+    "deletePermanently": "Ștergeți definitiv",
+    "deletePermanentlyConfirm": "Ștergeți definitiv această cheie revocată? Această acțiune este ireversibilă.",
+    "deletedToast": "Cheie ștearsă definitiv"
   },
   "webhooks": {
     "title": "Webhooks externe",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadate (expeditor, subiect, dată, stare)",
     "dragHint": "Trageți într-un dosar pentru a exporta ca .eml (Chrome/Edge), sau faceți clic pentru a alege formatul",
     "chromeHint": "💡 În Chrome/Edge, o fereastră vă va întreba unde să salvați fișierul."
+  },
+  "calendars": {
+    "connectFailedDesc": "Vă rugăm să încercați din nou.",
+    "connectFailedTitle": "Conexiune eșuată",
+    "connectGoogle": "Conectați Google Calendar",
+    "connectGoogleDesc": "Citirea evenimentelor și scrierea noilor RDV.",
+    "connectOutlook": "Conectați Outlook Calendar",
+    "connectOutlookDesc": "Citirea evenimentelor și scrierea noilor RDV.",
+    "connectedToastDesc": "Sincronizarea este activă.",
+    "connectedToastTitle": "Calendar conectat",
+    "disconnect": "Deconectați",
+    "disconnectFailed": "Eliminare imposibilă",
+    "disconnectedToast": "Calendar deconectat",
+    "empty": "Niciun calendar conectat momentan.",
+    "help": "Inboria folosește calendarele dumneavoastră pentru a verifica disponibilitățile și a crea întâlnirile stabilite din Inboria.",
+    "schemaMissing": "Tabelul calendar_accounts nu este încă creat în baza de date. Executați migrarea 2026_05_09_calendar_accounts.sql în Supabase.",
+    "statusConnected": "Conectat",
+    "statusReauth": "A se reconecta",
+    "subtitle": "Conectați Google Calendar sau Outlook Calendar pentru ca Inboria să vadă disponibilitățile și să înregistreze întâlnirile dumneavoastră.",
+    "title": "Calendare conectate"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} necitite · {{total}} în total",
+    "filters": {
+      "agenda": "Agendă",
+      "all": "Tot",
+      "inboria": "Inboria",
+      "mails": "Emailuri",
+      "system": "Sistem",
+      "team": "Echipă",
+      "unread": "Necitite"
+    },
+    "sourceAgenda": "Agendă",
+    "system": "Sistem"
   }
 }

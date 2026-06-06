@@ -543,6 +543,22 @@
     "teamTasks": "ٹیم کے کام",
     "assignedFilter": {
       "all": "پوری ٹیم"
+    },
+    "classicInboxLink": "پرانا ان باکس",
+    "help": {
+      "comingSoonDesc": "مدد کا مرکز جلد ہی دستیاب ہوگا۔ اس دوران، براہ کرم ترتیبات سے ہم سے رابطہ کریں۔",
+      "comingSoonTitle": "آن لائن مدد — جلد دستیاب",
+      "tooltip": "مدد (جلد دستیاب)"
+    },
+    "sections": {
+      "important": "اہم",
+      "other": "دیگر"
+    },
+    "shortcuts": {
+      "commands": "کمانڈز",
+      "done": "مکمل",
+      "navigate": "نیویگیٹ کریں",
+      "reply": "جواب دیں"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "ضم کرنے کا عمل جاری ہے…",
       "mergedToast": "{{count}} ای میل(ز) « {{target}} » میں منتقل کر دیے گئے",
       "close": "بند کریں",
-      "detecting": "تجزیہ جاری ہے…"
+      "detecting": "تجزیہ جاری ہے…",
+      "clusterLine": "{{count}} زمرے « {{name}} » کے نام سے",
+      "clusterMergeAll": "سب کو ایک میں ضم کریں",
+      "clusterMergeConfirmDesc": "تمام ای میلز کو ایک ہی زمرے « {{name}} » میں دوبارہ تفویض کیا جائے گا (جس میں پہلے سے زیادہ ای میلز موجود ہیں)۔ {{deleted}} دیگر نقول حذف کر دی جائیں گی۔ عمل ناقابل واپسی ہے۔",
+      "clusterMergeConfirmTitle": "کیا آپ {{count}} زمرے « {{name}} » کو ضم کرنا چاہتے ہیں؟",
+      "clusterMergedToast": "{{count}} ای میل(ز) کو گروپ کیا گیا — {{deleted}} نقل(یں) حذف کی گئیں",
+      "clusterTotalEmails": "کل {{count}} ای میلز",
+      "clustersDesc": "کئی زمرے ایک ہی نام رکھتے ہیں — اکثر درجہ بندی کے دوران بنائے گئے۔ ایک ہی ضم کرنے سے سب کچھ گروپ ہو جائے گا۔",
+      "clustersTitle": "عین نقل",
+      "pairsTitle": "مشابہ نام (جائزہ لیں)"
     },
     "sections": {
       "byPack": "پیک {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforce کے رابطوں، اکاؤنٹس اور مواقع کی ہم وقت سازی۔",
       "salesforceSandbox": "ایک Sandbox تنظیم کو متصل کریں (test.salesforce.com)",
       "privacy": "رازداری اور ٹیم تک رسائی",
-      "privacyDesc": "آپ کے نجی ای میلز اور ایڈمن کی مشاورت کا ریکارڈ"
+      "privacyDesc": "آپ کے نجی ای میلز اور ایڈمن کی مشاورت کا ریکارڈ",
+      "calendars": "کیلنڈرز",
+      "calendarsDesc": "گوگل کیلنڈر اور آؤٹ لک کیلنڈر کو جوڑیں"
     },
     "b2bSection": "B2B کی ساکھ",
     "slaCard": "شیئر کردہ باکسز کے لیے SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "رجسٹریشن شروع کرنے میں ناکامی"
     },
     "preferredVideoTitle": "طے شدہ ویڈیو میٹنگ",
-    "preferredVideoDesc": "براہ کرم نئی ملاقاتوں کے لیے طے شدہ ویڈیو میٹنگ فراہم کنندہ منتخب کریں۔ Meet کے لیے منسلک Google کیلنڈر ضروری ہے؛ Teams کے لیے Outlook ضروری ہے۔ Jitsi بغیر اکاؤنٹ کے کام کرتا ہے۔"
+    "preferredVideoDesc": "براہ کرم نئی ملاقاتوں کے لیے طے شدہ ویڈیو میٹنگ فراہم کنندہ منتخب کریں۔ Meet کے لیے منسلک Google کیلنڈر ضروری ہے؛ Teams کے لیے Outlook ضروری ہے۔ Jitsi بغیر اکاؤنٹ کے کام کرتا ہے۔",
+    "meetingRemindersDesc": "Inboria 48 گھنٹے بعد ایک شائستہ یاد دہانی بھیجتا ہے اگر ملاقات کی تجویز کا جواب نہ دیا جائے۔",
+    "meetingRemindersTitle": "خودکار ملاقات یاد دہانیاں"
   },
   "subscription": {
     "title": "اپنی رکنیت کا انتظام کریں",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria لنک، اکاؤنٹ کی ضرورت نہیں)",
     "videoMeet": "Google Meet (Google کیلنڈر درکار)",
     "videoTeams": "Microsoft Teams (Outlook کیلنڈر درکار)",
-    "videoJoin": "ویڈیو میٹنگ میں شامل ہوں"
+    "videoJoin": "ویڈیو میٹنگ میں شامل ہوں",
+    "bulkConfirmed": "{{count}} ملاقات(یں) تصدیق شدہ",
+    "bulkDismissed": "{{count}} تجویز(یں) نظرانداز کی گئی",
+    "confirmSelected": "منتخب کردہ کی تصدیق کریں",
+    "dismissSelected": "منتخب کردہ کو نظرانداز کریں",
+    "multi": {
+      "addParticipants": "شرکاء شامل کریں",
+      "candidateSlots": "پیش کردہ اوقات",
+      "externalParticipants": "بیرونی شرکاء",
+      "findCommonSlot": "مشترکہ وقت تلاش کریں",
+      "internalParticipants": "داخلی شرکاء",
+      "lastReminder": "آخری یاد دہانی",
+      "multiStatus": {
+        "confirmed": "تصدیق شدہ",
+        "declined": "مسترد",
+        "partially_confirmed": "جزوی طور پر تصدیق شدہ",
+        "pending": "منتظر"
+      },
+      "neverReminded": "کوئی یاد دہانی نہیں",
+      "noCommonSlot": "منتخب کردہ وقت میں کوئی مشترکہ وقت نہیں ملا۔",
+      "optional": "اختیاری",
+      "participantStatus": {
+        "accepted": "قبول شدہ",
+        "declined": "مسترد",
+        "pending": "منتظر",
+        "tentative": "عارضی"
+      },
+      "participantsLabel": "شرکاء (کاما یا نئی لائن سے جدا کریں)",
+      "remindParticipant": "یاد دہانی بھیجیں",
+      "remindSent": "یاد دہانی بھیجی گئی",
+      "required": "ضروری",
+      "send": "دعوت نامے بھیجیں",
+      "sent": "{{count}} دعوت نامے بھیجے گئے",
+      "title": "کثیر شرکاء"
+    },
+    "selectAll": "سب کو منتخب کریں",
+    "selectedCount": "{{count}} منتخب شدہ",
+    "statusConfirmedShort": "تصدیق شدہ",
+    "statusCounter": "جوابی تجویز موصول",
+    "statusCounterMonth": "جوابی تجویز",
+    "statusCounterShort": "جوابی تجویز",
+    "statusDeclined": "رابطہ کی طرف سے مسترد",
+    "statusDeclinedMonth": "مسترد",
+    "statusDeclinedShort": "مسترد",
+    "statusPending": "جواب کا انتظار",
+    "statusPendingMonth": "منتظر",
+    "statusPendingShort": "منتظر",
+    "syncFailed": "ہم آہنگی ناکام",
+    "viewDetails": "تفصیلات دیکھیں"
   },
   "supportChat": {
     "title": "Inboria کا معاون",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "ٹیمپلیٹ کے طور پر محفوظ کریں",
     "savedAsTemplate": "ای میل کو ٹیمپلیٹ کے طور پر محفوظ کر لیا گیا",
     "suggestNameWithAI": "Inboria کے ساتھ نام کی تجویز کریں",
-    "suggestNameShort": "تجویز کریں"
+    "suggestNameShort": "تجویز کریں",
+    "insertTemplate": "ٹیمپلیٹ داخل کریں",
+    "pickerNoMatch": "آپ کی تلاش کے مطابق کوئی ٹیمپلیٹ نہیں ملا۔",
+    "pickerSearch": "ٹیمپلیٹ تلاش کریں…",
+    "pickerTitle": "ٹیمپلیٹ منتخب کریں"
   },
   "rules": {
     "title": "خودکار قواعد",
@@ -3090,7 +3171,10 @@
     "createdHint": "اسے ابھی کاپی کریں — یہ دوبارہ کبھی نہیں دکھائی جائے گی۔",
     "dismissCreated": "میں نے کلید کاپی کر لی ہے",
     "usageTitle": "استعمال کی مثال",
-    "rateLimitNotice": "حد: 60 درخواستیں / منٹ / کلید۔"
+    "rateLimitNotice": "حد: 60 درخواستیں / منٹ / کلید۔",
+    "deletePermanently": "ہمیشہ کے لئے حذف کریں",
+    "deletePermanentlyConfirm": "کیا آپ اس منسوخ شدہ کلید کو ہمیشہ کے لئے حذف کرنا چاہتے ہیں؟ یہ عمل ناقابل واپسی ہے۔",
+    "deletedToast": "کلید ہمیشہ کے لئے حذف کر دی گئی"
   },
   "webhooks": {
     "title": "خارجی ویب ہکس",
@@ -3412,5 +3496,39 @@
     "csvDesc": "میٹا ڈیٹا (بھیجنے والا، موضوع، تاریخ، حالت)",
     "dragHint": "براہ کرم فولڈر میں گھسیٹیں تاکہ .eml کے طور پر ایکسپورٹ ہو (Chrome/Edge)، یا فارمیٹ منتخب کرنے کے لیے کلک کریں",
     "chromeHint": "💡 Chrome/Edge پر ایک ونڈو پوچھے گی کہ فائل کہاں محفوظ کی جائے۔"
+  },
+  "calendars": {
+    "connectFailedDesc": "براہ کرم دوبارہ کوشش کریں۔",
+    "connectFailedTitle": "کنکشن ناکام",
+    "connectGoogle": "گوگل کیلنڈر کو جوڑیں",
+    "connectGoogleDesc": "واقعات پڑھیں اور نئی ملاقاتیں لکھیں۔",
+    "connectOutlook": "آؤٹ لک کیلنڈر کو جوڑیں",
+    "connectOutlookDesc": "واقعات پڑھیں اور نئی ملاقاتیں لکھیں۔",
+    "connectedToastDesc": "ہم آہنگی فعال ہے۔",
+    "connectedToastTitle": "کیلنڈر جڑا ہوا",
+    "disconnect": "منقطع کریں",
+    "disconnectFailed": "حذف کرنا ممکن نہیں",
+    "disconnectedToast": "کیلنڈر منقطع",
+    "empty": "فی الحال کوئی کیلنڈر جڑا ہوا نہیں ہے۔",
+    "help": "Inboria آپ کے کیلنڈرز کو آپ کی دستیابی چیک کرنے اور Inboria سے طے شدہ ملاقاتیں بنانے کے لئے استعمال کرتا ہے۔",
+    "schemaMissing": "ٹیبل calendar_accounts ابھی تک ڈیٹا بیس میں نہیں بنائی گئی ہے۔ Supabase میں 2026_05_09_calendar_accounts.sql مائیگریشن چلائیں۔",
+    "statusConnected": "جڑا ہوا",
+    "statusReauth": "دوبارہ جوڑیں",
+    "subtitle": "گوگل کیلنڈر یا آؤٹ لک کیلنڈر کو جوڑیں تاکہ Inboria آپ کی دستیابی دیکھ سکے اور آپ کی ملاقاتیں درج کر سکے۔",
+    "title": "جڑے ہوئے کیلنڈرز"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} غیر پڑھی ہوئی · کل {{total}}",
+    "filters": {
+      "agenda": "ایجنڈا",
+      "all": "سب",
+      "inboria": "Inboria",
+      "mails": "ای میلز",
+      "system": "سسٹم",
+      "team": "ٹیم",
+      "unread": "غیر پڑھی ہوئی"
+    },
+    "sourceAgenda": "ایجنڈا",
+    "system": "سسٹم"
   }
 }

@@ -543,6 +543,22 @@
     "teamTasks": "团队任务",
     "assignedFilter": {
       "all": "全体团队"
+    },
+    "classicInboxLink": "旧版收件箱",
+    "help": {
+      "comingSoonDesc": "集成帮助中心即将推出。在此之前，请通过设置联系我们。",
+      "comingSoonTitle": "在线帮助 — 即将推出",
+      "tooltip": "帮助（即将推出）"
+    },
+    "sections": {
+      "important": "重要",
+      "other": "其他"
+    },
+    "shortcuts": {
+      "commands": "命令",
+      "done": "完成",
+      "navigate": "导航",
+      "reply": "回复"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "合并中...",
       "mergedToast": "{{count}} 封邮件已移动到 « {{target}} »",
       "close": "关闭",
-      "detecting": "分析中..."
+      "detecting": "分析中...",
+      "clusterLine": "名为“{{name}}”的{{count}}个类别",
+      "clusterMergeAll": "全部合并为一个",
+      "clusterMergeConfirmDesc": "所有邮件将重新分配到一个“{{name}}”类别（包含最多邮件的类别）。其他{{deleted}}个副本将被删除。此操作不可逆。",
+      "clusterMergeConfirmTitle": "合并{{count}}个“{{name}}”类别？",
+      "clusterMergedToast": "{{count}}封邮件已合并 — {{deleted}}个重复项已删除",
+      "clusterTotalEmails": "总计{{count}}封邮件",
+      "clustersDesc": "多个类别具有相同名称 — 通常在分类时并行创建。一次合并即可全部整合。",
+      "clustersTitle": "完全重复",
+      "pairsTitle": "相似名称（需审核）"
     },
     "sections": {
       "byPack": "包 {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "同步 Salesforce 的联系人、账户和机会。",
       "salesforceSandbox": "连接一个沙盒组织（test.salesforce.com）",
       "privacy": "隐私和团队访问",
-      "privacyDesc": "您的私人邮件和管理员查看日志"
+      "privacyDesc": "您的私人邮件和管理员查看日志",
+      "calendars": "日历",
+      "calendarsDesc": "连接 Google 日历和 Outlook 日历"
     },
     "b2bSection": "B2B 信誉",
     "slaCard": "共享邮箱的 SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "无法启动注册"
     },
     "preferredVideoTitle": "默认视频会议",
-    "preferredVideoDesc": "请为您的新约会选择默认的视频会议服务。Meet 需要已连接的 Google 日历；Teams 需要 Outlook。Jitsi 无需账户即可使用。"
+    "preferredVideoDesc": "请为您的新约会选择默认的视频会议服务。Meet 需要已连接的 Google 日历；Teams 需要 Outlook。Jitsi 无需账户即可使用。",
+    "meetingRemindersDesc": "Inboria 在预约建议未回复后 48 小时内向联系人发送礼貌提醒。",
+    "meetingRemindersTitle": "自动预约提醒"
   },
   "subscription": {
     "title": "管理您的订阅",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi（Inboria 链接，无需账户）",
     "videoMeet": "Google Meet（需要 Google 日历）",
     "videoTeams": "Microsoft Teams（需要 Outlook 日历）",
-    "videoJoin": "加入视频会议"
+    "videoJoin": "加入视频会议",
+    "bulkConfirmed": "{{count}} 个预约已确认",
+    "bulkDismissed": "{{count}} 个建议已忽略",
+    "confirmSelected": "确认选择",
+    "dismissSelected": "忽略选择",
+    "multi": {
+      "addParticipants": "添加参与者",
+      "candidateSlots": "建议时段",
+      "externalParticipants": "外部参与者",
+      "findCommonSlot": "寻找共同时段",
+      "internalParticipants": "内部参与者",
+      "lastReminder": "最后提醒",
+      "multiStatus": {
+        "confirmed": "已确认",
+        "declined": "已拒绝",
+        "partially_confirmed": "部分确认",
+        "pending": "待定"
+      },
+      "neverReminded": "无提醒",
+      "noCommonSlot": "在选定时间段内未找到共同时段。",
+      "optional": "可选",
+      "participantStatus": {
+        "accepted": "已接受",
+        "declined": "已拒绝",
+        "pending": "待定",
+        "tentative": "暂定"
+      },
+      "participantsLabel": "参与者（用逗号或换行分隔）",
+      "remindParticipant": "提醒",
+      "remindSent": "提醒已发送",
+      "required": "必需",
+      "send": "发送邀请",
+      "sent": "{{count}} 个邀请已发送",
+      "title": "多参与者"
+    },
+    "selectAll": "全选",
+    "selectedCount": "{{count}} 个已选择",
+    "statusConfirmedShort": "已确认",
+    "statusCounter": "收到反建议",
+    "statusCounterMonth": "反建议",
+    "statusCounterShort": "反建议",
+    "statusDeclined": "被联系人拒绝",
+    "statusDeclinedMonth": "已拒绝",
+    "statusDeclinedShort": "已拒绝",
+    "statusPending": "等待回复",
+    "statusPendingMonth": "待定",
+    "statusPendingShort": "待定",
+    "syncFailed": "同步失败",
+    "viewDetails": "查看详情"
   },
   "supportChat": {
     "title": "Inboria 助手",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "保存为模板",
     "savedAsTemplate": "邮件已保存为模板",
     "suggestNameWithAI": "使用 Inboria 建议名称",
-    "suggestNameShort": "建议"
+    "suggestNameShort": "建议",
+    "insertTemplate": "插入模板",
+    "pickerNoMatch": "没有符合您搜索的模板。",
+    "pickerSearch": "搜索模板…",
+    "pickerTitle": "选择模板"
   },
   "rules": {
     "title": "自动规则",
@@ -3090,7 +3171,10 @@
     "createdHint": "请立即复制 — 该密钥将不再显示。",
     "dismissCreated": "我已复制密钥",
     "usageTitle": "使用示例",
-    "rateLimitNotice": "限制：每分钟 60 次请求/密钥。"
+    "rateLimitNotice": "限制：每分钟 60 次请求/密钥。",
+    "deletePermanently": "永久删除",
+    "deletePermanentlyConfirm": "永久删除此已撤销的密钥？此操作不可逆。",
+    "deletedToast": "密钥已永久删除"
   },
   "webhooks": {
     "title": "出站 Webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "元数据（发件人、主题、日期、状态）",
     "dragHint": "请拖到文件夹以导出 .eml（Chrome/Edge），或点击选择格式",
     "chromeHint": "💡 在 Chrome/Edge 上，窗口将询问您文件保存位置。"
+  },
+  "calendars": {
+    "connectFailedDesc": "请重试。",
+    "connectFailedTitle": "连接失败",
+    "connectGoogle": "连接 Google 日历",
+    "connectGoogleDesc": "读取事件并写入新预约。",
+    "connectOutlook": "连接 Outlook 日历",
+    "connectOutlookDesc": "读取事件并写入新预约。",
+    "connectedToastDesc": "同步已激活。",
+    "connectedToastTitle": "日历已连接",
+    "disconnect": "断开连接",
+    "disconnectFailed": "无法删除",
+    "disconnectedToast": "日历已断开连接",
+    "empty": "目前没有连接的日历。",
+    "help": "Inboria 使用您的日历来检查您的可用性并创建从 Inboria 确定的预约。",
+    "schemaMissing": "calendar_accounts 表尚未在数据库中创建。请在 Supabase 中执行迁移 2026_05_09_calendar_accounts.sql。",
+    "statusConnected": "已连接",
+    "statusReauth": "需重新连接",
+    "subtitle": "连接 Google 日历或 Outlook 日历，以便 Inboria 查看您的可用性并记录您的预约。",
+    "title": "已连接的日历"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} 未读 · 共 {{total}}",
+    "filters": {
+      "agenda": "日程",
+      "all": "全部",
+      "inboria": "Inboria",
+      "mails": "邮件",
+      "system": "系统",
+      "team": "团队",
+      "unread": "未读"
+    },
+    "sourceAgenda": "日程",
+    "system": "系统"
   }
 }

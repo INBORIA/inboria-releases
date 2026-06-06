@@ -543,6 +543,22 @@
     "teamTasks": "टीम कार्य",
     "assignedFilter": {
       "all": "पूरी टीम"
+    },
+    "classicInboxLink": "पुरानी इनबॉक्स",
+    "help": {
+      "comingSoonDesc": "एकीकृत सहायता केंद्र बहुत जल्द आ रहा है। इस बीच, कृपया सेटिंग्स से हमसे संपर्क करें।",
+      "comingSoonTitle": "ऑनलाइन सहायता — जल्द ही उपलब्ध",
+      "tooltip": "सहायता (जल्द ही उपलब्ध)"
+    },
+    "sections": {
+      "important": "महत्वपूर्ण",
+      "other": "अन्य"
+    },
+    "shortcuts": {
+      "commands": "आदेश",
+      "done": "समाप्त",
+      "navigate": "नेविगेट करें",
+      "reply": "उत्तर दें"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "मिलान चल रहा है…",
       "mergedToast": "{{count}} ईमेल(ों) को « {{target}} » में स्थानांतरित किया गया",
       "close": "बंद करें",
-      "detecting": "विश्लेषण चल रहा है…"
+      "detecting": "विश्लेषण चल रहा है…",
+      "clusterLine": "{{count}} श्रेणियाँ नामित « {{name}} »",
+      "clusterMergeAll": "सभी को एक में विलय करें",
+      "clusterMergeConfirmDesc": "सभी ईमेल एक ही श्रेणी « {{name}} » में पुनः आवंटित किए जाएंगे (जिसमें पहले से सबसे अधिक ईमेल हैं)। {{deleted}} अन्य प्रतियां हटा दी जाएंगी। क्रिया अपरिवर्तनीय।",
+      "clusterMergeConfirmTitle": "क्या आप {{count}} श्रेणियों « {{name}} » को विलय करना चाहते हैं?",
+      "clusterMergedToast": "{{count}} ईमेल(एँ) समूहीकृत — {{deleted}} डुप्लिकेट(एँ) हटाई गईं",
+      "clusterTotalEmails": "कुल {{count}} ईमेल",
+      "clustersDesc": "कई श्रेणियों के एक ही नाम हैं — अक्सर छंटाई के दौरान समानांतर में बनाई जाती हैं। एक ही विलय से सब कुछ समूहीकृत हो जाएगा।",
+      "clustersTitle": "सटीक डुप्लिकेट",
+      "pairsTitle": "समान नाम (समीक्षा के लिए)"
     },
     "sections": {
       "byPack": "पैकेज {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "संपर्कों, खातों और Salesforce के अवसरों का सिंक्रनाइज़ेशन।",
       "salesforceSandbox": "एक ऑर्ग सैंडबॉक्स (test.salesforce.com) जोड़ें",
       "privacy": "गोपनीयता और टीम पहुंच",
-      "privacyDesc": "आपके निजी ईमेल और प्रशासनिक परामर्श का लॉग"
+      "privacyDesc": "आपके निजी ईमेल और प्रशासनिक परामर्श का लॉग",
+      "calendars": "कैलेंडर",
+      "calendarsDesc": "Google Calendar और Outlook Calendar कनेक्ट करें"
     },
     "b2bSection": "B2B विश्वसनीयता",
     "slaCard": "साझा बक्सों के लिए SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "पंजीकरण प्रारंभ करना असंभव है"
     },
     "preferredVideoTitle": "डिफ़ॉल्ट वीडियो मीटिंग",
-    "preferredVideoDesc": "कृपया नई मुलाकातों के लिए डिफ़ॉल्ट वीडियो मीटिंग प्रदाता चुनें। Meet के लिए कनेक्टेड Google कैलेंडर आवश्यक है; Teams के लिए Outlook आवश्यक है। Jitsi बिना खाते के काम करता है।"
+    "preferredVideoDesc": "कृपया नई मुलाकातों के लिए डिफ़ॉल्ट वीडियो मीटिंग प्रदाता चुनें। Meet के लिए कनेक्टेड Google कैलेंडर आवश्यक है; Teams के लिए Outlook आवश्यक है। Jitsi बिना खाते के काम करता है।",
+    "meetingRemindersDesc": "Inboria एक विनम्र अनुस्मारक भेजता है यदि 48 घंटे बाद भी बैठक का प्रस्ताव अनुत्तरित रहता है।",
+    "meetingRemindersTitle": "स्वचालित बैठक अनुस्मारक"
   },
   "subscription": {
     "title": "अपने सब्सक्रिप्शन का प्रबंधन करें",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria लिंक, खाते की आवश्यकता नहीं)",
     "videoMeet": "Google Meet (Google कैलेंडर आवश्यक)",
     "videoTeams": "Microsoft Teams (Outlook कैलेंडर आवश्यक)",
-    "videoJoin": "वीडियो मीटिंग में शामिल हों"
+    "videoJoin": "वीडियो मीटिंग में शामिल हों",
+    "bulkConfirmed": "{{count}} बैठक(एँ) पुष्टि की गई",
+    "bulkDismissed": "{{count}} सुझाव(एँ) अनदेखी की गई",
+    "confirmSelected": "चयन की पुष्टि करें",
+    "dismissSelected": "चयन को अनदेखा करें",
+    "multi": {
+      "addParticipants": "प्रतिभागियों को जोड़ें",
+      "candidateSlots": "प्रस्तावित समय स्लॉट",
+      "externalParticipants": "बाहरी प्रतिभागी",
+      "findCommonSlot": "सामान्य समय स्लॉट खोजें",
+      "internalParticipants": "आंतरिक प्रतिभागी",
+      "lastReminder": "अंतिम अनुस्मारक",
+      "multiStatus": {
+        "confirmed": "पुष्टि की गई",
+        "declined": "अस्वीकृत",
+        "partially_confirmed": "आंशिक रूप से पुष्टि की गई",
+        "pending": "लंबित"
+      },
+      "neverReminded": "कोई अनुस्मारक नहीं",
+      "noCommonSlot": "चयनित विंडो में कोई सामान्य समय स्लॉट नहीं मिला।",
+      "optional": "वैकल्पिक",
+      "participantStatus": {
+        "accepted": "स्वीकृत",
+        "declined": "अस्वीकृत",
+        "pending": "लंबित",
+        "tentative": "अनंतिम"
+      },
+      "participantsLabel": "प्रतिभागी (अल्पविराम या नई पंक्ति से अलग करें)",
+      "remindParticipant": "अनुस्मारक भेजें",
+      "remindSent": "अनुस्मारक भेजा गया",
+      "required": "आवश्यक",
+      "send": "आमंत्रण भेजें",
+      "sent": "{{count}} आमंत्रण भेजे गए",
+      "title": "बहु-प्रतिभागी"
+    },
+    "selectAll": "सभी का चयन करें",
+    "selectedCount": "{{count}} चयनित",
+    "statusConfirmedShort": "पुष्टि की गई",
+    "statusCounter": "विपरीत प्रस्ताव प्राप्त",
+    "statusCounterMonth": "विपरीत प्रस्ताव",
+    "statusCounterShort": "विपरीत प्रस्ताव",
+    "statusDeclined": "संपर्क द्वारा अस्वीकृत",
+    "statusDeclinedMonth": "अस्वीकृत",
+    "statusDeclinedShort": "अस्वीकृत",
+    "statusPending": "उत्तर की प्रतीक्षा में",
+    "statusPendingMonth": "प्रतीक्षा में",
+    "statusPendingShort": "प्रतीक्षा में",
+    "syncFailed": "सिंक विफल",
+    "viewDetails": "विवरण देखें"
   },
   "supportChat": {
     "title": "Inboria सहायक",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "टेम्पलेट के रूप में सहेजें",
     "savedAsTemplate": "ईमेल को टेम्पलेट के रूप में सहेजा गया",
     "suggestNameWithAI": "Inboria के साथ नाम का सुझाव दें",
-    "suggestNameShort": "सुझाएँ"
+    "suggestNameShort": "सुझाएँ",
+    "insertTemplate": "टेम्पलेट डालें",
+    "pickerNoMatch": "आपकी खोज से कोई टेम्पलेट मेल नहीं खाता।",
+    "pickerSearch": "टेम्पलेट खोजें…",
+    "pickerTitle": "टेम्पलेट चुनें"
   },
   "rules": {
     "title": "स्वचालित नियम",
@@ -3090,7 +3171,10 @@
     "createdHint": "इसे अभी कॉपी करें — यह फिर कभी नहीं दिखाई जाएगी।",
     "dismissCreated": "मैंने कुंजी कॉपी की है",
     "usageTitle": "उपयोग का उदाहरण",
-    "rateLimitNotice": "सीमा: 60 अनुरोध / मिनट / कुंजी।"
+    "rateLimitNotice": "सीमा: 60 अनुरोध / मिनट / कुंजी।",
+    "deletePermanently": "स्थायी रूप से हटाएं",
+    "deletePermanentlyConfirm": "क्या आप इस रद्द की गई कुंजी को स्थायी रूप से हटाना चाहते हैं? यह क्रिया अपरिवर्तनीय है।",
+    "deletedToast": "कुंजी स्थायी रूप से हटाई गई"
   },
   "webhooks": {
     "title": "आउटबाउंड वेबहुक",
@@ -3412,5 +3496,39 @@
     "csvDesc": "मेटाडेटा (प्रेषक, विषय, दिनांक, स्थिति)",
     "dragHint": "कृपया .eml के रूप में निर्यात करने के लिए फ़ोल्डर में खींचें (Chrome/Edge), या प्रारूप चुनने के लिए क्लिक करें",
     "chromeHint": "💡 Chrome/Edge पर एक विंडो पूछेगी कि फ़ाइल कहाँ सहेजी जाए।"
+  },
+  "calendars": {
+    "connectFailedDesc": "कृपया पुनः प्रयास करें।",
+    "connectFailedTitle": "कनेक्शन विफल",
+    "connectGoogle": "Google Calendar कनेक्ट करें",
+    "connectGoogleDesc": "घटनाओं को पढ़ें और नई बैठकें लिखें।",
+    "connectOutlook": "Outlook Calendar कनेक्ट करें",
+    "connectOutlookDesc": "घटनाओं को पढ़ें और नई बैठकें लिखें।",
+    "connectedToastDesc": "सिंक सक्रिय है।",
+    "connectedToastTitle": "कैलेंडर कनेक्टेड",
+    "disconnect": "डिस्कनेक्ट करें",
+    "disconnectFailed": "हटाना असंभव",
+    "disconnectedToast": "कैलेंडर डिस्कनेक्ट किया गया",
+    "empty": "अभी तक कोई कैलेंडर कनेक्ट नहीं किया गया है।",
+    "help": "Inboria आपके कैलेंडरों का उपयोग आपकी उपलब्धता की जांच करने और Inboria से तय की गई बैठकों को बनाने के लिए करता है।",
+    "schemaMissing": "तालिका calendar_accounts अभी तक डेटाबेस में नहीं बनाई गई है। Supabase में 2026_05_09_calendar_accounts.sql माइग्रेशन चलाएं।",
+    "statusConnected": "कनेक्टेड",
+    "statusReauth": "पुनः कनेक्ट करें",
+    "subtitle": "Google Calendar या Outlook Calendar को जोड़ें ताकि Inboria आपकी उपलब्धता देख सके और आपकी बैठकों को दर्ज कर सके।",
+    "title": "कनेक्टेड कैलेंडर"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} अपठित · कुल {{total}}",
+    "filters": {
+      "agenda": "एजेंडा",
+      "all": "सभी",
+      "inboria": "Inboria",
+      "mails": "मेल",
+      "system": "सिस्टम",
+      "team": "टीम",
+      "unread": "अपठित"
+    },
+    "sourceAgenda": "एजेंडा",
+    "system": "सिस्टम"
   }
 }

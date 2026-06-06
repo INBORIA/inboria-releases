@@ -543,6 +543,22 @@
     "teamTasks": "Teamets uppgifter",
     "assignedFilter": {
       "all": "Hela teamet"
+    },
+    "classicInboxLink": "Gammal inkorg",
+    "help": {
+      "comingSoonDesc": "Det integrerade hjälpcentret kommer snart. Under tiden, kontakta oss via Inställningar.",
+      "comingSoonTitle": "Onlinehjälp — snart tillgänglig",
+      "tooltip": "Hjälp (snart tillgänglig)"
+    },
+    "sections": {
+      "important": "Viktigt",
+      "other": "Övriga"
+    },
+    "shortcuts": {
+      "commands": "Kommandon",
+      "done": "Klart",
+      "navigate": "Navigera",
+      "reply": "Svara"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Slår ihop...",
       "mergedToast": "{{count}} e-postmeddelande(n) flyttade till « {{target}} »",
       "close": "Stäng",
-      "detecting": "Analys pågår..."
+      "detecting": "Analys pågår...",
+      "clusterLine": "{{count}} kategorier namngivna \"{{name}}\"",
+      "clusterMergeAll": "Slå ihop alla till en",
+      "clusterMergeConfirmDesc": "Alla e-postmeddelanden kommer att omfördelas till en enda kategori \"{{name}}\" (den som redan innehåller flest e-postmeddelanden). De {{deleted}} andra kopiorna kommer att raderas. Oåterkallelig åtgärd.",
+      "clusterMergeConfirmTitle": "Slå ihop de {{count}} kategorierna \"{{name}}\"?",
+      "clusterMergedToast": "{{count}} e-postmeddelanden grupperade — {{deleted}} dubbletter raderade",
+      "clusterTotalEmails": "{{count}} e-postmeddelanden totalt",
+      "clustersDesc": "Flera kategorier har samma namn — ofta skapade parallellt vid sortering. En enda sammanslagning räcker för att gruppera allt.",
+      "clustersTitle": "Exakta dubbletter",
+      "pairsTitle": "Liknande namn (att granska)"
     },
     "sections": {
       "byPack": "Paket {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Synkronisering av kontakter, konton och möjligheter i Salesforce.",
       "salesforceSandbox": "Anslut en Sandbox-org (test.salesforce.com)",
       "privacy": "Integritet och teamåtkomst",
-      "privacyDesc": "Dina privata e-postmeddelanden och loggen över administratörsvisningar"
+      "privacyDesc": "Dina privata e-postmeddelanden och loggen över administratörsvisningar",
+      "calendars": "Kalendrar",
+      "calendarsDesc": "Anslut Google Kalender och Outlook Kalender"
     },
     "b2bSection": "B2B-trovärdighet",
     "slaCard": "SLA för delade lådor",
@@ -1269,7 +1296,9 @@
       "enrollError": "Det går inte att starta registreringen"
     },
     "preferredVideoTitle": "Standardvideomöte",
-    "preferredVideoDesc": "Välj standardleverantör av videomöten för nya möten. Meet kräver en ansluten Google-kalender; Teams kräver Outlook. Jitsi fungerar utan konto."
+    "preferredVideoDesc": "Välj standardleverantör av videomöten för nya möten. Meet kräver en ansluten Google-kalender; Teams kräver Outlook. Jitsi fungerar utan konto.",
+    "meetingRemindersDesc": "Inboria skickar en artig påminnelse till kontakten 48 timmar efter ett mötesförslag som inte har besvarats.",
+    "meetingRemindersTitle": "Automatiska mötespåminnelser"
   },
   "subscription": {
     "title": "Hantera ditt abonnemang",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria-länk, utan konto)",
     "videoMeet": "Google Meet (Google-kalender krävs)",
     "videoTeams": "Microsoft Teams (Outlook-kalender krävs)",
-    "videoJoin": "Anslut till videomötet"
+    "videoJoin": "Anslut till videomötet",
+    "bulkConfirmed": "{{count}} bekräftade möten",
+    "bulkDismissed": "{{count}} ignorerade förslag",
+    "confirmSelected": "Bekräfta valda",
+    "dismissSelected": "Ignorera valda",
+    "multi": {
+      "addParticipants": "Lägg till deltagare",
+      "candidateSlots": "Föreslagna tider",
+      "externalParticipants": "Externa deltagare",
+      "findCommonSlot": "Hitta gemensam tid",
+      "internalParticipants": "Interna deltagare",
+      "lastReminder": "Senaste påminnelse",
+      "multiStatus": {
+        "confirmed": "Bekräftad",
+        "declined": "Avböjd",
+        "partially_confirmed": "Delvis bekräftad",
+        "pending": "Väntande"
+      },
+      "neverReminded": "Ingen påminnelse",
+      "noCommonSlot": "Ingen gemensam tid hittades inom det valda fönstret.",
+      "optional": "Valfri",
+      "participantStatus": {
+        "accepted": "Accepterad",
+        "declined": "Avböjd",
+        "pending": "Väntande",
+        "tentative": "Preliminär"
+      },
+      "participantsLabel": "Deltagare (separerade med kommatecken eller radbrytning)",
+      "remindParticipant": "Påminn",
+      "remindSent": "Påminnelse skickad",
+      "required": "Obligatorisk",
+      "send": "Skicka inbjudningar",
+      "sent": "{{count}} inbjudningar skickade",
+      "title": "Flera deltagare"
+    },
+    "selectAll": "Välj alla",
+    "selectedCount": "{{count}} valda",
+    "statusConfirmedShort": "Bekräftad",
+    "statusCounter": "Motförslag mottaget",
+    "statusCounterMonth": "Motförslag",
+    "statusCounterShort": "Motförslag",
+    "statusDeclined": "Avböjd av kontakt",
+    "statusDeclinedMonth": "Avböjd",
+    "statusDeclinedShort": "Avböjd",
+    "statusPending": "Väntar på svar",
+    "statusPendingMonth": "Väntande",
+    "statusPendingShort": "Väntande",
+    "syncFailed": "Synkronisering misslyckades",
+    "viewDetails": "Visa detaljer"
   },
   "supportChat": {
     "title": "Inboria-assistent",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Spara som mall",
     "savedAsTemplate": "E-postmeddelande sparat som mall",
     "suggestNameWithAI": "Föreslå ett namn med Inboria",
-    "suggestNameShort": "Föreslå"
+    "suggestNameShort": "Föreslå",
+    "insertTemplate": "Infoga en mall",
+    "pickerNoMatch": "Ingen mall matchar din sökning.",
+    "pickerSearch": "Sök en mall…",
+    "pickerTitle": "Välj en mall"
   },
   "rules": {
     "title": "Automatiska regler",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopiera den nu — den kommer aldrig att visas igen.",
     "dismissCreated": "Jag har kopierat nyckeln",
     "usageTitle": "Exempel på användning",
-    "rateLimitNotice": "Gräns: 60 förfrågningar / minut / nyckel."
+    "rateLimitNotice": "Gräns: 60 förfrågningar / minut / nyckel.",
+    "deletePermanently": "Radera permanent",
+    "deletePermanentlyConfirm": "Radera denna återkallade nyckel permanent? Denna åtgärd är oåterkallelig.",
+    "deletedToast": "Nyckel raderad permanent"
   },
   "webhooks": {
     "title": "Utgående webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadata (avsändare, ämne, datum, status)",
     "dragHint": "Dra till en mapp för att exportera som .eml (Chrome/Edge), eller klicka för att välja format",
     "chromeHint": "💡 I Chrome/Edge frågar ett fönster var filen ska sparas."
+  },
+  "calendars": {
+    "connectFailedDesc": "Vänligen försök igen.",
+    "connectFailedTitle": "Anslutning misslyckades",
+    "connectGoogle": "Anslut Google Kalender",
+    "connectGoogleDesc": "Läs händelser och skriv nya möten.",
+    "connectOutlook": "Anslut Outlook Kalender",
+    "connectOutlookDesc": "Läs händelser och skriv nya möten.",
+    "connectedToastDesc": "Synkronisering är aktiv.",
+    "connectedToastTitle": "Kalender ansluten",
+    "disconnect": "Koppla från",
+    "disconnectFailed": "Kunde inte ta bort",
+    "disconnectedToast": "Kalender frånkopplad",
+    "empty": "Inga kalendrar anslutna för tillfället.",
+    "help": "Inboria använder dina kalendrar för att kontrollera din tillgänglighet och skapa möten från Inboria.",
+    "schemaMissing": "Tabellen calendar_accounts är ännu inte skapad i databasen. Kör migrationen 2026_05_09_calendar_accounts.sql i Supabase.",
+    "statusConnected": "Ansluten",
+    "statusReauth": "Återanslut",
+    "subtitle": "Anslut Google Kalender eller Outlook Kalender så att Inboria kan se din tillgänglighet och boka dina möten.",
+    "title": "Anslutna kalendrar"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} olästa · {{total}} totalt",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Alla",
+      "inboria": "Inboria",
+      "mails": "E-post",
+      "system": "System",
+      "team": "Team",
+      "unread": "Olästa"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "System"
   }
 }

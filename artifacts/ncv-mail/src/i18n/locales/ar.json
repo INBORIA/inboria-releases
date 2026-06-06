@@ -543,6 +543,22 @@
     "teamTasks": "مهام الفريق",
     "assignedFilter": {
       "all": "الفريق كله"
+    },
+    "classicInboxLink": "الوارد القديم",
+    "help": {
+      "comingSoonDesc": "مركز المساعدة المدمج قادم قريبًا. في هذه الأثناء، اتصل بنا من الإعدادات.",
+      "comingSoonTitle": "المساعدة عبر الإنترنت — قريبًا",
+      "tooltip": "المساعدة (قريبًا)"
+    },
+    "sections": {
+      "important": "مهم",
+      "other": "أخرى"
+    },
+    "shortcuts": {
+      "commands": "الأوامر",
+      "done": "تم",
+      "navigate": "التنقل",
+      "reply": "الرد"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "جارٍ الدمج...",
       "mergedToast": "{{count}} رسالة(رسائل) تم نقلها إلى « {{target}} »",
       "close": "إغلاق",
-      "detecting": "جارٍ التحليل..."
+      "detecting": "جارٍ التحليل...",
+      "clusterLine": "{{count}} فئات مسماة « {{name}} »",
+      "clusterMergeAll": "دمج الكل في واحدة",
+      "clusterMergeConfirmDesc": "سيتم إعادة تخصيص جميع الرسائل الإلكترونية إلى فئة واحدة « {{name}} » (التي تحتوي بالفعل على أكبر عدد من الرسائل). سيتم حذف {{deleted}} النسخ الأخرى. الإجراء لا رجعة فيه.",
+      "clusterMergeConfirmTitle": "دمج {{count}} فئات « {{name}} »؟",
+      "clusterMergedToast": "{{count}} رسالة مدمجة — {{deleted}} نسخة محذوفة",
+      "clusterTotalEmails": "{{count}} رسائل إجمالاً",
+      "clustersDesc": "توجد عدة فئات تحمل نفس الاسم — غالبًا ما يتم إنشاؤها بالتوازي مع الفرز. يكفي دمج واحد لتجميع الكل.",
+      "clustersTitle": "تكرارات دقيقة",
+      "pairsTitle": "أسماء متشابهة (للمراجعة)"
     },
     "sections": {
       "byPack": "حزمة {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "مزامنة جهات الاتصال، الحسابات والفرص في Salesforce.",
       "salesforceSandbox": "تسجيل الدخول إلى منظمة Sandbox (test.salesforce.com)",
       "privacy": "الخصوصية والوصول إلى الفريق",
-      "privacyDesc": "رسائلك الخاصة وسجل استشارات المسؤول"
+      "privacyDesc": "رسائلك الخاصة وسجل استشارات المسؤول",
+      "calendars": "التقاويم",
+      "calendarsDesc": "ربط تقويم Google وOutlook"
     },
     "b2bSection": "المصداقية B2B",
     "slaCard": "SLA للصناديق المشتركة",
@@ -1269,7 +1296,9 @@
       "enrollError": "تعذر بدء عملية التسجيل"
     },
     "preferredVideoTitle": "اجتماع الفيديو الافتراضي",
-    "preferredVideoDesc": "يرجى اختيار مزوّد اجتماعات الفيديو الافتراضي للمواعيد الجديدة. يتطلب Meet تقويم Google متصلاً؛ ويتطلب Teams حساب Outlook. أما Jitsi فيعمل دون الحاجة إلى حساب."
+    "preferredVideoDesc": "يرجى اختيار مزوّد اجتماعات الفيديو الافتراضي للمواعيد الجديدة. يتطلب Meet تقويم Google متصلاً؛ ويتطلب Teams حساب Outlook. أما Jitsi فيعمل دون الحاجة إلى حساب.",
+    "meetingRemindersDesc": "يرسل Inboria تذكيرًا مهذبًا للاتصال بعد 48 ساعة من اقتراح موعد لم يتم الرد عليه.",
+    "meetingRemindersTitle": "تذكيرات المواعيد التلقائية"
   },
   "subscription": {
     "title": "إدارة اشتراككم",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (رابط Inboria، بدون حساب)",
     "videoMeet": "Google Meet (يتطلب تقويم Google)",
     "videoTeams": "Microsoft Teams (يتطلب تقويم Outlook)",
-    "videoJoin": "الانضمام إلى اجتماع الفيديو"
+    "videoJoin": "الانضمام إلى اجتماع الفيديو",
+    "bulkConfirmed": "{{count}} موعد مؤكد",
+    "bulkDismissed": "{{count}} اقتراح متجاهل",
+    "confirmSelected": "تأكيد التحديد",
+    "dismissSelected": "تجاهل التحديد",
+    "multi": {
+      "addParticipants": "إضافة مشاركين",
+      "candidateSlots": "فترات مقترحة",
+      "externalParticipants": "مشاركون خارجيون",
+      "findCommonSlot": "البحث عن فترة مشتركة",
+      "internalParticipants": "مشاركون داخليون",
+      "lastReminder": "آخر تذكير",
+      "multiStatus": {
+        "confirmed": "مؤكد",
+        "declined": "مرفوض",
+        "partially_confirmed": "مؤكد جزئيًا",
+        "pending": "قيد الانتظار"
+      },
+      "neverReminded": "لا تذكير",
+      "noCommonSlot": "لم يتم العثور على فترة مشتركة في النافذة المختارة.",
+      "optional": "اختياري",
+      "participantStatus": {
+        "accepted": "مقبول",
+        "declined": "مرفوض",
+        "pending": "قيد الانتظار",
+        "tentative": "مؤقت"
+      },
+      "participantsLabel": "المشاركون (مفصولون بفاصلة أو سطر جديد)",
+      "remindParticipant": "إعادة التذكير",
+      "remindSent": "تم إرسال التذكير",
+      "required": "مطلوب",
+      "send": "إرسال الدعوات",
+      "sent": "{{count}} دعوة مرسلة",
+      "title": "متعدد المشاركين"
+    },
+    "selectAll": "تحديد الكل",
+    "selectedCount": "{{count}} محدد",
+    "statusConfirmedShort": "مؤكد",
+    "statusCounter": "اقتراح مضاد مستلم",
+    "statusCounterMonth": "اقتراح مضاد",
+    "statusCounterShort": "اقتراح مضاد",
+    "statusDeclined": "مرفوض من قبل الاتصال",
+    "statusDeclinedMonth": "مرفوض",
+    "statusDeclinedShort": "مرفوض",
+    "statusPending": "في انتظار الرد",
+    "statusPendingMonth": "قيد الانتظار",
+    "statusPendingShort": "قيد الانتظار",
+    "syncFailed": "فشل المزامنة",
+    "viewDetails": "عرض التفاصيل"
   },
   "supportChat": {
     "title": "مساعد Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "حفظ كقالب",
     "savedAsTemplate": "تم تسجيل البريد الإلكتروني كقالب",
     "suggestNameWithAI": "اقتراح اسم مع Inboria",
-    "suggestNameShort": "اقتراح"
+    "suggestNameShort": "اقتراح",
+    "insertTemplate": "إدراج قالب",
+    "pickerNoMatch": "لا يوجد قالب يطابق بحثك.",
+    "pickerSearch": "البحث عن قالب…",
+    "pickerTitle": "اختيار قالب"
   },
   "rules": {
     "title": "القواعد التلقائية",
@@ -3090,7 +3171,10 @@
     "createdHint": "انسخوا الآن — لن يتم عرضها مرة أخرى.",
     "dismissCreated": "لقد نسخت المفتاح",
     "usageTitle": "مثال على الاستخدام",
-    "rateLimitNotice": "الحد: 60 طلبًا / دقيقة / مفتاح."
+    "rateLimitNotice": "الحد: 60 طلبًا / دقيقة / مفتاح.",
+    "deletePermanently": "حذف نهائي",
+    "deletePermanentlyConfirm": "حذف هذه المفتاح الملغى نهائيًا؟ هذا الإجراء لا رجعة فيه.",
+    "deletedToast": "تم حذف المفتاح نهائيًا"
   },
   "webhooks": {
     "title": "Webhooks الصادرة",
@@ -3412,5 +3496,39 @@
     "csvDesc": "بيانات وصفية (المرسل، الموضوع، التاريخ، الحالة)",
     "dragHint": "يرجى السحب إلى مجلد لتصديره بصيغة .eml (Chrome/Edge)، أو النقر لاختيار الصيغة",
     "chromeHint": "💡 على Chrome/Edge ستظهر نافذة تسألكم أين تحفظون الملف."
+  },
+  "calendars": {
+    "connectFailedDesc": "يرجى المحاولة مرة أخرى.",
+    "connectFailedTitle": "فشل الاتصال",
+    "connectGoogle": "ربط تقويم Google",
+    "connectGoogleDesc": "قراءة الأحداث وكتابة المواعيد الجديدة.",
+    "connectOutlook": "ربط تقويم Outlook",
+    "connectOutlookDesc": "قراءة الأحداث وكتابة المواعيد الجديدة.",
+    "connectedToastDesc": "المزامنة نشطة.",
+    "connectedToastTitle": "تم ربط التقويم",
+    "disconnect": "قطع الاتصال",
+    "disconnectFailed": "لا يمكن الحذف",
+    "disconnectedToast": "تم قطع اتصال التقويم",
+    "empty": "لا يوجد تقويم متصل حاليًا.",
+    "help": "يستخدم Inboria تقاويمك للتحقق من توافرك وإنشاء المواعيد المحددة من Inboria.",
+    "schemaMissing": "لم يتم إنشاء جدول calendar_accounts في القاعدة بعد. قم بتنفيذ الترحيل 2026_05_09_calendar_accounts.sql في Supabase.",
+    "statusConnected": "متصل",
+    "statusReauth": "إعادة الاتصال",
+    "subtitle": "اربط تقويم Google أو Outlook لتمكين Inboria من رؤية توافرك وتسجيل مواعيدك.",
+    "title": "التقاويم المتصلة"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} غير مقروءة · {{total}} إجمالاً",
+    "filters": {
+      "agenda": "الأجندة",
+      "all": "الكل",
+      "inboria": "Inboria",
+      "mails": "الرسائل",
+      "system": "النظام",
+      "team": "الفريق",
+      "unread": "غير مقروءة"
+    },
+    "sourceAgenda": "الأجندة",
+    "system": "النظام"
   }
 }

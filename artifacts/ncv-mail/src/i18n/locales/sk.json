@@ -543,6 +543,22 @@
     "teamTasks": "Tímové úlohy",
     "assignedFilter": {
       "all": "Celý tím"
+    },
+    "classicInboxLink": "Starý priečinok prijatých",
+    "help": {
+      "comingSoonDesc": "Integrované centrum pomoci príde čoskoro. Zatiaľ nás kontaktujte cez Nastavenia.",
+      "comingSoonTitle": "Online pomoc — čoskoro dostupná",
+      "tooltip": "Pomoc (čoskoro dostupná)"
+    },
+    "sections": {
+      "important": "Dôležité",
+      "other": "Ostatné"
+    },
+    "shortcuts": {
+      "commands": "Príkazy",
+      "done": "Dokončené",
+      "navigate": "Navigovať",
+      "reply": "Odpovedať"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Spojenie prebieha…",
       "mergedToast": "{{count}} e-mail(ov) presunutých do „{{target}}“",
       "close": "Zavrieť",
-      "detecting": "Analýza prebieha…"
+      "detecting": "Analýza prebieha…",
+      "clusterLine": "{{count}} kategórie s názvom „{{name}}“",
+      "clusterMergeAll": "Zlúčiť všetko do jednej",
+      "clusterMergeConfirmDesc": "Všetky emaily budú priradené do jednej kategórie „{{name}}“ (tej, ktorá už obsahuje najviac emailov). {{deleted}} ďalšie kópie budú odstránené. Nevratná akcia.",
+      "clusterMergeConfirmTitle": "Zlúčiť {{count}} kategórie „{{name}}“?",
+      "clusterMergedToast": "{{count}} email(-y) zlúčené — {{deleted}} duplikát(-y) odstránené",
+      "clusterTotalEmails": "Celkom {{count}} email(-y)",
+      "clustersDesc": "Viacero kategórií má rovnaký názov — často vytvorené paralelne pri triedení. Stačí jedno zlúčenie na zoskupenie všetkého.",
+      "clustersTitle": "Presné duplikáty",
+      "pairsTitle": "Podobné názvy (na preskúmanie)"
     },
     "sections": {
       "byPack": "Balík {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Synchronizácia kontaktov, účtov a príležitostí Salesforce.",
       "salesforceSandbox": "Pripojiť org Sandbox (test.salesforce.com)",
       "privacy": "Ochrana súkromia a prístup tímu",
-      "privacyDesc": "Vaše súkromné e-maily a záznamy o administrátorských konzultáciách"
+      "privacyDesc": "Vaše súkromné e-maily a záznamy o administrátorských konzultáciách",
+      "calendars": "Kalendáre",
+      "calendarsDesc": "Pripojiť Google Calendar a Outlook Calendar"
     },
     "b2bSection": "B2B dôveryhodnosť",
     "slaCard": "SLA zdieľaných schránok",
@@ -1269,7 +1296,9 @@
       "enrollError": "Nemožno spustiť registráciu"
     },
     "preferredVideoTitle": "Predvolený videohovor",
-    "preferredVideoDesc": "Prosím, vyberte predvoleného poskytovateľa videohovorov pre nové stretnutia. Meet vyžaduje pripojený kalendár Google; Teams vyžaduje Outlook. Jitsi funguje bez účtu."
+    "preferredVideoDesc": "Prosím, vyberte predvoleného poskytovateľa videohovorov pre nové stretnutia. Meet vyžaduje pripojený kalendár Google; Teams vyžaduje Outlook. Jitsi funguje bez účtu.",
+    "meetingRemindersDesc": "Inboria posiela zdvorilú pripomienku kontaktu 48 hodín po návrhu stretnutia, ktorý zostal bez odpovede.",
+    "meetingRemindersTitle": "Automatické pripomienky stretnutí"
   },
   "subscription": {
     "title": "Spravujte svoje predplatné",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (odkaz Inboria, bez účtu)",
     "videoMeet": "Google Meet (vyžaduje kalendár Google)",
     "videoTeams": "Microsoft Teams (vyžaduje kalendár Outlook)",
-    "videoJoin": "Pripojiť sa k videohovoru"
+    "videoJoin": "Pripojiť sa k videohovoru",
+    "bulkConfirmed": "{{count}} potvrdené stretnutie(-ia)",
+    "bulkDismissed": "{{count}} ignorovaná(-é) návrh(-y)",
+    "confirmSelected": "Potvrdiť výber",
+    "dismissSelected": "Ignorovať výber",
+    "multi": {
+      "addParticipants": "Pridať účastníkov",
+      "candidateSlots": "Navrhované termíny",
+      "externalParticipants": "Externí účastníci",
+      "findCommonSlot": "Nájsť spoločný termín",
+      "internalParticipants": "Interní účastníci",
+      "lastReminder": "Posledná pripomienka",
+      "multiStatus": {
+        "confirmed": "Potvrdené",
+        "declined": "Odmietnuté",
+        "partially_confirmed": "Čiastočne potvrdené",
+        "pending": "Čakajúce"
+      },
+      "neverReminded": "Žiadna pripomienka",
+      "noCommonSlot": "Žiadny spoločný termín nebol nájdený v zvolenom okne.",
+      "optional": "Voliteľné",
+      "participantStatus": {
+        "accepted": "Prijaté",
+        "declined": "Odmietnuté",
+        "pending": "Čakajúce",
+        "tentative": "Predbežné"
+      },
+      "participantsLabel": "Účastníci (oddelení čiarkou alebo novým riadkom)",
+      "remindParticipant": "Pripomenúť",
+      "remindSent": "Pripomienka odoslaná",
+      "required": "Povinné",
+      "send": "Odoslať pozvánky",
+      "sent": "{{count}} odoslaná(-é) pozvánka(-y)",
+      "title": "Viacúčastníci"
+    },
+    "selectAll": "Vybrať všetko",
+    "selectedCount": "{{count}} vybraný(-é)",
+    "statusConfirmedShort": "Potvrdené",
+    "statusCounter": "Protinávrh prijatý",
+    "statusCounterMonth": "Protinávrh",
+    "statusCounterShort": "Protinávrh",
+    "statusDeclined": "Odmietnuté kontaktom",
+    "statusDeclinedMonth": "Odmietnuté",
+    "statusDeclinedShort": "Odmietnuté",
+    "statusPending": "Čaká na odpoveď",
+    "statusPendingMonth": "Čaká",
+    "statusPendingShort": "Čakajúce",
+    "syncFailed": "Synchronizácia zlyhala",
+    "viewDetails": "Zobraziť podrobnosti"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Uložiť ako šablónu",
     "savedAsTemplate": "E-mail uložený ako šablóna",
     "suggestNameWithAI": "Navrhnúť názov s Inboria",
-    "suggestNameShort": "Navrhnúť"
+    "suggestNameShort": "Navrhnúť",
+    "insertTemplate": "Vložiť šablónu",
+    "pickerNoMatch": "Žiadna šablóna nezodpovedá vášmu vyhľadávaniu.",
+    "pickerSearch": "Hľadať šablónu…",
+    "pickerTitle": "Vybrať šablónu"
   },
   "rules": {
     "title": "Automatické pravidlá",
@@ -3090,7 +3171,10 @@
     "createdHint": "Skopírujte ho teraz — už sa nikdy viac nezobrazí.",
     "dismissCreated": "Skopíroval(a) som kľúč",
     "usageTitle": "Príklad použitia",
-    "rateLimitNotice": "Limit: 60 požiadaviek / minúta / kľúč."
+    "rateLimitNotice": "Limit: 60 požiadaviek / minúta / kľúč.",
+    "deletePermanently": "Trvalo odstrániť",
+    "deletePermanentlyConfirm": "Trvalo odstrániť tento zrušený kľúč? Táto akcia je nevratná.",
+    "deletedToast": "Kľúč trvalo odstránený"
   },
   "webhooks": {
     "title": "Odchádzajúce webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadáta (odosielateľ, predmet, dátum, stav)",
     "dragHint": "Prosím potiahnite do priečinka na export ako .eml (Chrome/Edge), alebo kliknite na výber formátu",
     "chromeHint": "💡 V Chrome/Edge sa okno opýta, kam súbor uložiť."
+  },
+  "calendars": {
+    "connectFailedDesc": "Skúste to znova.",
+    "connectFailedTitle": "Pripojenie zlyhalo",
+    "connectGoogle": "Pripojiť Google Calendar",
+    "connectGoogleDesc": "Čítanie udalostí a zapisovanie nových stretnutí.",
+    "connectOutlook": "Pripojiť Outlook Calendar",
+    "connectOutlookDesc": "Čítanie udalostí a zapisovanie nových stretnutí.",
+    "connectedToastDesc": "Synchronizácia je aktívna.",
+    "connectedToastTitle": "Kalendár pripojený",
+    "disconnect": "Odpojiť",
+    "disconnectFailed": "Odstránenie nie je možné",
+    "disconnectedToast": "Kalendár odpojený",
+    "empty": "Momentálne nie je pripojený žiadny kalendár.",
+    "help": "Inboria používa vaše kalendáre na overenie vašej dostupnosti a vytváranie stretnutí priamo z Inboria.",
+    "schemaMissing": "Tabuľka calendar_accounts ešte nie je vytvorená v databáze. Spustite migráciu 2026_05_09_calendar_accounts.sql v Supabase.",
+    "statusConnected": "Pripojené",
+    "statusReauth": "Znovu pripojiť",
+    "subtitle": "Pripojte Google Calendar alebo Outlook Calendar, aby Inboria videla vašu dostupnosť a zapisovala vaše stretnutia.",
+    "title": "Pripojené kalendáre"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} neprečítané · {{total}} celkom",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Všetko",
+      "inboria": "Inboria",
+      "mails": "Email",
+      "system": "Systém",
+      "team": "Tím",
+      "unread": "Neprečítané"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Systém"
   }
 }

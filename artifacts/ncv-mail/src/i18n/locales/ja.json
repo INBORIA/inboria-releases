@@ -543,6 +543,22 @@
     "teamTasks": "チームのタスク",
     "assignedFilter": {
       "all": "チーム全体"
+    },
+    "classicInboxLink": "旧受信トレイ",
+    "help": {
+      "comingSoonDesc": "統合されたヘルプセンターがまもなく登場します。それまでの間、設定からお問い合わせください。",
+      "comingSoonTitle": "オンラインヘルプ—近日公開",
+      "tooltip": "ヘルプ（近日公開）"
+    },
+    "sections": {
+      "important": "重要",
+      "other": "その他"
+    },
+    "shortcuts": {
+      "commands": "コマンド",
+      "done": "完了",
+      "navigate": "ナビゲート",
+      "reply": "返信"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "統合中…",
       "mergedToast": "{{count}} 通のメールが「 {{target}} 」に移動されました",
       "close": "閉じる",
-      "detecting": "分析中…"
+      "detecting": "分析中…",
+      "clusterLine": "「{{name}}」という名前のカテゴリが{{count}}件あります",
+      "clusterMergeAll": "すべてを1つに統合する",
+      "clusterMergeConfirmDesc": "すべてのメールが1つの「{{name}}」カテゴリに再割り当てされます（すでに最も多くのメールを含むもの）。{{deleted}}件の他のコピーは削除されます。この操作は元に戻せません。",
+      "clusterMergeConfirmTitle": "「{{name}}」カテゴリを{{count}}件統合しますか？",
+      "clusterMergedToast": "{{count}}件のメールが統合され、{{deleted}}件の重複が削除されました",
+      "clusterTotalEmails": "合計{{count}}件のメール",
+      "clustersDesc": "同じ名前のカテゴリが複数あります—通常、並行して作成されます。1回の統合で全てをまとめることができます。",
+      "clustersTitle": "正確な重複",
+      "pairsTitle": "類似した名前（レビューが必要）"
     },
     "sections": {
       "byPack": "パック {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforceの連絡先、アカウント、機会の同期。",
       "salesforceSandbox": "Sandbox組織を接続する（test.salesforce.com）",
       "privacy": "プライバシーとチームアクセス",
-      "privacyDesc": "あなたのプライベートメールと管理者の閲覧履歴"
+      "privacyDesc": "あなたのプライベートメールと管理者の閲覧履歴",
+      "calendars": "カレンダー",
+      "calendarsDesc": "GoogleカレンダーとOutlookカレンダーを接続する"
     },
     "b2bSection": "B2Bの信頼性",
     "slaCard": "共有ボックスのSLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "登録を開始できません"
     },
     "preferredVideoTitle": "既定のビデオ会議",
-    "preferredVideoDesc": "新しい予定の既定のビデオ会議プロバイダーを選択してください。Meet には接続済みの Google カレンダーが必要です。Teams には Outlook が必要です。Jitsi はアカウントなしで利用できます。"
+    "preferredVideoDesc": "新しい予定の既定のビデオ会議プロバイダーを選択してください。Meet には接続済みの Google カレンダーが必要です。Teams には Outlook が必要です。Jitsi はアカウントなしで利用できます。",
+    "meetingRemindersDesc": "Inboriaは、返答がないまま48時間経過した提案された予定に対して、丁寧なリマインダーを送信します。",
+    "meetingRemindersTitle": "自動予定リマインダー"
   },
   "subscription": {
     "title": "サブスクリプションを管理する",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi（Inboriaのリンク、アカウント不要）",
     "videoMeet": "Google Meet（Google カレンダーが必要です）",
     "videoTeams": "Microsoft Teams（Outlook カレンダーが必要です）",
-    "videoJoin": "ビデオ会議に参加"
+    "videoJoin": "ビデオ会議に参加",
+    "bulkConfirmed": "{{count}} 件の予定が確認されました",
+    "bulkDismissed": "{{count}} 件の提案が無視されました",
+    "confirmSelected": "選択を確認する",
+    "dismissSelected": "選択を無視する",
+    "multi": {
+      "addParticipants": "参加者を追加する",
+      "candidateSlots": "提案された時間枠",
+      "externalParticipants": "外部参加者",
+      "findCommonSlot": "共通の時間枠を探す",
+      "internalParticipants": "内部参加者",
+      "lastReminder": "最後のリマインダー",
+      "multiStatus": {
+        "confirmed": "確認済み",
+        "declined": "拒否されました",
+        "partially_confirmed": "一部確認済み",
+        "pending": "保留中"
+      },
+      "neverReminded": "リマインダーなし",
+      "noCommonSlot": "選択した期間に共通の時間枠が見つかりませんでした。",
+      "optional": "任意",
+      "participantStatus": {
+        "accepted": "承認済み",
+        "declined": "拒否されました",
+        "pending": "保留中",
+        "tentative": "仮承認"
+      },
+      "participantsLabel": "参加者（カンマまたは改行で区切る）",
+      "remindParticipant": "リマインダーを送る",
+      "remindSent": "リマインダーが送信されました",
+      "required": "必須",
+      "send": "招待を送信する",
+      "sent": "{{count}} 件の招待が送信されました",
+      "title": "複数参加者"
+    },
+    "selectAll": "すべて選択",
+    "selectedCount": "{{count}} 件選択されました",
+    "statusConfirmedShort": "確認済み",
+    "statusCounter": "対案が受け取られました",
+    "statusCounterMonth": "対案",
+    "statusCounterShort": "対案",
+    "statusDeclined": "連絡先により拒否されました",
+    "statusDeclinedMonth": "拒否されました",
+    "statusDeclinedShort": "拒否されました",
+    "statusPending": "返答待ち",
+    "statusPendingMonth": "保留中",
+    "statusPendingShort": "保留中",
+    "syncFailed": "同期に失敗しました",
+    "viewDetails": "詳細を見る"
   },
   "supportChat": {
     "title": "Inboriaアシスタント",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "テンプレートとして保存",
     "savedAsTemplate": "メールがテンプレートとして保存されました",
     "suggestNameWithAI": "Inboriaで名前を提案する",
-    "suggestNameShort": "提案する"
+    "suggestNameShort": "提案する",
+    "insertTemplate": "テンプレートを挿入する",
+    "pickerNoMatch": "検索に一致するテンプレートがありません。",
+    "pickerSearch": "テンプレートを検索…",
+    "pickerTitle": "テンプレートを選択する"
   },
   "rules": {
     "title": "自動ルール",
@@ -3090,7 +3171,10 @@
     "createdHint": "今すぐコピーしてください — もう二度と表示されません。",
     "dismissCreated": "キーをコピーしました",
     "usageTitle": "使用例",
-    "rateLimitNotice": "制限：60リクエスト/分/キー。"
+    "rateLimitNotice": "制限：60リクエスト/分/キー。",
+    "deletePermanently": "完全に削除する",
+    "deletePermanentlyConfirm": "この取り消されたキーを完全に削除しますか？この操作は元に戻せません。",
+    "deletedToast": "キーが完全に削除されました"
   },
   "webhooks": {
     "title": "アウトバウンドWebhook",
@@ -3412,5 +3496,39 @@
     "csvDesc": "メタデータ（送信者、件名、日付、ステータス）",
     "dragHint": "フォルダへドラッグして .eml で書き出せます（Chrome/Edge）、またはクリックして形式を選択してください",
     "chromeHint": "💡 Chrome/Edge ではダイアログで保存先を尋ねられます。"
+  },
+  "calendars": {
+    "connectFailedDesc": "再試行してください。",
+    "connectFailedTitle": "接続に失敗しました",
+    "connectGoogle": "Googleカレンダーを接続する",
+    "connectGoogleDesc": "イベントの読み取りと新しい予定の書き込み。",
+    "connectOutlook": "Outlookカレンダーを接続する",
+    "connectOutlookDesc": "イベントの読み取りと新しい予定の書き込み。",
+    "connectedToastDesc": "同期が有効です。",
+    "connectedToastTitle": "カレンダーが接続されました",
+    "disconnect": "接続を解除する",
+    "disconnectFailed": "削除できません",
+    "disconnectedToast": "カレンダーが切断されました",
+    "empty": "現在接続されているカレンダーはありません。",
+    "help": "Inboriaは、あなたのカレンダーを使用して利用可能な時間を確認し、Inboriaから設定された予定を作成します。",
+    "schemaMissing": "calendar_accountsテーブルがまだデータベースに作成されていません。Supabaseで2026_05_09_calendar_accounts.sqlを実行してください。",
+    "statusConnected": "接続済み",
+    "statusReauth": "再接続が必要です",
+    "subtitle": "GoogleカレンダーまたはOutlookカレンダーを接続して、Inboriaがあなたの利用可能な時間を確認し、予定を登録できるようにします。",
+    "title": "接続されたカレンダー"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}}件未読 · 合計{{total}}件",
+    "filters": {
+      "agenda": "アジェンダ",
+      "all": "すべて",
+      "inboria": "Inboria",
+      "mails": "メール",
+      "system": "システム",
+      "team": "チーム",
+      "unread": "未読"
+    },
+    "sourceAgenda": "アジェンダ",
+    "system": "システム"
   }
 }

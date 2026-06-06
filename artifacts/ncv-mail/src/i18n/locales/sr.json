@@ -543,6 +543,22 @@
     "teamTasks": "Тимски задаци",
     "assignedFilter": {
       "all": "Цео тим"
+    },
+    "classicInboxLink": "Стара пријемна пошта",
+    "help": {
+      "comingSoonDesc": "Интегрисани центар за помоћ ускоро стиже. У међувремену, контактирајте нас из Подешавања.",
+      "comingSoonTitle": "Онлајн помоћ — ускоро доступна",
+      "tooltip": "Помоћ (ускоро доступна)"
+    },
+    "sections": {
+      "important": "Важно",
+      "other": "Остало"
+    },
+    "shortcuts": {
+      "commands": "Команде",
+      "done": "Завршено",
+      "navigate": "Навигирајте",
+      "reply": "Одговорите"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Спојање у току…",
       "mergedToast": "{{count}} имејл(ова) премештено(а) у « {{target}} »",
       "close": "Затворити",
-      "detecting": "Анализа у току…"
+      "detecting": "Анализа у току…",
+      "clusterLine": "{{count}} категорија именована „{{name}}“",
+      "clusterMergeAll": "Спојите све у једну",
+      "clusterMergeConfirmDesc": "Сви имејлови ће бити премештени у једну категорију „{{name}}“ (ону која већ садржи највише имејлова). {{deleted}} остале копије ће бити обрисане. Акција је неповратна.",
+      "clusterMergeConfirmTitle": "Спојити {{count}} категорије „{{name}}“?",
+      "clusterMergedToast": "{{count}} имејл(ова) груписан(о) — {{deleted}} дупликат(а) обрисан(о)",
+      "clusterTotalEmails": "{{count}} имејл(ова) укупно",
+      "clustersDesc": "Више категорија има исто име — често креиране паралелно са сортирањем. Једно спајање је довољно да се све групише.",
+      "clustersTitle": "Тачни дупликати",
+      "pairsTitle": "Слична имена (за преглед)"
     },
     "sections": {
       "byPack": "Пакет {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Синхронизација контаката, налога и могућности Salesforce.",
       "salesforceSandbox": "Повежите Sandbox организацију (test.salesforce.com)",
       "privacy": "Приватност и приступ екипи",
-      "privacyDesc": "Ваше приватне е-поруке и дневник администраторских прегледа"
+      "privacyDesc": "Ваше приватне е-поруке и дневник администраторских прегледа",
+      "calendars": "Календари",
+      "calendarsDesc": "Повежите Google Calendar и Outlook Calendar"
     },
     "b2bSection": "Б2Б кредибилитет",
     "slaCard": "SLA за заједничке поште",
@@ -1269,7 +1296,9 @@
       "enrollError": "Није могуће започети уписивање"
     },
     "preferredVideoTitle": "Подразумевани видео-састанак",
-    "preferredVideoDesc": "Молимо Вас да изаберете подразумеваног добављача видео-састанака за нове састанке. Meet захтева повезан Google календар; Teams захтева Outlook. Jitsi ради без налога."
+    "preferredVideoDesc": "Молимо Вас да изаберете подразумеваног добављача видео-састанака за нове састанке. Meet захтева повезан Google календар; Teams захтева Outlook. Jitsi ради без налога.",
+    "meetingRemindersDesc": "Inboria шаље љубазан подсетник контакту 48 сати након предлога састанка који је остао без одговора.",
+    "meetingRemindersTitle": "Аутоматски подсетници за састанке"
   },
   "subscription": {
     "title": "Управљајте својом претплатом",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria веза, без налога)",
     "videoMeet": "Google Meet (потребан је Google календар)",
     "videoTeams": "Microsoft Teams (потребан је Outlook календар)",
-    "videoJoin": "Придружи се видео-састанку"
+    "videoJoin": "Придружи се видео-састанку",
+    "bulkConfirmed": "{{count}} потврђен(и) састанак(ци)",
+    "bulkDismissed": "{{count}} игнорисан(е) предлог(е)",
+    "confirmSelected": "Потврдите избор",
+    "dismissSelected": "Игноришите избор",
+    "multi": {
+      "addParticipants": "Додајте учеснике",
+      "candidateSlots": "Предложени термини",
+      "externalParticipants": "Спољни учесници",
+      "findCommonSlot": "Пронађите заједнички термин",
+      "internalParticipants": "Унутрашњи учесници",
+      "lastReminder": "Последњи подсетник",
+      "multiStatus": {
+        "confirmed": "Потврђено",
+        "declined": "Одбијено",
+        "partially_confirmed": "Делимично потврђено",
+        "pending": "На чекању"
+      },
+      "neverReminded": "Нема подсетника",
+      "noCommonSlot": "Није пронађен заједнички термин у изабраном временском оквиру.",
+      "optional": "Опционално",
+      "participantStatus": {
+        "accepted": "Прихваћено",
+        "declined": "Одбијено",
+        "pending": "На чекању",
+        "tentative": "Привремено"
+      },
+      "participantsLabel": "Учесници (одвојени зарезом или новим редом)",
+      "remindParticipant": "Подсетите",
+      "remindSent": "Подсетник послат",
+      "required": "Обавезно",
+      "send": "Пошаљите позивнице",
+      "sent": "{{count}} послат(е) позивница(е)",
+      "title": "Више учесника"
+    },
+    "selectAll": "Изаберите све",
+    "selectedCount": "{{count}} изабран(о)",
+    "statusConfirmedShort": "Потврђено",
+    "statusCounter": "Противпредлог примљен",
+    "statusCounterMonth": "Противпредлог",
+    "statusCounterShort": "Противпредлог",
+    "statusDeclined": "Одбијено од стране контакта",
+    "statusDeclinedMonth": "Одбијено",
+    "statusDeclinedShort": "Одбијено",
+    "statusPending": "Чека се одговор",
+    "statusPendingMonth": "На чекању",
+    "statusPendingShort": "На чекању",
+    "syncFailed": "Синхронизација није успела",
+    "viewDetails": "Погледајте детаље"
   },
   "supportChat": {
     "title": "Асистент Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Сачувајте као шаблон",
     "savedAsTemplate": "Е-пошта сачувана као шаблон",
     "suggestNameWithAI": "Предложите име са Inboria",
-    "suggestNameShort": "Предложите"
+    "suggestNameShort": "Предложите",
+    "insertTemplate": "Уметните шаблон",
+    "pickerNoMatch": "Ниједан шаблон не одговара вашој претрази.",
+    "pickerSearch": "Претражите шаблон…",
+    "pickerTitle": "Изаберите шаблон"
   },
   "rules": {
     "title": "Аутоматска правила",
@@ -3090,7 +3171,10 @@
     "createdHint": "Копирајте га сада — више никада неће бити приказан.",
     "dismissCreated": "Копирао сам кључ",
     "usageTitle": "Пример употребе",
-    "rateLimitNotice": "Лимит: 60 захтева / минут / кључ."
+    "rateLimitNotice": "Лимит: 60 захтева / минут / кључ.",
+    "deletePermanently": "Трајно обришите",
+    "deletePermanentlyConfirm": "Трајно обрисати овај опозвани кључ? Ова акција је неповратна.",
+    "deletedToast": "Кључ трајно обрисан"
   },
   "webhooks": {
     "title": "Излазни вебхукови",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Метаподаци (пошиљалац, тема, датум, статус)",
     "dragHint": "Молимо превуците у фасциклу за извоз као .eml (Chrome/Edge), или кликните за избор формата",
     "chromeHint": "💡 На Chrome/Edge прозор ће вас питати где сачувати фајл."
+  },
+  "calendars": {
+    "connectFailedDesc": "Молимо покушајте поново.",
+    "connectFailedTitle": "Повезивање није успело",
+    "connectGoogle": "Повежите Google Calendar",
+    "connectGoogleDesc": "Читање догађаја и писање нових састанака.",
+    "connectOutlook": "Повежите Outlook Calendar",
+    "connectOutlookDesc": "Читање догађаја и писање нових састанака.",
+    "connectedToastDesc": "Синхронизација је активна.",
+    "connectedToastTitle": "Календар повезан",
+    "disconnect": "Искључите",
+    "disconnectFailed": "Немогуће уклонити",
+    "disconnectedToast": "Календар искључен",
+    "empty": "Тренутно нема повезаних календара.",
+    "help": "Inboria користи ваше календаре да провери вашу доступност и креира састанке из Inboria.",
+    "schemaMissing": "Табела calendar_accounts још није креирана у бази. Покрените миграцију 2026_05_09_calendar_accounts.sql у Supabase.",
+    "statusConnected": "Повезан",
+    "statusReauth": "Поново повежите",
+    "subtitle": "Повежите Google Calendar или Outlook Calendar да би Inboria видела вашу доступност и уписала ваше састанке.",
+    "title": "Повезани календари"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} непрочитан(их) · {{total}} укупно",
+    "filters": {
+      "agenda": "Агенда",
+      "all": "Све",
+      "inboria": "Inboria",
+      "mails": "Имејлови",
+      "system": "Систем",
+      "team": "Тим",
+      "unread": "Непрочитано"
+    },
+    "sourceAgenda": "Агенда",
+    "system": "Систем"
   }
 }

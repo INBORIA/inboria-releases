@@ -543,6 +543,22 @@
     "teamTasks": "Kompiti tat-Tim",
     "assignedFilter": {
       "all": "It-tim kollu"
+    },
+    "classicInboxLink": "Riċeviment antik",
+    "help": {
+      "comingSoonDesc": "Iċ-ċentru ta' għajnuna integrat qed jasal dalwaqt. Sadanittant, ikkuntattjana minn Settings.",
+      "comingSoonTitle": "Għajnuna online — dalwaqt disponibbli",
+      "tooltip": "Għajnuna (dalwaqt disponibbli)"
+    },
+    "sections": {
+      "important": "Importanti",
+      "other": "Oħrajn"
+    },
+    "shortcuts": {
+      "commands": "Kmandi",
+      "done": "Lest",
+      "navigate": "Innaviga",
+      "reply": "Irrispondi"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Iffużjona fil-proċess...",
       "mergedToast": "{{count}} email(i) mviegħda lejn « {{target}} »",
       "close": "Agħlaq",
-      "detecting": "Analiżi fil-proċess..."
+      "detecting": "Analiżi fil-proċess...",
+      "clusterLine": "{{count}} kategoriji bl-isem « {{name}} »",
+      "clusterMergeAll": "Għaqqad kollox f'waħda",
+      "clusterMergeConfirmDesc": "L-emails kollha se jiġu assenjati mill-ġdid għal kategorija waħda « {{name}} » (dik li diġà fiha l-aktar emails). Il-{{deleted}} kopji l-oħra se jitħassru. Azzjoni irriversibbli.",
+      "clusterMergeConfirmTitle": "Għaqqad il-{{count}} kategoriji « {{name}} »?",
+      "clusterMergedToast": "{{count}} email(s) miġbura — {{deleted}} duplikat(i) imħassra",
+      "clusterTotalEmails": "{{count}} emails b'kollox",
+      "clustersDesc": "Diversi kategoriji għandhom l-istess isem — spiss maħluqa parallelament mat-tqassim. Għaqda waħda hija biżżejjed biex tiġbor kollox.",
+      "clustersTitle": "Duplikati eżatti",
+      "pairsTitle": "Ismijiet simili (għar-reviżjoni)"
     },
     "sections": {
       "byPack": "Pakkett {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Sinchronizzazzjoni tal-kuntatti, kontijiet u opportunitajiet Salesforce.",
       "salesforceSandbox": "Idħol f'org Sandbox (test.salesforce.com)",
       "privacy": "Privat u aċċess tat-tim",
-      "privacyDesc": "L-email privati tiegħek u l-ġurnal tal-konsultazzjonijiet tal-amministratur"
+      "privacyDesc": "L-email privati tiegħek u l-ġurnal tal-konsultazzjonijiet tal-amministratur",
+      "calendars": "Kalendari",
+      "calendarsDesc": "Qabbad Google Calendar u Outlook Calendar"
     },
     "b2bSection": "Kredibilità B2B",
     "slaCard": "SLA kaxxi maqsuma",
@@ -1269,7 +1296,9 @@
       "enrollError": "Impossibbli li tibda l-enrôlement"
     },
     "preferredVideoTitle": "Laqgħa bil-video awtomatika",
-    "preferredVideoDesc": "Jekk jogħġobkom agħżlu l-fornitur tal-laqgħat bil-video awtomatiku għall-appuntamenti l-ġodda. Meet jeħtieġ kalendarju Google konness; Teams jeħtieġ Outlook. Jitsi jaħdem mingħajr kont."
+    "preferredVideoDesc": "Jekk jogħġobkom agħżlu l-fornitur tal-laqgħat bil-video awtomatiku għall-appuntamenti l-ġodda. Meet jeħtieġ kalendarju Google konness; Teams jeħtieġ Outlook. Jitsi jaħdem mingħajr kont.",
+    "meetingRemindersDesc": "Inboria tibgħat tfakkira edukata lill-kuntatt 48 siegħa wara proposta ta' appuntamenti li tibqa' bla risposta.",
+    "meetingRemindersTitle": "Tfakkiriet awtomatiċi ta' RDV"
   },
   "subscription": {
     "title": "Immaniġġa l-abbonament tagħkom",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (link Inboria, mingħajr kont)",
     "videoMeet": "Google Meet (jeħtieġ kalendarju Google)",
     "videoTeams": "Microsoft Teams (jeħtieġ kalendarju Outlook)",
-    "videoJoin": "Ingħaqad mal-laqgħa bil-video"
+    "videoJoin": "Ingħaqad mal-laqgħa bil-video",
+    "bulkConfirmed": "{{count}} RDV ikkonfermat(i)",
+    "bulkDismissed": "{{count}} suġġeriment(i) injorat(i)",
+    "confirmSelected": "Ikkonferma l-għażla",
+    "dismissSelected": "Injora l-għażla",
+    "multi": {
+      "addParticipants": "Żid parteċipanti",
+      "candidateSlots": "Ħinijiet proposti",
+      "externalParticipants": "Parteċipanti esterni",
+      "findCommonSlot": "Fittex ħin komuni",
+      "internalParticipants": "Parteċipanti interni",
+      "lastReminder": "L-aħħar tfakkira",
+      "multiStatus": {
+        "confirmed": "Ikkonfermat",
+        "declined": "Miċħud",
+        "partially_confirmed": "Parzjalment ikkonfermat",
+        "pending": "Pendenti"
+      },
+      "neverReminded": "L-ebda tfakkira",
+      "noCommonSlot": "Ma nstab l-ebda ħin komuni fil-perjodu magħżul.",
+      "optional": "Fakultattiv",
+      "participantStatus": {
+        "accepted": "Aċċettat",
+        "declined": "Miċħud",
+        "pending": "Pendenti",
+        "tentative": "Provviżorju"
+      },
+      "participantsLabel": "Parteċipanti (separati b'virgola jew linja ġdida)",
+      "remindParticipant": "Tfakkira",
+      "remindSent": "Tfakkira mibgħuta",
+      "required": "Meħtieġ",
+      "send": "Ibgħat l-istediniet",
+      "sent": "{{count}} stedina(i) mibgħuta",
+      "title": "Multi-parteċipanti"
+    },
+    "selectAll": "Agħżel kollox",
+    "selectedCount": "{{count}} magħżul(i)",
+    "statusConfirmedShort": "Ikkonfermat",
+    "statusCounter": "Kontroproposta riċevuta",
+    "statusCounterMonth": "Kontroproposta",
+    "statusCounterShort": "Kontroproposta",
+    "statusDeclined": "Miċħud mill-kuntatt",
+    "statusDeclinedMonth": "Miċħud",
+    "statusDeclinedShort": "Miċħud",
+    "statusPending": "Pendenti għal risposta",
+    "statusPendingMonth": "Pendenti",
+    "statusPendingShort": "Pendenti",
+    "syncFailed": "Sinkronizzazzjoni falluta",
+    "viewDetails": "Ara d-dettalji"
   },
   "supportChat": {
     "title": "Assistenti Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Iħażen bħala modulu",
     "savedAsTemplate": "Il-posta elettronika rreġistrata bħala modulu",
     "suggestNameWithAI": "Is-suġġeriment ta' isim ma' Inboria",
-    "suggestNameShort": "Is-suġġeriment"
+    "suggestNameShort": "Is-suġġeriment",
+    "insertTemplate": "Daħħal template",
+    "pickerNoMatch": "L-ebda template ma jaqbel mat-tfittxija tiegħek.",
+    "pickerSearch": "Fittex template…",
+    "pickerTitle": "Agħżel template"
   },
   "rules": {
     "title": "Regoli awtomatiċi",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopjaha issa — ma tistax tiġi murija aktar.",
     "dismissCreated": "Kopjajt iċ-ċavetta",
     "usageTitle": "Eżempju ta' użu",
-    "rateLimitNotice": "Limitu: 60 talbiet / minuta / ċavetta."
+    "rateLimitNotice": "Limitu: 60 talbiet / minuta / ċavetta.",
+    "deletePermanently": "Ħassar b'mod permanenti",
+    "deletePermanentlyConfirm": "Ħassar din iċ-ċavetta revokata b'mod permanenti? Din l-azzjoni hija irriversibbli.",
+    "deletedToast": "Ċavetta mħassra b'mod permanenti"
   },
   "webhooks": {
     "title": "Webhooks ħarġin",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadata (mittent, suġġett, data, status)",
     "dragHint": "Jekk jogħġobkom irbattaw f'folder biex tesportaw bħala .eml (Chrome/Edge), jew ikklikkjaw biex tagħżlu l-format",
     "chromeHint": "💡 F'Chrome/Edge tieqa tistaqsi fejn tissejvja l-fajl."
+  },
+  "calendars": {
+    "connectFailedDesc": "Jekk jogħġbok erġa' pprova.",
+    "connectFailedTitle": "Konnessjoni falluta",
+    "connectGoogle": "Qabbad Google Calendar",
+    "connectGoogleDesc": "Qari tal-avvenimenti u kitba ta' RDV ġodda.",
+    "connectOutlook": "Qabbad Outlook Calendar",
+    "connectOutlookDesc": "Qari tal-avvenimenti u kitba ta' RDV ġodda.",
+    "connectedToastDesc": "Is-sinkronizzazzjoni hija attiva.",
+    "connectedToastTitle": "Kalendarju konness",
+    "disconnect": "Iżżarma",
+    "disconnectFailed": "Ħassra impossibbli",
+    "disconnectedToast": "Kalendarju żarmat",
+    "empty": "L-ebda kalendarju konness bħalissa.",
+    "help": "Inboria tuża l-kalendarji tiegħek biex tivverifika d-disponibbiltajiet tiegħek u toħloq l-appuntamenti stabbiliti minn Inboria.",
+    "schemaMissing": "It-tabella calendar_accounts għadha ma nħolqitx fid-database. Esegwi l-migrazzjoni 2026_05_09_calendar_accounts.sql f'Supabase.",
+    "statusConnected": "Konness",
+    "statusReauth": "Biex terġa' tikkonnettja",
+    "subtitle": "Qabbad Google Calendar jew Outlook Calendar biex Inboria tara d-disponibbiltajiet tiegħek u tniżżel l-appuntamenti tiegħek.",
+    "title": "Kalendari konnessi"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} mhux moqrija · {{total}} b'kollox",
+    "filters": {
+      "agenda": "Aġenda",
+      "all": "Kollox",
+      "inboria": "Inboria",
+      "mails": "Emails",
+      "system": "Sistema",
+      "team": "Tim",
+      "unread": "Mhux moqrija"
+    },
+    "sourceAgenda": "Aġenda",
+    "system": "Sistema"
   }
 }

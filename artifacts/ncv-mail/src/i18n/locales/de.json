@@ -543,6 +543,22 @@
     "teamTasks": "Teamaufgaben",
     "assignedFilter": {
       "all": "Ganzes Team"
+    },
+    "classicInboxLink": "Alte Inbox",
+    "help": {
+      "comingSoonDesc": "Das integrierte Hilfezentrum kommt bald. Kontaktieren Sie uns in der Zwischenzeit über Einstellungen.",
+      "comingSoonTitle": "Online-Hilfe — bald verfügbar",
+      "tooltip": "Hilfe (bald verfügbar)"
+    },
+    "sections": {
+      "important": "Wichtig",
+      "other": "Andere"
+    },
+    "shortcuts": {
+      "commands": "Befehle",
+      "done": "Erledigt",
+      "navigate": "Navigieren",
+      "reply": "Antworten"
     }
   },
   "sent": {
@@ -1074,7 +1090,16 @@
       "merging": "Wird zusammengeführt…",
       "mergedToast": "{{count}} E-Mail(s) verschoben zu „{{target}}\"",
       "close": "Schließen",
-      "detecting": "Wird analysiert…"
+      "detecting": "Wird analysiert…",
+      "clusterLine": "{{count}} Kategorien mit dem Namen „{{name}}“",
+      "clusterMergeAll": "Alle zu einer zusammenführen",
+      "clusterMergeConfirmDesc": "Alle E-Mails werden einer einzigen Kategorie „{{name}}“ zugeordnet (derjenigen, die bereits die meisten E-Mails enthält). Die {{deleted}} anderen Kopien werden gelöscht. Unwiderrufliche Aktion.",
+      "clusterMergeConfirmTitle": "Die {{count}} Kategorien „{{name}}“ zusammenführen?",
+      "clusterMergedToast": "{{count}} E-Mail(s) zusammengeführt — {{deleted}} Duplikat(e) gelöscht",
+      "clusterTotalEmails": "{{count}} E-Mails insgesamt",
+      "clustersDesc": "Mehrere Kategorien haben denselben Namen — oft parallel beim Sortieren erstellt. Eine einzige Zusammenführung reicht aus, um alles zu gruppieren.",
+      "clustersTitle": "Exakte Duplikate",
+      "pairsTitle": "Ähnliche Namen (zu überprüfen)"
     },
     "sections": {
       "byPack": "Set {{name}}",
@@ -1246,7 +1271,9 @@
       "salesforceDesc": "Synchronisation von Salesforce-Kontakten, -Konten und -Opportunities.",
       "salesforceSandbox": "Mit einer Sandbox-Org verbinden (test.salesforce.com)",
       "privacy": "Datenschutz und Teamzugriff",
-      "privacyDesc": "Ihre privaten E-Mails und das Admin-Zugriffsprotokoll"
+      "privacyDesc": "Ihre privaten E-Mails und das Admin-Zugriffsprotokoll",
+      "calendars": "Kalender",
+      "calendarsDesc": "Google Calendar und Outlook Calendar verbinden"
     },
     "b2bSection": "B2B-Glaubwürdigkeit",
     "slaCard": "SLAs für geteilte Postfächer",
@@ -1279,7 +1306,9 @@
       "enrollError": "Registrierung konnte nicht gestartet werden"
     },
     "preferredVideoTitle": "Standard-Videokonferenz",
-    "preferredVideoDesc": "Wählen Sie den Standardanbieter für Videokonferenzen für neue Termine. Meet erfordert einen verbundenen Google-Kalender; Teams erfordert Outlook. Jitsi funktioniert ohne Konto."
+    "preferredVideoDesc": "Wählen Sie den Standardanbieter für Videokonferenzen für neue Termine. Meet erfordert einen verbundenen Google-Kalender; Teams erfordert Outlook. Jitsi funktioniert ohne Konto.",
+    "meetingRemindersDesc": "Inboria sendet eine höfliche Erinnerung an den Kontakt 48 Stunden nach einem unbeantworteten Terminvorschlag.",
+    "meetingRemindersTitle": "Automatische Terminerinnerungen"
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",
@@ -2676,7 +2705,55 @@
     "videoJitsi": "Jitsi (Inboria-Link, ohne Konto)",
     "videoMeet": "Google Meet (Google-Kalender erforderlich)",
     "videoTeams": "Microsoft Teams (Outlook-Kalender erforderlich)",
-    "videoJoin": "Videokonferenz beitreten"
+    "videoJoin": "Videokonferenz beitreten",
+    "bulkConfirmed": "{{count}} bestätigte(r) Termin(e)",
+    "bulkDismissed": "{{count}} ignorierte Vorschlag/Vorschläge",
+    "confirmSelected": "Auswahl bestätigen",
+    "dismissSelected": "Auswahl ignorieren",
+    "multi": {
+      "addParticipants": "Teilnehmer hinzufügen",
+      "candidateSlots": "Vorgeschlagene Zeitfenster",
+      "externalParticipants": "Externe Teilnehmer",
+      "findCommonSlot": "Gemeinsames Zeitfenster suchen",
+      "internalParticipants": "Interne Teilnehmer",
+      "lastReminder": "Letzte Erinnerung",
+      "multiStatus": {
+        "confirmed": "Bestätigt",
+        "declined": "Abgelehnt",
+        "partially_confirmed": "Teilweise bestätigt",
+        "pending": "Ausstehend"
+      },
+      "neverReminded": "Keine Erinnerung",
+      "noCommonSlot": "Kein gemeinsames Zeitfenster im gewählten Zeitraum gefunden.",
+      "optional": "Optional",
+      "participantStatus": {
+        "accepted": "Angenommen",
+        "declined": "Abgelehnt",
+        "pending": "Ausstehend",
+        "tentative": "Vorläufig"
+      },
+      "participantsLabel": "Teilnehmer (durch Komma oder Zeilenumbruch getrennt)",
+      "remindParticipant": "Erinnern",
+      "remindSent": "Erinnerung gesendet",
+      "required": "Erforderlich",
+      "send": "Einladungen senden",
+      "sent": "{{count}} Einladungen gesendet",
+      "title": "Mehrere Teilnehmer"
+    },
+    "selectAll": "Alle auswählen",
+    "selectedCount": "{{count}} ausgewählt",
+    "statusConfirmedShort": "Bestätigt",
+    "statusCounter": "Gegenvorschlag erhalten",
+    "statusCounterMonth": "Gegenvorschlag",
+    "statusCounterShort": "Gegenvorschlag",
+    "statusDeclined": "Vom Kontakt abgelehnt",
+    "statusDeclinedMonth": "Abgelehnt",
+    "statusDeclinedShort": "Abgelehnt",
+    "statusPending": "Antwort ausstehend",
+    "statusPendingMonth": "Ausstehend",
+    "statusPendingShort": "Ausstehend",
+    "syncFailed": "Synchronisation fehlgeschlagen",
+    "viewDetails": "Details anzeigen"
   },
   "supportChat": {
     "title": "Inboria Assistant",
@@ -4573,7 +4650,10 @@
     "openedBadge": "Geöffnet",
     "openedBadgeCount": "{{count}} mal geöffnet",
     "openedAtLabel": "Erste Öffnung: {{date}}",
-    "notOpenedYet": "Noch nicht geöffnet"
+    "notOpenedYet": "Noch nicht geöffnet",
+    "snoozedSectionEmpty": "Keine verschobenen E-Mails",
+    "snoozedSectionEmptyHint": "Die von Ihnen verschobenen E-Mails erscheinen hier bis zu ihrem Aufwecken.",
+    "snoozedSectionTitle": "Verschobene E-Mails"
   },
   "templates": {
     "title": "Vorlagen",
@@ -4607,7 +4687,11 @@
     "saveAsTemplate": "Als Vorlage speichern",
     "savedAsTemplate": "E-Mail als Vorlage gespeichert",
     "suggestNameWithAI": "Namen mit Inboria vorschlagen",
-    "suggestNameShort": "Vorschlagen"
+    "suggestNameShort": "Vorschlagen",
+    "insertTemplate": "Vorlage einfügen",
+    "pickerNoMatch": "Keine Vorlage entspricht Ihrer Suche.",
+    "pickerSearch": "Vorlage suchen…",
+    "pickerTitle": "Vorlage auswählen"
   },
   "rules": {
     "title": "Automatische Regeln",
@@ -4731,7 +4815,10 @@
     "createdHint": "Jetzt kopieren — wird nicht erneut angezeigt.",
     "dismissCreated": "Ich habe den Schlüssel kopiert",
     "usageTitle": "Beispiel",
-    "rateLimitNotice": "Limit: 60 Anfragen / Minute / Schlüssel."
+    "rateLimitNotice": "Limit: 60 Anfragen / Minute / Schlüssel.",
+    "deletePermanently": "Dauerhaft löschen",
+    "deletePermanentlyConfirm": "Diese widerrufene Schlüssel dauerhaft löschen? Diese Aktion ist unwiderruflich.",
+    "deletedToast": "Schlüssel dauerhaft gelöscht"
   },
   "webhooks": {
     "title": "Ausgehende Webhooks",
@@ -5070,5 +5157,39 @@
     "csvDesc": "Metadaten (Absender, Betreff, Datum, Status)",
     "dragHint": "Ziehen Sie in einen Ordner, um als .eml zu exportieren (Chrome/Edge), oder klicken Sie zur Formatwahl",
     "chromeHint": "💡 In Chrome/Edge werden Sie gefragt, wo die Datei gespeichert werden soll."
+  },
+  "calendars": {
+    "connectFailedDesc": "Bitte versuchen Sie es erneut.",
+    "connectFailedTitle": "Verbindung fehlgeschlagen",
+    "connectGoogle": "Google Calendar verbinden",
+    "connectGoogleDesc": "Lesen von Ereignissen und Schreiben neuer Termine.",
+    "connectOutlook": "Outlook Calendar verbinden",
+    "connectOutlookDesc": "Lesen von Ereignissen und Schreiben neuer Termine.",
+    "connectedToastDesc": "Die Synchronisation ist aktiv.",
+    "connectedToastTitle": "Kalender verbunden",
+    "disconnect": "Trennen",
+    "disconnectFailed": "Entfernen nicht möglich",
+    "disconnectedToast": "Kalender getrennt",
+    "empty": "Derzeit kein Kalender verbunden.",
+    "help": "Inboria nutzt Ihre Kalender, um Ihre Verfügbarkeit zu prüfen und Termine direkt in Inboria zu erstellen.",
+    "schemaMissing": "Die Tabelle calendar_accounts ist noch nicht in der Datenbank erstellt. Führen Sie die Migration 2026_05_09_calendar_accounts.sql in Supabase aus.",
+    "statusConnected": "Verbunden",
+    "statusReauth": "Erneut verbinden",
+    "subtitle": "Verbinden Sie Google Calendar oder Outlook Calendar, damit Inboria Ihre Verfügbarkeit sieht und Termine einträgt.",
+    "title": "Verbundene Kalender"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} ungelesen · {{total}} insgesamt",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Alle",
+      "inboria": "Inboria",
+      "mails": "E-Mails",
+      "system": "System",
+      "team": "Team",
+      "unread": "Ungelesen"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "System"
   }
 }

@@ -543,6 +543,22 @@
     "teamTasks": "Csapat feladatok",
     "assignedFilter": {
       "all": "Teljes csapat"
+    },
+    "classicInboxLink": "Régi beérkezett üzenetek",
+    "help": {
+      "comingSoonDesc": "Az integrált súgóközpont hamarosan elérhető lesz. Addig is, lépjen kapcsolatba velünk a Beállítások menüpontban.",
+      "comingSoonTitle": "Online segítség — hamarosan elérhető",
+      "tooltip": "Segítség (hamarosan elérhető)"
+    },
+    "sections": {
+      "important": "Fontos",
+      "other": "Egyéb"
+    },
+    "shortcuts": {
+      "commands": "Parancsok",
+      "done": "Kész",
+      "navigate": "Navigálás",
+      "reply": "Válasz"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Egyesítés folyamatban...",
       "mergedToast": "{{count}} e-mail(ek) áthelyezve a « {{target}} »-be",
       "close": "Bezárás",
-      "detecting": "Elemzés folyamatban..."
+      "detecting": "Elemzés folyamatban...",
+      "clusterLine": "{{count}} kategória „{{name}}” névvel",
+      "clusterMergeAll": "Összes egyesítése egybe",
+      "clusterMergeConfirmDesc": "Minden email egyetlen „{{name}}” kategóriába lesz áthelyezve (amelyik már most is a legtöbb emailt tartalmazza). A {{deleted}} többi másolat törlésre kerül. Visszafordíthatatlan művelet.",
+      "clusterMergeConfirmTitle": "Egyesíti a(z) {{count}} „{{name}}” kategóriát?",
+      "clusterMergedToast": "{{count}} email egyesítve — {{deleted}} másolat törölve",
+      "clusterTotalEmails": "Összesen {{count}} email",
+      "clustersDesc": "Több kategória azonos névvel — gyakran párhuzamosan létrehozva a rendezés során. Egyetlen egyesítés elegendő mindent összefogni.",
+      "clustersTitle": "Pontos másolatok",
+      "pairsTitle": "Hasonló nevek (áttekintés szükséges)"
     },
     "sections": {
       "byPack": "Csomag {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Kapcsolatok, fiókok és lehetőségek szinkronizálása a Salesforce-ban.",
       "salesforceSandbox": "Csatlakoztassa a Sandbox szervezetet (test.salesforce.com)",
       "privacy": "Adatvédelem és csapat hozzáférés",
-      "privacyDesc": "Saját privát emailjei és az adminisztrátori konzultációk naplója"
+      "privacyDesc": "Saját privát emailjei és az adminisztrátori konzultációk naplója",
+      "calendars": "Naptárak",
+      "calendarsDesc": "Google Naptár és Outlook Naptár csatlakoztatása"
     },
     "b2bSection": "B2B hitelesség",
     "slaCard": "Megosztott fiókok SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "Nem lehet elindítani a regisztrációt"
     },
     "preferredVideoTitle": "Alapértelmezett videohívás",
-    "preferredVideoDesc": "Válassza ki az új találkozók alapértelmezett videoszolgáltatóját. A Meet csatlakoztatott Google-naptárat igényel; a Teams Outlookot igényel. A Jitsi fiók nélkül is működik."
+    "preferredVideoDesc": "Válassza ki az új találkozók alapértelmezett videoszolgáltatóját. A Meet csatlakoztatott Google-naptárat igényel; a Teams Outlookot igényel. A Jitsi fiók nélkül is működik.",
+    "meetingRemindersDesc": "Az Inboria udvarias emlékeztetőt küld a kapcsolatnak 48 órával a válasz nélkül maradt találkozó javaslat után.",
+    "meetingRemindersTitle": "Automatikus találkozó emlékeztetők"
   },
   "subscription": {
     "title": "Kezelje az előfizetését",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria-link, fiók nélkül)",
     "videoMeet": "Google Meet (Google-naptár szükséges)",
     "videoTeams": "Microsoft Teams (Outlook-naptár szükséges)",
-    "videoJoin": "Csatlakozás a videohíváshoz"
+    "videoJoin": "Csatlakozás a videohíváshoz",
+    "bulkConfirmed": "{{count}} megerősített találkozó",
+    "bulkDismissed": "{{count}} figyelmen kívül hagyott javaslat",
+    "confirmSelected": "Kiválasztás megerősítése",
+    "dismissSelected": "Kiválasztás figyelmen kívül hagyása",
+    "multi": {
+      "addParticipants": "Résztvevők hozzáadása",
+      "candidateSlots": "Javasolt időpontok",
+      "externalParticipants": "Külső résztvevők",
+      "findCommonSlot": "Közös időpont keresése",
+      "internalParticipants": "Belső résztvevők",
+      "lastReminder": "Utolsó emlékeztető",
+      "multiStatus": {
+        "confirmed": "Megerősítve",
+        "declined": "Elutasítva",
+        "partially_confirmed": "Részben megerősítve",
+        "pending": "Függőben"
+      },
+      "neverReminded": "Nincs emlékeztető",
+      "noCommonSlot": "Nincs közös időpont a választott időkeretben.",
+      "optional": "Opcionális",
+      "participantStatus": {
+        "accepted": "Elfogadva",
+        "declined": "Elutasítva",
+        "pending": "Függőben",
+        "tentative": "Ideiglenes"
+      },
+      "participantsLabel": "Résztvevők (vesszővel vagy új sorral elválasztva)",
+      "remindParticipant": "Emlékeztető küldése",
+      "remindSent": "Emlékeztető elküldve",
+      "required": "Kötelező",
+      "send": "Meghívók küldése",
+      "sent": "{{count}} meghívó elküldve",
+      "title": "Több résztvevős"
+    },
+    "selectAll": "Összes kiválasztása",
+    "selectedCount": "{{count}} kiválasztva",
+    "statusConfirmedShort": "Megerősítve",
+    "statusCounter": "Ellenvetés érkezett",
+    "statusCounterMonth": "Ellenvetés",
+    "statusCounterShort": "Ellenvetés",
+    "statusDeclined": "Kapcsolat által elutasítva",
+    "statusDeclinedMonth": "Elutasítva",
+    "statusDeclinedShort": "Elutasítva",
+    "statusPending": "Válaszra vár",
+    "statusPendingMonth": "Függőben",
+    "statusPendingShort": "Függőben",
+    "syncFailed": "Szinkronizálás sikertelen",
+    "viewDetails": "Részletek megtekintése"
   },
   "supportChat": {
     "title": "Inboria asszisztens",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Mentés sablonként",
     "savedAsTemplate": "E-mail mentve sablonként",
     "suggestNameWithAI": "Név javaslása az Inboria segítségével",
-    "suggestNameShort": "Javasolni"
+    "suggestNameShort": "Javasolni",
+    "insertTemplate": "Sablon beszúrása",
+    "pickerNoMatch": "Nincs a keresésnek megfelelő sablon.",
+    "pickerSearch": "Sablon keresése…",
+    "pickerTitle": "Sablon kiválasztása"
   },
   "rules": {
     "title": "Automatikus szabályok",
@@ -3090,7 +3171,10 @@
     "createdHint": "Másolja most — soha többé nem lesz megjelenítve.",
     "dismissCreated": "Másoltam a kulcsot",
     "usageTitle": "Használati példa",
-    "rateLimitNotice": "Korlát: 60 kérés / perc / kulcs."
+    "rateLimitNotice": "Korlát: 60 kérés / perc / kulcs.",
+    "deletePermanently": "Végleges törlés",
+    "deletePermanentlyConfirm": "Véglegesen törli ezt a visszavont kulcsot? Ez a művelet visszafordíthatatlan.",
+    "deletedToast": "Kulcs véglegesen törölve"
   },
   "webhooks": {
     "title": "Kimenő webhookok",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metaadatok (feladó, tárgy, dátum, állapot)",
     "dragHint": "Húzza egy mappába .eml exporthoz (Chrome/Edge), vagy kattintson a formátum választásához",
     "chromeHint": "💡 Chrome/Edge alatt egy ablak kérdezi, hova mentse a fájlt."
+  },
+  "calendars": {
+    "connectFailedDesc": "Kérjük, próbálja újra.",
+    "connectFailedTitle": "Csatlakozás sikertelen",
+    "connectGoogle": "Google Naptár csatlakoztatása",
+    "connectGoogleDesc": "Események olvasása és új találkozók írása.",
+    "connectOutlook": "Outlook Naptár csatlakoztatása",
+    "connectOutlookDesc": "Események olvasása és új találkozók írása.",
+    "connectedToastDesc": "A szinkronizálás aktív.",
+    "connectedToastTitle": "Naptár csatlakoztatva",
+    "disconnect": "Csatlakozás megszüntetése",
+    "disconnectFailed": "Eltávolítás sikertelen",
+    "disconnectedToast": "Naptár lecsatlakoztatva",
+    "empty": "Jelenleg nincs csatlakoztatott naptár.",
+    "help": "Az Inboria a naptárait használja az elérhetőségek ellenőrzésére és a találkozók létrehozására.",
+    "schemaMissing": "A calendar_accounts tábla még nincs létrehozva az adatbázisban. Futtassa a 2026_05_09_calendar_accounts.sql migrációt a Supabase-ben.",
+    "statusConnected": "Csatlakoztatva",
+    "statusReauth": "Újra csatlakoztatandó",
+    "subtitle": "Csatlakoztassa a Google Naptárat vagy az Outlook Naptárat, hogy az Inboria lássa az elérhetőségeit és beírja a találkozóit.",
+    "title": "Csatlakoztatott naptárak"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} olvasatlan · {{total}} összesen",
+    "filters": {
+      "agenda": "Naptár",
+      "all": "Összes",
+      "inboria": "Inboria",
+      "mails": "E-mailek",
+      "system": "Rendszer",
+      "team": "Csapat",
+      "unread": "Olvasatlan"
+    },
+    "sourceAgenda": "Naptár",
+    "system": "Rendszer"
   }
 }

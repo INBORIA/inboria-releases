@@ -543,6 +543,22 @@
     "teamTasks": "Tasques de l'equip",
     "assignedFilter": {
       "all": "Tot l'equip"
+    },
+    "classicInboxLink": "Antiga recepció",
+    "help": {
+      "comingSoonDesc": "El centre d'ajuda integrat arribarà molt aviat. Mentrestant, contacti'ns des de Configuració.",
+      "comingSoonTitle": "Ajuda en línia — pròximament disponible",
+      "tooltip": "Ajuda (pròximament disponible)"
+    },
+    "sections": {
+      "important": "Important",
+      "other": "Altres"
+    },
+    "shortcuts": {
+      "commands": "Comandes",
+      "done": "Fet",
+      "navigate": "Navegar",
+      "reply": "Respondre"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Fusionant…",
       "mergedToast": "{{count}} correu(s) traslladat(s) a « {{target}} »",
       "close": "Tancar",
-      "detecting": "Analitzant…"
+      "detecting": "Analitzant…",
+      "clusterLine": "{{count}} categories anomenades « {{name}} »",
+      "clusterMergeAll": "Fusionar tot en una sola",
+      "clusterMergeConfirmDesc": "Tots els correus seran reassignats a una sola categoria « {{name}} » (la que ja conté més correus). Les {{deleted}} altres còpies seran eliminades. Acció irreversible.",
+      "clusterMergeConfirmTitle": "Fusionar les {{count}} categories « {{name}} »?",
+      "clusterMergedToast": "{{count}} correu(s) agrupat(s) — {{deleted}} duplicat(s) eliminat(s)",
+      "clusterTotalEmails": "{{count}} correus en total",
+      "clustersDesc": "Diverses categories tenen el mateix nom — sovint creades en paral·lel al triatge. Una sola fusió és suficient per agrupar-ho tot.",
+      "clustersTitle": "Duplicats exactes",
+      "pairsTitle": "Noms similars (a revisar)"
     },
     "sections": {
       "byPack": "Pack {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Sincronització de contactes, comptes i oportunitats de Salesforce.",
       "salesforceSandbox": "Connectar una org Sandbox (test.salesforce.com)",
       "privacy": "Privadesa i accés a l'equip",
-      "privacyDesc": "Els vostres correus electrònics privats i el diari de consultes d'administració"
+      "privacyDesc": "Els vostres correus electrònics privats i el diari de consultes d'administració",
+      "calendars": "Calendaris",
+      "calendarsDesc": "Connectar Google Calendar i Outlook Calendar"
     },
     "b2bSection": "Credibilitat B2B",
     "slaCard": "SLA caixes compartides",
@@ -1269,7 +1296,9 @@
       "enrollError": "Impossible d'iniciar l'enrolament"
     },
     "preferredVideoTitle": "Videoconferència per defecte",
-    "preferredVideoDesc": "Si us plau, escolliu el proveïdor de videoconferència per defecte per a les cites noves. Meet necessita un calendari de Google connectat; Teams necessita Outlook. Jitsi funciona sense compte."
+    "preferredVideoDesc": "Si us plau, escolliu el proveïdor de videoconferència per defecte per a les cites noves. Meet necessita un calendari de Google connectat; Teams necessita Outlook. Jitsi funciona sense compte.",
+    "meetingRemindersDesc": "Inboria envia un recordatori educat al contacte 48 h després d'una proposta de cita sense resposta.",
+    "meetingRemindersTitle": "Recordatoris automàtics de RDV"
   },
   "subscription": {
     "title": "Gereu la vostra subscripció",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (enllaç Inboria, sense compte)",
     "videoMeet": "Google Meet (cal un calendari Google)",
     "videoTeams": "Microsoft Teams (cal un calendari Outlook)",
-    "videoJoin": "Uniu-vos a la videoconferència"
+    "videoJoin": "Uniu-vos a la videoconferència",
+    "bulkConfirmed": "{{count}} RDV confirmat(s)",
+    "bulkDismissed": "{{count}} suggeriment(s) ignorat(s)",
+    "confirmSelected": "Confirmar la selecció",
+    "dismissSelected": "Ignorar la selecció",
+    "multi": {
+      "addParticipants": "Afegir participants",
+      "candidateSlots": "Franges proposades",
+      "externalParticipants": "Participants externs",
+      "findCommonSlot": "Cercar una franja comuna",
+      "internalParticipants": "Participants interns",
+      "lastReminder": "Últim recordatori",
+      "multiStatus": {
+        "confirmed": "Confirmat",
+        "declined": "Refusat",
+        "partially_confirmed": "Parcialment confirmat",
+        "pending": "Pendent"
+      },
+      "neverReminded": "Cap recordatori",
+      "noCommonSlot": "No s'ha trobat cap franja comuna en la finestra escollida.",
+      "optional": "Opcional",
+      "participantStatus": {
+        "accepted": "Acceptat",
+        "declined": "Refusat",
+        "pending": "Pendent",
+        "tentative": "Provisional"
+      },
+      "participantsLabel": "Participants (separats per coma o retorn de línia)",
+      "remindParticipant": "Recordar",
+      "remindSent": "Recordatori enviat",
+      "required": "Requerit",
+      "send": "Enviar les invitacions",
+      "sent": "{{count}} invitacions enviades",
+      "title": "Multi-participants"
+    },
+    "selectAll": "Seleccionar tot",
+    "selectedCount": "{{count}} seleccionat(s)",
+    "statusConfirmedShort": "Confirmat",
+    "statusCounter": "Contra-proposta rebuda",
+    "statusCounterMonth": "Contra-proposta",
+    "statusCounterShort": "Contra-proposta",
+    "statusDeclined": "Refusat pel contacte",
+    "statusDeclinedMonth": "Refusat",
+    "statusDeclinedShort": "Refusat",
+    "statusPending": "Pendent de resposta",
+    "statusPendingMonth": "Pendent",
+    "statusPendingShort": "Pendent",
+    "syncFailed": "Sincronització fallida",
+    "viewDetails": "Veure els detalls"
   },
   "supportChat": {
     "title": "Assistència Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Desar com a plantilla",
     "savedAsTemplate": "Correu desat com a plantilla",
     "suggestNameWithAI": "Suggerir un nom amb Inboria",
-    "suggestNameShort": "Suggerir"
+    "suggestNameShort": "Suggerir",
+    "insertTemplate": "Inserir una plantilla",
+    "pickerNoMatch": "Cap plantilla coincideix amb la seva cerca.",
+    "pickerSearch": "Cercar una plantilla…",
+    "pickerTitle": "Triar una plantilla"
   },
   "rules": {
     "title": "Regles automàtiques",
@@ -3090,7 +3171,10 @@
     "createdHint": "Copieu-la ara — no es mostrarà mai més.",
     "dismissCreated": "He copiat la clau",
     "usageTitle": "Exemple d'ús",
-    "rateLimitNotice": "Límit: 60 sol·licituds / minut / clau."
+    "rateLimitNotice": "Límit: 60 sol·licituds / minut / clau.",
+    "deletePermanently": "Eliminar definitivament",
+    "deletePermanentlyConfirm": "Eliminar definitivament aquesta clau revocada? Aquesta acció és irreversible.",
+    "deletedToast": "Clau eliminada definitivament"
   },
   "webhooks": {
     "title": "Webhooks sortints",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadades (remitent, assumpte, data, estat)",
     "dragHint": "Si us plau arrossegueu a una carpeta per exportar com a .eml (Chrome/Edge), o feu clic per triar el format",
     "chromeHint": "💡 A Chrome/Edge una finestra preguntarà on desar el fitxer."
+  },
+  "calendars": {
+    "connectFailedDesc": "Si us plau, torni a intentar-ho.",
+    "connectFailedTitle": "Connexió fallida",
+    "connectGoogle": "Connectar Google Calendar",
+    "connectGoogleDesc": "Lectura dels esdeveniments i escriptura dels nous RDV.",
+    "connectOutlook": "Connectar Outlook Calendar",
+    "connectOutlookDesc": "Lectura dels esdeveniments i escriptura dels nous RDV.",
+    "connectedToastDesc": "La sincronització està activa.",
+    "connectedToastTitle": "Calendari connectat",
+    "disconnect": "Desconnectar",
+    "disconnectFailed": "Eliminació impossible",
+    "disconnectedToast": "Calendari desconnectat",
+    "empty": "Cap calendari connectat per ara.",
+    "help": "Inboria utilitza els seus calendaris per verificar les seves disponibilitats i crear-hi les cites fixades des d'Inboria.",
+    "schemaMissing": "La taula calendar_accounts encara no està creada a la base. Executeu la migració 2026_05_09_calendar_accounts.sql a Supabase.",
+    "statusConnected": "Connectat",
+    "statusReauth": "A reconnectar",
+    "subtitle": "Connecti Google Calendar o Outlook Calendar perquè Inboria vegi les seves disponibilitats i hi inscrigui les seves cites.",
+    "title": "Calendaris connectats"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} no llegides · {{total}} en total",
+    "filters": {
+      "agenda": "Agenda",
+      "all": "Tot",
+      "inboria": "Inboria",
+      "mails": "Correus",
+      "system": "Sistema",
+      "team": "Equip",
+      "unread": "No llegides"
+    },
+    "sourceAgenda": "Agenda",
+    "system": "Sistema"
   }
 }

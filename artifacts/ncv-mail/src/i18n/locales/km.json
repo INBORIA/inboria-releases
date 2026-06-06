@@ -543,6 +543,22 @@
     "teamTasks": "ភារកិច្ចក្រុម",
     "assignedFilter": {
       "all": "ក្រុមទាំងមូល"
+    },
+    "classicInboxLink": "ប្រអប់ទទួលចាស់",
+    "help": {
+      "comingSoonDesc": "មជ្ឈមណ្ឌលជំនួយដែលបានបង្កប់នឹងមកដល់ឆាប់ៗ។ រង់ចាំនេះ សូមទាក់ទងយើងពីការកំណត់។",
+      "comingSoonTitle": "ជំនួយអនឡាញ — នឹងមានឆាប់ៗ",
+      "tooltip": "ជំនួយ (នឹងមានឆាប់ៗ)"
+    },
+    "sections": {
+      "important": "សំខាន់",
+      "other": "ផ្សេងទៀត"
+    },
+    "shortcuts": {
+      "commands": "ពាក្យបញ្ជា",
+      "done": "បានបញ្ចប់",
+      "navigate": "រុករក",
+      "reply": "ឆ្លើយតប"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "កំពុងភ្ជាប់…",
       "mergedToast": "{{count}} អ៊ីមែលត្រូវបានផ្ទេរទៅ « {{target}} »",
       "close": "បិទ",
-      "detecting": "កំពុងវិភាគ…"
+      "detecting": "កំពុងវិភាគ…",
+      "clusterLine": "{{count}} ប្រភេទដែលមានឈ្មោះ « {{name}} »",
+      "clusterMergeAll": "បញ្ចូលទាំងអស់ជាមួយគ្នា",
+      "clusterMergeConfirmDesc": "អ៊ីមែលទាំងអស់នឹងត្រូវបានផ្ទេរទៅប្រភេទតែមួយ « {{name}} » (ដែលមានអ៊ីមែលច្រើនជាងគេរួចហើយ)។ {{deleted}} ច្បាប់ចម្លងផ្សេងទៀតនឹងត្រូវបានលុប។ សកម្មភាពមិនអាចត្រឡប់វិញបាន។",
+      "clusterMergeConfirmTitle": "បញ្ចូល {{count}} ប្រភេទ « {{name}} »?",
+      "clusterMergedToast": "{{count}} អ៊ីមែលបានបញ្ចូល — {{deleted}} ច្បាប់ចម្លងត្រូវបានលុប",
+      "clusterTotalEmails": "{{count}} អ៊ីមែលសរុប",
+      "clustersDesc": "ប្រភេទជាច្រើនមានឈ្មោះដូចគ្នា — ជាញឹកញាប់បង្កើតឡើងក្នុងពេលតែមួយ។ ការបញ្ចូលតែមួយគឺគ្រប់គ្រាន់ដើម្បីបញ្ចូលទាំងអស់។",
+      "clustersTitle": "ច្បាប់ចម្លងដូចគ្នា",
+      "pairsTitle": "ឈ្មោះស្រដៀងគ្នា (ត្រូវពិនិត្យ)"
     },
     "sections": {
       "byPack": "កញ្ចប់ {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "ការសម្របសម្រួលទំនាក់ទំនង, គណនី និងឱកាស Salesforce។",
       "salesforceSandbox": "ភ្ជាប់អង្គភាព Sandbox (test.salesforce.com)",
       "privacy": "ភាពឯកជន និងការចូលដំណើរការក្រុម",
-      "privacyDesc": "អ៊ីមែលឯកជនរបស់លោកអ្នក និងកំណត់ហេតុការពិនិត្យ admin"
+      "privacyDesc": "អ៊ីមែលឯកជនរបស់លោកអ្នក និងកំណត់ហេតុការពិនិត្យ admin",
+      "calendars": "ប្រតិទិន",
+      "calendarsDesc": "ភ្ជាប់ Google Calendar និង Outlook Calendar"
     },
     "b2bSection": "ភាពជឿជាក់ B2B",
     "slaCard": "SLA សម្រាប់ប្រអប់ចែករំលែក",
@@ -1269,7 +1296,9 @@
       "enrollError": "មិនអាចចាប់ផ្តើមការចុះបញ្ជីបានទេ។"
     },
     "preferredVideoTitle": "ការប្រជុំជាវីដេអូលំនាំដើម",
-    "preferredVideoDesc": "សូមជ្រើសរើសអ្នកផ្តល់សេវាកម្មការប្រជុំជាវីដេអូលំនាំដើមសម្រាប់ការណាត់ជួបថ្មី។ Meet ត្រូវការប្រតិទិន Google ដែលបានភ្ជាប់ ហើយ Teams ត្រូវការ Outlook។ Jitsi ដំណើរការដោយមិនចាំបាច់មានគណនី។"
+    "preferredVideoDesc": "សូមជ្រើសរើសអ្នកផ្តល់សេវាកម្មការប្រជុំជាវីដេអូលំនាំដើមសម្រាប់ការណាត់ជួបថ្មី។ Meet ត្រូវការប្រតិទិន Google ដែលបានភ្ជាប់ ហើយ Teams ត្រូវការ Outlook។ Jitsi ដំណើរការដោយមិនចាំបាច់មានគណនី។",
+    "meetingRemindersDesc": "Inboria ផ្ញើការរំលឹកយ៉ាងគួរសមទៅកាន់ទំនាក់ទំនង 48 ម៉ោងបន្ទាប់ពីការផ្តល់ជូនការណាត់ជួបមិនទាន់បានឆ្លើយតប។",
+    "meetingRemindersTitle": "ការរំលឹកការណាត់ជួបដោយស្វ័យប្រវត្តិ"
   },
   "subscription": {
     "title": "គ្រប់គ្រងការជាវរបស់លោកអ្នក។",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (តំណ Inboria មិនត្រូវការគណនី)",
     "videoMeet": "Google Meet (ត្រូវការប្រតិទិន Google)",
     "videoTeams": "Microsoft Teams (ត្រូវការប្រតិទិន Outlook)",
-    "videoJoin": "ចូលរួមការប្រជុំជាវីដេអូ"
+    "videoJoin": "ចូលរួមការប្រជុំជាវីដេអូ",
+    "bulkConfirmed": "{{count}} ការណាត់ជួបបានបញ្ជាក់",
+    "bulkDismissed": "{{count}} សំណើត្រូវបានមិនអើពើ",
+    "confirmSelected": "បញ្ជាក់ការជ្រើសរើស",
+    "dismissSelected": "មិនអើពើការជ្រើសរើស",
+    "multi": {
+      "addParticipants": "បន្ថែមអ្នកចូលរួម",
+      "candidateSlots": "ពេលវេលាដែលបានផ្តល់ជូន",
+      "externalParticipants": "អ្នកចូលរួមខាងក្រៅ",
+      "findCommonSlot": "ស្វែងរកពេលវេលាដែលស្របគ្នា",
+      "internalParticipants": "អ្នកចូលរួមខាងក្នុង",
+      "lastReminder": "ការរំលឹកចុងក្រោយ",
+      "multiStatus": {
+        "confirmed": "បានបញ្ជាក់",
+        "declined": "បានបដិសេធ",
+        "partially_confirmed": "បានបញ្ជាក់ខ្លះ",
+        "pending": "កំពុងរង់ចាំ"
+      },
+      "neverReminded": "មិនមានការរំលឹក",
+      "noCommonSlot": "មិនមានពេលវេលាដែលស្របគ្នានៅក្នុងបង្អួចដែលបានជ្រើស។",
+      "optional": "ជាជម្រើស",
+      "participantStatus": {
+        "accepted": "បានទទួល",
+        "declined": "បានបដិសេធ",
+        "pending": "កំពុងរង់ចាំ",
+        "tentative": "បណ្ដោះអាសន្ន"
+      },
+      "participantsLabel": "អ្នកចូលរួម (បំបែកដោយក្បៀស ឬបញ្ចូលបន្ទាត់)",
+      "remindParticipant": "រំលឹក",
+      "remindSent": "បានផ្ញើការរំលឹក",
+      "required": "ត្រូវការ",
+      "send": "ផ្ញើការអញ្ជើញ",
+      "sent": "{{count}} ការអញ្ជើញបានផ្ញើ",
+      "title": "អ្នកចូលរួមច្រើន"
+    },
+    "selectAll": "ជ្រើសរើសទាំងអស់",
+    "selectedCount": "{{count}} បានជ្រើសរើស",
+    "statusConfirmedShort": "បានបញ្ជាក់",
+    "statusCounter": "បានទទួលការប្រកួតប្រជែង",
+    "statusCounterMonth": "ការប្រកួតប្រជែង",
+    "statusCounterShort": "ការប្រកួតប្រជែង",
+    "statusDeclined": "បានបដិសេធដោយទំនាក់ទំនង",
+    "statusDeclinedMonth": "បានបដិសេធ",
+    "statusDeclinedShort": "បានបដិសេធ",
+    "statusPending": "កំពុងរង់ចាំការឆ្លើយតប",
+    "statusPendingMonth": "កំពុងរង់ចាំ",
+    "statusPendingShort": "កំពុងរង់ចាំ",
+    "syncFailed": "ការសមកាលកម្មបានបរាជ័យ",
+    "viewDetails": "មើលព័ត៌មានលម្អិត"
   },
   "supportChat": {
     "title": "ជំនួយ Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "រក្សាទុកជាគំរូ",
     "savedAsTemplate": "អ៊ីមែលបានរក្សាទុកជាគំរូ",
     "suggestNameWithAI": "សូមស្នើឈ្មោះជាមួយ Inboria",
-    "suggestNameShort": "សូមផ្តល់អនុសាសន៍"
+    "suggestNameShort": "សូមផ្តល់អនុសាសន៍",
+    "insertTemplate": "បញ្ចូលគំរូ",
+    "pickerNoMatch": "គ្មានគំរូណាដែលផ្គូផ្គងនឹងការស្វែងរករបស់លោកអ្នក។",
+    "pickerSearch": "ស្វែងរកគំរូ…",
+    "pickerTitle": "ជ្រើសរើសគំរូ"
   },
   "rules": {
     "title": "ច្បាប់ស្វ័យប្រវត្តិ",
@@ -3090,7 +3171,10 @@
     "createdHint": "សូមចម្លងវាឥឡូវនេះ — វានឹងមិនត្រូវបានបង្ហាញឡើងវិញទេ។",
     "dismissCreated": "ខ្ញុំបានចម្លងកូនសោ",
     "usageTitle": "ឧទាហរណ៍នៃការប្រើប្រាស់",
-    "rateLimitNotice": "កំណត់៖ 60 សំណើ / នាទី / កូនសោ។"
+    "rateLimitNotice": "កំណត់៖ 60 សំណើ / នាទី / កូនសោ។",
+    "deletePermanently": "លុបជាអចិន្ត្រៃយ៍",
+    "deletePermanentlyConfirm": "លុបកូនសោដែលបានដកហូតនេះជាអចិន្ត្រៃយ៍? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។",
+    "deletedToast": "កូនសោបានលុបជាអចិន្ត្រៃយ៍"
   },
   "webhooks": {
     "title": "Webhooks ចេញ",
@@ -3412,5 +3496,39 @@
     "csvDesc": "ទិន្នន័យមេតា (អ្នកផ្ញើ ប្រធានបទ កាលបរិច្ឆេទ ស្ថានភាព)",
     "dragHint": "សូមអូសទៅថតដើម្បីនាំចេញជា .eml (Chrome/Edge) ឬចុចដើម្បីជ្រើសទម្រង់",
     "chromeHint": "💡 នៅ Chrome/Edge បង្អួចនឹងសួរទីកន្លែងរក្សាទុកឯកសារ។"
+  },
+  "calendars": {
+    "connectFailedDesc": "សូមព្យាយាមម្តងទៀត។",
+    "connectFailedTitle": "ការតភ្ជាប់បានបរាជ័យ",
+    "connectGoogle": "ភ្ជាប់ Google Calendar",
+    "connectGoogleDesc": "អានព្រឹត្តិការណ៍ និងសរសេរការណាត់ជួបថ្មី។",
+    "connectOutlook": "ភ្ជាប់ Outlook Calendar",
+    "connectOutlookDesc": "អានព្រឹត្តិការណ៍ និងសរសេរការណាត់ជួបថ្មី។",
+    "connectedToastDesc": "ការសមកាលកម្មកំពុងដំណើរការ។",
+    "connectedToastTitle": "ប្រតិទិនបានភ្ជាប់",
+    "disconnect": "ផ្ដាច់",
+    "disconnectFailed": "មិនអាចលុបបាន",
+    "disconnectedToast": "ប្រតិទិនបានផ្ដាច់",
+    "empty": "មិនមានប្រតិទិនដែលបានភ្ជាប់នៅឡើយ។",
+    "help": "Inboria ប្រើប្រតិទិនរបស់លោកអ្នកដើម្បីពិនិត្យមើលភាពទំនេររបស់លោកអ្នក និងបង្កើតការណាត់ជួបពី Inboria។",
+    "schemaMissing": "តារាង calendar_accounts មិនទាន់បានបង្កើតនៅក្នុងមូលដ្ឋានទិន្នន័យ។ អនុវត្តការផ្លាស់ប្តូរ 2026_05_09_calendar_accounts.sql នៅក្នុង Supabase។",
+    "statusConnected": "បានភ្ជាប់",
+    "statusReauth": "ត្រូវភ្ជាប់ឡើងវិញ",
+    "subtitle": "ភ្ជាប់ Google Calendar ឬ Outlook Calendar ដើម្បីឱ្យ Inboria មើលភាពទំនេររបស់លោកអ្នក និងបញ្ចូលការណាត់ជួបរបស់លោកអ្នក។",
+    "title": "ប្រតិទិនដែលបានភ្ជាប់"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} មិនទាន់អាន · {{total}} សរុប",
+    "filters": {
+      "agenda": "កាលវិភាគ",
+      "all": "ទាំងអស់",
+      "inboria": "Inboria",
+      "mails": "អ៊ីមែល",
+      "system": "ប្រព័ន្ធ",
+      "team": "ក្រុម",
+      "unread": "មិនទាន់អាន"
+    },
+    "sourceAgenda": "កាលវិភាគ",
+    "system": "ប្រព័ន្ធ"
   }
 }

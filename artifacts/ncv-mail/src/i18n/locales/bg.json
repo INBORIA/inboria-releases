@@ -543,6 +543,22 @@
     "teamTasks": "Екипни задачи",
     "assignedFilter": {
       "all": "Целият екип"
+    },
+    "classicInboxLink": "Стара пощенска кутия",
+    "help": {
+      "comingSoonDesc": "Интегрираният център за помощ скоро ще бъде наличен. Междувременно, свържете се с нас от Настройки.",
+      "comingSoonTitle": "Онлайн помощ — скоро налична",
+      "tooltip": "Помощ (скоро налична)"
+    },
+    "sections": {
+      "important": "Важно",
+      "other": "Други"
+    },
+    "shortcuts": {
+      "commands": "Команди",
+      "done": "Завършено",
+      "navigate": "Навигирайте",
+      "reply": "Отговорете"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Обединяване на данни...",
       "mergedToast": "{{count}} имейл(а) преместени в « {{target}} »",
       "close": "Затвори",
-      "detecting": "Анализ в ход..."
+      "detecting": "Анализ в ход...",
+      "clusterLine": "{{count}} категории с име „{{name}}“",
+      "clusterMergeAll": "Обединете всички в една",
+      "clusterMergeConfirmDesc": "Всички имейли ще бъдат пренасочени към една категория „{{name}}“ (тази, която вече съдържа най-много имейли). {{deleted}} други копия ще бъдат изтрити. Необратимо действие.",
+      "clusterMergeConfirmTitle": "Да обедините ли {{count}} категории „{{name}}“?",
+      "clusterMergedToast": "{{count}} обединени имейла — {{deleted}} изтрити дубликати",
+      "clusterTotalEmails": "Общо {{count}} имейла",
+      "clustersDesc": "Няколко категории имат едно и също име — често създадени паралелно при сортиране. Едно обединение е достатъчно, за да се съберат всички.",
+      "clustersTitle": "Точни дубликати",
+      "pairsTitle": "Подобни имена (за преглед)"
     },
     "sections": {
       "byPack": "Пакет {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Синхронизация на контакти, акаунти и възможности Salesforce.",
       "salesforceSandbox": "Свържете Sandbox организация (test.salesforce.com)",
       "privacy": "Лични данни и достъп на екипа",
-      "privacyDesc": "Вашите лични имейли и журнал на администраторските консултации"
+      "privacyDesc": "Вашите лични имейли и журнал на администраторските консултации",
+      "calendars": "Календари",
+      "calendarsDesc": "Свържете Google Calendar и Outlook Calendar"
     },
     "b2bSection": "B2B доверие",
     "slaCard": "SLA за споделени кутии",
@@ -1269,7 +1296,9 @@
       "enrollError": "Не е възможно да се стартира регистрацията"
     },
     "preferredVideoTitle": "Видеоконференция по подразбиране",
-    "preferredVideoDesc": "Моля, изберете доставчика на видеоконференции по подразбиране за нови срещи. Meet изисква свързан календар Google; Teams изисква Outlook. Jitsi работи без акаунт."
+    "preferredVideoDesc": "Моля, изберете доставчика на видеоконференции по подразбиране за нови срещи. Meet изисква свързан календар Google; Teams изисква Outlook. Jitsi работи без акаунт.",
+    "meetingRemindersDesc": "Inboria изпраща учтиво напомняне на контакта 48 часа след предложение за среща, останало без отговор.",
+    "meetingRemindersTitle": "Автоматични напомняния за срещи"
   },
   "subscription": {
     "title": "Управлявайте Вашата абонаментна услуга",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (връзка Inboria, без акаунт)",
     "videoMeet": "Google Meet (необходим е календар Google)",
     "videoTeams": "Microsoft Teams (необходим е календар Outlook)",
-    "videoJoin": "Присъедини се към видеоконференцията"
+    "videoJoin": "Присъедини се към видеоконференцията",
+    "bulkConfirmed": "{{count}} потвърдени срещи",
+    "bulkDismissed": "{{count}} игнорирани предложения",
+    "confirmSelected": "Потвърдете избраното",
+    "dismissSelected": "Игнорирайте избраното",
+    "multi": {
+      "addParticipants": "Добавете участници",
+      "candidateSlots": "Предложени времеви слотове",
+      "externalParticipants": "Външни участници",
+      "findCommonSlot": "Намерете общ времеви слот",
+      "internalParticipants": "Вътрешни участници",
+      "lastReminder": "Последно напомняне",
+      "multiStatus": {
+        "confirmed": "Потвърдено",
+        "declined": "Отказано",
+        "partially_confirmed": "Частично потвърдено",
+        "pending": "В очакване"
+      },
+      "neverReminded": "Без напомняне",
+      "noCommonSlot": "Не е намерен общ времеви слот в избрания прозорец.",
+      "optional": "По избор",
+      "participantStatus": {
+        "accepted": "Прието",
+        "declined": "Отказано",
+        "pending": "В очакване",
+        "tentative": "Предварително"
+      },
+      "participantsLabel": "Участници (разделени със запетая или нов ред)",
+      "remindParticipant": "Напомнете",
+      "remindSent": "Напомнянето е изпратено",
+      "required": "Задължително",
+      "send": "Изпратете поканите",
+      "sent": "{{count}} изпратени покани",
+      "title": "Много участници"
+    },
+    "selectAll": "Изберете всички",
+    "selectedCount": "{{count}} избрани",
+    "statusConfirmedShort": "Потвърдено",
+    "statusCounter": "Получено контра-предложение",
+    "statusCounterMonth": "Контра-предложение",
+    "statusCounterShort": "Контра-предложение",
+    "statusDeclined": "Отказано от контакта",
+    "statusDeclinedMonth": "Отказано",
+    "statusDeclinedShort": "Отказано",
+    "statusPending": "В очакване на отговор",
+    "statusPendingMonth": "В очакване",
+    "statusPendingShort": "В очакване",
+    "syncFailed": "Синхронизацията не бе успешна",
+    "viewDetails": "Вижте подробности"
   },
   "supportChat": {
     "title": "Асистент Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Запазете като шаблон",
     "savedAsTemplate": "Имейлът е запазен като шаблон",
     "suggestNameWithAI": "Предложете име с Inboria",
-    "suggestNameShort": "Предложете"
+    "suggestNameShort": "Предложете",
+    "insertTemplate": "Вмъкнете шаблон",
+    "pickerNoMatch": "Няма шаблон, който да отговаря на вашето търсене.",
+    "pickerSearch": "Търсене на шаблон…",
+    "pickerTitle": "Изберете шаблон"
   },
   "rules": {
     "title": "Автоматични правила",
@@ -3090,7 +3171,10 @@
     "createdHint": "Копирайте го сега — той повече никога няма да бъде показан.",
     "dismissCreated": "Копирах ключа",
     "usageTitle": "Пример за употреба",
-    "rateLimitNotice": "Лимит: 60 заявки / минута / ключ."
+    "rateLimitNotice": "Лимит: 60 заявки / минута / ключ.",
+    "deletePermanently": "Изтрийте завинаги",
+    "deletePermanentlyConfirm": "Да изтриете ли завинаги този оттеглен ключ? Това действие е необратимо.",
+    "deletedToast": "Ключът е изтрит завинаги"
   },
   "webhooks": {
     "title": "Изходящи уебхукове",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Метаданни (подател, тема, дата, статус)",
     "dragHint": "Моля плъзнете в папка за експорт като .eml (Chrome/Edge), или щракнете за избор на формат",
     "chromeHint": "💡 В Chrome/Edge прозорец ще попита къде да запази файла."
+  },
+  "calendars": {
+    "connectFailedDesc": "Моля, опитайте отново.",
+    "connectFailedTitle": "Неуспешна връзка",
+    "connectGoogle": "Свържете Google Calendar",
+    "connectGoogleDesc": "Четене на събития и запис на нови срещи.",
+    "connectOutlook": "Свържете Outlook Calendar",
+    "connectOutlookDesc": "Четене на събития и запис на нови срещи.",
+    "connectedToastDesc": "Синхронизацията е активна.",
+    "connectedToastTitle": "Календарът е свързан",
+    "disconnect": "Разкачете",
+    "disconnectFailed": "Неуспешно премахване",
+    "disconnectedToast": "Календарът е разкачен",
+    "empty": "Все още няма свързани календари.",
+    "help": "Inboria използва вашите календари, за да провери наличността ви и да създаде срещи от Inboria.",
+    "schemaMissing": "Таблицата calendar_accounts все още не е създадена в базата. Изпълнете миграцията 2026_05_09_calendar_accounts.sql в Supabase.",
+    "statusConnected": "Свързан",
+    "statusReauth": "Трябва да се свърже отново",
+    "subtitle": "Свържете Google Calendar или Outlook Calendar, за да може Inboria да види вашата наличност и да запише вашите срещи.",
+    "title": "Свързани календари"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} непрочетени · {{total}} общо",
+    "filters": {
+      "agenda": "Агенда",
+      "all": "Всички",
+      "inboria": "Inboria",
+      "mails": "Имейли",
+      "system": "Система",
+      "team": "Екип",
+      "unread": "Непрочетени"
+    },
+    "sourceAgenda": "Агенда",
+    "system": "Система"
   }
 }

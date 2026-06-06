@@ -543,6 +543,22 @@
     "teamTasks": "Nhiệm vụ nhóm",
     "assignedFilter": {
       "all": "Toàn đội"
+    },
+    "classicInboxLink": "Hộp thư cũ",
+    "help": {
+      "comingSoonDesc": "Trung tâm trợ giúp tích hợp sẽ sớm ra mắt. Trong thời gian chờ đợi, vui lòng liên hệ với chúng tôi từ Cài đặt.",
+      "comingSoonTitle": "Trợ giúp trực tuyến — sắp có",
+      "tooltip": "Trợ giúp (sắp có)"
+    },
+    "sections": {
+      "important": "Quan trọng",
+      "other": "Khác"
+    },
+    "shortcuts": {
+      "commands": "Lệnh",
+      "done": "Hoàn thành",
+      "navigate": "Điều hướng",
+      "reply": "Trả lời"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Đang hợp nhất...",
       "mergedToast": "{{count}} email(s) đã được chuyển đến « {{target}} »",
       "close": "Đóng",
-      "detecting": "Đang phân tích..."
+      "detecting": "Đang phân tích...",
+      "clusterLine": "{{count}} danh mục có tên « {{name}} »",
+      "clusterMergeAll": "Hợp nhất tất cả thành một",
+      "clusterMergeConfirmDesc": "Tất cả email sẽ được chuyển vào một danh mục « {{name}} » (danh mục chứa nhiều email nhất). {{deleted}} bản sao khác sẽ bị xóa. Hành động không thể hoàn tác.",
+      "clusterMergeConfirmTitle": "Hợp nhất {{count}} danh mục « {{name}} »?",
+      "clusterMergedToast": "{{count}} email đã được nhóm lại — {{deleted}} bản sao đã bị xóa",
+      "clusterTotalEmails": "Tổng cộng {{count}} email",
+      "clustersDesc": "Nhiều danh mục có cùng tên — thường được tạo song song khi phân loại. Chỉ cần một lần hợp nhất để nhóm tất cả lại.",
+      "clustersTitle": "Trùng lặp chính xác",
+      "pairsTitle": "Tên tương tự (cần xem xét)"
     },
     "sections": {
       "byPack": "Gói {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Đồng bộ hóa danh bạ, tài khoản và cơ hội Salesforce.",
       "salesforceSandbox": "Kết nối một tổ chức Sandbox (test.salesforce.com)",
       "privacy": "Quyền riêng tư và truy cập nhóm",
-      "privacyDesc": "Email riêng tư của Quý khách và nhật ký truy cập quản trị"
+      "privacyDesc": "Email riêng tư của Quý khách và nhật ký truy cập quản trị",
+      "calendars": "Lịch",
+      "calendarsDesc": "Kết nối Google Calendar và Outlook Calendar"
     },
     "b2bSection": "Độ tin cậy B2B",
     "slaCard": "SLA hộp thư chia sẻ",
@@ -1269,7 +1296,9 @@
       "enrollError": "Không thể bắt đầu quá trình đăng ký"
     },
     "preferredVideoTitle": "Họp trực tuyến mặc định",
-    "preferredVideoDesc": "Quý khách vui lòng chọn nhà cung cấp họp trực tuyến mặc định cho các cuộc hẹn mới. Meet yêu cầu lịch Google đã kết nối; Teams yêu cầu Outlook. Jitsi hoạt động không cần tài khoản."
+    "preferredVideoDesc": "Quý khách vui lòng chọn nhà cung cấp họp trực tuyến mặc định cho các cuộc hẹn mới. Meet yêu cầu lịch Google đã kết nối; Teams yêu cầu Outlook. Jitsi hoạt động không cần tài khoản.",
+    "meetingRemindersDesc": "Inboria gửi nhắc nhở lịch sự đến liên hệ sau 48 giờ nếu đề xuất cuộc hẹn không được phản hồi.",
+    "meetingRemindersTitle": "Nhắc nhở tự động cho cuộc hẹn"
   },
   "subscription": {
     "title": "Quản lý đăng ký của Quý khách",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (liên kết Inboria, không cần tài khoản)",
     "videoMeet": "Google Meet (yêu cầu lịch Google)",
     "videoTeams": "Microsoft Teams (yêu cầu lịch Outlook)",
-    "videoJoin": "Tham gia cuộc họp trực tuyến"
+    "videoJoin": "Tham gia cuộc họp trực tuyến",
+    "bulkConfirmed": "{{count}} cuộc hẹn đã được xác nhận",
+    "bulkDismissed": "{{count}} gợi ý đã bị bỏ qua",
+    "confirmSelected": "Xác nhận lựa chọn",
+    "dismissSelected": "Bỏ qua lựa chọn",
+    "multi": {
+      "addParticipants": "Thêm người tham gia",
+      "candidateSlots": "Khung giờ đề xuất",
+      "externalParticipants": "Người tham gia bên ngoài",
+      "findCommonSlot": "Tìm khung giờ chung",
+      "internalParticipants": "Người tham gia nội bộ",
+      "lastReminder": "Nhắc nhở cuối cùng",
+      "multiStatus": {
+        "confirmed": "Đã xác nhận",
+        "declined": "Đã từ chối",
+        "partially_confirmed": "Xác nhận một phần",
+        "pending": "Đang chờ"
+      },
+      "neverReminded": "Chưa nhắc nhở",
+      "noCommonSlot": "Không tìm thấy khung giờ chung trong khoảng thời gian đã chọn.",
+      "optional": "Tùy chọn",
+      "participantStatus": {
+        "accepted": "Đã chấp nhận",
+        "declined": "Đã từ chối",
+        "pending": "Đang chờ",
+        "tentative": "Tạm thời"
+      },
+      "participantsLabel": "Người tham gia (ngăn cách bằng dấu phẩy hoặc xuống dòng)",
+      "remindParticipant": "Nhắc nhở",
+      "remindSent": "Đã gửi nhắc nhở",
+      "required": "Bắt buộc",
+      "send": "Gửi lời mời",
+      "sent": "{{count}} lời mời đã được gửi",
+      "title": "Nhiều người tham gia"
+    },
+    "selectAll": "Chọn tất cả",
+    "selectedCount": "{{count}} đã chọn",
+    "statusConfirmedShort": "Đã xác nhận",
+    "statusCounter": "Đã nhận được đề xuất đối ứng",
+    "statusCounterMonth": "Đề xuất đối ứng",
+    "statusCounterShort": "Đề xuất đối ứng",
+    "statusDeclined": "Đã từ chối bởi liên hệ",
+    "statusDeclinedMonth": "Đã từ chối",
+    "statusDeclinedShort": "Đã từ chối",
+    "statusPending": "Đang chờ phản hồi",
+    "statusPendingMonth": "Đang chờ",
+    "statusPendingShort": "Đang chờ",
+    "syncFailed": "Đồng bộ thất bại",
+    "viewDetails": "Xem chi tiết"
   },
   "supportChat": {
     "title": "Trợ lý Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Lưu dưới dạng mẫu",
     "savedAsTemplate": "Email đã được lưu dưới dạng mẫu",
     "suggestNameWithAI": "Gợi ý một tên với Inboria",
-    "suggestNameShort": "Gợi ý"
+    "suggestNameShort": "Gợi ý",
+    "insertTemplate": "Chèn mẫu",
+    "pickerNoMatch": "Không có mẫu nào phù hợp với tìm kiếm của Quý vị.",
+    "pickerSearch": "Tìm kiếm mẫu…",
+    "pickerTitle": "Chọn mẫu"
   },
   "rules": {
     "title": "Quy tắc tự động",
@@ -3090,7 +3171,10 @@
     "createdHint": "Xin vui lòng sao chép ngay — nó sẽ không bao giờ được hiển thị lại.",
     "dismissCreated": "Tôi đã sao chép khóa",
     "usageTitle": "Ví dụ sử dụng",
-    "rateLimitNotice": "Giới hạn: 60 yêu cầu / phút / khóa."
+    "rateLimitNotice": "Giới hạn: 60 yêu cầu / phút / khóa.",
+    "deletePermanently": "Xóa vĩnh viễn",
+    "deletePermanentlyConfirm": "Xóa vĩnh viễn khóa đã thu hồi này? Hành động này không thể hoàn tác.",
+    "deletedToast": "Khóa đã được xóa vĩnh viễn"
   },
   "webhooks": {
     "title": "Webhooks đầu ra",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Siêu dữ liệu (người gửi, chủ đề, ngày, trạng thái)",
     "dragHint": "Quý khách hãy kéo vào thư mục để xuất .eml (Chrome/Edge), hoặc nhấp để chọn định dạng",
     "chromeHint": "💡 Trên Chrome/Edge, một cửa sổ sẽ hỏi nơi lưu tệp."
+  },
+  "calendars": {
+    "connectFailedDesc": "Vui lòng thử lại.",
+    "connectFailedTitle": "Kết nối thất bại",
+    "connectGoogle": "Kết nối Google Calendar",
+    "connectGoogleDesc": "Đọc sự kiện và ghi cuộc hẹn mới.",
+    "connectOutlook": "Kết nối Outlook Calendar",
+    "connectOutlookDesc": "Đọc sự kiện và ghi cuộc hẹn mới.",
+    "connectedToastDesc": "Đồng bộ hóa đang hoạt động.",
+    "connectedToastTitle": "Lịch đã kết nối",
+    "disconnect": "Ngắt kết nối",
+    "disconnectFailed": "Không thể xóa",
+    "disconnectedToast": "Lịch đã ngắt kết nối",
+    "empty": "Hiện chưa có lịch nào được kết nối.",
+    "help": "Inboria sử dụng lịch của Quý vị để kiểm tra khả năng sẵn sàng và tạo cuộc hẹn từ Inboria.",
+    "schemaMissing": "Bảng calendar_accounts chưa được tạo trong cơ sở dữ liệu. Thực hiện di chuyển 2026_05_09_calendar_accounts.sql trong Supabase.",
+    "statusConnected": "Đã kết nối",
+    "statusReauth": "Cần kết nối lại",
+    "subtitle": "Kết nối Google Calendar hoặc Outlook Calendar để Inboria có thể xem khả năng sẵn sàng của Quý vị và ghi lại các cuộc hẹn.",
+    "title": "Lịch đã kết nối"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} chưa đọc · {{total}} tổng cộng",
+    "filters": {
+      "agenda": "Lịch trình",
+      "all": "Tất cả",
+      "inboria": "Inboria",
+      "mails": "Thư",
+      "system": "Hệ thống",
+      "team": "Nhóm",
+      "unread": "Chưa đọc"
+    },
+    "sourceAgenda": "Lịch trình",
+    "system": "Hệ thống"
   }
 }

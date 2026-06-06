@@ -543,6 +543,22 @@
     "teamTasks": "Ekip Görevleri",
     "assignedFilter": {
       "all": "Tüm ekip"
+    },
+    "classicInboxLink": "Eski gelen kutusu",
+    "help": {
+      "comingSoonDesc": "Entegre yardım merkezi çok yakında geliyor. Bu arada, Ayarlar'dan bize ulaşın.",
+      "comingSoonTitle": "Çevrimiçi Yardım — yakında",
+      "tooltip": "Yardım (yakında)"
+    },
+    "sections": {
+      "important": "Önemli",
+      "other": "Diğerleri"
+    },
+    "shortcuts": {
+      "commands": "Komutlar",
+      "done": "Tamamlandı",
+      "navigate": "Gezin",
+      "reply": "Yanıtla"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Birleştirme işlemi devam ediyor…",
       "mergedToast": "{{count}} e-posta « {{target}} »'a taşındı",
       "close": "Kapat",
-      "detecting": "Analiz devam ediyor…"
+      "detecting": "Analiz devam ediyor…",
+      "clusterLine": "{{count}} « {{name}} » adlı kategori",
+      "clusterMergeAll": "Hepsini tek bir kategoride birleştir",
+      "clusterMergeConfirmDesc": "Tüm e-postalar tek bir « {{name}} » kategorisine yeniden atanacak (zaten en fazla e-posta içeren kategori). {{deleted}} diğer kopyalar silinecek. Bu işlem geri alınamaz.",
+      "clusterMergeConfirmTitle": "{{count}} « {{name}} » kategorisini birleştirmek istiyor musunuz?",
+      "clusterMergedToast": "{{count}} e-posta birleştirildi — {{deleted}} kopya silindi",
+      "clusterTotalEmails": "Toplam {{count}} e-posta",
+      "clustersDesc": "Birden fazla kategori aynı adı taşıyor — genellikle sıralama sırasında paralel olarak oluşturulmuş. Her şeyi birleştirmek için tek bir birleşim yeterlidir.",
+      "clustersTitle": "Tam kopyalar",
+      "pairsTitle": "Benzer isimler (incelemek için)"
     },
     "sections": {
       "byPack": "Paket {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Salesforce'taki kişiler, hesaplar ve fırsatların senkronizasyonu.",
       "salesforceSandbox": "Bir Sandbox orgunu bağlayın (test.salesforce.com)",
       "privacy": "Gizlilik ve ekip erişimi",
-      "privacyDesc": "Özel e-postalarınız ve yönetici erişim günlükleri"
+      "privacyDesc": "Özel e-postalarınız ve yönetici erişim günlükleri",
+      "calendars": "Takvimler",
+      "calendarsDesc": "Google Takvim ve Outlook Takvim'i bağlayın"
     },
     "b2bSection": "B2B Güvenilirliği",
     "slaCard": "Paylaşılan kutular için SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "Kayıt işlemi başlatılamadı"
     },
     "preferredVideoTitle": "Varsayılan görüntülü toplantı",
-    "preferredVideoDesc": "Yeni randevular için varsayılan görüntülü toplantı sağlayıcısını seçin. Meet bağlı bir Google takvimi gerektirir; Teams Outlook gerektirir. Jitsi hesap olmadan çalışır."
+    "preferredVideoDesc": "Yeni randevular için varsayılan görüntülü toplantı sağlayıcısını seçin. Meet bağlı bir Google takvimi gerektirir; Teams Outlook gerektirir. Jitsi hesap olmadan çalışır.",
+    "meetingRemindersDesc": "Inboria, yanıtlanmamış bir randevu önerisinden 48 saat sonra nazik bir hatırlatma gönderir.",
+    "meetingRemindersTitle": "Otomatik RDV hatırlatmaları"
   },
   "subscription": {
     "title": "Aboneliğinizi yönetin",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria bağlantısı, hesap gerekmez)",
     "videoMeet": "Google Meet (Google takvimi gerekir)",
     "videoTeams": "Microsoft Teams (Outlook takvimi gerekir)",
-    "videoJoin": "Görüntülü toplantıya katıl"
+    "videoJoin": "Görüntülü toplantıya katıl",
+    "bulkConfirmed": "{{count}} RDV onaylandı",
+    "bulkDismissed": "{{count}} öneri göz ardı edildi",
+    "confirmSelected": "Seçimi onayla",
+    "dismissSelected": "Seçimi göz ardı et",
+    "multi": {
+      "addParticipants": "Katılımcı ekle",
+      "candidateSlots": "Önerilen zaman dilimleri",
+      "externalParticipants": "Harici katılımcılar",
+      "findCommonSlot": "Ortak zaman dilimi bul",
+      "internalParticipants": "Dahili katılımcılar",
+      "lastReminder": "Son hatırlatma",
+      "multiStatus": {
+        "confirmed": "Onaylandı",
+        "declined": "Reddedildi",
+        "partially_confirmed": "Kısmen onaylandı",
+        "pending": "Beklemede"
+      },
+      "neverReminded": "Hiç hatırlatma yapılmadı",
+      "noCommonSlot": "Seçilen zaman aralığında ortak zaman dilimi bulunamadı.",
+      "optional": "İsteğe bağlı",
+      "participantStatus": {
+        "accepted": "Kabul edildi",
+        "declined": "Reddedildi",
+        "pending": "Beklemede",
+        "tentative": "Geçici"
+      },
+      "participantsLabel": "Katılımcılar (virgül veya satır sonu ile ayrılmış)",
+      "remindParticipant": "Hatırlat",
+      "remindSent": "Hatırlatma gönderildi",
+      "required": "Gerekli",
+      "send": "Davetiyeleri gönder",
+      "sent": "{{count}} davetiye gönderildi",
+      "title": "Çoklu katılımcılar"
+    },
+    "selectAll": "Tümünü seç",
+    "selectedCount": "{{count}} seçildi",
+    "statusConfirmedShort": "Onaylandı",
+    "statusCounter": "Karşı öneri alındı",
+    "statusCounterMonth": "Karşı öneri",
+    "statusCounterShort": "Karşı öneri",
+    "statusDeclined": "Kişi tarafından reddedildi",
+    "statusDeclinedMonth": "Reddedildi",
+    "statusDeclinedShort": "Reddedildi",
+    "statusPending": "Yanıt bekleniyor",
+    "statusPendingMonth": "Beklemede",
+    "statusPendingShort": "Beklemede",
+    "syncFailed": "Senkronizasyon başarısız",
+    "viewDetails": "Detayları görüntüle"
   },
   "supportChat": {
     "title": "Inboria Asistanı",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Şablon olarak kaydet",
     "savedAsTemplate": "E-posta şablon olarak kaydedildi",
     "suggestNameWithAI": "Inboria ile bir ad önerin",
-    "suggestNameShort": "Öner"
+    "suggestNameShort": "Öner",
+    "insertTemplate": "Şablon ekle",
+    "pickerNoMatch": "Aramanıza uygun şablon bulunamadı.",
+    "pickerSearch": "Şablon ara…",
+    "pickerTitle": "Şablon seç"
   },
   "rules": {
     "title": "Otomatik kurallar",
@@ -3090,7 +3171,10 @@
     "createdHint": "Şimdi kopyalayın — bir daha asla gösterilmeyecek.",
     "dismissCreated": "Anahtarı kopyaladım",
     "usageTitle": "Kullanım örneği",
-    "rateLimitNotice": "Limit: dakikada 60 istek / anahtar."
+    "rateLimitNotice": "Limit: dakikada 60 istek / anahtar.",
+    "deletePermanently": "Kalıcı olarak sil",
+    "deletePermanentlyConfirm": "Bu iptal edilmiş anahtarı kalıcı olarak silmek istiyor musunuz? Bu işlem geri alınamaz.",
+    "deletedToast": "Anahtar kalıcı olarak silindi"
   },
   "webhooks": {
     "title": "Çıkış web kancaları",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Üst veri (gönderen, konu, tarih, durum)",
     "dragHint": ".eml olarak dışa aktarmak için bir klasöre sürükleyin (Chrome/Edge), veya biçim seçmek için tıklayın",
     "chromeHint": "💡 Chrome/Edge'de bir pencere dosyayı nereye kaydedeceğinizi soracaktır."
+  },
+  "calendars": {
+    "connectFailedDesc": "Lütfen tekrar deneyin.",
+    "connectFailedTitle": "Bağlantı başarısız",
+    "connectGoogle": "Google Takvim'i Bağla",
+    "connectGoogleDesc": "Etkinlikleri okuma ve yeni RDV yazma.",
+    "connectOutlook": "Outlook Takvim'i Bağla",
+    "connectOutlookDesc": "Etkinlikleri okuma ve yeni RDV yazma.",
+    "connectedToastDesc": "Senkronizasyon aktif.",
+    "connectedToastTitle": "Takvim bağlı",
+    "disconnect": "Bağlantıyı kes",
+    "disconnectFailed": "Silme başarısız",
+    "disconnectedToast": "Takvim bağlantısı kesildi",
+    "empty": "Şu anda bağlı takvim yok.",
+    "help": "Inboria, takvimlerinizi uygunluklarınızı kontrol etmek ve Inboria'dan ayarlanan randevuları oluşturmak için kullanır.",
+    "schemaMissing": "calendar_accounts tablosu henüz veritabanında oluşturulmadı. Supabase'de 2026_05_09_calendar_accounts.sql göçünü çalıştırın.",
+    "statusConnected": "Bağlı",
+    "statusReauth": "Yeniden bağlan",
+    "subtitle": "Inboria'nın uygunluklarınızı görmesi ve randevularınızı kaydetmesi için Google Takvim veya Outlook Takvim'i bağlayın.",
+    "title": "Bağlı Takvimler"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} okunmamış · Toplam {{total}}",
+    "filters": {
+      "agenda": "Ajanda",
+      "all": "Tümü",
+      "inboria": "Inboria",
+      "mails": "E-postalar",
+      "system": "Sistem",
+      "team": "Takım",
+      "unread": "Okunmamış"
+    },
+    "sourceAgenda": "Ajanda",
+    "system": "Sistem"
   }
 }

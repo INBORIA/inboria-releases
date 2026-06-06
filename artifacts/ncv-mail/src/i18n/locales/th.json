@@ -543,6 +543,22 @@
     "teamTasks": "งานของทีม",
     "assignedFilter": {
       "all": "ทั้งทีม"
+    },
+    "classicInboxLink": "กล่องจดหมายเก่า",
+    "help": {
+      "comingSoonDesc": "ศูนย์ช่วยเหลือในตัวกำลังจะมาเร็ว ๆ นี้ ในระหว่างนี้ โปรดติดต่อเราจากการตั้งค่า",
+      "comingSoonTitle": "ความช่วยเหลือออนไลน์ — เร็ว ๆ นี้",
+      "tooltip": "ความช่วยเหลือ (เร็ว ๆ นี้)"
+    },
+    "sections": {
+      "important": "สำคัญ",
+      "other": "อื่น ๆ"
+    },
+    "shortcuts": {
+      "commands": "คำสั่ง",
+      "done": "เสร็จสิ้น",
+      "navigate": "นำทาง",
+      "reply": "ตอบกลับ"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "กำลังรวม...",
       "mergedToast": "{{count}} อีเมลถูกย้ายไปยัง « {{target}} »",
       "close": "ปิด",
-      "detecting": "กำลังวิเคราะห์..."
+      "detecting": "กำลังวิเคราะห์...",
+      "clusterLine": "{{count}} หมวดหมู่ที่ชื่อว่า « {{name}} »",
+      "clusterMergeAll": "รวมทั้งหมดเป็นหนึ่งเดียว",
+      "clusterMergeConfirmDesc": "อีเมลทั้งหมดจะถูกจัดสรรใหม่ไปยังหมวดหมู่เดียว « {{name}} » (ที่มีอีเมลมากที่สุด) {{deleted}} สำเนาอื่น ๆ จะถูกลบ การกระทำนี้ไม่สามารถย้อนกลับได้",
+      "clusterMergeConfirmTitle": "รวม {{count}} หมวดหมู่ « {{name}} »?",
+      "clusterMergedToast": "{{count}} อีเมลที่รวมแล้ว — {{deleted}} สำเนาที่ถูกลบ",
+      "clusterTotalEmails": "{{count}} อีเมลทั้งหมด",
+      "clustersDesc": "หลายหมวดหมู่มีชื่อเดียวกัน — มักถูกสร้างขึ้นพร้อมกันในระหว่างการจัดเรียง การรวมเพียงครั้งเดียวก็เพียงพอที่จะรวมทั้งหมด",
+      "clustersTitle": "สำเนาที่เหมือนกัน",
+      "pairsTitle": "ชื่อที่คล้ายกัน (ต้องตรวจสอบ)"
     },
     "sections": {
       "byPack": "แพ็ค {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "การซิงโครไนซ์ผู้ติดต่อ, บัญชี และโอกาสใน Salesforce",
       "salesforceSandbox": "เชื่อมต่อองค์กร Sandbox (test.salesforce.com)",
       "privacy": "ความเป็นส่วนตัวและการเข้าถึงทีม",
-      "privacyDesc": "อีเมลส่วนตัวของท่านและบันทึกการเข้าชมของผู้ดูแล"
+      "privacyDesc": "อีเมลส่วนตัวของท่านและบันทึกการเข้าชมของผู้ดูแล",
+      "calendars": "ปฏิทิน",
+      "calendarsDesc": "เชื่อมต่อ Google Calendar และ Outlook Calendar"
     },
     "b2bSection": "ความน่าเชื่อถือ B2B",
     "slaCard": "SLA สำหรับกล่องที่แชร์",
@@ -1269,7 +1296,9 @@
       "enrollError": "ไม่สามารถเริ่มการลงทะเบียนได้"
     },
     "preferredVideoTitle": "การประชุมทางวิดีโอเริ่มต้น",
-    "preferredVideoDesc": "โปรดเลือกผู้ให้บริการการประชุมทางวิดีโอเริ่มต้นสำหรับการนัดหมายใหม่ Meet ต้องเชื่อมต่อกับปฏิทิน Google และ Teams ต้องใช้ Outlook ส่วน Jitsi ใช้งานได้โดยไม่ต้องมีบัญชี"
+    "preferredVideoDesc": "โปรดเลือกผู้ให้บริการการประชุมทางวิดีโอเริ่มต้นสำหรับการนัดหมายใหม่ Meet ต้องเชื่อมต่อกับปฏิทิน Google และ Teams ต้องใช้ Outlook ส่วน Jitsi ใช้งานได้โดยไม่ต้องมีบัญชี",
+    "meetingRemindersDesc": "Inboria ส่งการเตือนที่สุภาพไปยังผู้ติดต่อ 48 ชั่วโมงหลังจากข้อเสนอการนัดหมายที่ยังไม่ได้รับการตอบกลับ",
+    "meetingRemindersTitle": "การเตือนการนัดหมายอัตโนมัติ"
   },
   "subscription": {
     "title": "จัดการการสมัครสมาชิกของท่าน",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (ลิงก์ Inboria ไม่ต้องมีบัญชี)",
     "videoMeet": "Google Meet (ต้องใช้ปฏิทิน Google)",
     "videoTeams": "Microsoft Teams (ต้องใช้ปฏิทิน Outlook)",
-    "videoJoin": "เข้าร่วมการประชุมทางวิดีโอ"
+    "videoJoin": "เข้าร่วมการประชุมทางวิดีโอ",
+    "bulkConfirmed": "{{count}} การนัดหมายที่ยืนยันแล้ว",
+    "bulkDismissed": "{{count}} ข้อเสนอที่ถูกละเลย",
+    "confirmSelected": "ยืนยันการเลือก",
+    "dismissSelected": "ละเลยการเลือก",
+    "multi": {
+      "addParticipants": "เพิ่มผู้เข้าร่วม",
+      "candidateSlots": "ช่วงเวลาที่เสนอ",
+      "externalParticipants": "ผู้เข้าร่วมภายนอก",
+      "findCommonSlot": "ค้นหาช่วงเวลาร่วม",
+      "internalParticipants": "ผู้เข้าร่วมภายใน",
+      "lastReminder": "การเตือนครั้งสุดท้าย",
+      "multiStatus": {
+        "confirmed": "ยืนยันแล้ว",
+        "declined": "ปฏิเสธ",
+        "partially_confirmed": "ยืนยันบางส่วน",
+        "pending": "รอดำเนินการ"
+      },
+      "neverReminded": "ไม่มีการเตือน",
+      "noCommonSlot": "ไม่พบช่วงเวลาร่วมในหน้าต่างที่เลือก",
+      "optional": "ไม่บังคับ",
+      "participantStatus": {
+        "accepted": "ยอมรับ",
+        "declined": "ปฏิเสธ",
+        "pending": "รอดำเนินการ",
+        "tentative": "ชั่วคราว"
+      },
+      "participantsLabel": "ผู้เข้าร่วม (แยกด้วยเครื่องหมายจุลภาคหรือขึ้นบรรทัดใหม่)",
+      "remindParticipant": "เตือน",
+      "remindSent": "ส่งการเตือนแล้ว",
+      "required": "จำเป็น",
+      "send": "ส่งคำเชิญ",
+      "sent": "{{count}} คำเชิญที่ส่งแล้ว",
+      "title": "หลายผู้เข้าร่วม"
+    },
+    "selectAll": "เลือกทั้งหมด",
+    "selectedCount": "{{count}} ที่เลือก",
+    "statusConfirmedShort": "ยืนยันแล้ว",
+    "statusCounter": "ได้รับข้อเสนอใหม่",
+    "statusCounterMonth": "ข้อเสนอใหม่",
+    "statusCounterShort": "ข้อเสนอใหม่",
+    "statusDeclined": "ปฏิเสธโดยผู้ติดต่อ",
+    "statusDeclinedMonth": "ปฏิเสธ",
+    "statusDeclinedShort": "ปฏิเสธ",
+    "statusPending": "รอการตอบกลับ",
+    "statusPendingMonth": "รอ",
+    "statusPendingShort": "รอ",
+    "syncFailed": "การซิงค์ล้มเหลว",
+    "viewDetails": "ดูรายละเอียด"
   },
   "supportChat": {
     "title": "ผู้ช่วย Inboria",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "บันทึกเป็นแม่แบบ",
     "savedAsTemplate": "อีเมลที่บันทึกเป็นเทมเพลต",
     "suggestNameWithAI": "แนะนำชื่อด้วย Inboria",
-    "suggestNameShort": "แนะนำ"
+    "suggestNameShort": "แนะนำ",
+    "insertTemplate": "แทรกเทมเพลต",
+    "pickerNoMatch": "ไม่มีเทมเพลตที่ตรงกับการค้นหาของท่าน",
+    "pickerSearch": "ค้นหาเทมเพลต...",
+    "pickerTitle": "เลือกเทมเพลต"
   },
   "rules": {
     "title": "กฎอัตโนมัติ",
@@ -3090,7 +3171,10 @@
     "createdHint": "โปรดคัดลอกกุญแจนี้ตอนนี้ — จะไม่แสดงอีกครั้ง",
     "dismissCreated": "ข้าพเจ้าได้คัดลอกกุญแจแล้ว",
     "usageTitle": "ตัวอย่างการใช้งาน",
-    "rateLimitNotice": "ขีดจำกัด: 60 คำขอ / นาที / กุญแจ"
+    "rateLimitNotice": "ขีดจำกัด: 60 คำขอ / นาที / กุญแจ",
+    "deletePermanently": "ลบอย่างถาวร",
+    "deletePermanentlyConfirm": "ลบคีย์ที่ถูกเพิกถอนอย่างถาวร? การกระทำนี้ไม่สามารถย้อนกลับได้",
+    "deletedToast": "คีย์ถูกลบอย่างถาวร"
   },
   "webhooks": {
     "title": "Webhook ขาออก",
@@ -3412,5 +3496,39 @@
     "csvDesc": "เมตาดาต้า (ผู้ส่ง, หัวข้อ, วันที่, สถานะ)",
     "dragHint": "โปรดลากไปยังโฟลเดอร์เพื่อส่งออกเป็น .eml (Chrome/Edge) หรือคลิกเพื่อเลือกรูปแบบ",
     "chromeHint": "💡 บน Chrome/Edge จะมีหน้าต่างถามว่าจะบันทึกไฟล์ไว้ที่ใด"
+  },
+  "calendars": {
+    "connectFailedDesc": "โปรดลองอีกครั้ง",
+    "connectFailedTitle": "การเชื่อมต่อล้มเหลว",
+    "connectGoogle": "เชื่อมต่อ Google Calendar",
+    "connectGoogleDesc": "อ่านเหตุการณ์และเขียนการนัดหมายใหม่",
+    "connectOutlook": "เชื่อมต่อ Outlook Calendar",
+    "connectOutlookDesc": "อ่านเหตุการณ์และเขียนการนัดหมายใหม่",
+    "connectedToastDesc": "การซิงค์ใช้งานอยู่",
+    "connectedToastTitle": "ปฏิทินเชื่อมต่อแล้ว",
+    "disconnect": "ยกเลิกการเชื่อมต่อ",
+    "disconnectFailed": "ไม่สามารถลบได้",
+    "disconnectedToast": "ปฏิทินถูกยกเลิกการเชื่อมต่อ",
+    "empty": "ยังไม่มีปฏิทินที่เชื่อมต่อ",
+    "help": "Inboria ใช้ปฏิทินของท่านเพื่อตรวจสอบความพร้อมและสร้างการนัดหมายจาก Inboria",
+    "schemaMissing": "ตาราง calendar_accounts ยังไม่ได้สร้างในฐานข้อมูล โปรดดำเนินการย้าย 2026_05_09_calendar_accounts.sql ใน Supabase",
+    "statusConnected": "เชื่อมต่อแล้ว",
+    "statusReauth": "ต้องเชื่อมต่อใหม่",
+    "subtitle": "เชื่อมต่อ Google Calendar หรือ Outlook Calendar เพื่อให้ Inboria เห็นความพร้อมของท่านและบันทึกการนัดหมาย",
+    "title": "ปฏิทินที่เชื่อมต่อ"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} ยังไม่ได้อ่าน · {{total}} ทั้งหมด",
+    "filters": {
+      "agenda": "วาระการประชุม",
+      "all": "ทั้งหมด",
+      "inboria": "Inboria",
+      "mails": "อีเมล",
+      "system": "ระบบ",
+      "team": "ทีม",
+      "unread": "ยังไม่ได้อ่าน"
+    },
+    "sourceAgenda": "วาระการประชุม",
+    "system": "ระบบ"
   }
 }

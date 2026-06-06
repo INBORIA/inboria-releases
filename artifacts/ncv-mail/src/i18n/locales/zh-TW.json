@@ -543,6 +543,22 @@
     "teamTasks": "團隊任務",
     "assignedFilter": {
       "all": "全體團隊"
+    },
+    "classicInboxLink": "舊版收件箱",
+    "help": {
+      "comingSoonDesc": "內建的幫助中心即將推出。在此之前，請從設置中聯繫我們。",
+      "comingSoonTitle": "在線幫助 — 即將推出",
+      "tooltip": "幫助（即將推出）"
+    },
+    "sections": {
+      "important": "重要",
+      "other": "其他"
+    },
+    "shortcuts": {
+      "commands": "命令",
+      "done": "完成",
+      "navigate": "導航",
+      "reply": "回覆"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "合併中...",
       "mergedToast": "{{count}} 封電子郵件已移動到「 {{target}} 」",
       "close": "關閉",
-      "detecting": "分析中..."
+      "detecting": "分析中...",
+      "clusterLine": "{{count}} 個名為「{{name}}」的類別",
+      "clusterMergeAll": "全部合併為一",
+      "clusterMergeConfirmDesc": "所有電子郵件將重新分配到一個「{{name}}」類別（包含最多電子郵件的類別）。其他 {{deleted}} 個副本將被刪除。此操作不可逆。",
+      "clusterMergeConfirmTitle": "合併 {{count}} 個「{{name}}」類別？",
+      "clusterMergedToast": "{{count}} 封電子郵件已合併 — {{deleted}} 個重複項已刪除",
+      "clusterTotalEmails": "總共 {{count}} 封電子郵件",
+      "clustersDesc": "多個類別具有相同名稱 — 通常在分類時創建。一次合併即可全部合併。",
+      "clustersTitle": "精確重複",
+      "pairsTitle": "相似名稱（需審核）"
     },
     "sections": {
       "byPack": "包 {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "同步 Salesforce 的聯絡人、帳戶和商機。",
       "salesforceSandbox": "連線 Sandbox 組織 (test.salesforce.com)",
       "privacy": "隱私與團隊存取",
-      "privacyDesc": "您的私人電子郵件及管理員查詢日誌"
+      "privacyDesc": "您的私人電子郵件及管理員查詢日誌",
+      "calendars": "日曆",
+      "calendarsDesc": "連接 Google Calendar 和 Outlook Calendar"
     },
     "b2bSection": "B2B 信譽",
     "slaCard": "共享信箱的 SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "無法啟動註冊"
     },
     "preferredVideoTitle": "預設視訊會議",
-    "preferredVideoDesc": "請為您的新約會選擇預設的視訊會議服務。Meet 需要已連接的 Google 行事曆；Teams 需要 Outlook。Jitsi 無需帳戶即可使用。"
+    "preferredVideoDesc": "請為您的新約會選擇預設的視訊會議服務。Meet 需要已連接的 Google 行事曆；Teams 需要 Outlook。Jitsi 無需帳戶即可使用。",
+    "meetingRemindersDesc": "Inboria 在會議提議未回覆後 48 小時內向聯絡人發送禮貌提醒。",
+    "meetingRemindersTitle": "自動會議提醒"
   },
   "subscription": {
     "title": "管理您的訂閱",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi（Inboria 連結，無需帳戶）",
     "videoMeet": "Google Meet（需要 Google 行事曆）",
     "videoTeams": "Microsoft Teams（需要 Outlook 行事曆）",
-    "videoJoin": "加入視訊會議"
+    "videoJoin": "加入視訊會議",
+    "bulkConfirmed": "{{count}} 個會議已確認",
+    "bulkDismissed": "{{count}} 個建議已忽略",
+    "confirmSelected": "確認選擇",
+    "dismissSelected": "忽略選擇",
+    "multi": {
+      "addParticipants": "新增參與者",
+      "candidateSlots": "建議時段",
+      "externalParticipants": "外部參與者",
+      "findCommonSlot": "尋找共同時段",
+      "internalParticipants": "內部參與者",
+      "lastReminder": "最後提醒",
+      "multiStatus": {
+        "confirmed": "已確認",
+        "declined": "已拒絕",
+        "partially_confirmed": "部分確認",
+        "pending": "待定"
+      },
+      "neverReminded": "未提醒",
+      "noCommonSlot": "在選擇的時間範圍內未找到共同時段。",
+      "optional": "選擇性",
+      "participantStatus": {
+        "accepted": "已接受",
+        "declined": "已拒絕",
+        "pending": "待定",
+        "tentative": "暫定"
+      },
+      "participantsLabel": "參與者（以逗號或換行分隔）",
+      "remindParticipant": "提醒",
+      "remindSent": "提醒已發送",
+      "required": "必需",
+      "send": "發送邀請",
+      "sent": "{{count}} 個邀請已發送",
+      "title": "多參與者"
+    },
+    "selectAll": "全選",
+    "selectedCount": "{{count}} 個已選擇",
+    "statusConfirmedShort": "已確認",
+    "statusCounter": "收到反建議",
+    "statusCounterMonth": "反建議",
+    "statusCounterShort": "反建議",
+    "statusDeclined": "聯絡人已拒絕",
+    "statusDeclinedMonth": "已拒絕",
+    "statusDeclinedShort": "已拒絕",
+    "statusPending": "等待回覆",
+    "statusPendingMonth": "待定",
+    "statusPendingShort": "待定",
+    "syncFailed": "同步失敗",
+    "viewDetails": "查看詳情"
   },
   "supportChat": {
     "title": "Inboria 助手",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "儲存為範本",
     "savedAsTemplate": "電子郵件已儲存為範本",
     "suggestNameWithAI": "使用 Inboria 建議名稱",
-    "suggestNameShort": "建議"
+    "suggestNameShort": "建議",
+    "insertTemplate": "插入範本",
+    "pickerNoMatch": "沒有符合您搜尋的範本。",
+    "pickerSearch": "搜尋範本…",
+    "pickerTitle": "選擇範本"
   },
   "rules": {
     "title": "自動規則",
@@ -3090,7 +3171,10 @@
     "createdHint": "請立即複製 — 之後將不會再顯示。",
     "dismissCreated": "我已複製金鑰",
     "usageTitle": "使用範例",
-    "rateLimitNotice": "限制：每分鐘每個金鑰 60 次請求。"
+    "rateLimitNotice": "限制：每分鐘每個金鑰 60 次請求。",
+    "deletePermanently": "永久刪除",
+    "deletePermanentlyConfirm": "永久刪除此已撤銷的密鑰？此操作不可逆。",
+    "deletedToast": "密鑰已永久刪除"
   },
   "webhooks": {
     "title": "外部 Webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "中繼資料（寄件者、主旨、日期、狀態）",
     "dragHint": "請拖至資料夾以匯出 .eml（Chrome/Edge），或點擊選擇格式",
     "chromeHint": "💡 在 Chrome/Edge 上，視窗會詢問您檔案儲存位置。"
+  },
+  "calendars": {
+    "connectFailedDesc": "請重試。",
+    "connectFailedTitle": "連接失敗",
+    "connectGoogle": "連接 Google Calendar",
+    "connectGoogleDesc": "讀取事件並寫入新會議。",
+    "connectOutlook": "連接 Outlook Calendar",
+    "connectOutlookDesc": "讀取事件並寫入新會議。",
+    "connectedToastDesc": "同步已啟用。",
+    "connectedToastTitle": "日曆已連接",
+    "disconnect": "斷開連接",
+    "disconnectFailed": "無法刪除",
+    "disconnectedToast": "日曆已斷開連接",
+    "empty": "目前沒有連接的日曆。",
+    "help": "Inboria 使用您的日曆來檢查您的可用性並創建從 Inboria 設定的會議。",
+    "schemaMissing": "calendar_accounts 表尚未在數據庫中創建。請在 Supabase 中執行 2026_05_09_calendar_accounts.sql 遷移。",
+    "statusConnected": "已連接",
+    "statusReauth": "需要重新連接",
+    "subtitle": "連接 Google Calendar 或 Outlook Calendar 以便 Inboria 查看您的可用性並記錄您的會議。",
+    "title": "已連接的日曆"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} 封未讀 · 總共 {{total}} 封",
+    "filters": {
+      "agenda": "議程",
+      "all": "全部",
+      "inboria": "Inboria",
+      "mails": "郵件",
+      "system": "系統",
+      "team": "團隊",
+      "unread": "未讀"
+    },
+    "sourceAgenda": "議程",
+    "system": "系統"
   }
 }

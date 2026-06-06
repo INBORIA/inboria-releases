@@ -543,6 +543,22 @@
     "teamTasks": "Komandas uzdevumi",
     "assignedFilter": {
       "all": "Visa komanda"
+    },
+    "classicInboxLink": "Vecā iesūtne",
+    "help": {
+      "comingSoonDesc": "Integrētais palīdzības centrs drīz būs pieejams. Tikmēr sazinieties ar mums no Iestatījumiem.",
+      "comingSoonTitle": "Tiešsaistes palīdzība — drīzumā pieejama",
+      "tooltip": "Palīdzība (drīzumā pieejama)"
+    },
+    "sections": {
+      "important": "Svarīgi",
+      "other": "Citi"
+    },
+    "shortcuts": {
+      "commands": "Komandas",
+      "done": "Pabeigts",
+      "navigate": "Pārvietoties",
+      "reply": "Atbildēt"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Apvienošana notiek…",
       "mergedToast": "{{count}} e-pasts(-i) pārvietoti uz „{{target}}”",
       "close": "Aizvērt",
-      "detecting": "Analīze notiek…"
+      "detecting": "Analīze notiek…",
+      "clusterLine": "{{count}} kategorijas ar nosaukumu « {{name}} »",
+      "clusterMergeAll": "Apvienot visas vienā",
+      "clusterMergeConfirmDesc": "Visi e-pasti tiks piešķirti vienai kategorijai « {{name}} » (tai, kurā jau ir visvairāk e-pastu). {{deleted}} citas kopijas tiks dzēstas. Neatgriezeniska darbība.",
+      "clusterMergeConfirmTitle": "Apvienot {{count}} kategorijas « {{name}} »?",
+      "clusterMergedToast": "{{count}} e-pasts(-i) apvienots(-i) — {{deleted}} dublikāts(-i) dzēsts(-i)",
+      "clusterTotalEmails": "{{count}} e-pasti kopā",
+      "clustersDesc": "Vairākām kategorijām ir vienāds nosaukums — bieži izveidotas paralēli šķirošanai. Pietiek ar vienu apvienošanu, lai visu apvienotu.",
+      "clustersTitle": "Precīzi dublikāti",
+      "pairsTitle": "Līdzīgi nosaukumi (pārskatīšanai)"
     },
     "sections": {
       "byPack": "Pakete {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Kontaktu, kontu un iespēju Salesforce sinhronizācija.",
       "salesforceSandbox": "Pieslēgt Sandbox organizāciju (test.salesforce.com)",
       "privacy": "Privātums un piekļuve komandai",
-      "privacyDesc": "Jūsu privātie e-pasti un administratora skatījumu žurnāls"
+      "privacyDesc": "Jūsu privātie e-pasti un administratora skatījumu žurnāls",
+      "calendars": "Kalendāri",
+      "calendarsDesc": "Savienot Google Calendar un Outlook Calendar"
     },
     "b2bSection": "B2B uzticamība",
     "slaCard": "SLA koplietotajām kastēm",
@@ -1269,7 +1296,9 @@
       "enrollError": "Neizdevās uzsākt reģistrāciju"
     },
     "preferredVideoTitle": "Noklusētā videokonference",
-    "preferredVideoDesc": "Lūdzu, izvēlieties noklusēto videokonferenču pakalpojumu sniedzēju jaunām tikšanās reizēm. Meet ir nepieciešams pievienots Google kalendārs; Teams ir nepieciešams Outlook. Jitsi darbojas bez konta."
+    "preferredVideoDesc": "Lūdzu, izvēlieties noklusēto videokonferenču pakalpojumu sniedzēju jaunām tikšanās reizēm. Meet ir nepieciešams pievienots Google kalendārs; Teams ir nepieciešams Outlook. Jitsi darbojas bez konta.",
+    "meetingRemindersDesc": "Inboria nosūta pieklājīgu atgādinājumu kontaktam 48 stundas pēc tikšanās priekšlikuma, kas palicis bez atbildes.",
+    "meetingRemindersTitle": "Automātiskie tikšanās atgādinājumi"
   },
   "subscription": {
     "title": "Pārvaldiet savu abonementu",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "Jitsi (Inboria saite, bez konta)",
     "videoMeet": "Google Meet (nepieciešams Google kalendārs)",
     "videoTeams": "Microsoft Teams (nepieciešams Outlook kalendārs)",
-    "videoJoin": "Pievienoties videokonferencei"
+    "videoJoin": "Pievienoties videokonferencei",
+    "bulkConfirmed": "{{count}} apstiprināts tikšanās(-as)",
+    "bulkDismissed": "{{count}} ignorēts ieteikums(-i)",
+    "confirmSelected": "Apstiprināt izvēlēto",
+    "dismissSelected": "Ignorēt izvēlēto",
+    "multi": {
+      "addParticipants": "Pievienot dalībniekus",
+      "candidateSlots": "Piedāvātie laiki",
+      "externalParticipants": "Ārējie dalībnieki",
+      "findCommonSlot": "Meklēt kopīgu laiku",
+      "internalParticipants": "Iekšējie dalībnieki",
+      "lastReminder": "Pēdējais atgādinājums",
+      "multiStatus": {
+        "confirmed": "Apstiprināts",
+        "declined": "Noraidīts",
+        "partially_confirmed": "Daļēji apstiprināts",
+        "pending": "Gaida apstiprinājumu"
+      },
+      "neverReminded": "Nav atgādināts",
+      "noCommonSlot": "Nav atrasts kopīgs laiks izvēlētajā logā.",
+      "optional": "Pēc izvēles",
+      "participantStatus": {
+        "accepted": "Pieņemts",
+        "declined": "Noraidīts",
+        "pending": "Gaida apstiprinājumu",
+        "tentative": "Provizorisks"
+      },
+      "participantsLabel": "Dalībnieki (atdalīti ar komatu vai jaunu rindu)",
+      "remindParticipant": "Atgādināt",
+      "remindSent": "Atgādinājums nosūtīts",
+      "required": "Obligāts",
+      "send": "Nosūtīt ielūgumus",
+      "sent": "{{count}} ielūgums(-i) nosūtīts(-i)",
+      "title": "Vairāki dalībnieki"
+    },
+    "selectAll": "Izvēlēties visu",
+    "selectedCount": "{{count}} izvēlēts(-i)",
+    "statusConfirmedShort": "Apstiprināts",
+    "statusCounter": "Saņemts pretpiedāvājums",
+    "statusCounterMonth": "Pretpiedāvājums",
+    "statusCounterShort": "Pretpiedāvājums",
+    "statusDeclined": "Noraidīts no kontakta",
+    "statusDeclinedMonth": "Noraidīts",
+    "statusDeclinedShort": "Noraidīts",
+    "statusPending": "Gaida atbildi",
+    "statusPendingMonth": "Gaida",
+    "statusPendingShort": "Gaida",
+    "syncFailed": "Sinhronizācija neizdevās",
+    "viewDetails": "Skatīt detaļas"
   },
   "supportChat": {
     "title": "Inboria asistents",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Saglabāt kā veidni",
     "savedAsTemplate": "E-pasts saglabāts kā veidne",
     "suggestNameWithAI": "Ieteikt nosaukumu ar Inboria",
-    "suggestNameShort": "Ieteikt"
+    "suggestNameShort": "Ieteikt",
+    "insertTemplate": "Ievietot veidni",
+    "pickerNoMatch": "Neviena veidne neatbilst jūsu meklējumam.",
+    "pickerSearch": "Meklēt veidni…",
+    "pickerTitle": "Izvēlēties veidni"
   },
   "rules": {
     "title": "Automātiskās noteikumi",
@@ -3090,7 +3171,10 @@
     "createdHint": "Lūdzu, kopējiet to tagad — tā vairs nekad netiks rādīta.",
     "dismissCreated": "Es esmu nokopējis atslēgu",
     "usageTitle": "Izmantošanas piemērs",
-    "rateLimitNotice": "Ierobežojums: 60 pieprasījumi / minūtē / atslēga."
+    "rateLimitNotice": "Ierobežojums: 60 pieprasījumi / minūtē / atslēga.",
+    "deletePermanently": "Dzēst neatgriezeniski",
+    "deletePermanentlyConfirm": "Dzēst neatgriezeniski šo atsaukto atslēgu? Šī darbība ir neatgriezeniska.",
+    "deletedToast": "Atslēga neatgriezeniski dzēsta"
   },
   "webhooks": {
     "title": "Izejošie webhooks",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metadati (sūtītājs, temats, datums, statuss)",
     "dragHint": "Lūdzu velciet mapē, lai eksportētu kā .eml (Chrome/Edge), vai noklikšķiniet, lai izvēlētos formātu",
     "chromeHint": "💡 Chrome/Edge logā jautās, kur saglabāt failu."
+  },
+  "calendars": {
+    "connectFailedDesc": "Lūdzu, mēģiniet vēlreiz.",
+    "connectFailedTitle": "Savienojums neizdevās",
+    "connectGoogle": "Savienot Google Calendar",
+    "connectGoogleDesc": "Lasīt notikumus un rakstīt jaunus tikšanās.",
+    "connectOutlook": "Savienot Outlook Calendar",
+    "connectOutlookDesc": "Lasīt notikumus un rakstīt jaunus tikšanās.",
+    "connectedToastDesc": "Sinhronizācija ir aktīva.",
+    "connectedToastTitle": "Kalendārs savienots",
+    "disconnect": "Atvienot",
+    "disconnectFailed": "Nevar atvienot",
+    "disconnectedToast": "Kalendārs atvienots",
+    "empty": "Pašlaik nav savienotu kalendāru.",
+    "help": "Inboria izmanto jūsu kalendārus, lai pārbaudītu jūsu pieejamību un izveidotu tikšanās no Inboria.",
+    "schemaMissing": "Tabula calendar_accounts vēl nav izveidota datubāzē. Izpildiet migrāciju 2026_05_09_calendar_accounts.sql Supabase.",
+    "statusConnected": "Savienots",
+    "statusReauth": "Jāatjauno savienojums",
+    "subtitle": "Savienojiet Google Calendar vai Outlook Calendar, lai Inboria redzētu jūsu pieejamību un reģistrētu jūsu tikšanās.",
+    "title": "Savienotie kalendāri"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} nelasītas · {{total}} kopā",
+    "filters": {
+      "agenda": "Darba kārtība",
+      "all": "Viss",
+      "inboria": "Inboria",
+      "mails": "E-pasti",
+      "system": "Sistēma",
+      "team": "Komanda",
+      "unread": "Nelasītas"
+    },
+    "sourceAgenda": "Darba kārtība",
+    "system": "Sistēma"
   }
 }

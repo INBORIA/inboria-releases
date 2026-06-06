@@ -543,6 +543,22 @@
     "teamTasks": "Komandos užduotys",
     "assignedFilter": {
       "all": "Visa komanda"
+    },
+    "classicInboxLink": "Sena pašto dėžutė",
+    "help": {
+      "comingSoonDesc": "Integruotas pagalbos centras netrukus pasirodys. Tuo tarpu susisiekite su mumis per Nustatymus.",
+      "comingSoonTitle": "Pagalba internetu — netrukus",
+      "tooltip": "Pagalba (netrukus)"
+    },
+    "sections": {
+      "important": "Svarbu",
+      "other": "Kita"
+    },
+    "shortcuts": {
+      "commands": "Komandos",
+      "done": "Atlikta",
+      "navigate": "Naršyti",
+      "reply": "Atsakyti"
     }
   },
   "sent": {
@@ -1064,7 +1080,16 @@
       "merging": "Sujungimas vyksta…",
       "mergedToast": "{{count}} el. laiškai perkelti į „{{target}}“",
       "close": "Uždaryti",
-      "detecting": "Analizė vyksta…"
+      "detecting": "Analizė vyksta…",
+      "clusterLine": "{{count}} kategorijos pavadinimu „{{name}}“",
+      "clusterMergeAll": "Sujungti viską į vieną",
+      "clusterMergeConfirmDesc": "Visi el. laiškai bus priskirti vienai kategorijai „{{name}}“ (tai, kurioje jau yra daugiausia el. laiškų). Kitos {{deleted}} kopijos bus ištrintos. Veiksmas negrįžtamas.",
+      "clusterMergeConfirmTitle": "Sujungti {{count}} kategorijas „{{name}}“?",
+      "clusterMergedToast": "{{count}} el. laiškas(-ai) sujungtas(-i) — {{deleted}} dublikatas(-ai) ištrintas(-i)",
+      "clusterTotalEmails": "Iš viso {{count}} el. laiškas(-ai)",
+      "clustersDesc": "Kelios kategorijos turi tą patį pavadinimą — dažnai sukurtos lygiagrečiai rūšiavimui. Vienas sujungimas pakanka viskam sujungti.",
+      "clustersTitle": "Tikslūs dublikatai",
+      "pairsTitle": "Panašūs pavadinimai (peržiūrėti)"
     },
     "sections": {
       "byPack": "Rinkinys {{name}}",
@@ -1236,7 +1261,9 @@
       "salesforceDesc": "Kontaktų, paskyrų ir galimybių Salesforce sinchronizavimas.",
       "salesforceSandbox": "Prisijungti prie Sandbox organizacijos (test.salesforce.com)",
       "privacy": "Privatumas ir komandos prieiga",
-      "privacyDesc": "Jūsų privatūs el. laiškai ir administratoriaus konsultacijų žurnalas"
+      "privacyDesc": "Jūsų privatūs el. laiškai ir administratoriaus konsultacijų žurnalas",
+      "calendars": "Kalendoriai",
+      "calendarsDesc": "Prisijungti prie Google Calendar ir Outlook Calendar"
     },
     "b2bSection": "B2B patikimumas",
     "slaCard": "Bendrosios paskyros SLA",
@@ -1269,7 +1296,9 @@
       "enrollError": "Nepavyko pradėti registracijos"
     },
     "preferredVideoTitle": "Numatytoji vaizdo konferencija",
-    "preferredVideoDesc": "Prašome pasirinkti numatytąjį vaizdo konferencijų teikėją naujiems susitikimams. „Meet“ reikalauja prijungto „Google“ kalendoriaus; „Teams“ reikalauja „Outlook“. „Jitsi“ veikia be paskyros."
+    "preferredVideoDesc": "Prašome pasirinkti numatytąjį vaizdo konferencijų teikėją naujiems susitikimams. „Meet“ reikalauja prijungto „Google“ kalendoriaus; „Teams“ reikalauja „Outlook“. „Jitsi“ veikia be paskyros.",
+    "meetingRemindersDesc": "Inboria siunčia mandagų priminimą kontaktui po 48 valandų, jei pasiūlymas dėl susitikimo lieka be atsakymo.",
+    "meetingRemindersTitle": "Automatiniai susitikimų priminimai"
   },
   "subscription": {
     "title": "Tvarkykite Jūsų prenumeratą",
@@ -2666,7 +2695,55 @@
     "videoJitsi": "„Jitsi“ (Inboria nuoroda, paskyros nereikia)",
     "videoMeet": "„Google Meet“ (reikalingas „Google“ kalendorius)",
     "videoTeams": "„Microsoft Teams“ (reikalingas „Outlook“ kalendorius)",
-    "videoJoin": "Prisijungti prie vaizdo konferencijos"
+    "videoJoin": "Prisijungti prie vaizdo konferencijos",
+    "bulkConfirmed": "{{count}} patvirtintas(-i) susitikimas(-ai)",
+    "bulkDismissed": "{{count}} atmesta(-os) pasiūlymas(-ai)",
+    "confirmSelected": "Patvirtinti pasirinkimą",
+    "dismissSelected": "Atmesti pasirinkimą",
+    "multi": {
+      "addParticipants": "Pridėti dalyvius",
+      "candidateSlots": "Siūlomi laikai",
+      "externalParticipants": "Išoriniai dalyviai",
+      "findCommonSlot": "Rasti bendrą laiką",
+      "internalParticipants": "Vidiniai dalyviai",
+      "lastReminder": "Paskutinis priminimas",
+      "multiStatus": {
+        "confirmed": "Patvirtinta",
+        "declined": "Atmesta",
+        "partially_confirmed": "Iš dalies patvirtinta",
+        "pending": "Laukiama"
+      },
+      "neverReminded": "Nėra priminimų",
+      "noCommonSlot": "Pasirinktu laikotarpiu bendro laiko nerasta.",
+      "optional": "Pasirinktinai",
+      "participantStatus": {
+        "accepted": "Priimta",
+        "declined": "Atmesta",
+        "pending": "Laukiama",
+        "tentative": "Laikinas"
+      },
+      "participantsLabel": "Dalyviai (atskirti kableliu arba nauja eilute)",
+      "remindParticipant": "Priminti",
+      "remindSent": "Priminimas išsiųstas",
+      "required": "Privaloma",
+      "send": "Siųsti kvietimus",
+      "sent": "{{count}} išsiųsta(-i) kvietimas(-ai)",
+      "title": "Daugelio dalyvių"
+    },
+    "selectAll": "Pasirinkti viską",
+    "selectedCount": "{{count}} pasirinkta(-i)",
+    "statusConfirmedShort": "Patvirtinta",
+    "statusCounter": "Gautas priešpriešinis pasiūlymas",
+    "statusCounterMonth": "Priešpriešinis pasiūlymas",
+    "statusCounterShort": "Priešpriešinis pasiūlymas",
+    "statusDeclined": "Atmesta kontakto",
+    "statusDeclinedMonth": "Atmesta",
+    "statusDeclinedShort": "Atmesta",
+    "statusPending": "Laukiama atsakymo",
+    "statusPendingMonth": "Laukiama",
+    "statusPendingShort": "Laukiama",
+    "syncFailed": "Sinchronizacija nepavyko",
+    "viewDetails": "Peržiūrėti detales"
   },
   "supportChat": {
     "title": "Inboria asistentas",
@@ -2966,7 +3043,11 @@
     "saveAsTemplate": "Išsaugoti kaip šabloną",
     "savedAsTemplate": "El. paštas išsaugotas kaip šablonas",
     "suggestNameWithAI": "Pasiūlyti pavadinimą su Inboria",
-    "suggestNameShort": "Pasiūlyti"
+    "suggestNameShort": "Pasiūlyti",
+    "insertTemplate": "Įterpti šabloną",
+    "pickerNoMatch": "Nėra šablonų, atitinkančių jūsų paiešką.",
+    "pickerSearch": "Ieškoti šablono…",
+    "pickerTitle": "Pasirinkti šabloną"
   },
   "rules": {
     "title": "Automatinės taisyklės",
@@ -3090,7 +3171,10 @@
     "createdHint": "Kopijuokite dabar — jis daugiau niekada nebus rodomas.",
     "dismissCreated": "Aš nukopijavau raktą",
     "usageTitle": "Naudojimo pavyzdys",
-    "rateLimitNotice": "Ribojimas: 60 užklausų / minutę / raktą."
+    "rateLimitNotice": "Ribojimas: 60 užklausų / minutę / raktą.",
+    "deletePermanently": "Ištrinti visam laikui",
+    "deletePermanentlyConfirm": "Ištrinti šį atšauktą raktą visam laikui? Šis veiksmas yra negrįžtamas.",
+    "deletedToast": "Raktas ištrintas visam laikui"
   },
   "webhooks": {
     "title": "Išėjimo webhook'ai",
@@ -3412,5 +3496,39 @@
     "csvDesc": "Metaduomenys (siuntėjas, tema, data, būsena)",
     "dragHint": "Prašome nuvilkti į aplanką, kad eksportuotumėte kaip .eml (Chrome/Edge), arba spustelėkite formatui pasirinkti",
     "chromeHint": "💡 Chrome/Edge naršyklėje langas paklaus, kur išsaugoti failą."
+  },
+  "calendars": {
+    "connectFailedDesc": "Prašome bandyti dar kartą.",
+    "connectFailedTitle": "Prisijungimas nepavyko",
+    "connectGoogle": "Prisijungti prie Google Calendar",
+    "connectGoogleDesc": "Įvykių skaitymas ir naujų susitikimų rašymas.",
+    "connectOutlook": "Prisijungti prie Outlook Calendar",
+    "connectOutlookDesc": "Įvykių skaitymas ir naujų susitikimų rašymas.",
+    "connectedToastDesc": "Sinchronizacija aktyvi.",
+    "connectedToastTitle": "Kalendorius prijungtas",
+    "disconnect": "Atsijungti",
+    "disconnectFailed": "Pašalinti nepavyko",
+    "disconnectedToast": "Kalendorius atjungtas",
+    "empty": "Šiuo metu nėra prijungtų kalendorių.",
+    "help": "Inboria naudoja jūsų kalendorius, kad patikrintų jūsų prieinamumą ir sukurtų susitikimus iš Inboria.",
+    "schemaMissing": "Lentelė calendar_accounts dar nesukurta duomenų bazėje. Vykdykite migraciją 2026_05_09_calendar_accounts.sql Supabase.",
+    "statusConnected": "Prijungta",
+    "statusReauth": "Reikia prisijungti iš naujo",
+    "subtitle": "Prijunkite Google Calendar arba Outlook Calendar, kad Inboria matytų jūsų prieinamumą ir įrašytų jūsų susitikimus.",
+    "title": "Prijungti kalendoriai"
+  },
+  "notificationsPage": {
+    "counter": "{{unread}} neskaityta(-os) · iš viso {{total}}",
+    "filters": {
+      "agenda": "Darbotvarkė",
+      "all": "Visi",
+      "inboria": "Inboria",
+      "mails": "Laiškai",
+      "system": "Sistema",
+      "team": "Komanda",
+      "unread": "Neskaityta"
+    },
+    "sourceAgenda": "Darbotvarkė",
+    "system": "Sistema"
   }
 }

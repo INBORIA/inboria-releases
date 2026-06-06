@@ -1273,7 +1273,9 @@
       "salesforceDesc": "Sync Salesforce contacts, accounts and opportunities.",
       "salesforceSandbox": "Connect a Sandbox org (test.salesforce.com)",
       "privacy": "Privacy & team access",
-      "privacyDesc": "Your private emails and the admin access log"
+      "privacyDesc": "Your private emails and the admin access log",
+      "calendars": "Calendars",
+      "calendarsDesc": "Connect Google Calendar and Outlook Calendar"
     },
     "b2bSection": "B2B credibility",
     "slaCard": "Shared mailbox SLAs",
@@ -2728,7 +2730,44 @@
     "videoJitsi": "Jitsi (Inboria link, no account)",
     "videoMeet": "Google Meet (Google calendar required)",
     "videoTeams": "Microsoft Teams (Outlook calendar required)",
-    "videoJoin": "Join video meeting"
+    "videoJoin": "Join video meeting",
+    "bulkConfirmed": "{{count}} appointment(s) confirmed",
+    "bulkDismissed": "{{count}} suggestion(s) dismissed",
+    "confirmSelected": "Confirm selection",
+    "dismissSelected": "Dismiss selection",
+    "multi": {
+      "addParticipants": "Add participants",
+      "candidateSlots": "Proposed slots",
+      "externalParticipants": "External participants",
+      "findCommonSlot": "Find common slot",
+      "internalParticipants": "Internal participants",
+      "lastReminder": "Last reminder",
+      "multiStatus": {
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "partially_confirmed": "Partially confirmed",
+        "pending": "Pending"
+      },
+      "neverReminded": "No reminder",
+      "noCommonSlot": "No common slot found in the chosen window.",
+      "optional": "Optional",
+      "participantStatus": {
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "pending": "Pending",
+        "tentative": "Tentative"
+      },
+      "participantsLabel": "Participants (separated by comma or newline)",
+      "remindParticipant": "Remind",
+      "remindSent": "Reminder sent",
+      "required": "Required",
+      "send": "Send invitations",
+      "sent": "{{count}} invitations sent",
+      "title": "Multi-participants"
+    },
+    "selectAll": "Select all",
+    "selectedCount": "{{count}} selected",
+    "viewDetails": "View details"
   },
   "supportChat": {
     "title": "Inboria Assistant",
@@ -4625,7 +4664,10 @@
     "openedBadge": "Opened",
     "openedBadgeCount": "Opened {{count}} times",
     "openedAtLabel": "First opened: {{date}}",
-    "notOpenedYet": "Not opened yet"
+    "notOpenedYet": "Not opened yet",
+    "snoozedSectionEmpty": "No snoozed emails",
+    "snoozedSectionEmptyHint": "Emails you snooze will reappear here until they wake up.",
+    "snoozedSectionTitle": "Snoozed emails"
   },
   "templates": {
     "title": "Templates",
