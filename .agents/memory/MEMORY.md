@@ -24,4 +24,5 @@
 - [ncv-mail lazy routes have no error boundary](ncv-mail-lazy-route-no-errorboundary.md) — blank dashboard page w/ only toast region = lazy chunk-hash race (rebuild/deploy mid-session), not a page bug; re-test on stable build; real deploy risk.
 - [OVH Email Pro IMAP host](ovh-email-pro-imap.md) — Email Pro boxes use pro3.mail.ovh.net:993, NOT the in-app IMAP default ssl0.ovh.net (that's MX Plan); use Configuration avancée.
 - [ncv-mail i18n lazy-load](ncv-mail-i18n-lazy-load.md) — only fr bundled at boot, 42 locales load on demand (1 chunk/lang); needs bindI18nStore:'added'; zh-TW collapses to zh under load:languageOnly so boot reads raw localStorage code.
+- [Drag-out to desktop (DownloadURL)](ncv-mail-drag-out-desktop.md) — dataTransfer is writable ONLY sync in dragstart; prefetch blob on hover/pointerdown; blocked in the Replit preview iframe (test in a real tab), Chromium-only.
 - [optimistic-email cache-head coupling](optimistic-email-cache-heads.md) — shared optimistic helpers patch only caches whose query-key head matches the predicate (/api/emails + /api/folders/:id/emails); other heads = silent no-op. Check the head before wiring a new mail page.

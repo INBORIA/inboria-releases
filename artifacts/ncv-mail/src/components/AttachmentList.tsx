@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Paperclip, Download, Eye, File, FileText, Image, FileSpreadsheet, Archive } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import type { Attachment } from "@workspace/api-client-react";
@@ -31,43 +31,59 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string>("");
   const [downloading, setDownloading] = useState<string | null>(null);
+  // Cache des blob-URLs pré-téléchargées pour le glisser-dehors. La spec HTML5
+  // n'autorise l'écriture de dataTransfer QUE pendant dragstart (synchrone) :
+  // impossible de poser l'URL après un fetch async. On pré-télécharge donc le
+  // fichier dès le survol / l'appui pour que l'URL soit prête au dragstart.
+  const blobUrls = useRef<Map<string, string>>(new Map());
+  const fetching = useRef<Set<string>>(new Set());
 
-  if (!attachments || attachments.length === 0) return null;
+  useEffect(() => {
+    const cache = blobUrls.current;
+    return () => {
+      for (const u of cache.values()) URL.revokeObjectURL(u);
+      cache.clear();
+    };
+  }, []);
 
-  async function fetchAttachmentBlob(att: Attachment): Promise<Blob | null> {
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const url = `${import.meta.env.BASE_URL}api/attachments/${att.id}/download`;
-      const res = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-      if (!res.ok) return null;
-      return await res.blob();
-    } catch {
-      return null;
-    }
+  function prefetchForDrag(att: Attachment) {
+    if (disableDownload) return;
+    if (blobUrls.current.has(att.id) || fetching.current.has(att.id)) return;
+    fetching.current.add(att.id);
+    void (async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        const url = `${import.meta.env.BASE_URL}api/attachments/${att.id}/download`;
+        const res = await fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        blobUrls.current.set(att.id, URL.createObjectURL(blob));
+      } catch {
+        /* noop */
+      } finally {
+        fetching.current.delete(att.id);
+      }
+    })();
   }
 
-  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement). On
-  // pre-fetche le fichier au dragstart et on expose son URL via DownloadURL.
+  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement).
   function onAttachmentDragStart(e: React.DragEvent, att: Attachment) {
-    e.dataTransfer.effectAllowed = "copy";
+    const ready = blobUrls.current.get(att.id);
+    if (!ready) {
+      // Pas encore prêt : on lance le pré-téléchargement pour le prochain essai
+      // et on laisse tomber ce glisser (le clic-pour-télécharger reste dispo).
+      prefetchForDrag(att);
+      e.preventDefault();
+      return;
+    }
     const ct = att.content_type || "application/octet-stream";
+    e.dataTransfer.effectAllowed = "copy";
     try {
-      e.dataTransfer.setData("DownloadURL", `${ct}:${att.filename}:about:blank`);
+      e.dataTransfer.setData("DownloadURL", `${ct}:${att.filename}:${ready}`);
     } catch {
       /* noop */
     }
-    void (async () => {
-      const blob = await fetchAttachmentBlob(att);
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      try {
-        e.dataTransfer.setData("DownloadURL", `${ct}:${att.filename}:${url}`);
-      } catch {
-        /* noop */
-      }
-      setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    })();
   }
 
   async function downloadAttachment(att: Attachment, preview = false) {
@@ -121,6 +137,8 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
               key={att.id}
               draggable={!disableDownload}
               onDragStart={disableDownload ? undefined : (e) => onAttachmentDragStart(e, att)}
+              onMouseEnter={disableDownload ? undefined : () => prefetchForDrag(att)}
+              onPointerDown={disableDownload ? undefined : () => prefetchForDrag(att)}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs group transition-colors"
               style={{
                 background: "#1a2332",
