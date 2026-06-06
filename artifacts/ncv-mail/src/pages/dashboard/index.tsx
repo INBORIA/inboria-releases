@@ -6693,15 +6693,31 @@ export default function Dashboard() {
               {isSnoozedView ? (
                 <SnoozedPanel />
               ) : inboxMode === "assigned" ? (
-                /* Vue Assignés — copie miroir 1:1 de la vue Partagées :
-                   - mêmes 2 dropdowns (Assigné à + Statut)
-                   - même <EmailRow> avec hover/clic droit complets
-                   - pagination « Voir plus » client (PAGE_SIZE par clic)
-                   Dataset : useGetTeamAssignments (membres + emails),
-                   filtres + SLA appliqués côté client.
-                   Si pas d'équipe (hasTeamForAssigned = false), on
-                   affiche un état vide minimal. */
-                (() => {
+                <>
+                  {!selectedEmail && (
+                    <div className="mb-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setInboxMode("personal")}
+                        title={t("common.back", "Retour")}
+                        aria-label={t("common.back", "Retour")}
+                        className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+                        data-testid="assigned-back-to-inbox"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  )}
+                  {/* Vue Assignés — copie miroir 1:1 de la vue Partagées :
+                     - mêmes 2 dropdowns (Assigné à + Statut)
+                     - même EmailRow avec hover/clic droit complets
+                     - pagination « Voir plus » client (PAGE_SIZE par clic)
+                     Dataset : useGetTeamAssignments (membres + emails),
+                     filtres + SLA appliqués côté client.
+                     Si pas d'équipe (hasTeamForAssigned = false), on
+                     affiche un état vide minimal. */}
+                  {(() => {
                   if (!hasTeamForAssigned) {
                     return (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
@@ -6849,7 +6865,8 @@ export default function Dashboard() {
                       )}
                     </>
                   );
-                })()
+                  })()}
+                </>
               ) : inboxMode === "shared" ? (
                 <>
                   {!selectedEmail && (
