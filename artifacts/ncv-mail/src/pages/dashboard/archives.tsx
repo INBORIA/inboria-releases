@@ -796,7 +796,7 @@ export default function Archives() {
     <DashboardLayout>
       <MailPageHeader currentTab="archives" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
-        <BackToInboxButton />
+        <BackToInboxButton iconOnly />
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>
           <p className="text-[12px] text-[#b8c5d6] mt-0.5">
