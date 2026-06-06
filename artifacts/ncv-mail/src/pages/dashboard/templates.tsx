@@ -128,7 +128,7 @@ export default function Templates() {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
-        <BackToInboxButton />
+        <BackToInboxButton iconOnly />
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-semibold flex items-center gap-2">
