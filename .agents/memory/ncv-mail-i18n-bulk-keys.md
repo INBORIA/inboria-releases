@@ -29,8 +29,20 @@ Targeted splice after the parent open-brace is clean and re-runnable.
 **How to apply:** any time the user asks to add UI/marketing copy that must exist in all 43 langs.
 The sandbox (`code_execution`) has NO `process.env`; run the translation script via bash instead.
 
-## Ops note: OpenAI batch script gets killed after ~10 langs in this env
-The bash tool kills a long Node script (41 sequential OpenAI calls) after ~10 languages
-(exit -1, no output). Make the inject step write per-language AND idempotent (skip files
-already containing the new key), then just re-run the same script 3-4× until all 43 files
-contain the key. Validate every locale with JSON.parse afterward.
+## Parity check first — new fr keys routinely ship untranslated
+Flatten every locale and diff its key-set against `fr.json` (the reference superset)
+before launch. Recently-added features land fr-only and silently fall back to French
+in the other 42 langs (and sometimes en too). One pre-launch sweep found **103** such
+keys (agenda.multi.*, calendars.*, classification.cleanupDuplicates.*, notificationsPage.*,
+templates.picker*, apiKeys.*, inbox.shortcuts/help, wave1.snoozed*) — 36 missing even in en.
+**How to apply:** any time after adding fr UI copy, run the flatten+set-diff vs fr and fill gaps.
+
+## Ops note: parallel threads fill all 42 langs in ONE bash run
+A Python script using `urllib` + `os.environ["OPENAI_API_KEY"]` + `gpt-4o`
+(`response_format=json_object`) with `ThreadPoolExecutor(max_workers=10)`, one call per
+language (all that language's missing keys in a single request, per-call `timeout=110`),
+completes all 42 non-fr locales inside a single 120s bash call. Make it idempotent
+(recompute missing keys per file each run, skip if none) so a timeout just resumes on re-run.
+`json.dump(..., ensure_ascii=False, indent=2)` matches the existing format → small diffs
+(set_nested appends new keys at the end of their parent). Validate JSON + re-diff after.
+(Supersedes the older "killed after ~10 langs / sequential / re-run 3-4×" approach.)
