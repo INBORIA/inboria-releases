@@ -556,7 +556,10 @@
     "draftEditing": "édite(nt) en ce moment",
     "draftSaving": "Enregistrement…",
     "draftSaved": "Enregistré",
-    "teamTasks": "Tâches équipe"
+    "teamTasks": "Tâches équipe",
+    "assignedFilter": {
+      "all": "Toute l'équipe"
+    }
   },
   "sent": {
     "title": "Emails envoyés",

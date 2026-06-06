@@ -540,7 +540,10 @@
     "draftEditing": "현재 편집 중",
     "draftSaving": "저장 중…",
     "draftSaved": "저장됨",
-    "teamTasks": "팀 작업"
+    "teamTasks": "팀 작업",
+    "assignedFilter": {
+      "all": "전체 팀"
+    }
   },
   "sent": {
     "title": "보낸 이메일",

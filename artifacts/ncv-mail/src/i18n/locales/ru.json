@@ -540,7 +540,10 @@
     "draftEditing": "редактируют сейчас",
     "draftSaving": "Сохранение…",
     "draftSaved": "Сохранено",
-    "teamTasks": "Задачи команды"
+    "teamTasks": "Задачи команды",
+    "assignedFilter": {
+      "all": "Вся команда"
+    }
   },
   "sent": {
     "title": "Отправленные электронные почты",

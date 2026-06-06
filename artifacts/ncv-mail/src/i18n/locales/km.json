@@ -540,7 +540,10 @@
     "draftEditing": "កំពុងកែសម្រួល",
     "draftSaving": "កំពុងរក្សាទុក…",
     "draftSaved": "បានរក្សាទុក",
-    "teamTasks": "ភារកិច្ចក្រុម"
+    "teamTasks": "ភារកិច្ចក្រុម",
+    "assignedFilter": {
+      "all": "ក្រុមទាំងមូល"
+    }
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",

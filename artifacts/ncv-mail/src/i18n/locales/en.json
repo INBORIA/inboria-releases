@@ -556,7 +556,10 @@
     "draftEditing": "editing now",
     "draftSaving": "Saving…",
     "draftSaved": "Saved",
-    "teamTasks": "Team tasks"
+    "teamTasks": "Team tasks",
+    "assignedFilter": {
+      "all": "Whole team"
+    }
   },
   "sent": {
     "title": "Sent emails",

@@ -540,7 +540,10 @@
     "draftEditing": "nu aan het bewerken",
     "draftSaving": "Opslaan…",
     "draftSaved": "Opgeslagen",
-    "teamTasks": "Teamtaken"
+    "teamTasks": "Teamtaken",
+    "assignedFilter": {
+      "all": "Heel team"
+    }
   },
   "sent": {
     "title": "Verzonden e-mails",

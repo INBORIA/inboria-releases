@@ -540,7 +540,10 @@
     "draftEditing": "редагують зараз",
     "draftSaving": "Зберігається…",
     "draftSaved": "Збережено",
-    "teamTasks": "Завдання команди"
+    "teamTasks": "Завдання команди",
+    "assignedFilter": {
+      "all": "Вся команда"
+    }
   },
   "sent": {
     "title": "Відправлені електронні листи",

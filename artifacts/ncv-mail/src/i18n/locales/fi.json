@@ -540,7 +540,10 @@
     "draftEditing": "muokkaavat nyt",
     "draftSaving": "Tallennetaan…",
     "draftSaved": "Tallennettu",
-    "teamTasks": "Tiimin tehtävät"
+    "teamTasks": "Tiimin tehtävät",
+    "assignedFilter": {
+      "all": "Koko tiimi"
+    }
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

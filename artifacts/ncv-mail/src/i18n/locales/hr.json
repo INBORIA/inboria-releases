@@ -540,7 +540,10 @@
     "draftEditing": "uređuju sada",
     "draftSaving": "Spremam…",
     "draftSaved": "Spremjeno",
-    "teamTasks": "Timski zadaci"
+    "teamTasks": "Timski zadaci",
+    "assignedFilter": {
+      "all": "Cijeli tim"
+    }
   },
   "sent": {
     "title": "Poslane e-pošte",

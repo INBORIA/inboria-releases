@@ -540,7 +540,10 @@
     "draftEditing": "szerkesztés alatt",
     "draftSaving": "Mentés…",
     "draftSaved": "Mentve",
-    "teamTasks": "Csapat feladatok"
+    "teamTasks": "Csapat feladatok",
+    "assignedFilter": {
+      "all": "Teljes csapat"
+    }
   },
   "sent": {
     "title": "Küldött emailek",

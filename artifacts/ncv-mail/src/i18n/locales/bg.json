@@ -540,7 +540,10 @@
     "draftEditing": "редактира в момента",
     "draftSaving": "Записване…",
     "draftSaved": "Записано",
-    "teamTasks": "Екипни задачи"
+    "teamTasks": "Екипни задачи",
+    "assignedFilter": {
+      "all": "Целият екип"
+    }
   },
   "sent": {
     "title": "Изпратени имейли",

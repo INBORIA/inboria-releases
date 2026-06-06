@@ -540,7 +540,10 @@
     "draftEditing": "يحرر الآن",
     "draftSaving": "جارٍ الحفظ…",
     "draftSaved": "تم الحفظ",
-    "teamTasks": "مهام الفريق"
+    "teamTasks": "مهام الفريق",
+    "assignedFilter": {
+      "all": "الفريق كله"
+    }
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

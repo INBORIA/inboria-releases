@@ -540,7 +540,10 @@
     "draftEditing": "đang chỉnh sửa",
     "draftSaving": "Đang lưu…",
     "draftSaved": "Đã lưu",
-    "teamTasks": "Nhiệm vụ nhóm"
+    "teamTasks": "Nhiệm vụ nhóm",
+    "assignedFilter": {
+      "all": "Toàn đội"
+    }
   },
   "sent": {
     "title": "Email đã gửi",

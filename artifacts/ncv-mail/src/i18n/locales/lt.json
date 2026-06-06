@@ -540,7 +540,10 @@
     "draftEditing": "dabar redaguoja",
     "draftSaving": "Išsaugoma…",
     "draftSaved": "Išsaugota",
-    "teamTasks": "Komandos užduotys"
+    "teamTasks": "Komandos užduotys",
+    "assignedFilter": {
+      "all": "Visa komanda"
+    }
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

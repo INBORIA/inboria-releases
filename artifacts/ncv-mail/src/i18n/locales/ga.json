@@ -540,7 +540,10 @@
     "draftEditing": "ag eagarthóireacht anois",
     "draftSaving": "Ag sábháil…",
     "draftSaved": "Sábháilte",
-    "teamTasks": "Tascanna Foirne"
+    "teamTasks": "Tascanna Foirne",
+    "assignedFilter": {
+      "all": "An fhoireann ar fad"
+    }
   },
   "sent": {
     "title": "Ríomhphoist seolta",

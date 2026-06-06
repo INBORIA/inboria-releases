@@ -540,7 +540,10 @@
     "draftEditing": "redigerer nu",
     "draftSaving": "Gemmer…",
     "draftSaved": "Gemt",
-    "teamTasks": "Teamopgaver"
+    "teamTasks": "Teamopgaver",
+    "assignedFilter": {
+      "all": "Hele holdet"
+    }
   },
   "sent": {
     "title": "Sendte emails",

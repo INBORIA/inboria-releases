@@ -540,7 +540,10 @@
     "draftEditing": "επεξεργάζονται τώρα",
     "draftSaving": "Αποθήκευση…",
     "draftSaved": "Αποθηκεύτηκε",
-    "teamTasks": "Ομαδικές εργασίες"
+    "teamTasks": "Ομαδικές εργασίες",
+    "assignedFilter": {
+      "all": "Όλη η ομάδα"
+    }
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

@@ -540,7 +540,10 @@
     "draftEditing": "redigerar nu",
     "draftSaving": "Sparar…",
     "draftSaved": "Sparad",
-    "teamTasks": "Teamets uppgifter"
+    "teamTasks": "Teamets uppgifter",
+    "assignedFilter": {
+      "all": "Hela teamet"
+    }
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

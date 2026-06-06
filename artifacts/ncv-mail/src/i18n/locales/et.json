@@ -540,7 +540,10 @@
     "draftEditing": "redigeerivad praegu",
     "draftSaving": "Salvestamine…",
     "draftSaved": "Salvestatud",
-    "teamTasks": "Meeskonna ülesanded"
+    "teamTasks": "Meeskonna ülesanded",
+    "assignedFilter": {
+      "all": "Kogu meeskond"
+    }
   },
   "sent": {
     "title": "Saadetud e-kirjad",

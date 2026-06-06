@@ -540,7 +540,10 @@
     "draftEditing": "şu anda düzenliyor",
     "draftSaving": "Kaydediliyor…",
     "draftSaved": "Kaydedildi",
-    "teamTasks": "Ekip Görevleri"
+    "teamTasks": "Ekip Görevleri",
+    "assignedFilter": {
+      "all": "Tüm ekip"
+    }
   },
   "sent": {
     "title": "Gönderilen e-postalar",

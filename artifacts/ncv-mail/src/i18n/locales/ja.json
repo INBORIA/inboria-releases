@@ -540,7 +540,10 @@
     "draftEditing": "編集中です",
     "draftSaving": "保存中…",
     "draftSaved": "保存されました",
-    "teamTasks": "チームのタスク"
+    "teamTasks": "チームのタスク",
+    "assignedFilter": {
+      "all": "チーム全体"
+    }
   },
   "sent": {
     "title": "送信済みのメール",

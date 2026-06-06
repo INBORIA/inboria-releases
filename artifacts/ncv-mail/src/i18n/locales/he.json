@@ -540,7 +540,10 @@
     "draftEditing": "עורכים עכשיו",
     "draftSaving": "שומר…",
     "draftSaved": "נשמרה",
-    "teamTasks": "משימות הצוות"
+    "teamTasks": "משימות הצוות",
+    "assignedFilter": {
+      "all": "כל הצוות"
+    }
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

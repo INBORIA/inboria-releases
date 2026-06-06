@@ -540,7 +540,10 @@
     "draftEditing": "bearbeitet jetzt",
     "draftSaving": "Speichern…",
     "draftSaved": "Gespeichert",
-    "teamTasks": "Teamaufgaben"
+    "teamTasks": "Teamaufgaben",
+    "assignedFilter": {
+      "all": "Ganzes Team"
+    }
   },
   "sent": {
     "title": "Gesendete E-Mails",

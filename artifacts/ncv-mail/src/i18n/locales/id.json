@@ -540,7 +540,10 @@
     "draftEditing": "sedang mengedit",
     "draftSaving": "Menyimpan…",
     "draftSaved": "Tersimpan",
-    "teamTasks": "Tugas Tim"
+    "teamTasks": "Tugas Tim",
+    "assignedFilter": {
+      "all": "Seluruh tim"
+    }
   },
   "sent": {
     "title": "Email yang dikirim",

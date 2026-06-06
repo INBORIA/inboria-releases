@@ -540,7 +540,10 @@
     "draftEditing": "editează acum",
     "draftSaving": "Se salvează…",
     "draftSaved": "Salvat",
-    "teamTasks": "Sarcinile echipei"
+    "teamTasks": "Sarcinile echipei",
+    "assignedFilter": {
+      "all": "Întreaga echipă"
+    }
   },
   "sent": {
     "title": "Email-uri trimise",

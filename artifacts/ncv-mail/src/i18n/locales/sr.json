@@ -540,7 +540,10 @@
     "draftEditing": "молимо уређују",
     "draftSaving": "Сачувам…",
     "draftSaved": "Сачувано",
-    "teamTasks": "Тимски задаци"
+    "teamTasks": "Тимски задаци",
+    "assignedFilter": {
+      "all": "Цео тим"
+    }
   },
   "sent": {
     "title": "Послати имејлови",

@@ -540,7 +540,10 @@
     "draftEditing": "正在編輯",
     "draftSaving": "儲存中…",
     "draftSaved": "已儲存",
-    "teamTasks": "團隊任務"
+    "teamTasks": "團隊任務",
+    "assignedFilter": {
+      "all": "全體團隊"
+    }
   },
   "sent": {
     "title": "已發送的電子郵件",

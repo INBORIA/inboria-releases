@@ -540,7 +540,10 @@
     "draftEditing": "अब संपादित कर रहे हैं",
     "draftSaving": "सहेज रहा है…",
     "draftSaved": "सहेजा गया",
-    "teamTasks": "टीम कार्य"
+    "teamTasks": "टीम कार्य",
+    "assignedFilter": {
+      "all": "पूरी टीम"
+    }
   },
   "sent": {
     "title": "भेजे गए ईमेल",

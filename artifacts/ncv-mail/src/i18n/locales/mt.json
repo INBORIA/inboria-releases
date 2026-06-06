@@ -540,7 +540,10 @@
     "draftEditing": "qed jeditja issa",
     "draftSaving": "Qed isalva…",
     "draftSaved": "Salvat",
-    "teamTasks": "Kompiti tat-Tim"
+    "teamTasks": "Kompiti tat-Tim",
+    "assignedFilter": {
+      "all": "It-tim kollu"
+    }
   },
   "sent": {
     "title": "Emails inviati",

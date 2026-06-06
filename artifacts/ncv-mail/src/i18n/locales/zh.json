@@ -540,7 +540,10 @@
     "draftEditing": "正在编辑",
     "draftSaving": "保存中…",
     "draftSaved": "已保存",
-    "teamTasks": "团队任务"
+    "teamTasks": "团队任务",
+    "assignedFilter": {
+      "all": "全体团队"
+    }
   },
   "sent": {
     "title": "已发送邮件",

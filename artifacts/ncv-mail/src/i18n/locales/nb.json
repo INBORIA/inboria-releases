@@ -540,7 +540,10 @@
     "draftEditing": "redigerer nå",
     "draftSaving": "Lagrer…",
     "draftSaved": "Lagt til",
-    "teamTasks": "Teamoppgaver"
+    "teamTasks": "Teamoppgaver",
+    "assignedFilter": {
+      "all": "Hele teamet"
+    }
   },
   "sent": {
     "title": "Sendte e-poster",

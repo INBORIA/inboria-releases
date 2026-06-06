@@ -6031,8 +6031,8 @@ export default function Dashboard() {
                 <UserCheck className="w-4 h-4 text-primary" />
                 {assigneePageTitle}
               </h1>
-              <p className="text-[12px] text-[#b8c5d6] mt-0.5">
-                {t("inbox.assignedPageCount", { count: displayedEmailCount, defaultValue: `${displayedEmailCount} email(s)` })}
+              <p className="text-[12px] text-[#b8c5d6] mt-0.5 tabular-nums">
+                ({displayedEmailCount})
               </p>
             </div>
           </div>
@@ -6776,8 +6776,8 @@ export default function Dashboard() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-card border-border">
-                            <SelectItem value="all">{t("inbox.assignedTo.all", "Toute l'équipe")}</SelectItem>
-                            <SelectItem value="me">{t("inbox.assignedTo.me", "Moi")}</SelectItem>
+                            <SelectItem value="all">{t("inbox.assignedFilter.all", "Toute l'équipe")}</SelectItem>
+                            <SelectItem value="me">{t("inbox.sharedClaim.me", "Moi")}</SelectItem>
                             {(orgMembers as any[] | undefined)?.filter((m: any) => m.status === "active" && m.userId && m.userId !== (profile as any)?.id).map((m: any) => (
                               <SelectItem key={m.userId} value={m.userId}>
                                 {m.fullName || m.email || m.userId}

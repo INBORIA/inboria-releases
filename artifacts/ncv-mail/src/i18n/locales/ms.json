@@ -540,7 +540,10 @@
     "draftEditing": "sedang menyunting",
     "draftSaving": "Menyimpan…",
     "draftSaved": "Disimpan",
-    "teamTasks": "Tugas Pasukan"
+    "teamTasks": "Tugas Pasukan",
+    "assignedFilter": {
+      "all": "Seluruh pasukan"
+    }
   },
   "sent": {
     "title": "Emel yang dihantar",

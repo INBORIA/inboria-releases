@@ -540,7 +540,10 @@
     "draftEditing": "editant ara",
     "draftSaving": "Desant…",
     "draftSaved": "Desat",
-    "teamTasks": "Tasques de l'equip"
+    "teamTasks": "Tasques de l'equip",
+    "assignedFilter": {
+      "all": "Tot l'equip"
+    }
   },
   "sent": {
     "title": "Correu electrònic enviats",

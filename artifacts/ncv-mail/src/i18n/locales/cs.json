@@ -540,7 +540,10 @@
     "draftEditing": "právě upravují",
     "draftSaving": "Ukládání…",
     "draftSaved": "Uloženo",
-    "teamTasks": "Týmové úkoly"
+    "teamTasks": "Týmové úkoly",
+    "assignedFilter": {
+      "all": "Celý tým"
+    }
   },
   "sent": {
     "title": "Odeslané emaily",

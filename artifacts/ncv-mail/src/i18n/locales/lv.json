@@ -540,7 +540,10 @@
     "draftEditing": "redaktē tagad",
     "draftSaving": "Saglabā…",
     "draftSaved": "Saglabāts",
-    "teamTasks": "Komandas uzdevumi"
+    "teamTasks": "Komandas uzdevumi",
+    "assignedFilter": {
+      "all": "Visa komanda"
+    }
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

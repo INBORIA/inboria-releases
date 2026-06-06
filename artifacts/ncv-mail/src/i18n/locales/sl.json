@@ -540,7 +540,10 @@
     "draftEditing": "ureja zdaj",
     "draftSaving": "Shranjujem…",
     "draftSaved": "Shranjeno",
-    "teamTasks": "Skupinske naloge"
+    "teamTasks": "Skupinske naloge",
+    "assignedFilter": {
+      "all": "Celotna ekipa"
+    }
   },
   "sent": {
     "title": "Poslane e-pošte",
