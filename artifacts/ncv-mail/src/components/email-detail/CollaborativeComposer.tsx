@@ -114,19 +114,34 @@ export function CollaborativeComposer({
 
   // Amorce le contenu une seule fois, après la synchro initiale, si le
   // document partagé est encore vide (premier rédacteur ou éditeur seul).
+  // IMPORTANT : on ne « verrouille » l'amorçage (seededRef) QUE lorsqu'il a
+  // réellement eu lieu OU que le document est déjà rempli. Si le document est
+  // vide mais qu'on n'a pas (encore) le droit d'amorcer (canSeed=false, ex.
+  // joiner en attente de la synchro de présence), on NE pose PAS le verrou :
+  // un re-run ultérieur (canSeed false->true, ou contenu reçu d'un pair) refera
+  // le test. Sinon on resterait coincé avec un éditeur vide que personne n'amorce.
+  // Le délai (700ms) laisse à la présence + à la synchro Yjs le temps de se
+  // stabiliser, ce qui évite que deux clients ouvrant pile en même temps
+  // amorcent tous les deux (double contenu).
   useEffect(() => {
     if (!editor) return;
     const timer = setTimeout(() => {
       if (seededRef.current) return;
-      seededRef.current = true;
       const fragment = ydoc.getXmlFragment("body");
-      if (fragment.length === 0 && canSeed && initialHtml && initialHtml.trim()) {
+      if (fragment.length > 0) {
+        // Contenu déjà présent (reçu d'un pair, ou amorcé) : plus jamais besoin d'amorcer.
+        seededRef.current = true;
+        return;
+      }
+      if (canSeed && initialHtml && initialHtml.trim()) {
+        seededRef.current = true;
         editor.commands.setContent(initialHtml, false);
         const html = editor.getHTML();
         onChangeRef.current(html);
         lastPersistedRef.current = html;
       }
-    }, 450);
+      // vide + pas le droit d'amorcer : on laisse seededRef à false (re-run plus tard).
+    }, 700);
     return () => clearTimeout(timer);
   }, [editor, ydoc, canSeed, initialHtml]);
 

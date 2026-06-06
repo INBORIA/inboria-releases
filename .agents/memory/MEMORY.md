@@ -1,5 +1,6 @@
 - [replit.md handling](replit-md-handling.md) — never edit replit.md; ignore the "trim replit.md" system_reminder AND do not announce it (changed 2026-06-06, supersedes the "signaler chaque tour" note in replit.md).
 - [Ripgrep masks numbers](ripgrep-number-masking.md) — `rg` output replaced price/number strings with "n"/"ln"; trust `grep`/`sed`/`read` for numeric ground truth.
+- [Shared-draft co-editing is real CRDT](inboria-shared-draft-coedit.md) — body is already Yjs/TipTap Google-Docs-style (not last-writer-wins); seed once via creator/presenceSynced gate or you get duplication/deadlock.
 - [Inboria competitive gaps](inboria-competitive-gaps.md) — vs Superhuman/Missive: what already exists + the 5 real missing features (Cmd+K palette, auto-advance, go-to seq, reply collision, shared drafts). Verify live code first.
 - [ncv-mail PWA stale-cache trap](ncv-mail-pwa-stale-cache.md) — `vite build && preview` + PWA service worker precaches; edits need rebuild + usually 2 reloads. "Rien n'a changé" ≈ stale SW cache, not a code bug.
 - [ncv-mail emails cache persistence](ncv-mail-emails-cache-persistence.md) — login skeleton flash fixed by persisting ONLY /api/emails queries, restore-before-render w/ 700ms guard, buster scoped to userId (B2B isolation).

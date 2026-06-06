@@ -1494,9 +1494,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       draftId={sharedDraft.draftId}
                       initialHtml={collabInitialBodyRef.current || replyText}
                       canSeed={
-                        !sharedDraft.createdBy ||
-                        sharedDraft.createdBy === currentUserId ||
-                        sharedDraft.editors.length === 0
+                        (!!sharedDraft.createdBy && sharedDraft.createdBy === currentUserId) ||
+                        (sharedDraft.presenceSynced && sharedDraft.editors.length === 0)
                       }
                       userName={myPresenceName}
                       userColor={myColor}

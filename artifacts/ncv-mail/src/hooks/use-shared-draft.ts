@@ -95,6 +95,10 @@ export function useSharedDraft({
   const [draftId, setDraftId] = useState<string | null>(null);
   const [createdBy, setCreatedBy] = useState<string | null>(null);
   const [editors, setEditors] = useState<DraftEditor[]>([]);
+  // Passe à true dès le premier événement de présence reçu : on sait alors de
+  // façon fiable si on est seul (editors.length===0) ou non. Sert à n'autoriser
+  // l'amorçage du contenu qu'à bon escient (anti-doublon, cf. CollaborativeComposer).
+  const [presenceSynced, setPresenceSynced] = useState(false);
   const [lastEditor, setLastEditor] = useState<{ name: string; at: number } | null>(null);
   const [saving, setSaving] = useState(false);
   // T005 — revendication d'envoi : id du membre qui « prend l'envoi » (null = personne).
@@ -118,6 +122,7 @@ export function useSharedDraft({
     setEditors([]);
     setLastEditor(null);
     setSendClaimedBy(null);
+    setPresenceSynced(false);
     lastSyncedRef.current = "";
   }, [emailId]);
 
@@ -174,6 +179,7 @@ export function useSharedDraft({
     setEditors([]);
     setLastEditor(null);
     setSendClaimedBy(null);
+    setPresenceSynced(false);
     lastSyncedRef.current = "";
   }, []);
 
@@ -245,6 +251,7 @@ export function useSharedDraft({
   // Canal realtime : presence des éditeurs + broadcast des modifications.
   useEffect(() => {
     if (!active || !draftId || !currentUserId) return;
+    setPresenceSynced(false);
     const color = colorForUser(currentUserId);
     const myName = name || currentUserId.slice(0, 6);
     myInfoRef.current = { name: myName, color };
@@ -264,6 +271,7 @@ export function useSharedDraft({
           }
         }
         setEditors(Array.from(seen.values()));
+        setPresenceSynced(true);
       })
       .on("broadcast", { event: "patch" }, ({ payload }: { payload?: Record<string, unknown> }) => {
         if (!payload || payload.by === currentUserId) return;
@@ -355,6 +363,7 @@ export function useSharedDraft({
     draftId,
     createdBy,
     editors,
+    presenceSynced,
     lastEditor,
     saving,
     sendClaimedBy,
