@@ -62,6 +62,18 @@ export function NotificationBell() {
       setOpen(false);
       return;
     }
+    if (notif.type === "followup_suggestions_digest") {
+      setLocation("/dashboard/taches");
+      setOpen(false);
+      return;
+    }
+    if (notif.type === "appointment_imminent") {
+      const m = String(notif.title || "").match(/^\[apt:([^\]]+)\]/);
+      const aptId = m ? m[1] : null;
+      setLocation(aptId ? `/dashboard/agenda?openApt=${encodeURIComponent(aptId)}` : "/dashboard/agenda");
+      setOpen(false);
+      return;
+    }
     if (notif.emailId) {
       setLocation(`/dashboard?emailId=${notif.emailId}`);
       setOpen(false);
@@ -182,7 +194,7 @@ export function NotificationBell() {
                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                     )}
                     <div className="flex-1 min-w-0 pr-5">
-                      <p className={cn("text-[11px] font-medium truncate", n.type === "connection_disconnected" ? "text-red-300" : "text-white")}>{n.title}</p>
+                      <p className={cn("text-[11px] font-medium truncate", n.type === "connection_disconnected" ? "text-red-300" : "text-white")}>{n.title.replace(/^\[(?:apt|task):[^\]]+\]\s*/, "")}</p>
                       {n.message && (
                         <p className="text-[10px] text-[#b8c5d6] mt-0.5 line-clamp-2">{n.message}</p>
                       )}
