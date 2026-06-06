@@ -28,3 +28,12 @@ compte ; et on ne veut pas re-déclencher le blank-screen historique.
 **How to apply** : si on étend la persistance à d'autres listes (catégories,
 counts…), garder le scope par préfixe de clé + le buster lié à l'utilisateur, et
 bumper `CACHE_BUSTER` à tout changement de forme des données persistées.
+
+**PIÈGE majeur (régression vécue)** : NE PAS appeler `supabase.auth.getSession()`
+(ni aucune API auth qui prend le verrou gotrue `lock:sb-<ref>-auth-token`) sur le
+chemin de restauration AVANT rendu. Ce verrou peut rester bloqué ~5 s (thrash de
+verrou auth via les canaux realtime, cf. logs). La restauration dépasserait alors
+la garde de 700 ms de `main.tsx` → app démarre sans cache → squelette gris
+réapparaît. Lire l'id user en SYNCHRONE depuis localStorage (`sb-<ref>-auth-token`,
+gérer le préfixe `base64-`) via `readCurrentUserIdSync()`. Règle générale : tout
+ce qui s'exécute avant le 1er rendu doit éviter le verrou gotrue.

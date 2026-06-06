@@ -261,6 +261,34 @@ const shouldDehydrateEmailsQuery = (query: {
 }) => query.state.status === "success" && query.queryKey?.[0] === "/api/emails";
 
 /**
+ * Lit l'id de l'utilisateur connecté DIRECTEMENT depuis localStorage, sans
+ * passer par `supabase.auth.getSession()`.
+ *
+ * Pourquoi : getSession() acquiert le verrou gotrue `lock:sb-<ref>-auth-token`
+ * qui, d'après les logs, peut rester bloqué jusqu'à 5 s (thrash de verrou auth).
+ * Si on attendait getSession() ici, la restauration du cache dépasserait la
+ * garde de 700 ms de main.tsx → l'app démarrerait SANS cache → le squelette
+ * gris réapparaîtrait. La lecture localStorage est synchrone et instantanée.
+ *
+ * Supabase stocke la session sous `sb-<project-ref>-auth-token` (JSON, parfois
+ * préfixé `base64-`). On en extrait juste `user.id` pour étiqueter le cache.
+ */
+function readCurrentUserIdSync(): string {
+  try {
+    const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    if (!url || typeof window === "undefined") return "anon";
+    const ref = new URL(url).hostname.split(".")[0];
+    let raw = window.localStorage.getItem(`sb-${ref}-auth-token`);
+    if (!raw) return "anon";
+    if (raw.startsWith("base64-")) raw = atob(raw.slice("base64-".length));
+    const parsed = JSON.parse(raw);
+    return parsed?.user?.id ?? parsed?.currentSession?.user?.id ?? "anon";
+  } catch {
+    return "anon";
+  }
+}
+
+/**
  * Restaure le cache des listes de mails depuis le navigateur AVANT le premier
  * rendu (appelé depuis main.tsx), puis abonne le client pour ré-enregistrer le
  * cache à chaque changement. Tolérant aux pannes : si la restauration échoue ou
@@ -275,13 +303,8 @@ const shouldDehydrateEmailsQuery = (query: {
  */
 export async function restorePersistedQueryCache(): Promise<void> {
   if (!emailsPersister) return;
-  let userId = "anon";
-  try {
-    const { data } = await supabase.auth.getSession();
-    userId = data.session?.user?.id ?? "anon";
-  } catch {
-    // Session illisible — on traite comme anonyme (rien de sensible restauré).
-  }
+  // Lecture synchrone (pas de verrou gotrue) → restauration toujours < 700 ms.
+  const userId = readCurrentUserIdSync();
   const persistOptions = {
     queryClient,
     persister: emailsPersister,
