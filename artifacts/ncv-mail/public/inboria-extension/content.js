@@ -64,6 +64,220 @@
     return el ? String(el.innerText || el.textContent || "").trim() : "";
   }
 
+  // Premier sélecteur (parmi une liste) qui donne du texte non vide.
+  function qText(sels) {
+    for (var i = 0; i < sels.length; i++) {
+      try {
+        var v = txt(document.querySelector(sels[i]));
+        if (v) return v;
+      } catch (e) {}
+    }
+    return "";
+  }
+
+  // Lecture du corps quand il est rendu dans une iframe MÊME ORIGINE (cas de
+  // beaucoup de webmails : GMX, Zimbra, Zoho, Proton, iCloud…). On lit
+  // contentDocument ; une iframe cross-origin lèvera et sera ignorée.
+  function frameBody(sels) {
+    for (var i = 0; i < sels.length; i++) {
+      try {
+        var f = document.querySelector(sels[i]);
+        if (f && f.contentDocument && f.contentDocument.body) {
+          var v = String(f.contentDocument.body.innerText || "").trim();
+          if (v.length > 20) return v;
+        }
+      } catch (e) {}
+    }
+    return "";
+  }
+
+  // ---- Adaptateurs par webmail (Étape 2) -----------------------------------
+  // Chaque adaptateur ne fait que REMPLIR les champs encore vides : il ne peut
+  // qu'améliorer la précision, jamais écraser ni casser le repli universel qui
+  // s'exécute juste après dans scrapeContext. Sélecteurs « best-effort » à
+  // affiner avec de vraies captures par webmail (peuvent évoluer côté éditeur).
+  // Chaque `read` RETOURNE des candidats {subject, from, body} (sans muter le
+  // contexte) ; applyAdapter ne les accepte qu'après VALIDATION et seulement
+  // pour les champs encore vides. Un faux positif est ainsi rejeté → le repli
+  // universel reprend la main. Sélecteurs volontairement spécifiques au volet
+  // de lecture du fournisseur (on évite les classes globales .subject/.sender).
+  var WEBMAIL_ADAPTERS = [
+    {
+      // Yahoo Mail
+      match: function (h) {
+        return /(^|\.)((mail\.)?yahoo|ymail|rocketmail)\./.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText(["[data-test-id='message-subject']"]),
+          from: qText([
+            "[data-test-id='message-from'] [data-test-id='email-pill']",
+            "[data-test-id='message-from']",
+          ]),
+          body: qText(["[data-test-id='message-view-body']"]),
+        };
+      },
+    },
+    {
+      // GMX / Web.de / mail.com (plateforme 1&1)
+      match: function (h) {
+        return /(^|\.)(gmx\.|web\.de|mail\.com)/.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText([".subject-text", ".mail-view-headers .subject"]),
+          from: qText([".sender-info .email", ".sender .email", ".sender-name"]),
+          body:
+            frameBody([
+              "iframe.mail-detail-frame",
+              "#mailContent iframe",
+              "iframe#mail",
+            ]) || qText([".mail-content", ".message-text"]),
+        };
+      },
+    },
+    {
+      // Zoho Mail
+      match: function (h) {
+        return /(^|\.)zoho\./.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText([
+            ".zmMVSub",
+            ".zmsubject",
+            "[data-zmverticalsubject]",
+          ]),
+          from: qText([".zmMVFromName", ".zmFromName", ".zmfromaddress"]),
+          body:
+            frameBody([
+              "iframe.zmMailContent",
+              "#mailContentArea iframe",
+              "iframe[name='messageFrame']",
+            ]) || qText([".zmMailContent", ".zmmailcontent"]),
+        };
+      },
+    },
+    {
+      // Zimbra (hôtes variés → on s'appuie aussi sur la signature DOM)
+      match: function (h) {
+        return (
+          /(^|\.)zimbra/.test(h) ||
+          !!document.querySelector("#zimbraMailbox, [id^='zv__'], [id^='zb__']")
+        );
+      },
+      read: function () {
+        return {
+          subject: qText([".zo-subject", ".MsgHdrSubject", "td.SubjectText"]),
+          from: qText([".MsgHdr-From .AddrBubble", ".MsgHdr-From", ".zo-from"]),
+          body:
+            frameBody([
+              "iframe.zo-message-body",
+              "iframe[id$='_body']",
+              ".MsgBody iframe",
+              "iframe.MsgBody-html",
+            ]) || qText([".MsgBody", ".zo-message-body"]),
+        };
+      },
+    },
+    {
+      // Proton Mail (corps chiffré rendu dans une iframe même origine)
+      match: function (h) {
+        return /(^|\.)(proton\.me|protonmail\.com|mail\.proton)/.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText([
+            "[data-testid='message-header:subject']",
+            ".message-header-subject",
+          ]),
+          from: qText([
+            "[data-testid='message-header:from']",
+            ".message-header-from .sender-address",
+            "span.item-sender",
+          ]),
+          body: frameBody([
+            "iframe.proton-secure-iframe",
+            "iframe[title*='Email content' i]",
+            ".message-iframe iframe",
+          ]),
+        };
+      },
+    },
+    {
+      // Fastmail
+      match: function (h) {
+        return /(^|\.)fastmail\./.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText([".v-MessageView-subject", ".v-Subject"]),
+          from: qText([".v-Sender-address", ".v-MessageView-from"]),
+          body: qText([".v-MessageView-body", ".v-Message-body"]),
+        };
+      },
+    },
+    {
+      // iCloud Mail (composants web / shadow DOM → best effort)
+      match: function (h) {
+        return /(^|\.)icloud\.com/.test(h);
+      },
+      read: function () {
+        return {
+          subject: qText([".mail-message-subject"]),
+          from: qText([".mail-message-from", ".from-address"]),
+          body:
+            frameBody([
+              "iframe.mail-message-content",
+              "iframe[name='message']",
+            ]) || qText([".mail-message-content"]),
+        };
+      },
+    },
+  ];
+
+  // Garde-fous : on n'accepte une valeur d'adaptateur que si elle ressemble
+  // vraiment à un sujet / un expéditeur (et pas à un libellé d'interface vide).
+  function looksLikeSubject(s) {
+    if (!s) return false;
+    s = s.trim();
+    if (s.length < 2 || s.length > 250) return false;
+    if (/^(subject|sujet|objet|inbox|boîte de réception)\s*:?$/i.test(s))
+      return false;
+    return true;
+  }
+  function looksLikeFrom(s) {
+    if (!s) return false;
+    s = s.trim();
+    if (s.length < 2 || s.length > 160) return false;
+    if (/^(from|de|expéditeur|sender|to|à|cc|bcc)\s*:?$/i.test(s)) return false;
+    return true;
+  }
+
+  // Applique l'adaptateur de l'hôte courant (au plus un) : remplit chaque champ
+  // ENCORE VIDE uniquement si le candidat passe la validation.
+  function applyAdapter(c) {
+    var h = location.hostname.toLowerCase();
+    for (var i = 0; i < WEBMAIL_ADAPTERS.length; i++) {
+      var a = WEBMAIL_ADAPTERS[i];
+      var matched = false;
+      try {
+        matched = a.match(h);
+      } catch (e) {}
+      if (!matched) continue;
+      var cand = {};
+      try {
+        cand = a.read() || {};
+      } catch (e) {}
+      if (!c.subject && looksLikeSubject(cand.subject))
+        c.subject = cand.subject.trim();
+      if (!c.from && looksLikeFrom(cand.from)) c.from = cand.from.trim();
+      if (!c.body && cand.body && cand.body.trim().length > 40)
+        c.body = cand.body.trim();
+      break;
+    }
+  }
+
   function scrapeContext() {
     var ctx = { subject: "", from: "", body: "", messageId: "", nativeId: "" };
 
@@ -72,6 +286,13 @@
       selection = window.getSelection
         ? String(window.getSelection().toString()).trim()
         : "";
+    } catch (e) {}
+
+    // Étape 2 : adaptateur précis selon le webmail détecté. Ne remplit que les
+    // champs qu'il connaît ; tout le reste est complété par le repli universel
+    // ci-dessous (donc un adaptateur incomplet ne dégrade jamais l'existant).
+    try {
+      applyAdapter(ctx);
     } catch (e) {}
 
     // Roundcube : la vue du message est dans une iframe MÊME ORIGINE → lisible.

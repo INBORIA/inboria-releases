@@ -29,8 +29,14 @@ Source : `artifacts/ncv-mail/public/inboria-extension/` (manifest MV3, `content.
   **Why:** sans cette double exigence, un match sujet-seul (ou sujet vide) ouvre un mail au hasard. C'est le piège signalé en revue.
 - Côté extension : gratter l'expéditeur via lien `mailto:` en priorité puis 1ère adresse e-mail en tête de la zone de lecture (`[role=main]`/reading pane), et le sujet via 1er `[role=heading]`/h1/h2. Envoyer `subject`+`from` à `resolve-email` ET à `prefetchEmailId`.
 
+## Adaptateurs par webmail (Étape 2) — architecture
+- `content.js` n'a PAS d'adaptateurs « lourds » : une heuristique UNIVERSELLE unique (`scrapeContext`) + une table additive `WEBMAIL_ADAPTERS` (Yahoo, GMX/Web.de/mail.com, Zoho, Zimbra, Proton, Fastmail, iCloud). `applyAdapter(ctx)` tourne EN PREMIER (après la sélection, avant Roundcube + heuristiques) et chaque adaptateur ne fait que REMPLIR les champs vides (`if (!c.subject) …`).
+  **Why:** un adaptateur dont les sélecteurs sont faux/obsolètes ne peut que rester no-op → le repli universel reprend la main → jamais de régression sur les webmails qui marchent déjà (Gmail/Outlook/Roundcube/OVH).
+  **How to apply:** pour ajouter un webmail, pousser une entrée `{match(h), read(c)}` dans `WEBMAIL_ADAPTERS` ; ne JAMAIS écraser un champ déjà rempli, ne jamais retirer le repli universel. Helpers : `qText([sels])` (1er sélecteur non vide) et `frameBody([iframe sels])` (corps en iframe MÊME ORIGINE — GMX/Zimbra/Zoho/Proton/iCloud).
+- Sélecteurs « best-effort » écrits SANS captures réelles → à valider/affiner webmail par webmail (les éditeurs changent leurs classes). Le manifest est déjà `https://*/*` donc aucun nouveau host à déclarer.
+
 ## Reste à faire (plan validé user)
-Étape 2 = adaptateurs de lecture par webmail (Roundcube/OVH d'abord, puis Yahoo/GMX/Zoho/iCloud/Zimbra + bonus Gmail/Outlook web). Étape 3 = section installation dans Paramètres → Mon compte + i18n + base URL dynamique. Étape 4 = packaging + publication Chrome/Edge (compte dev Chrome ~5 $ une fois), Firefox ensuite.
+Étape 2 = ✅ socle adaptateurs en place (à affiner avec captures réelles par webmail). Étape 3 = section installation dans Paramètres → Mon compte + i18n + base URL dynamique. Étape 4 = packaging + publication Chrome/Edge (compte dev Chrome ~5 $ une fois), Firefox ensuite.
 
 ## Ouvrir un mail depuis un pont = NE PAS dépendre du jeton du pont
 Le bouton « Ouvrir dans Inboria » ne doit jamais dépendre du jeton (Bearer Supabase)
