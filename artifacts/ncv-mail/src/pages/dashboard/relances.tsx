@@ -601,7 +601,7 @@ export default function Relances() {
     <DashboardLayout>
       <MailPageHeader currentTab="relances" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-3">
-        <BackToInboxButton />
+        <BackToInboxButton iconOnly />
         <div>
           <h1 className="text-[20px] font-semibold text-foreground flex items-center gap-2">
             <MailCheck className="w-5 h-5 text-primary" />
