@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
@@ -381,6 +382,7 @@ export default function Corbeille() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="corbeille" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">

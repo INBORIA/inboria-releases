@@ -13,6 +13,7 @@ import {
   getGetContactTimelineQueryKey,
 } from "@workspace/api-client-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -335,6 +336,7 @@ export default function Contacts() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="contacts" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-row h-[calc(100vh-4rem)]">
         <aside className="w-[300px] md:w-[340px] shrink-0 border-r border-[#1f2937] flex flex-col min-h-0">
           <div className="p-4 space-y-3 border-b border-[#1f2937]">

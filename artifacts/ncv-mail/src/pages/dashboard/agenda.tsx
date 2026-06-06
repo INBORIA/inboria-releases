@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useListAppointments,
@@ -1411,6 +1412,7 @@ export default function Agenda() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="agenda" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton iconOnly />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">

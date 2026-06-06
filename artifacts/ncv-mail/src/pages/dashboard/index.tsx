@@ -3421,7 +3421,10 @@ export default function Dashboard() {
     return () => window.removeEventListener("sidebar-nav-reset", handler);
   }, []);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("q") ?? "";
+  });
   // Wave perçue C — recherche instantanée. 80ms = 1 frame perceptible,
   // suffit pour grouper les frappes très rapides sans donner l'impression
   // d'attendre. Le serveur reste appelé après chaque salve.

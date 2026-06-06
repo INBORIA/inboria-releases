@@ -15,6 +15,7 @@
 - [emails list/detail mapping drift](emails-list-detail-mapping-drift.md) — /api/emails list and /api/emails/:id hand-map fields separately; add new gating fields (sharedMailboxId, assignedTo…) to BOTH or UI silently breaks on detail-fetch failure.
 - [ncv-mail shared-mail auto-close](ncv-mail-shared-mail-autoclose.md) — opened mail closes itself in shared box = gotrue auth-lock thrash from many realtime channels → Dashboard remount resets selection; persist state outside component, never return null from detail queryFn.
 - [React Query prefetch null-poisoning](react-query-prefetch-null-poisoning.md) — a hover-prefetch sharing a cache key must THROW (not cache null) on failure, else it blanks the detail for the staleTime window.
+- [ncv-mail route aliases](ncv-mail-route-aliases.md) — sidebar « Catégories » → /dashboard/classement (classement.tsx); categories.tsx is dead/redirected. Header search → /dashboard?q=.
 - [CRM plan gating & Slack/Notion removal](inboria-crm-plan-gating.md) — CRM reserved Pro/Business, locked at /connect only (Odoo-parity, downgrade leniency by design); Slack/Notion removed Apr 2026.
 - [ncv-mail lazy routes have no error boundary](ncv-mail-lazy-route-no-errorboundary.md) — blank dashboard page w/ only toast region = lazy chunk-hash race (rebuild/deploy mid-session), not a page bug; re-test on stable build; real deploy risk.
 - [OVH Email Pro IMAP host](ovh-email-pro-imap.md) — Email Pro boxes use pro3.mail.ovh.net:993, NOT the in-app IMAP default ssl0.ovh.net (that's MX Plan); use Configuration avancée.

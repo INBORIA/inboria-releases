@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
@@ -111,7 +111,13 @@ type CurrentTab =
   | "projets"
   | "relances"
   | "archives"
-  | "activite-equipe";
+  | "activite-equipe"
+  | "contacts"
+  | "agenda"
+  | "bilan"
+  | "classement"
+  | "templates"
+  | "regles";
 
 interface MailPageHeaderProps {
   currentTab: CurrentTab;
@@ -140,6 +146,7 @@ function MailPageHeaderImpl({
   const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   // ─── Volet de lecture (3e colonne) — toggle global persisté ──────────────
   const [readingPaneEnabled, toggleReadingPane] = useReadingPaneEnabled();
@@ -157,6 +164,12 @@ function MailPageHeaderImpl({
   };
   // Debounce conservé pour parité d'API si jamais consommé plus tard.
   useDebounce(searchInput, 300);
+  // Recherche unifiée : où qu'on soit, valider une recherche renvoie sur la
+  // Réception avec le texte appliqué (?q=...) → un seul comportement partout.
+  const submitSearch = useCallback(() => {
+    const q = (searchInput || "").trim();
+    navigate(q ? `/dashboard?q=${encodeURIComponent(q)}` : "/dashboard");
+  }, [searchInput, navigate]);
 
   // ─── Compose / Sync ──────────────────────────────────────────────────────
   const [isComposeOpen, setIsComposeOpen] = useState(false);
@@ -431,6 +444,12 @@ function MailPageHeaderImpl({
           <Input
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                submitSearch();
+              }
+            }}
             placeholder={t("inbox.searchPlaceholder")}
             className="pl-8 pr-16 bg-card border-border text-foreground placeholder:text-muted-foreground h-9 text-[13px] rounded-md"
           />

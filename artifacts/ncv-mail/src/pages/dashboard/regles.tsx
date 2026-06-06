@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import {
   useListAutomationRules,
   useCreateAutomationRule,
@@ -254,6 +255,7 @@ export default function Regles() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="regles" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton iconOnly />
         <div className="flex items-center justify-between mb-6">

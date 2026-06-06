@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import {
   useListEmails,
@@ -541,6 +542,7 @@ export default function Indesirables() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="indesirables" showReadingPaneToggle={false} showHeaderCollapseToggle={false} />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">
