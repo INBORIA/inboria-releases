@@ -38,6 +38,35 @@ réapparaît. Lire l'id user en SYNCHRONE depuis localStorage (`sb-<ref>-auth-to
 gérer le préfixe `base64-`) via `readCurrentUserIdSync()`. Règle générale : tout
 ce qui s'exécute avant le 1er rendu doit éviter le verrou gotrue.
 
+**PIÈGE racine #2 — buster figé au boot (cache jeté à chaque login)** : le buster
+d'isolation `v1:<userId>` était calculé UNE fois au boot via `readCurrentUserIdSync()`.
+Lors d'une connexion FRAÎCHE, au boot aucun jeton n'est encore en localStorage →
+userId = "anon" → l'abonnement de persistance (`persistQueryClientSubscribe`) sauvait
+les mails sous `v1:anon`. Au rechargement suivant (désormais connecté), le boot lit
+l'id réel → restore avec buster `v1:<realId>` ≠ `v1:anon` → `persistQueryClientRestore`
+JETTE tout le cache → squelette à chaque 1er rechargement post-login. **Fix** :
+re-clé du cache dès qu'une session apparaît — `onAuthStateChange((event, session))`
+appelle `syncPersistedCacheOwner(session.user.id)` qui (si l'owner change) désabonne,
+force un `persistQueryClientSave` immédiat sous `v1:<realId>` puis se réabonne.
+Passage "anon"→realId NE purge PAS (on garde les mails chargés, on les ré-étiquette) ;
+passage realId_A→realId_B purge (poste partagé). **Why** : un buster lié à l'identité
+DOIT être recalculé quand l'identité arrive, pas figé à un instant où elle est absente.
+**How to apply** : tout cache persisté étiqueté par utilisateur doit se re-keyer sur
+l'évènement d'auth, jamais seulement au boot.
+
+**Durcissement isolation B2B (poste partagé)** : `syncPersistedCacheOwner` purge
+SYSTÉMATIQUEMENT (queryClient.clear + removeItem) à TOUT changement de propriétaire,
+y compris "anon"→realId — car la mémoire restaurée au boot peut venir d'un blob
+`v*:anon` laissé par un AUTRE compte. Ne jamais ré-étiqueter des mails d'origine
+incertaine. Le no-op `userId === _persistOwnerId` protège le cas reload (sinon la
+purge effacerait le cache fraîchement restauré → squelette). En plus, bumper le
+buster (`v1`→`v2`) lors d'un correctif de ce type pour invalider d'office les caches
+contaminés déjà présents chez les utilisateurs → coûte 1 MISS unique au prochain
+reload puis HIT. **Why** : un cache à clé par-endpoint (`/api/emails`, non scopé user)
+ne prouve pas la provenance ; seule la purge au changement d'identité garantit qu'un
+compte ne voit jamais les mails d'un autre. Diagnostic console `[inboria] restore
+cache: HIT/MISS` (temporaire) pour vérifier en prod.
+
 **Complément anti-flash — squelette RETARDÉ** : le cache seul réduit le flash mais
 n'élimine pas les cas où `isLoading` est vrai une fraction de seconde (cache absent
 après déconnexion, restore qui rate la 1ʳᵉ frame, gros chunk dashboard). Un squelette

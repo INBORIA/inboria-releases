@@ -6,6 +6,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
+  persistQueryClientSave,
 } from "@tanstack/react-query-persist-client";
 import { getGetProfileQueryKey, useGetMyOrganisation, getGetMyOrganisationQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
@@ -200,7 +201,10 @@ const ONE_HOUR = ONE_MINUTE * 60;
 const ONE_DAY = ONE_HOUR * 24;
 
 const PERSIST_CACHE_KEY = "inboria-cache-v1";
-const CACHE_BUSTER = "v1";
+// v2 (et non v1) : invalide d'office TOUT cache `v1:*` écrit par l'ancienne logique
+// buggée — dont les blobs `v1:anon` qui pouvaient contenir les mails d'un compte sur
+// un poste partagé. Ils ne correspondront plus à aucun buster `v2:<id>` → ignorés.
+const CACHE_BUSTER = "v2";
 
 const queryClient = new QueryClient({
   mutationCache,
@@ -301,28 +305,101 @@ function readCurrentUserIdSync(): string {
  * `persistQueryClientRestore` jette ce cache au lieu de l'afficher. Un compte ne
  * peut donc jamais voir, même brièvement, les mails d'un autre.
  */
-export async function restorePersistedQueryCache(): Promise<void> {
-  if (!emailsPersister) return;
-  // Lecture synchrone (pas de verrou gotrue) → restauration toujours < 700 ms.
-  const userId = readCurrentUserIdSync();
-  const persistOptions = {
+// Compte dont le cache est actuellement persisté + fonction de désabonnement de
+// l'écriture automatique. Permet de RE-CLÉER le cache quand l'utilisateur se
+// connecte. PIÈGE corrigé : au boot d'une connexion FRAÎCHE, aucun jeton n'est
+// encore en localStorage → readCurrentUserIdSync() = "anon" → les mails se
+// sauvegardaient sous buster `v1:anon`. Au rechargement suivant (désormais
+// connecté), le buster devient `v1:<realId>` ≠ `v1:anon` → persistQueryClientRestore
+// JETAIT tout le cache → le squelette gris réapparaissait à chaque login. On bascule
+// donc l'abonnement (et on force une sauvegarde immédiate) sur l'id réel dès que la
+// session apparaît.
+let _persistOwnerId: string | null = null;
+let _persistUnsub: (() => void) | null = null;
+
+function buildPersistOptions(userId: string) {
+  return {
     queryClient,
-    persister: emailsPersister,
+    persister: emailsPersister!,
     maxAge: ONE_DAY,
     // buster lié à l'utilisateur : tout cache d'un autre compte est ignoré.
     buster: `${CACHE_BUSTER}:${userId}`,
     dehydrateOptions: { shouldDehydrateQuery: shouldDehydrateEmailsQuery },
   };
+}
+
+export async function restorePersistedQueryCache(): Promise<void> {
+  if (!emailsPersister) return;
+  // Lecture synchrone (pas de verrou gotrue) → restauration toujours < 700 ms.
+  const userId = readCurrentUserIdSync();
+  const persistOptions = buildPersistOptions(userId);
   try {
     await persistQueryClientRestore(persistOptions as any);
   } catch {
     // Cache corrompu ou incompatible — on ignore, l'app charge depuis le réseau.
   }
   try {
-    persistQueryClientSubscribe(persistOptions as any);
+    _persistUnsub = persistQueryClientSubscribe(persistOptions as any);
+    _persistOwnerId = userId;
   } catch {
     // Non fatal : la persistance future est simplement désactivée.
   }
+  // Diagnostic (temporaire) : confirme depuis la console du navigateur si la
+  // restauration a réellement repeuplé la liste des mails (cache HIT) ou non
+  // (cache MISS → squelette attendu). À retirer une fois le clignotement réglé.
+  try {
+    const n = queryClient
+      .getQueryCache()
+      .findAll({ predicate: (q: any) => q.queryKey?.[0] === "/api/emails" }).length;
+    console.info(
+      `[inboria] restore cache: ${n > 0 ? "HIT" : "MISS"} (owner=${userId.slice(0, 8)}, emailsQueries=${n})`,
+    );
+  } catch {
+    /* noop */
+  }
+}
+
+/**
+ * Re-cible le cache persisté sur l'utilisateur réellement connecté. Appelé sur
+ * chaque évènement d'auth porteur de session (login frais, refresh, session
+ * initiale). No-op si le propriétaire n'a pas changé.
+ *  - Connexion fraîche (boot "anon" → realId) : on bascule l'abonnement sur
+ *    `v1:<realId>` ET on force une sauvegarde immédiate sous ce buster, pour qu'un
+ *    rechargement juste après le login restaure bien (au lieu de jeter le cache).
+ *  - Propriétaire DIFFÉRENT connu (poste partagé, session d'un autre compte
+ *    restaurée par erreur) : on purge cache mémoire + persisté avant de réabonner
+ *    → aucun mail d'un autre compte n'est conservé.
+ */
+export function syncPersistedCacheOwner(userId: string): void {
+  if (!emailsPersister || !userId || userId === _persistOwnerId) return;
+  if (_persistUnsub) {
+    try { _persistUnsub(); } catch { /* noop */ }
+    _persistUnsub = null;
+  }
+  // SÉCURITÉ B2B : tout changement de propriétaire purge cache mémoire + persisté
+  // AVANT de réabonner. Cela couvre le passage "anon" → realId (où la mémoire
+  // restaurée au boot peut provenir d'un blob `v*:anon` laissé par un AUTRE compte
+  // sur un poste partagé). On ne ré-étiquette JAMAIS des mails d'origine incertaine ;
+  // le tableau de bord recharge depuis le réseau, étiqueté au bon compte.
+  queryClient.clear();
+  try { window.localStorage.removeItem(PERSIST_CACHE_KEY); } catch { /* noop */ }
+  const persistOptions = buildPersistOptions(userId);
+  // Sauvegarde immédiate sous le nouveau buster, puis réabonnement continu.
+  try { void persistQueryClientSave(persistOptions as any); } catch { /* noop */ }
+  try {
+    _persistUnsub = persistQueryClientSubscribe(persistOptions as any);
+    _persistOwnerId = userId;
+  } catch {
+    /* noop */
+  }
+}
+
+function teardownPersistedCache(): void {
+  if (_persistUnsub) {
+    try { _persistUnsub(); } catch { /* noop */ }
+    _persistUnsub = null;
+  }
+  _persistOwnerId = null;
 }
 
 /**
@@ -331,15 +408,22 @@ export async function restorePersistedQueryCache(): Promise<void> {
  */
 function CacheCleanup() {
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
+        teardownPersistedCache();
         queryClient.clear();
         try {
           window.localStorage.removeItem(PERSIST_CACHE_KEY);
         } catch {
           // Storage may be unavailable in private mode — non fatal.
         }
+        return;
       }
+      // Toute session présente (login frais, refresh jeton, session initiale) :
+      // on ré-étiquette le cache au compte réellement connecté. Corrige le cas
+      // « boot anon → realId » qui jetait le cache au rechargement post-login.
+      const uid = session?.user?.id;
+      if (uid) syncPersistedCacheOwner(uid);
     });
     return () => subscription.unsubscribe();
   }, []);
