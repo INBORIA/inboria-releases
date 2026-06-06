@@ -29,6 +29,8 @@ interface MailboxPolicy {
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const PRESETS = [
+  { minutes: 15, label: "15 min" },
+  { minutes: 30, label: "30 min" },
   { minutes: 60, label: "1h" },
   { minutes: 240, label: "4h" },
   { minutes: 480, label: "8h" },

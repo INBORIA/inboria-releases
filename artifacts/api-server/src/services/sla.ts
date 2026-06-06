@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { createNotification } from "../lib/activity";
+import { hasHandledColumns } from "../lib/schema-flags";
 
 const TICK_INTERVAL_MS = 5 * 60_000;
 let started = false;
@@ -98,14 +99,28 @@ async function evaluatePolicy(policy: any) {
   const now = new Date();
   const sinceIso = new Date(now.getTime() - 14 * 24 * 60 * 60_000).toISOString();
 
-  const { data: emails } = await supabaseAdmin
+  // Une réponse envoyée (ou un « marquer traité ») pose handled_at sur l'email.
+  // On considère donc un mail comme « répondu » dès que handled_at est présent
+  // — ce qui correspond à la promesse de l'UI : « le compteur s'arrête dès
+  // qu'une réponse est envoyée ». On exclut ces mails des candidats au
+  // dépassement (gardé compatible avec les tenants legacy sans la colonne).
+  const handledOn = await hasHandledColumns();
+  const selectCols: string = handledOn
+    ? "id, sender, subject, created_at, status, assigned_to, claimed_by, handled_at"
+    : "id, sender, subject, created_at, status, assigned_to, claimed_by";
+
+  let candidateQuery = supabaseAdmin
     .from("emails")
-    .select("id, sender, subject, created_at, status, assigned_to, claimed_by")
+    .select(selectCols)
     .eq("shared_mailbox_id", policy.shared_mailbox_id)
     .gte("created_at", sinceIso)
-    .not("status", "in", "(archived,supprime)")
+    .not("status", "in", "(archived,supprime)");
+  if (handledOn) candidateQuery = candidateQuery.is("handled_at", null);
+
+  const { data: emails } = await candidateQuery
     .order("created_at", { ascending: false })
-    .limit(500);
+    .limit(500)
+    .returns<any[]>();
 
   const breachedEmails: { id: number; sender: string; subject: string; assignedTo: string | null; elapsed: number }[] = [];
 
@@ -148,33 +163,60 @@ async function evaluatePolicy(policy: any) {
       await supabaseAdmin.from("sla_breaches").insert(newRows);
     }
 
-    // Notify for newly inserted breaches
-    for (const b of breachedEmails) {
-      if (existingMap.get(b.id)?.notified_at) continue;
+    // Notifier UNE SEULE FOIS par dépassement.
+    // On traite tous les breaches encore non notifiés (nouveaux de ce tick OU
+    // anciens dont notified_at est resté null — échec/race précédente), pas
+    // seulement les lignes insérées à l'instant.
+    //   - Mail assigné      -> on notifie la personne assignée.
+    //   - Mail NON assigné  -> on notifie tous les membres de la boîte partagée
+    //     (sinon le mail était marqué en dépassement mais personne n'était
+    //     prévenu par la cloche).
+    if (escalation.email !== false) {
+      const toNotify = breachedEmails.filter((b) => !existingMap.get(b.id)?.notified_at);
 
-      const target = b.assignedTo;
-      if (!target) continue;
+      let mailboxMemberIds: string[] | null = null;
+      const getMailboxMembers = async (): Promise<string[]> => {
+        if (mailboxMemberIds) return mailboxMemberIds;
+        const { data: members } = await supabaseAdmin
+          .from("shared_mailbox_members")
+          .select("user_id")
+          .eq("shared_mailbox_id", policy.shared_mailbox_id);
+        mailboxMemberIds = Array.from(
+          new Set((members || []).map((m: any) => m.user_id).filter(Boolean)),
+        );
+        return mailboxMemberIds;
+      };
 
-      if (escalation.email !== false) {
-        try {
-          await createNotification({
-            userId: target,
-            type: "sla_breach",
-            title: "SLA dépassé",
-            message: `Email de ${b.sender} sans réponse depuis ${b.elapsed} min ouvrées (objectif ${targetMin} min)`,
-            emailId: b.id,
-          });
-        } catch {}
+      // On ne marque notified_at QUE pour les breaches réellement notifiés
+      // (au moins un destinataire). Un mail non assigné sans membre reste donc
+      // non notifié et sera retenté au prochain tick (sans spam : 0 envoi).
+      const notifiedIds: number[] = [];
+      for (const b of toNotify) {
+        const recipients = b.assignedTo ? [b.assignedTo] : await getMailboxMembers();
+        if (recipients.length === 0) continue;
+        let sentAny = false;
+        for (const userId of recipients) {
+          try {
+            await createNotification({
+              userId,
+              type: "sla_breach",
+              title: "SLA dépassé",
+              message: `Email de ${b.sender} sans réponse depuis ${b.elapsed} min ouvrées (objectif ${targetMin} min)`,
+              emailId: b.id,
+            });
+            sentAny = true;
+          } catch {}
+        }
+        if (sentAny) notifiedIds.push(b.id);
       }
-    }
 
-    // Mark notified
-    if (newRows.length > 0) {
-      await supabaseAdmin
-        .from("sla_breaches")
-        .update({ notified_at: now.toISOString() })
-        .in("email_id", newRows.map((r) => r.email_id))
-        .is("notified_at", null);
+      if (notifiedIds.length > 0) {
+        await supabaseAdmin
+          .from("sla_breaches")
+          .update({ notified_at: now.toISOString() })
+          .in("email_id", notifiedIds)
+          .is("notified_at", null);
+      }
     }
   }
 
@@ -198,15 +240,24 @@ async function evaluatePolicy(policy: any) {
   );
 
   if (openIds.length > 0) {
-    // An email is considered "handled" when it is archived or deleted.
-    // We treat statuses 'archived' and 'supprime' as resolved.
+    // Un mail est « résolu » pour le SLA dès qu'il est archivé/supprimé OU
+    // qu'il a reçu une réponse (handled_at posé à l'envoi d'une réponse, d'un
+    // transfert, ou via « marquer traité »).
+    const resolveCols: string = handledOn ? "id, status, handled_at" : "id, status";
     const { data: handled } = await supabaseAdmin
       .from("emails")
-      .select("id, status")
+      .select(resolveCols)
       .in("id", openIds)
-      .in("status", ["archived", "supprime"]);
+      .returns<any[]>();
 
-    const handledIds = (handled || []).map((r: any) => r.id);
+    const handledIds = (handled || [])
+      .filter(
+        (r: any) =>
+          r.status === "archived" ||
+          r.status === "supprime" ||
+          (handledOn && !!r.handled_at),
+      )
+      .map((r: any) => r.id);
     if (handledIds.length > 0) {
       await supabaseAdmin
         .from("sla_breaches")
