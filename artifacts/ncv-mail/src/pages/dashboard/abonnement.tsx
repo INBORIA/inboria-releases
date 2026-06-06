@@ -203,7 +203,7 @@ export default function Abonnement() {
           </Link>
         </div>
         <div className="mb-6 text-center max-w-2xl mx-auto">
-          <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
+          <h1 className="text-[16px] font-semibold text-white tracking-tight mb-1.5">
             {t("subscription.title")}
           </h1>
           <p className="text-[12px] text-[#b8c5d6]">

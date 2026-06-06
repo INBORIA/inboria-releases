@@ -7,15 +7,9 @@ import {
   AlertCircle,
   Archive,
   BellOff,
-  Briefcase,
-  Building2,
   CheckSquare,
-  ChevronDown,
-  ChevronRight,
   ChevronsDownUp,
   ChevronsUpDown,
-  Cloud,
-  Database,
   FolderKanban,
   Inbox,
   MailCheck,
@@ -23,8 +17,6 @@ import {
   RefreshCw,
   Search,
   ShieldAlert,
-  SlidersHorizontal,
-  Tags,
   Trash2,
   Users,
   X,
@@ -37,12 +29,10 @@ import {
   useGetTeamAssignments,
   useGetProfile,
   useListProjects,
-  useListIntegrations,
   useSendEmail,
 } from "@workspace/api-client-react";
 import type {
   PaginatedEmails,
-  Integration,
   SendEmailBody,
   SendEmail200,
   Project,
@@ -55,8 +45,6 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
-import { CalendarDays, Check, Mail, MailOpen } from "lucide-react";
-import type { DateFilterValue, ReadFilterValue } from "@/lib/format-mail-date";
 import { PanelRight, PanelRightClose } from "lucide-react";
 import {
   Select,
@@ -96,8 +84,6 @@ type ComposeConnection = {
   consecutive_failures?: number | null;
   last_error_message?: string | null;
 };
-
-type CrmFilter = "hubspot" | "pipedrive" | "salesforce" | "odoo" | null;
 
 type CurrentTab =
   | "inbox"
@@ -170,23 +156,6 @@ function MailPageHeaderImpl({
     const q = (searchInput || "").trim();
     navigate(q ? `/dashboard?q=${encodeURIComponent(q)}` : "/dashboard");
   }, [searchInput, navigate]);
-
-  // La ligne « Filtres / Catégories » (date, lu/non-lu, catégories) ne porte que
-  // sur des listes d'emails. Sur les pages non-email (contacts, agenda, bilan,
-  // classement, templates, règles, projets…) elle n'agirait sur rien → on la
-  // masque pour éviter toute confusion.
-  const EMAIL_FILTER_TABS: CurrentTab[] = [
-    "inbox",
-    "envoyes",
-    "programmes",
-    "dossiers",
-    "indesirables",
-    "corbeille",
-    "reportes",
-    "relances",
-    "archives",
-  ];
-  const showFilters = EMAIL_FILTER_TABS.includes(currentTab);
 
   // ─── Compose / Sync ──────────────────────────────────────────────────────
   const [isComposeOpen, setIsComposeOpen] = useState(false);
@@ -398,42 +367,6 @@ function MailPageHeaderImpl({
       selectedAccountId,
     );
   }, [selectedAccountId, profileTyped?.id]);
-
-  // ─── Filtres ──────────────────────────────────────────────────────────────
-  const [filterPriority, setFilterPriority] = useState<string>("all");
-  const [filterImportance, setFilterImportance] = useState<"all" | "important">("all");
-  const [filterDate, setFilterDate] = useState<DateFilterValue>("all");
-  const [filterRead, setFilterRead] = useState<ReadFilterValue>("all");
-  const [crmFilter, setCrmFilter] = useState<CrmFilter>(null);
-  const [categoriesCollapsed, setCategoriesCollapsed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("ncv.categoriesCollapsed") === "1";
-  });
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        "ncv.categoriesCollapsed",
-        categoriesCollapsed ? "1" : "0",
-      );
-    }
-  }, [categoriesCollapsed]);
-
-  const { data: integrationsList = [] } = useListIntegrations();
-  const integrations = (integrationsList as Integration[]) || [];
-  const isEnabled = (i: Integration): boolean =>
-    Boolean((i as Integration & { enabled?: boolean }).enabled);
-  const hasHubspot = integrations.some(
-    (i) => String(i.provider) === "hubspot" && isEnabled(i),
-  );
-  const hasPipedrive = integrations.some(
-    (i) => String(i.provider) === "pipedrive" && isEnabled(i),
-  );
-  const hasSalesforce = integrations.some(
-    (i) => String(i.provider) === "salesforce" && isEnabled(i),
-  );
-  const hasOdoo = integrations.some(
-    (i) => String(i.provider) === "odoo" && isEnabled(i),
-  );
 
   // ─── Helpers UI ───────────────────────────────────────────────────────────
   const tabBaseClass =
@@ -761,275 +694,6 @@ function MailPageHeaderImpl({
 
       </div>
 
-      {/* Bloc C — Filtres / Catégories (listes d'emails uniquement) */}
-      {showFilters && (
-      <div
-        className="flex flex-nowrap md:flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [&>*]:shrink-0"
-        data-testid="row-filters-unified"
-      >
-        {(() => {
-          const activeCount =
-            (filterPriority !== "all" ? 1 : 0) +
-            (filterImportance !== "all" ? 1 : 0) +
-            (crmFilter ? 1 : 0);
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className={`inline-flex items-center gap-1.5 h-8 px-3 text-[12px] rounded-md font-medium border transition-colors ${
-                    activeCount > 0
-                      ? "bg-primary/15 text-primary border-primary/20"
-                      : "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
-                  }`}
-                  data-testid="btn-filters-unified"
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <span>{t("inbox.filtersLabel", "Filtres")}</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64 bg-card border-border">
-                <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
-                  {t("inbox.importanceLabel", "Affichage")}
-                </DropdownMenuLabel>
-                <DropdownMenuRadioGroup
-                  value={filterImportance}
-                  onValueChange={(v) => setFilterImportance(v as "all" | "important")}
-                >
-                  <DropdownMenuRadioItem value="all" className="text-[12px]">
-                    {t("inbox.importance.all", "Tous les mails")}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="important" className="text-[12px]">
-                    {t("inbox.importance.important", "Importants")}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
-                  {t("inbox.priorityLabel", "Priorité")}
-                </DropdownMenuLabel>
-                <DropdownMenuRadioGroup
-                  value={filterPriority}
-                  onValueChange={setFilterPriority}
-                >
-                  <DropdownMenuRadioItem value="all" className="text-[12px]">
-                    {t("inbox.priorities.all", "Toutes")}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="urgent" className="text-[12px]">
-                    {t("inbox.priorities.urgent")}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="moyen" className="text-[12px]">
-                    {t("inbox.priorities.medium")}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="faible" className="text-[12px]">
-                    {t("inbox.priorities.low")}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-
-                {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
-                      CRM
-                    </DropdownMenuLabel>
-                    {hasHubspot && (
-                      <DropdownMenuCheckboxItem
-                        checked={crmFilter === "hubspot"}
-                        onCheckedChange={(v) => setCrmFilter(v ? "hubspot" : null)}
-                        className="text-[12px]"
-                      >
-                        <Building2 className="w-3 h-3 mr-1.5" />
-                        HubSpot
-                      </DropdownMenuCheckboxItem>
-                    )}
-                    {hasPipedrive && (
-                      <DropdownMenuCheckboxItem
-                        checked={crmFilter === "pipedrive"}
-                        onCheckedChange={(v) => setCrmFilter(v ? "pipedrive" : null)}
-                        className="text-[12px]"
-                      >
-                        <Briefcase className="w-3 h-3 mr-1.5" />
-                        Pipedrive
-                      </DropdownMenuCheckboxItem>
-                    )}
-                    {hasSalesforce && (
-                      <DropdownMenuCheckboxItem
-                        checked={crmFilter === "salesforce"}
-                        onCheckedChange={(v) => setCrmFilter(v ? "salesforce" : null)}
-                        className="text-[12px]"
-                      >
-                        <Cloud className="w-3 h-3 mr-1.5" />
-                        Salesforce
-                      </DropdownMenuCheckboxItem>
-                    )}
-                    {hasOdoo && (
-                      <DropdownMenuCheckboxItem
-                        checked={crmFilter === "odoo"}
-                        onCheckedChange={(v) => setCrmFilter(v ? "odoo" : null)}
-                        className="text-[12px]"
-                      >
-                        <Database className="w-3 h-3 mr-1.5" />
-                        Odoo
-                      </DropdownMenuCheckboxItem>
-                    )}
-                  </>
-                )}
-
-                {activeCount > 0 && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onSelect={() => {
-                        setFilterPriority("all");
-                        setFilterImportance("all");
-                        setCrmFilter(null);
-                      }}
-                      className="text-[12px] text-[#b8c5d6]"
-                    >
-                      <X className="w-3 h-3 mr-1.5" />
-                      {t("inbox.filtersReset", "Réinitialiser les filtres")}
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        })()}
-
-        <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
-          {filterImportance === "important"
-            ? t("inbox.importance.important", "Importants")
-            : t("inbox.importance.all", "Tous")}
-        </span>
-        <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
-          {filterPriority === "urgent"
-            ? t("inbox.priorities.urgent")
-            : filterPriority === "moyen"
-              ? t("inbox.priorities.medium")
-              : filterPriority === "faible"
-                ? t("inbox.priorities.low")
-                : t("inbox.priorities.all", "Toutes")}
-        </span>
-
-        {/* Filtre Date — Outlook style (état local, wire-up futur) */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              data-testid="mailheader-filter-date"
-              className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
-                filterDate !== "all"
-                  ? "bg-primary/15 text-primary border-primary/20"
-                  : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
-              }`}
-            >
-              <CalendarDays className="w-3 h-3" />
-              {filterDate === "today" ? t("inbox.date.today", "Aujourd'hui")
-                : filterDate === "yesterday" ? t("inbox.date.yesterday", "Hier")
-                : filterDate === "last7" ? t("inbox.date.last7", "7 derniers jours")
-                : filterDate === "last30" ? t("inbox.date.last30", "30 derniers jours")
-                : filterDate === "thisMonth" ? t("inbox.date.thisMonth", "Ce mois-ci")
-                : t("inbox.date.all", "Toutes les dates")}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-[180px]">
-            {([
-              ["all", t("inbox.date.all", "Toutes les dates")],
-              ["today", t("inbox.date.today", "Aujourd'hui")],
-              ["yesterday", t("inbox.date.yesterday", "Hier")],
-              ["last7", t("inbox.date.last7", "7 derniers jours")],
-              ["last30", t("inbox.date.last30", "30 derniers jours")],
-              ["thisMonth", t("inbox.date.thisMonth", "Ce mois-ci")],
-            ] as [DateFilterValue, string][]).map(([v, label]) => (
-              <DropdownMenuItem key={v} onClick={() => setFilterDate(v)} className={filterDate === v ? "text-primary" : ""}>
-                {filterDate === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
-                {label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Filtre Lu / Non lus (état local, wire-up futur) */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              data-testid="mailheader-filter-read"
-              className={`inline-flex items-center gap-1.5 h-7 px-2 text-[11px] rounded-md border transition-colors ${
-                filterRead !== "all"
-                  ? "bg-primary/15 text-primary border-primary/20"
-                  : "bg-transparent text-[#b8c5d6] border-border/60 hover:bg-white/[0.04]"
-              }`}
-            >
-              {filterRead === "unread" ? <Mail className="w-3 h-3" /> : <MailOpen className="w-3 h-3" />}
-              {filterRead === "unread" ? t("inbox.read.unread", "Non lus")
-                : filterRead === "read" ? t("inbox.read.read", "Lus")
-                : t("inbox.read.all", "Tous")}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-[160px]">
-            {([
-              ["all", t("inbox.read.all", "Tous")],
-              ["unread", t("inbox.read.unread", "Non lus")],
-              ["read", t("inbox.read.read", "Lus")],
-            ] as [ReadFilterValue, string][]).map(([v, label]) => (
-              <DropdownMenuItem key={v} onClick={() => setFilterRead(v)} className={filterRead === v ? "text-primary" : ""}>
-                {filterRead === v ? <Check className="w-3 h-3 mr-2" /> : <span className="w-3 h-3 mr-2" />}
-                {label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <button
-          type="button"
-          onClick={() => setCategoriesCollapsed((v) => !v)}
-          className={`inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md font-medium border transition-colors ${
-            categoriesCollapsed
-              ? "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
-              : "bg-primary/15 text-primary border-primary/20"
-          }`}
-          title={
-            categoriesCollapsed
-              ? t("common.expand", { defaultValue: "Afficher les catégories" })
-              : t("common.collapse", { defaultValue: "Masquer les catégories" })
-          }
-        >
-          <Tags className="w-3.5 h-3.5" />
-          <span>{t("inbox.category")}</span>
-          {categoriesCollapsed ? (
-            <ChevronRight className="w-3 h-3" />
-          ) : (
-            <ChevronDown className="w-3 h-3" />
-          )}
-        </button>
-
-        {crmFilter && (
-          <button
-            onClick={() => setCrmFilter(null)}
-            className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
-          >
-            {crmFilter === "hubspot" ? (
-              <Building2 className="w-3 h-3" />
-            ) : crmFilter === "pipedrive" ? (
-              <Briefcase className="w-3 h-3" />
-            ) : crmFilter === "salesforce" ? (
-              <Cloud className="w-3 h-3" />
-            ) : (
-              <Database className="w-3 h-3" />
-            )}
-            {crmFilter === "hubspot"
-              ? "HubSpot"
-              : crmFilter === "pipedrive"
-                ? "Pipedrive"
-                : crmFilter === "salesforce"
-                  ? "Salesforce"
-                  : "Odoo"}
-            <X className="w-3 h-3" />
-          </button>
-        )}
-      </div>
-      )}
       </>
       )}
     </div>

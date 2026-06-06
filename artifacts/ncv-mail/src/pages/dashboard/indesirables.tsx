@@ -559,7 +559,7 @@ export default function Indesirables() {
         </div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-baseline gap-3">
-            <h1 className="text-[18px] font-semibold text-white">{t("junk.title")}</h1>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("junk.title")}</h1>
             <span className="text-[12px] text-[#b8c5d6]">
               {t("junk.count", { count: emails.length })}
             </span>

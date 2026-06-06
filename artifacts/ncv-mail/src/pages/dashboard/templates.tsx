@@ -133,7 +133,7 @@ export default function Templates() {
         <BackToInboxButton iconOnly />
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold flex items-center gap-2">
+            <h1 className="text-[16px] font-semibold tracking-tight flex items-center gap-2">
               <FileText className="h-6 w-6" /> {t("templates.title")}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">{t("templates.subtitle")}</p>

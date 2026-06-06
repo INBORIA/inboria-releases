@@ -312,7 +312,7 @@ export default function Equipe() {
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+            <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <Building2 className="h-5 w-5 text-primary" />
               {(org as any)?.name}
             </h1>
