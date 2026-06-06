@@ -530,6 +530,39 @@ html[data-ncv-theme="light"] [data-context-menu] .text-red-400\/80 { color: #dc2
 html[data-ncv-theme="light"] [data-context-menu] .hover\:text-red-400:hover { color: #b91c1c !important; }
 html[data-ncv-theme="light"] [data-context-menu] .hover\:bg-red-500\/\[0\.08\]:hover { background-color: rgba(220, 38, 38, 0.08) !important; }
 
+/* ───────────────────────────────────────────────────────────────
+ * Couleurs sémantiques (succès/vert & danger/rouge) — lisibilité mode clair
+ * Les teintes pâles (emerald-300/400, green-300/400, red-300/400 + opacités)
+ * manquent de contraste sur fond blanc. On les assombrit GLOBALEMENT (niveau
+ * AA) pour tout le dashboard : badge « Traité par », bouton « Supprimer »,
+ * liens succès, badges d'ouverture, etc. Le mode sombre n'est pas touché.
+ * ─────────────────────────────────────────────────────────────── */
+html[data-ncv-theme="light"] .text-emerald-300,
+html[data-ncv-theme="light"] .text-emerald-400,
+html[data-ncv-theme="light"] .text-emerald-500,
+html[data-ncv-theme="light"] .text-green-300,
+html[data-ncv-theme="light"] .text-green-400,
+html[data-ncv-theme="light"] .text-green-500 { color: #047857 !important; }
+html[data-ncv-theme="light"] .hover\:text-emerald-300:hover,
+html[data-ncv-theme="light"] .hover\:text-emerald-400:hover,
+html[data-ncv-theme="light"] .hover\:text-green-300:hover,
+html[data-ncv-theme="light"] .hover\:text-green-400:hover { color: #065f46 !important; }
+/* Le badge vert (« Traité par », ouvertures) garde un fond/contour vert clair lisible */
+html[data-ncv-theme="light"] .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.10) !important; }
+html[data-ncv-theme="light"] .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.40) !important; }
+
+/* Danger / Supprimer — rouge pâle (red-300/400 + opacités) -> rouge AA */
+html[data-ncv-theme="light"] .text-red-300,
+html[data-ncv-theme="light"] .text-red-400,
+html[data-ncv-theme="light"] .text-red-400\/70,
+html[data-ncv-theme="light"] .text-red-400\/80,
+html[data-ncv-theme="light"] .text-red-500 { color: #dc2626 !important; }
+html[data-ncv-theme="light"] .hover\:text-red-300:hover,
+html[data-ncv-theme="light"] .hover\:text-red-400:hover,
+html[data-ncv-theme="light"] .hover\:text-red-500:hover { color: #b91c1c !important; }
+html[data-ncv-theme="light"] .border-red-500\/30,
+html[data-ncv-theme="light"] .border-red-400\/30 { border-color: rgba(220, 38, 38, 0.40) !important; }
+
 /* Étape 6ter — Panneau d'activité Autopilot (« EN VEILLE / Triés / Brouillons / Tâches / RDV »).
    Utilise bg-[#0b0d12] + de nombreuses classes text-white/X non couvertes. */
 html[data-ncv-theme="light"] [data-inboria-activity-panel],

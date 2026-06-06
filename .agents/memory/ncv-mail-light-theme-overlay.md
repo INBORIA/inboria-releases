@@ -52,6 +52,16 @@ not by tokenizing everything. New code adds hexes the overlay never learned abou
 - Radix `AlertDialog` does NOT close on outside-click (only Escape + its buttons),
   so an unreadable cancel button feels like "can't close it".
 
+## Semantic colors (green success / red danger) are pale → fixed by a global remap
+Tailwind `text-emerald-300/400`, `text-green-*`, `text-red-300/400` (+ opacity
+variants like `text-red-400/70`) are too pale on the light surfaces → low contrast
+(e.g. "Traité par …" badge in emerald, "Supprimer" button in red). There is now a
+GLOBAL block in `index.css` under `html[data-ncv-theme="light"]` (right after the
+context-menu red rules) that darkens these to AA: greens → `#047857` (hover
+`#065f46`), reds → `#dc2626` (hover `#b91c1c`), plus emerald/red badge bg/border
+tweaks. Applies app-wide incl. portals; dark mode untouched. New pale green/red
+utility classes outside this list still need adding here (or use tokens).
+
 ## Gotcha: shadcn `outline` variant is invisible in light mode
 The `outline` Button variant (components/ui/button.tsx) has NO own text/bg color — it
 inherits the surrounding text color and only sets a border via `--button-outline`. In
