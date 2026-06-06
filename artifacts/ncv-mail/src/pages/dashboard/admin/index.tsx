@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useGetProfile } from "@workspace/api-client-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -153,6 +154,7 @@ export default function AdminIndex() {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
+        <BackToInboxButton iconOnly />
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
           <h1 className="text-xl font-bold text-white">Admin</h1>
