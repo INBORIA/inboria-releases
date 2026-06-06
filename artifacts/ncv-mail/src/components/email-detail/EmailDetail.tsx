@@ -214,7 +214,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
   );
 }
 
-export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
+export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -1554,15 +1554,42 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim() || sendLockedByOther}
                       title={sendLockedByOther ? t("inbox.draftSomeoneSends", "{{name}} va l'envoyer", { name: draftClaimerName }) : undefined}
                       onClick={() => {
-                        onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments, replyConnectionId || undefined, replyProjectId || undefined);
-                        if (sharedDraft.active) sharedDraft.remove();
-                        setReplyText("");
-                        setReplyTo("");
-                        setReplySubject("");
-                        setReplyAttachments([]);
-                        setReplyConnectionId("");
-                        setReplyProjectId("");
-                        setReplyOpen(false);
+                        const wasShared = sharedDraft.active;
+                        // Id capturé maintenant : la suppression différée (~10s) doit
+                        // viser CE brouillon même si l'état du hook change entre-temps.
+                        const draftIdAtClick = sharedDraft.draftId;
+                        const resetComposer = () => {
+                          setReplyText("");
+                          setReplyTo("");
+                          setReplySubject("");
+                          setReplyAttachments([]);
+                          setReplyConnectionId("");
+                          setReplyProjectId("");
+                          setReplyOpen(false);
+                        };
+                        onSendReply(
+                          replyTo,
+                          replySubject,
+                          replyText,
+                          email.id,
+                          replyAttachments,
+                          replyConnectionId || undefined,
+                          replyProjectId || undefined,
+                          undefined,
+                          // Suppression sécurisée : ne retirer le brouillon partagé
+                          // qu'une fois l'envoi confirmé (jamais au simple clic).
+                          wasShared
+                            ? () => {
+                                sharedDraft.removeById(draftIdAtClick);
+                                resetComposer();
+                              }
+                            : undefined,
+                        );
+                        // Brouillon partagé : on NE vide PAS les champs au clic, sinon
+                        // l'effet de sync pousserait des valeurs vides vers les autres
+                        // éditeurs et l'annulation/échec laisserait un brouillon amputé.
+                        // On réinitialise uniquement à la confirmation d'envoi (onSent).
+                        if (!wasShared) resetComposer();
                       }}
                     >
                       <Send className="w-3 h-3" />

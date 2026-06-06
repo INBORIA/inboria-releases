@@ -33,10 +33,23 @@ re-broadcast/re-PATCH.
 (creator, or sole editor). `collabInitialBodyRef` in EmailDetail MUST be reset on email change,
 else draft B can be re-seeded with draft A's body (content cross-contamination).
 
-**Deferred to "étape 3" (finitions envoi):** send currently calls `onSendReply` then
-`sharedDraft.remove()` immediately (fire-and-forget). On send failure the shared draft is
-destroyed for all peers. Make remove conditional on send success when the send contract
-exposes a promise.
+**Remote-selection color MUST be hex, not hsl:** y-prosemirror builds the remote-selection
+decoration as `background-color: ${user.color}70` (appends an 8-digit-hex alpha). An `hsl(...)`
+color produces invalid CSS (`hsl(...)70`) so distant selections silently DON'T render (carets
+still work — they use the color verbatim). `colorForUser` therefore returns `#rrggbb`.
+**Why:** caret worked but selection highlight was invisible; root cause was the color format.
+
+**Safe deletion of a shared draft on send (resolved):** never `remove()` on click. The send
+contract (`onSendReply`/`handleSendReply`) takes an optional `onSent` callback fired only in the
+send mutation's `onSuccess` (i.e. after the ~10s undo window AND server confirmation). On undo
+or error the draft is preserved. Two non-obvious requirements:
+- For a SHARED draft do NOT clear/close the composer on click — the to/subject sync effect would
+  push EMPTY values to peers and leave an amputated draft on undo/error. Clear only inside `onSent`.
+  (Solo path still resets immediately — no draft to corrupt.)
+- Capture the draft id at click and delete via `removeById(id)` (state-independent), NOT `remove()`
+  which reads mutable hook state — if the composer is closed/deactivated during the undo window,
+  `draftId` becomes null and the backend DELETE + peer `sent` broadcast are lost (stale draft +
+  duplicate-send risk). `removeById` always DELETEs the captured id; peer broadcast is best-effort.
 
 CSS for live cursors: `.collaboration-cursor__caret` / `__label` in `src/index.css`; the
 TipTap editor carries class `signature-editor collab-editor` so it inherits list styles.

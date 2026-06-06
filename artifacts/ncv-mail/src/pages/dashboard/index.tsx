@@ -5213,7 +5213,7 @@ export default function Dashboard() {
     return;
   };
 
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
       to,
@@ -5237,6 +5237,9 @@ export default function Dashboard() {
         {
           onSuccess: (resp: any) => {
             invalidateAll();
+            // Suppression sécurisée : on ne retire le brouillon partagé qu'ici,
+            // une fois l'envoi réellement confirmé (jamais au simple clic).
+            onSent?.();
             if (resp?.appointmentId) {
               toast({ title: t("inbox.emailSent"), description: t("inbox.appointmentProposed", "Rendez-vous proposé créé dans l'agenda") });
             } else {

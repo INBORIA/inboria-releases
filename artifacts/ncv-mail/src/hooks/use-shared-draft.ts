@@ -177,26 +177,36 @@ export function useSharedDraft({
     lastSyncedRef.current = "";
   }, []);
 
-  const remove = useCallback(async () => {
-    const id = draftId;
-    // Prévient les autres éditeurs que le mail vient d'être envoyé (fermeture
-    // automatique de leur composer -> anti double-envoi).
-    channelRef.current
-      ?.send({
-        type: "broadcast",
-        event: "sent",
-        payload: { by: currentUserId, name: myInfoRef.current.name },
-      })
-      .catch(() => {});
-    deactivate();
-    if (id) {
-      try {
-        await authJson(`api/drafts/${id}`, { method: "DELETE" });
-      } catch {
-        /* noop */
+  // Supprime un brouillon par son id EXPLICITE (capturé au clic d'envoi), pour que
+  // le nettoyage post-envoi (différé de ~10s via l'anti-envoi) reste fiable même si
+  // l'état du hook a changé entre-temps (composer fermé, brouillon désactivé, etc.).
+  const removeById = useCallback(
+    async (id: string | null) => {
+      // Prévient les autres éditeurs que le mail vient d'être envoyé (fermeture
+      // automatique de leur composer -> anti double-envoi). Best-effort : si le
+      // canal a déjà été démonté, la suppression DB ci-dessous reste garantie.
+      channelRef.current
+        ?.send({
+          type: "broadcast",
+          event: "sent",
+          payload: { by: currentUserId, name: myInfoRef.current.name },
+        })
+        .catch(() => {});
+      deactivate();
+      if (id) {
+        try {
+          await authJson(`api/drafts/${id}`, { method: "DELETE" });
+        } catch {
+          /* noop */
+        }
       }
-    }
-  }, [draftId, deactivate, currentUserId]);
+    },
+    [deactivate, currentUserId],
+  );
+
+  const remove = useCallback(async () => {
+    await removeById(draftId);
+  }, [draftId, removeById]);
 
   // T005 — « C'est moi qui envoie » : revendique l'envoi (verrouille les autres).
   const claimSend = useCallback(async () => {
@@ -352,6 +362,7 @@ export function useSharedDraft({
     deactivate,
     sync,
     remove,
+    removeById,
     claimSend,
     releaseSend,
   };
