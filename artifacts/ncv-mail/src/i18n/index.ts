@@ -97,9 +97,23 @@ i18n
     },
   });
 
+// Langues à écriture droite-à-gauche (arabe, hébreu, ourdou). On applique
+// dynamiquement `dir="rtl"` sur <html> pour que toute l'UI (barre latérale,
+// listes, alignements, classes Tailwind `rtl:`) bascule correctement.
+const RTL_LNGS = new Set(["ar", "he", "ur"]);
+
+function applyDocumentDirection(lng: string): void {
+  if (typeof document === "undefined") return;
+  const code = normalizeCode(lng);
+  const dir = RTL_LNGS.has(code) ? "rtl" : "ltr";
+  document.documentElement.setAttribute("dir", dir);
+  document.documentElement.setAttribute("lang", code);
+}
+
 // Charge la langue détectée au boot (si ≠ fr) puis toute langue choisie ensuite.
 i18n.on("languageChanged", (lng) => {
   void ensureLanguageLoaded(lng);
+  applyDocumentDirection(lng);
 });
 // Au boot, on lit d'abord la préférence stockée brute (clé « inboria-lang ») :
 // elle conserve le code complet « zh-TW » alors que i18n.resolvedLanguage peut
@@ -113,5 +127,6 @@ try {
   /* localStorage indisponible (mode privé) → on garde la langue i18next */
 }
 void ensureLanguageLoaded(bootLng);
+applyDocumentDirection(bootLng);
 
 export default i18n;

@@ -19,10 +19,6 @@ pnpm dev # Starts frontend and backend
 - `MICROSOFT_CLIENT_SECRET`
 - `PADDLE_SECRET_KEY`
 - `PADDLE_CLIENT_TOKEN`
-- `SLACK_CLIENT_ID`
-- `SLACK_CLIENT_SECRET`
-- `NOTION_CLIENT_ID`
-- `NOTION_CLIENT_SECRET`
 
 ## Stack
 
@@ -63,8 +59,8 @@ pnpm dev # Starts frontend and backend
 - Multi-provider email integration (Gmail, Outlook, IMAP).
 - AI-driven email drafting, reply suggestions, and follow-up management.
 - Subscription management via Paddle.
-- Integrations with Slack (notifications) and Notion (task creation).
-- CRM integrations (HubSpot, Pipedrive) for Pro/Plus plans.
+- Internal notifications and task creation (Slack/Notion integrations were removed in April 2026 — now fully internal, plus API keys/webhooks for automation).
+- CRM integrations (HubSpot, Pipedrive, Salesforce, Odoo) reserved for Pro/Business plans.
 - Organizational features: shared mailboxes, team management, email assignment, internal comments.
 - Contact 360° view with Inboria Memory (semantic search, facts, episodes, signals).
 - Inboria Expert Suggestion for shared mailboxes.

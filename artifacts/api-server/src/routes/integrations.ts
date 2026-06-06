@@ -192,7 +192,12 @@ router.get("/integrations/hubspot/connect", requireAuth, async (req, res): Promi
     res.status(400).json({ error: "HubSpot integration not configured" });
     return;
   }
-  // CRM accessible a tous les plans (Free, Solo, Pro, Business)
+  // CRM réservé aux plans Pro/Business (parité Odoo).
+  const isPro = await requireProPlan(req.userId!);
+  if (!isPro) {
+    res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+    return;
+  }
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: HUBSPOT_CLIENT_ID,
@@ -677,7 +682,12 @@ router.get("/integrations/pipedrive/connect", requireAuth, async (req, res): Pro
     res.status(400).json({ error: "Pipedrive integration not configured" });
     return;
   }
-  // CRM accessible a tous les plans (Free, Solo, Pro, Business)
+  // CRM réservé aux plans Pro/Business (parité Odoo).
+  const isPro = await requireProPlan(req.userId!);
+  if (!isPro) {
+    res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+    return;
+  }
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: PIPEDRIVE_CLIENT_ID,
@@ -1059,8 +1069,12 @@ router.get("/integrations/salesforce/connect", requireAuth, async (req, res): Pr
     res.status(400).json({ error: "Salesforce integration not configured" });
     return;
   }
-  // CRM accessible a tous les plans (parité HubSpot/Pipedrive : trancher
-  // côté Salesforce ne pénaliserait pas les ETI cible).
+  // CRM réservé aux plans Pro/Business (parité Odoo/HubSpot/Pipedrive).
+  const isPro = await requireProPlan(req.userId!);
+  if (!isPro) {
+    res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+    return;
+  }
   const sandbox = String(req.query.sandbox || "").toLowerCase() === "true";
   const state = createSignedStateWithFlags(req.userId!, { sandbox });
   const params = new URLSearchParams({
