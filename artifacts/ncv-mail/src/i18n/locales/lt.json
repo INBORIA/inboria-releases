@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Bendras juodraštis",
     "sharedDraftOn": "Bendras juodraštis įjungtas",
+    "sharedDraftSentByOther": "{{name}} išsiuntė šį el. laišką.",
     "draftEditing": "dabar redaguoja",
     "draftSaving": "Išsaugoma…",
     "draftSaved": "Išsaugota",

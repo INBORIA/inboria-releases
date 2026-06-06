@@ -536,6 +536,7 @@
     },
     "sharedDraft": "共享草稿",
     "sharedDraftOn": "共享草稿已开启",
+    "sharedDraftSentByOther": "{{name}} 已发送此邮件。",
     "draftEditing": "正在编辑",
     "draftSaving": "保存中…",
     "draftSaved": "已保存",

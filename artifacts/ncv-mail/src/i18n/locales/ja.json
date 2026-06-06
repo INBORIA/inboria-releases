@@ -536,6 +536,7 @@
     },
     "sharedDraft": "共有ドラフト",
     "sharedDraftOn": "共有ドラフトがオン",
+    "sharedDraftSentByOther": "{{name}} さんがこのメールを送信しました。",
     "draftEditing": "編集中です",
     "draftSaving": "保存中…",
     "draftSaved": "保存されました",

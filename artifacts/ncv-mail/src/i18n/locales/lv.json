@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Kopīgais melnraksts",
     "sharedDraftOn": "Kopīgais melnraksts ieslēgts",
+    "sharedDraftSentByOther": "{{name}} nosūtīja šo e-pastu.",
     "draftEditing": "redaktē tagad",
     "draftSaving": "Saglabā…",
     "draftSaved": "Saglabāts",

@@ -536,6 +536,7 @@
     },
     "sharedDraft": "공유 초안",
     "sharedDraftOn": "공유 초안 활성화",
+    "sharedDraftSentByOther": "{{name}}님이 이 이메일을 보냈습니다.",
     "draftEditing": "현재 편집 중",
     "draftSaving": "저장 중…",
     "draftSaved": "저장됨",

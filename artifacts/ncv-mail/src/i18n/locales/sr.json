@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Делени нацрт",
     "sharedDraftOn": "Делени нацрт укључен",
+    "sharedDraftSentByOther": "{{name}} је послао/ла ову е-пошту.",
     "draftEditing": "молимо уређују",
     "draftSaving": "Сачувам…",
     "draftSaved": "Сачувано",

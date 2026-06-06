@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Dréacht comhoibrithe",
     "sharedDraftOn": "Dréacht comhoibrithe ar",
+    "sharedDraftSentByOther": "Sheol {{name}} an ríomhphost seo.",
     "draftEditing": "ag eagarthóireacht anois",
     "draftSaving": "Ag sábháil…",
     "draftSaved": "Sábháilte",

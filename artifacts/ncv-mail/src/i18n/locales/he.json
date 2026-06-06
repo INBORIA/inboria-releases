@@ -536,6 +536,7 @@
     },
     "sharedDraft": "טיוטה משותפת",
     "sharedDraftOn": "טיוטה משותפת פעילה",
+    "sharedDraftSentByOther": "{{name}} שלח/ה את הדוא״ל הזה.",
     "draftEditing": "עורכים עכשיו",
     "draftSaving": "שומר…",
     "draftSaved": "נשמרה",

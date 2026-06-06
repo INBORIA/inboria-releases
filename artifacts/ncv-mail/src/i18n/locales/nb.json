@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Delt utkast",
     "sharedDraftOn": "Delt utkast aktivert",
+    "sharedDraftSentByOther": "{{name}} sendte denne e-posten.",
     "draftEditing": "redigerer nå",
     "draftSaving": "Lagrer…",
     "draftSaved": "Lagt til",

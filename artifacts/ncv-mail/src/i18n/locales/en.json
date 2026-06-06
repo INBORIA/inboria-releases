@@ -552,6 +552,7 @@
     },
     "sharedDraft": "Shared draft",
     "sharedDraftOn": "Shared draft on",
+    "sharedDraftSentByOther": "{{name}} sent this email.",
     "draftEditing": "editing now",
     "draftSaving": "Saving…",
     "draftSaved": "Saved",

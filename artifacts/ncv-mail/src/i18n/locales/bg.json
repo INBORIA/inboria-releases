@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Споделен чернови",
     "sharedDraftOn": "Споделен чернови включен",
+    "sharedDraftSentByOther": "{{name}} изпрати този имейл.",
     "draftEditing": "редактира в момента",
     "draftSaving": "Записване…",
     "draftSaved": "Записано",

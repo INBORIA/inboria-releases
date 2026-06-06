@@ -552,6 +552,7 @@
     },
     "sharedDraft": "Brouillon partagé",
     "sharedDraftOn": "Brouillon partagé activé",
+    "sharedDraftSentByOther": "{{name}} a envoyé ce mail.",
     "draftEditing": "édite(nt) en ce moment",
     "draftSaving": "Enregistrement…",
     "draftSaved": "Enregistré",

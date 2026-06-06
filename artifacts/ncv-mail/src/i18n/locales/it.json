@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Bozza condivisa",
     "sharedDraftOn": "Bozza condivisa attivata",
+    "sharedDraftSentByOther": "{{name}} ha inviato questa email.",
     "draftEditing": "sta modificando ora",
     "draftSaving": "Salvataggio…",
     "draftSaved": "Salvato",

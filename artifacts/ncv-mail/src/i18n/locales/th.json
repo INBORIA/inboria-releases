@@ -536,6 +536,7 @@
     },
     "sharedDraft": "ร่างที่แชร์",
     "sharedDraftOn": "ร่างที่แชร์เปิดใช้งาน",
+    "sharedDraftSentByOther": "{{name}} ได้ส่งอีเมลนี้แล้ว",
     "draftEditing": "กำลังแก้ไขอยู่",
     "draftSaving": "กำลังบันทึก…",
     "draftSaved": "บันทึกแล้ว",

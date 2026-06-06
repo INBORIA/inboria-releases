@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Borrador compartit",
     "sharedDraftOn": "Borrador compartit activat",
+    "sharedDraftSentByOther": "{{name}} ha enviat aquest correu.",
     "draftEditing": "editant ara",
     "draftSaving": "Desant…",
     "draftSaved": "Desat",

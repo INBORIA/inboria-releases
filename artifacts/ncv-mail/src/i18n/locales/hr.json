@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Zajednički nacrt",
     "sharedDraftOn": "Zajednički nacrt uključen",
+    "sharedDraftSentByOther": "{{name}} je poslao/la ovu e-poštu.",
     "draftEditing": "uređuju sada",
     "draftSaving": "Spremam…",
     "draftSaved": "Spremjeno",

@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Delad utkast",
     "sharedDraftOn": "Delad utkast aktiverad",
+    "sharedDraftSentByOther": "{{name}} skickade det här e-postmeddelandet.",
     "draftEditing": "redigerar nu",
     "draftSaving": "Sparar…",
     "draftSaved": "Sparad",

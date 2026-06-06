@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Schimb de schițe",
     "sharedDraftOn": "Schimb de schițe activat",
+    "sharedDraftSentByOther": "{{name}} a trimis acest e-mail.",
     "draftEditing": "editează acum",
     "draftSaving": "Se salvează…",
     "draftSaved": "Salvat",

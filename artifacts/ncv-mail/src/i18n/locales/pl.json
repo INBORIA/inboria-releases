@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Wspólny szkic",
     "sharedDraftOn": "Wspólny szkic włączony",
+    "sharedDraftSentByOther": "{{name}} wysłał(a) ten e-mail.",
     "draftEditing": "edytuje teraz",
     "draftSaving": "Zapisywanie…",
     "draftSaved": "Zapisano",

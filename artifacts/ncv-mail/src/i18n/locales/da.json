@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Delte udkast",
     "sharedDraftOn": "Delte udkast aktiveret",
+    "sharedDraftSentByOther": "{{name}} har sendt denne e-mail.",
     "draftEditing": "redigerer nu",
     "draftSaving": "Gemmer…",
     "draftSaved": "Gemt",

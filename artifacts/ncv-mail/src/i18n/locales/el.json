@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Κοινό σχέδιο",
     "sharedDraftOn": "Κοινό σχέδιο ενεργό",
+    "sharedDraftSentByOther": "{{name}} έστειλε αυτό το email.",
     "draftEditing": "επεξεργάζονται τώρα",
     "draftSaving": "Αποθήκευση…",
     "draftSaved": "Αποθηκεύτηκε",

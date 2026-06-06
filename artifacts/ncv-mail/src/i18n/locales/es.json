@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Borrador compartido",
     "sharedDraftOn": "Borrador compartido activado",
+    "sharedDraftSentByOther": "{{name}} ha enviado este correo.",
     "draftEditing": "editando ahora",
     "draftSaving": "Guardando…",
     "draftSaved": "Guardado",

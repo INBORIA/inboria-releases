@@ -536,6 +536,7 @@
     },
     "sharedDraft": "រូបមន្តចែករំលែក",
     "sharedDraftOn": "រូបមន្តចែករំលែកបើក",
+    "sharedDraftSentByOther": "{{name}} បានផ្ញើអ៊ីមែលនេះ។",
     "draftEditing": "កំពុងកែសម្រួល",
     "draftSaving": "កំពុងរក្សាទុក…",
     "draftSaved": "បានរក្សាទុក",

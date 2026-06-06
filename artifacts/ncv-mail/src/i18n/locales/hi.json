@@ -536,6 +536,7 @@
     },
     "sharedDraft": "साझा ड्राफ्ट",
     "sharedDraftOn": "साझा ड्राफ्ट चालू",
+    "sharedDraftSentByOther": "{{name}} ने यह ईमेल भेजा।",
     "draftEditing": "अब संपादित कर रहे हैं",
     "draftSaving": "सहेज रहा है…",
     "draftSaved": "सहेजा गया",

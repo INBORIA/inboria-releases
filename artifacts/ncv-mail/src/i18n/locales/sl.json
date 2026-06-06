@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Skupni osnutek",
     "sharedDraftOn": "Skupni osnutek vklopljen",
+    "sharedDraftSentByOther": "{{name}} je poslal(a) to e-pošto.",
     "draftEditing": "ureja zdaj",
     "draftSaving": "Shranjujem…",
     "draftSaved": "Shranjeno",

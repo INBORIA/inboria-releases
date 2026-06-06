@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Gedeeld concept",
     "sharedDraftOn": "Gedeeld concept ingeschakeld",
+    "sharedDraftSentByOther": "{{name}} heeft deze e-mail verzonden.",
     "draftEditing": "nu aan het bewerken",
     "draftSaving": "Opslaan…",
     "draftSaved": "Opgeslagen",

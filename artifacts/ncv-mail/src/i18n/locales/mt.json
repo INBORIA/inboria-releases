@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Draft ma' ħbieb",
     "sharedDraftOn": "Draft ma' ħbieb attivat",
+    "sharedDraftSentByOther": "{{name}} bagħat din l-email.",
     "draftEditing": "qed jeditja issa",
     "draftSaving": "Qed isalva…",
     "draftSaved": "Salvat",

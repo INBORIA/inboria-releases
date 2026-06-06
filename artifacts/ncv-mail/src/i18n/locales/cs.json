@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Sdílený návrh",
     "sharedDraftOn": "Sdílený návrh zapnutý",
+    "sharedDraftSentByOther": "{{name}} odeslal(a) tento e-mail.",
     "draftEditing": "právě upravují",
     "draftSaving": "Ukládání…",
     "draftSaved": "Uloženo",

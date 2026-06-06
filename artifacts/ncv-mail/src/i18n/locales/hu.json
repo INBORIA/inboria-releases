@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Megosztott vázlat",
     "sharedDraftOn": "Megosztott vázlat be",
+    "sharedDraftSentByOther": "{{name}} elküldte ezt az e-mailt.",
     "draftEditing": "szerkesztés alatt",
     "draftSaving": "Mentés…",
     "draftSaved": "Mentve",

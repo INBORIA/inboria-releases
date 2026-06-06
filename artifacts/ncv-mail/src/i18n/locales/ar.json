@@ -536,6 +536,7 @@
     },
     "sharedDraft": "مسودة مشتركة",
     "sharedDraftOn": "المسودة المشتركة مفعلة",
+    "sharedDraftSentByOther": "أرسل {{name}} هذا البريد الإلكتروني.",
     "draftEditing": "يحرر الآن",
     "draftSaving": "جارٍ الحفظ…",
     "draftSaved": "تم الحفظ",

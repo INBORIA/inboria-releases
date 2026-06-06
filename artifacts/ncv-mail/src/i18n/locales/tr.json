@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Paylaşılan taslak",
     "sharedDraftOn": "Paylaşılan taslak açık",
+    "sharedDraftSentByOther": "{{name}} bu e-postayı gönderdi.",
     "draftEditing": "şu anda düzenliyor",
     "draftSaving": "Kaydediliyor…",
     "draftSaved": "Kaydedildi",

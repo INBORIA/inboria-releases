@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Спільний чернетка",
     "sharedDraftOn": "Спільний чернетка увімкнено",
+    "sharedDraftSentByOther": "{{name}} надіслав(ла) цей лист.",
     "draftEditing": "редагують зараз",
     "draftSaving": "Зберігається…",
     "draftSaved": "Збережено",

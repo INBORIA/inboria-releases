@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Draf bersama",
     "sharedDraftOn": "Draf bersama aktif",
+    "sharedDraftSentByOther": "{{name}} telah mengirim email ini.",
     "draftEditing": "sedang mengedit",
     "draftSaving": "Menyimpan…",
     "draftSaved": "Tersimpan",

@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Jagatud mustand",
     "sharedDraftOn": "Jagatud mustand sisse",
+    "sharedDraftSentByOther": "{{name}} saatis selle e-kirja.",
     "draftEditing": "redigeerivad praegu",
     "draftSaving": "Salvestamine…",
     "draftSaved": "Salvestatud",

@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Bản nháp chia sẻ",
     "sharedDraftOn": "Bản nháp chia sẻ đã bật",
+    "sharedDraftSentByOther": "{{name}} đã gửi email này.",
     "draftEditing": "đang chỉnh sửa",
     "draftSaving": "Đang lưu…",
     "draftSaved": "Đã lưu",

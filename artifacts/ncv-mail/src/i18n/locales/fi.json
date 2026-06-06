@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Jaettu luonnos",
     "sharedDraftOn": "Jaettu luonnos päällä",
+    "sharedDraftSentByOther": "{{name}} lähetti tämän sähköpostin.",
     "draftEditing": "muokkaavat nyt",
     "draftSaving": "Tallennetaan…",
     "draftSaved": "Tallennettu",

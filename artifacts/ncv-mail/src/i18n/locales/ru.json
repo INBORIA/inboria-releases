@@ -536,6 +536,7 @@
     },
     "sharedDraft": "Совместный черновик",
     "sharedDraftOn": "Совместный черновик включен",
+    "sharedDraftSentByOther": "{{name}} отправил(а) это письмо.",
     "draftEditing": "редактируют сейчас",
     "draftSaving": "Сохранение…",
     "draftSaved": "Сохранено",
