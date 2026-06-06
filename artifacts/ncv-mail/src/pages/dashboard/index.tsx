@@ -6798,7 +6798,7 @@ export default function Dashboard() {
                           </SelectContent>
                         </Select>
                         <span className="text-[11px] text-[#8b95a7] tabular-nums ml-1">
-                          {t("inbox.assignedPageCount", { count: searched.length, defaultValue: `${searched.length} email(s)` })}
+                          ({searched.length})
                         </span>
                       </div>
                       {searched.length === 0 ? (
