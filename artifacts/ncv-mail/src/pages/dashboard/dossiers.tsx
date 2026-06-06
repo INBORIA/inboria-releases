@@ -772,7 +772,7 @@ export default function MesDossiers() {
         onSearchChange={setHeaderSearch}
       />
       <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
-        <BackToInboxButton />
+        <BackToInboxButton iconOnly />
         <div className="flex items-center justify-between mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight">
