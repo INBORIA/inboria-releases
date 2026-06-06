@@ -96,6 +96,16 @@ Le bandeau sticky des pages mail (recherche + Actualiser + Nouvel email, onglets
 
 Convention : toute nouvelle page de liste mails (Programmés / Reportés / Tâches / Archives / Partagées / Mes dossiers / Assignés …) doit monter `<MailPageHeader currentTab="..." />` immédiatement après `<DashboardLayout>` (avant le `<div className="max-w-6xl ...">`). N'ajouter le header que sur la **vue racine** d'une page (jamais sur une vue détail/sous-dossier).
 
+## Convention flèche « Retour » (back) — à vérifier sur CHAQUE page
+
+Demande utilisateur (06/06/2026, à passer en revue page par page) : **chaque page doit avoir une flèche `←` « Retour » en haut à gauche.** Page de référence = **Corbeille** (`artifacts/ncv-mail/src/pages/dashboard/corbeille.tsx`), deux cas :
+- **Vue liste (racine)** : flèche `←` tout en haut à gauche qui ramène à la Réception. Implémentation de réf. : `<Link href="/dashboard"><Button variant="ghost" size="sm" ... aria-label={t("common.back","Retour")}><ArrowLeft className="w-3.5 h-3.5" /></Button></Link>` dans un `<div className="mb-2">` placé AVANT le titre de la page (corbeille.tsx L385-397).
+- **Vue détail (email ouvert)** : flèche `←` qui referme l'email et revient à la liste de la même page (`onClick={() => setSelectedEmailId(null)}`, corbeille.tsx L279-288).
+
+Style commun : `h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]`, icône `ArrowLeft w-3.5 h-3.5`, `aria-label`/`title` traduits (`common.back`).
+
+À VÉRIFIER lors de la revue : présence + bon comportement de cette flèche sur toutes les pages (Envoyés, Programmés, Reportés, Relances, Mes tâches, Archives, Mes dossiers, Partagées, Assignés, Contacts, Agenda, Bilan quotidien, Catégories, Templates, Règles automatiques, Admin, Paramètres…). Noter celles qui manquent ou dont le retour pointe au mauvais endroit.
+
 ## Gotchas
 
 - **Doublons catégories (race condition triage)**: appliquer manuellement `artifacts/api-server/migrations/2026_05_28_categories_unique_per_user.sql` dans Supabase. Symptôme : panneau « Nettoyer les doublons » affichait 3081 paires identiques « Newsletters/Newsletters » pour 1 user, parce que auto-sync.ts (L661-688) et webhook.ts (L157-181) faisaient SELECT-then-INSERT sans contrainte unique → 100+ INSERT parallèles au triage IA passaient tous → 79 copies de la même catégorie en DB → C(79,2)=3081 paires. La migration (a) dédoublonne les catégories existantes en gardant celle qui a le plus d'emails (réaffectation puis DELETE), (b) crée un index UNIQUE partiel `categories_user_name_unique` sur `(user_id, lower(trim(name))) WHERE is_system=false`. Le code applicatif gère déjà le 23505 fallback. Côté UI : nouvelle structure `{ clusters, pairs }` retournée par `/api/categories/duplicates` (similarity.ts → `findDuplicateReport`) — 1 cluster = N homonymes fusionnés en 1 passe via `POST /api/categories/merge-cluster { targetId, sourceIds[] }`. Le panneau de nettoyage affiche une section « Doublons exacts » (clusters, fusion massive) au-dessus de « Noms similaires » (paires classiques inchangées).
