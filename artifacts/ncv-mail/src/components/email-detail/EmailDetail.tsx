@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, AlertTriangle, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
+  MoreHorizontal, ChevronDown, ChevronUp, ChevronRight, ArrowLeft,
   FolderKanban, Folder, FolderPlus, ExternalLink, Users, Hand,
 } from "lucide-react";
 
@@ -1686,9 +1686,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
           onClick={onBack}
           className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
           title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
+          aria-label={t("common.back", "Retour")}
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          {t("common.back", "Retour")}
+          <ArrowLeft className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
