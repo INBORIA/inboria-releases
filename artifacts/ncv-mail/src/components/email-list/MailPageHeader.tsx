@@ -171,6 +171,23 @@ function MailPageHeaderImpl({
     navigate(q ? `/dashboard?q=${encodeURIComponent(q)}` : "/dashboard");
   }, [searchInput, navigate]);
 
+  // La ligne « Filtres / Catégories » (date, lu/non-lu, catégories) ne porte que
+  // sur des listes d'emails. Sur les pages non-email (contacts, agenda, bilan,
+  // classement, templates, règles, projets…) elle n'agirait sur rien → on la
+  // masque pour éviter toute confusion.
+  const EMAIL_FILTER_TABS: CurrentTab[] = [
+    "inbox",
+    "envoyes",
+    "programmes",
+    "dossiers",
+    "indesirables",
+    "corbeille",
+    "reportes",
+    "relances",
+    "archives",
+  ];
+  const showFilters = EMAIL_FILTER_TABS.includes(currentTab);
+
   // ─── Compose / Sync ──────────────────────────────────────────────────────
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
@@ -744,7 +761,8 @@ function MailPageHeaderImpl({
 
       </div>
 
-      {/* Bloc C — Filtres / Catégories */}
+      {/* Bloc C — Filtres / Catégories (listes d'emails uniquement) */}
+      {showFilters && (
       <div
         className="flex flex-nowrap md:flex-wrap items-center gap-2 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto md:overflow-visible [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [&>*]:shrink-0"
         data-testid="row-filters-unified"
@@ -1011,6 +1029,7 @@ function MailPageHeaderImpl({
           </button>
         )}
       </div>
+      )}
       </>
       )}
     </div>
