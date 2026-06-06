@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
-import { useLocation, useRoute } from "wouter";
+import { useLocation, useRoute, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -60,6 +60,7 @@ import {
   StickyNote,
   Brain,
   FileText,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -338,9 +339,23 @@ export default function Contacts() {
         <aside className="w-[300px] md:w-[340px] shrink-0 border-r border-[#1f2937] flex flex-col min-h-0">
           <div className="p-4 space-y-3 border-b border-[#1f2937]">
             <div className="flex items-center justify-between gap-2">
-              <h1 className="text-[14px] font-semibold text-white">
-                {t("sidebar.contacts", "Contacts")}
-              </h1>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <Link href="/dashboard">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+                    aria-label={t("common.back", "Retour")}
+                    title={t("common.back", "Retour")}
+                    data-testid="contacts-back-to-inbox"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </Button>
+                </Link>
+                <h1 className="text-[14px] font-semibold text-white truncate">
+                  {t("sidebar.contacts", "Contacts")}
+                </h1>
+              </div>
               <Button
                 size="sm"
                 onClick={openCreateDialog}
