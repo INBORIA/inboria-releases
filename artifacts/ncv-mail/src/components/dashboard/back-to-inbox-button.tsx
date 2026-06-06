@@ -17,9 +17,10 @@ export function useSmartBack(defaultHref: string = "/dashboard", _defaultLabelKe
   };
 }
 
-export function BackToInboxButton() {
+export function BackToInboxButton({ iconOnly = false }: { iconOnly?: boolean } = {}) {
   const { t } = useTranslation();
   const back = useSmartBack();
+  const label = t(back.labelKey, back.labelFallback || t("common.back"));
   return (
     <div className="mb-3">
       <Link href={back.href}>
@@ -28,9 +29,11 @@ export function BackToInboxButton() {
           size="sm"
           className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
           data-testid="smart-back"
+          aria-label={iconOnly ? label : undefined}
+          title={iconOnly ? label : undefined}
         >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t(back.labelKey, back.labelFallback || t("common.back"))}
+          <ArrowLeft className={iconOnly ? "w-3.5 h-3.5" : "w-3.5 h-3.5 mr-1"} />
+          {!iconOnly && label}
         </Button>
       </Link>
     </div>

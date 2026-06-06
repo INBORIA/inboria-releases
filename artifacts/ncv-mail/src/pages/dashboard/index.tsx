@@ -6019,7 +6019,7 @@ export default function Dashboard() {
       <div className="flex flex-col h-[calc(100vh-4rem)]">
         {assigneePageTitle && (
           <div className="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-            <BackToInboxButton />
+            <BackToInboxButton iconOnly />
             <div className="mt-1">
               <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-primary" />
