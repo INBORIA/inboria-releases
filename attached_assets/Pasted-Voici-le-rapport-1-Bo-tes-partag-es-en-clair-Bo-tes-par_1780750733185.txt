@@ -1,0 +1,54 @@
+Voici le rapport #1 — Boîtes partagées (en clair) :
+
+✅ Boîtes partagées — globalement solide
+Ce qui fonctionne bien :
+
+Création & accès : un admin crée une boîte partagée à partir d'une connexion existante ; les membres ne voient que les boîtes auxquelles ils ont accès (contrôles de permission présents à chaque opération).
+Prise en charge ("claim") : un email peut être pris en charge par un membre ; logique claire.
+Attribution : assigner un email à un collègue est réservé aux admins ; chacun peut s'auto-assigner.
+Commentaires internes en temps réel : vrai chat d'équipe (présence, "en train d'écrire", fil mêlant emails + commentaires), via Supabase Realtime. Mentions @collègue qui notifient.
+Filtres de statut : Non traités / Traités / Reportés / SLA dépassé.
+Anti-doublon correctement isolé par boîte (un mail reçu en perso ET en partagé reste 2 copies distinctes — voulu, pour ne pas mélanger les commentaires/états).
+⚠️ À surveiller (pas bloquant, mais à connaître) :
+
+Performance du calcul des délais (SLA) : le contrôleur balaie 14 jours de mails toutes les 5 min. Sur une très grosse boîte (10 000+ mails non traités), ça pourrait ralentir la base. OK pour démarrer, à optimiser si gros client.
+Bascule d'une boîte en "partagé" : on ignore volontairement l'historique d'avant la mise en partage (pour ne pas noyer l'équipe). Conséquence : un mail non traité reçu juste avant la bascule n'apparaît que dans le filtre "Tous". À garder en tête.
+Migration tracking_started_at : doit être appliquée manuellement dans Supabase (déjà noté dans vos consignes). Sans elle, les filtres de statut renverraient tout l'historique.
+❌ Petit point à corriger (mineur) :
+
+Commentaires orphelins : si un email est supprimé, ses commentaires ne semblent pas effacés automatiquement (pas de suppression en cascade). Pas grave, mais ça laisse des données fantômes. Je peux ajouter le nettoyage si vous voulez.
+Verdict : prête pour le lancement. Le seul vrai sujet à terme = la performance du SLA sur de gros volumes.
+
+Je continue : j'analyse en parallèle Équipe et Agenda/RDV pour les prochains rapports.
+
+
+3 actions
+✅ Rapport #2 — Équipe / Organisation : solide, et même un atout RGPD
+Ce qui fonctionne :
+
+Création d'équipe : le créateur devient admin, plan géré automatiquement (essai vs business).
+Invitations par email (via Brevo) : vérifie le nombre de sièges dispo (limite 4 en plan essai) ; si la personne a déjà un compte Inboria, elle est ajoutée directement.
+Rôles : admin/membre, changement réservé aux admins, impossible de se supprimer soi-même.
+Confidentialité (fort argument B2B européen) : un membre peut marquer un email "privé" → exclu de la vue admin et de l'IA. Et un journal d'accès trace chaque consultation par un admin. Page dédiée pour voir qui a accédé à ses données.
+⚠️ À surveiller :
+
+Migration journal d'accès (2026_05_01) à appliquer manuellement, sinon la traçabilité est en mode dégradé.
+Cohérence du plan : passage en "business" géré, mais la rétrogradation quand un membre quitte/supprime l'orga n'est pas verrouillée contre les abus.
+Sécurité : repose sur le code backend (service role qui contourne les règles SQL Supabase). Fiable, mais c'est le code qui garantit l'isolation, pas la base elle-même.
+Verdict : prête pour le lancement.
+
+✅ Rapport #3 — Agenda / Rendez-vous : très avancé
+Ce qui fonctionne :
+
+Cycle complet : création / modif / suppression / liste, vues Mois-Semaine-Jour.
+RDV avec invités externes créé en "en attente", proposition par email rédigée par l'IA, et propositions multi-créneaux avec fichier d'invitation standard (ICS) → le client accepte/refuse directement depuis Gmail/Outlook.
+Visio automatique : Meet / Teams / Jitsi, avec repli systématique sur Jitsi → il y a toujours un lien.
+Notes internes ciblées (choix des destinataires).
+Synchro calendrier Google & Outlook dans les deux sens, gestion des disponibilités.
+⚠️ À surveiller :
+
+Migrations manuelles critiques (sync externe, multi-créneaux, notes, lien visio perso) : si une n'est pas appliquée en prod, certains enregistrements échouent silencieusement ou en erreur 500. C'est le risque n°1 ici.
+Jetons de calendrier : une déconnexion silencieuse d'un compte peut casser l'écriture des RDV sans alerter l'utilisateur.
+Corrélation réponse↔RDV : dépend des identifiants de message que Gmail réécrit parfois → mécanisme de rattrapage présent mais fragile.
+Concurrence multi-créneaux : si deux clients confirment deux créneaux du même groupe, il faut garantir l'annulation propre des autres.
+Verdict : prêt, à condition de vérifier que TOUTES les migrations agenda sont bien appliquées en prod.
