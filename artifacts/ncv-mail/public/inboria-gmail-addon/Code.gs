@@ -193,6 +193,14 @@ function cleanReply_(text) {
     .replace(/```[a-z-]*\s*([\s\S]*?)```/g, function (_m, inner) {
       return inner.trim();
     })
+    // Ce pont affiche le brouillon / RDV en texte simple (pas de carte ni de
+    // boutons Envoyer / Modifier / Bloquer) : on retire la consigne du prompt
+    // qui renvoie l'utilisateur vers ces boutons inexistants ici.
+    .replace(
+      /Cliquez sur [^.]*\b(?:Envoyer|Modifier|Bloquer)\b[^.]*\.(?:\s*(?:Inboria|Le RDV)[^.]*\.)?/gi,
+      "",
+    )
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
