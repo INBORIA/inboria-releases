@@ -359,8 +359,30 @@
     } catch (e) {}
     var payload = { to: to, subject: subject, body: body };
     if (currentEmailId) payload.emailId = currentEmailId;
-    var frag = "#inboria-draft=" + encodeURIComponent(JSON.stringify(payload));
-    post("open", { url: INBORIA_BASE + "/dashboard?from=extension" + frag });
+    var fragUrl =
+      INBORIA_BASE +
+      "/dashboard?from=extension#inboria-draft=" +
+      encodeURIComponent(JSON.stringify(payload));
+    // Transport principal : jeton serveur éphémère. L'ouverture d'un nouvel
+    // onglet + la danse d'auth (/login) peuvent perdre le fragment (#...) ; la
+    // query ?draft= survit. Le contenu du mail reste hors des journaux serveur.
+    // Repli sur le fragment si la création du jeton échoue.
+    apiFetch("/api/inboria/draft-handoff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.token) {
+          post("open", {
+            url: INBORIA_BASE + "/dashboard?from=extension&draft=" + encodeURIComponent(data.token),
+          });
+        } else {
+          post("open", { url: fragUrl });
+        }
+      })
+      .catch(function () { post("open", { url: fragUrl }); });
   }
 
   // Extrait une adresse email pure depuis "Nom <email>" ou une chaîne email.

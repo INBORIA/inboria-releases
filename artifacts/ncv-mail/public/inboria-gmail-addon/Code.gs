@@ -550,10 +550,29 @@ function handleOpen_(e) {
       body: p.draftBody || "",
     };
     if (emailId) payload.emailId = emailId;
-    var durl =
-      INBORIA_BASE +
-      "/dashboard?from=gmail#inboria-draft=" +
-      encodeURIComponent(JSON.stringify(payload));
+    // Transport principal : jeton serveur éphémère. L'ouverture d'un nouvel
+    // onglet + la danse d'auth (/login) peuvent perdre le fragment (#...) ; la
+    // query ?draft= survit. Le contenu du mail reste hors des journaux et de
+    // l'URL. Repli sur le fragment si la création du jeton échoue.
+    var durl;
+    try {
+      var hr = apiFetch_("/api/inboria/draft-handoff", {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify(payload),
+      });
+      var token = hr && hr.token ? hr.token : "";
+      durl = token
+        ? INBORIA_BASE + "/dashboard?from=gmail&draft=" + encodeURIComponent(token)
+        : INBORIA_BASE +
+          "/dashboard?from=gmail#inboria-draft=" +
+          encodeURIComponent(JSON.stringify(payload));
+    } catch (errTok) {
+      durl =
+        INBORIA_BASE +
+        "/dashboard?from=gmail#inboria-draft=" +
+        encodeURIComponent(JSON.stringify(payload));
+    }
     return CardService.newActionResponseBuilder()
       .setOpenLink(CardService.newOpenLink().setUrl(durl))
       .build();
