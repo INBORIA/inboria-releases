@@ -4388,6 +4388,9 @@ components:
           type: string
         replyToEmailId:
           type: ["integer", "null"]
+        markHandledOfEmailId:
+          type: ["integer", "null"]
+          description: Original email id to mark as handled once the scheduled send succeeds (used for scheduled forwards, which carry no replyToEmailId).
         connectionId:
           type: ["string", "null"]
         projectId:

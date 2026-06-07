@@ -12,6 +12,11 @@ export interface ScheduleEmailBody {
   body: string;
   /** @nullable */
   replyToEmailId?: number | null;
+  /**
+   * Original email id to mark as handled once the scheduled send succeeds (used for scheduled forwards, which carry no replyToEmailId).
+   * @nullable
+   */
+  markHandledOfEmailId?: number | null;
   /** @nullable */
   connectionId?: string | null;
   /** @nullable */

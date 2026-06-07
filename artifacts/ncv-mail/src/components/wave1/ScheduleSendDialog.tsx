@@ -17,13 +17,14 @@ interface Props {
   subject: string;
   body: string;
   replyToEmailId?: number | null;
+  markHandledOfEmailId?: number | null;
   connectionId?: string | null;
   projectId?: string | null;
   attachments?: UploadedFile[];
   onScheduled?: () => void;
 }
 
-export function ScheduleSendDialog({ open, onOpenChange, to, subject, body, replyToEmailId, connectionId, projectId, attachments, onScheduled }: Props) {
+export function ScheduleSendDialog({ open, onOpenChange, to, subject, body, replyToEmailId, markHandledOfEmailId, connectionId, projectId, attachments, onScheduled }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -46,6 +47,7 @@ export function ScheduleSendDialog({ open, onOpenChange, to, subject, body, repl
       subject,
       body,
       replyToEmailId: replyToEmailId ?? null,
+      markHandledOfEmailId: markHandledOfEmailId ?? null,
       connectionId: connectionId ?? null,
       projectId: projectId ?? null,
       scheduledSendAt: target.toISOString(),

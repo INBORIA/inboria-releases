@@ -11,7 +11,7 @@ import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
 import { extractGmailBody } from "../services/auto-sync";
 import { simpleParser } from "mailparser";
-import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn, hasHandledColumns } from "../lib/schema-flags";
+import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn, hasHandledColumns, hasScheduledMarkHandledColumn } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 import { emitWebhook } from "../services/webhooks";
 import { logEmailToHubspot } from "../services/hubspot";
@@ -2204,7 +2204,7 @@ router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => 
       res.status(503).json({ error: "Envoi programmé indisponible : appliquez sql_wave1_quick_wins.sql dans Supabase." });
       return;
     }
-    const { to, subject, body, replyToEmailId, connectionId, projectId, scheduledSendAt, attachments: rawScheduledAttachments } = req.body || {};
+    const { to, subject, body, replyToEmailId, connectionId, projectId, scheduledSendAt, markHandledOfEmailId, attachments: rawScheduledAttachments } = req.body || {};
     if (!to || !subject || !body || !scheduledSendAt) {
       res.status(400).json({ error: "Destinataire, sujet, corps et scheduledSendAt requis" });
       return;
@@ -2286,6 +2286,19 @@ router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => 
     if (validatedProjectId) insertPayload.project_id = validatedProjectId;
     if (trackingPixelId) insertPayload.tracking_pixel_id = trackingPixelId;
     if (scheduledUploadIds.length > 0) insertPayload.scheduled_attachment_ids = scheduledUploadIds;
+    // Envoi programmé : on mémorise le mail d'origine à marquer "traité" une
+    // fois l'envoi différé réussi (cf. worker scheduled-send). Parité EXACTE
+    // avec l'envoi immédiat : cible = réponse (replyToEmailId) OU transfert
+    // (markHandledOfEmailId), et on VÉRIFIE l'autorisation MAINTENANT via
+    // userCanHandleEmail (sinon un utilisateur pourrait faire marquer "traité"
+    // un mail d'un autre tenant en devinant son id — IDOR). Le worker ne se
+    // basera QUE sur cette colonne pré-autorisée, jamais sur reply_to_email_id
+    // (qui sert au threading et n'est pas contrôlé en écriture ici).
+    const handledTargetId = replyToEmailId || markHandledOfEmailId || null;
+    if (handledTargetId && (await hasScheduledMarkHandledColumn())) {
+      const canHandle = await userCanHandleEmail(String(handledTargetId), req.userId!);
+      if (canHandle) insertPayload.scheduled_mark_handled_id = handledTargetId;
+    }
 
     const { data: row, error } = await supabaseAdmin
       .from("emails")

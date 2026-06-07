@@ -6,6 +6,7 @@ import { logger } from "../lib/logger";
 import { getBackendUrl } from "../lib/urls";
 import { resolveUploadedFiles } from "../routes/attachments";
 import { buildMimeWithAttachments, type ResolvedAttachment } from "../routes/emails";
+import { hasHandledColumns } from "../lib/schema-flags";
 
 const POLL_INTERVAL_MS = 60_000;
 const MAX_BATCH = 25;
@@ -243,6 +244,30 @@ async function sendOneScheduled(row: any): Promise<void> {
         scheduled_send_error: null,
       })
       .eq("id", row.id);
+
+    // Parité avec l'envoi immédiat : marquer le mail d'origine "traité".
+    // On se base UNIQUEMENT sur scheduled_mark_handled_id, déjà autorisé via
+    // userCanHandleEmail au moment de la programmation (cf. /emails/schedule).
+    // On n'utilise PAS reply_to_email_id ici : il sert au threading et n'est
+    // pas contrôlé en écriture → l'utiliser rouvrirait une faille IDOR.
+    const handledTargetId = row.scheduled_mark_handled_id || null;
+    if (handledTargetId && (await hasHandledColumns())) {
+      try {
+        const { data: orig } = await supabaseAdmin
+          .from("emails")
+          .select("id, handled_at")
+          .eq("id", handledTargetId)
+          .maybeSingle();
+        if (orig && !(orig as any).handled_at) {
+          await supabaseAdmin
+            .from("emails")
+            .update({ handled_at: new Date().toISOString(), handled_by: userId })
+            .eq("id", handledTargetId);
+        }
+      } catch (e: any) {
+        logger.warn({ err: e?.message, emailId: handledTargetId }, "[scheduled-send] handled auto-mark failed");
+      }
+    }
 
     logger.info({ emailId: row.id, userId }, "[scheduled-send] sent OK");
   } catch (err: any) {

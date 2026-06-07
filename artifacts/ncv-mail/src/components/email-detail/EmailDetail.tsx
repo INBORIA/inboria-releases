@@ -1775,6 +1775,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   subject={forwardSubject}
                   body={forwardText}
                   replyToEmailId={null}
+                  markHandledOfEmailId={handledAt ? undefined : email.id}
                   connectionId={forwardConnectionId || undefined}
                   attachments={forwardAttachments}
                   onScheduled={() => {

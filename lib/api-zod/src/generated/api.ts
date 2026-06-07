@@ -1551,6 +1551,12 @@ export const ScheduleEmailBody = zod.object({
   subject: zod.string(),
   body: zod.string(),
   replyToEmailId: zod.number().nullish(),
+  markHandledOfEmailId: zod
+    .number()
+    .nullish()
+    .describe(
+      "Original email id to mark as handled once the scheduled send succeeds (used for scheduled forwards, which carry no replyToEmailId).",
+    ),
   connectionId: zod.string().nullish(),
   projectId: zod.string().nullish(),
   scheduledSendAt: zod.coerce

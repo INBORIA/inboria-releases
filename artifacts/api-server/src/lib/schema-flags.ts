@@ -100,9 +100,35 @@ export async function hasHandledColumns(): Promise<boolean> {
   return result;
 }
 
+let cachedHasScheduledMarkHandled: boolean | null = null;
+let scheduledMarkHandledProbeInFlight: Promise<boolean> | null = null;
+
+export async function hasScheduledMarkHandledColumn(): Promise<boolean> {
+  if (cachedHasScheduledMarkHandled !== null) return cachedHasScheduledMarkHandled;
+  if (scheduledMarkHandledProbeInFlight) return scheduledMarkHandledProbeInFlight;
+
+  scheduledMarkHandledProbeInFlight = (async () => {
+    try {
+      const { error } = await supabaseAdmin
+        .from("emails")
+        .select("scheduled_mark_handled_id")
+        .limit(1);
+      cachedHasScheduledMarkHandled = !error;
+    } catch {
+      cachedHasScheduledMarkHandled = false;
+    }
+    return cachedHasScheduledMarkHandled;
+  })();
+
+  const result = await scheduledMarkHandledProbeInFlight;
+  scheduledMarkHandledProbeInFlight = null;
+  return result;
+}
+
 export function resetSchemaFlagsCache(): void {
   cachedHasJunkColumns = null;
   cachedHasWaveOneColumns = null;
   cachedHasTrackingProfile = null;
   cachedHasHandledColumns = null;
+  cachedHasScheduledMarkHandled = null;
 }
