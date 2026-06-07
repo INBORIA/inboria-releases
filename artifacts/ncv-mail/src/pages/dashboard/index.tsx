@@ -501,6 +501,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
   const [attachments, setAttachments] = useState<UploadedFile[]>([]);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [fromId, setFromId] = useState<string>(() => (connections[0] ? String(connections[0].id) : ""));
   const [projectId, setProjectId] = useState<string>("");
   const [appliedSig, setAppliedSig] = useState<string>(initialBody ? "__prefilled__" : "");
@@ -628,9 +629,19 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
         </div>
         <FileAttachInput files={attachments} onChange={setAttachments} />
       </div>
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-4 flex items-center gap-2">
         <Button
-          className="w-full gap-2 h-9 text-[12px]"
+          variant="outline"
+          className="gap-1.5 h-9 text-[12px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+          disabled={isPending || !to.trim() || !subject.trim() || !body.trim()}
+          onClick={() => setScheduleOpen(true)}
+          data-testid="button-schedule-send-compose"
+        >
+          <CalendarDays className="w-3.5 h-3.5" />
+          {t("wave1.scheduleButton")}
+        </Button>
+        <Button
+          className="flex-1 gap-2 h-9 text-[12px]"
           disabled={isPending || !to.trim() || !subject.trim() || !body.trim()}
           onClick={() => onSend({ to, subject, body, attachments, connectionId: fromId, projectId })}
         >
@@ -638,6 +649,23 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
           {isPending ? t("inbox.sending") : t("inbox.send")}
         </Button>
       </div>
+      <ScheduleSendDialog
+        open={scheduleOpen}
+        onOpenChange={setScheduleOpen}
+        to={to}
+        subject={subject}
+        body={body}
+        connectionId={fromId || undefined}
+        projectId={projectId || undefined}
+        attachments={attachments}
+        onScheduled={() => {
+          setTo("");
+          setSubject("");
+          setBody("");
+          setAttachments([]);
+          onClose?.();
+        }}
+      />
     </>
   );
 });

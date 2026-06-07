@@ -268,6 +268,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const [forwardConnectionId, setForwardConnectionId] = useState<string>("");
   const [forwardIntroLoading, setForwardIntroLoading] = useState(false);
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [scheduleForwardDialogOpen, setScheduleForwardDialogOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   const resolveDefaultConnectionId = useCallback(() => {
@@ -1731,6 +1732,17 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       {t("common.cancel")}
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                      disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
+                      onClick={() => setScheduleForwardDialogOpen(true)}
+                      data-testid="button-schedule-send-forward"
+                    >
+                      <CalendarDays className="w-3 h-3" />
+                      {t("wave1.scheduleButton")}
+                    </Button>
+                    <Button
                       size="sm"
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
@@ -1756,6 +1768,24 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     </Button>
                   </div>
                 </div>
+                <ScheduleSendDialog
+                  open={scheduleForwardDialogOpen}
+                  onOpenChange={setScheduleForwardDialogOpen}
+                  to={forwardTo}
+                  subject={forwardSubject}
+                  body={forwardText}
+                  replyToEmailId={null}
+                  connectionId={forwardConnectionId || undefined}
+                  attachments={forwardAttachments}
+                  onScheduled={() => {
+                    setForwardText("");
+                    setForwardTo("");
+                    setForwardSubject("");
+                    setForwardAttachments([]);
+                    setForwardConnectionId("");
+                    setForwardOpen(false);
+                  }}
+                />
               </div>
             )}
           </div>
