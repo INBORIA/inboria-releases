@@ -232,10 +232,10 @@ title = "Extension Inboria (corrigée) — à installer dans Chrome/Edge"
 id = "2Scil4Zuf56Xpb3iKktzb"
 uri = "file://exports/inboria-gmail-addon.zip"
 type = "unspecified"
-title = "Gmail — add-on Inboria à jour (contient Code.gs)"
+title = "Module Gmail (corrigé — adresse inboria.com)"
 
 [[outputs]]
 id = "Cz7JpHEx_X4FUl9KIidrC"
 uri = "file://exports/inboria-extension.zip"
 type = "unspecified"
-title = "OVH — extension Inboria à jour"
+title = "Extension OVH/webmail (corrigée — adresse inboria.com)"
