@@ -1254,7 +1254,7 @@ export default function ParametresMonCompte() {
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">2</span>
                           <div className="text-[13px] text-foreground min-w-0 flex-1">
-                            {t("settings.gmailStep2", "Remplacez tout le contenu du fichier « Code.gs » par ce code Inboria :")}
+                            {t("settings.gmailStep2", "Remplacez tout le contenu du fichier « Code.gs » par ce code Inboria, puis enregistrez (icône 💾 en haut, ou Ctrl+S) :")}
                             <div className="mt-2 flex gap-2">
                               <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailCode} onClick={() => copyToClipboard(gmailCode, t("settings.gmailCodeCopied", "Code copié ✓"))}>
                                 <Copy className="w-3.5 h-3.5" />
@@ -1270,7 +1270,7 @@ export default function ParametresMonCompte() {
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">3</span>
                           <div className="text-[13px] text-foreground min-w-0 flex-1">
-                            {t("settings.gmailStep3", "Activez le manifeste : menu « Paramètres du projet » › cochez « Afficher le fichier manifeste appsscript.json », puis collez ce contenu dans appsscript.json :")}
+                            {t("settings.gmailStep3", "Activez le manifeste : menu « Paramètres du projet » › cochez « Afficher le fichier manifeste appsscript.json », collez ce contenu dans appsscript.json, puis enregistrez (icône 💾 ou Ctrl+S) :")}
                             <div className="mt-2 flex gap-2">
                               <Button size="sm" variant="outline" className="h-8 text-[12px] gap-1.5 bg-transparent border-border text-muted-foreground hover:text-foreground" disabled={!gmailManifest} onClick={() => copyToClipboard(gmailManifest, t("settings.gmailManifestCopied", "Manifeste copié ✓"))}>
                                 <Copy className="w-3.5 h-3.5" />
@@ -1286,7 +1286,7 @@ export default function ParametresMonCompte() {
                         <li className="flex gap-3">
                           <span className="w-6 h-6 shrink-0 rounded-full bg-primary/15 text-primary text-[12px] font-semibold flex items-center justify-center">4</span>
                           <div className="text-[13px] text-foreground">
-                            {t("settings.gmailStep4", "Cliquez sur « Déployer » › « Tester les déploiements » › « Installer ». Autorisez l'accès quand Google le demande. Ouvrez ensuite un mail dans Gmail : le panneau Inboria apparaît à droite. Connectez-vous une fois, c'est prêt.")}
+                            {t("settings.gmailStep4", "Vérifiez d'abord que les deux fichiers sont bien enregistrés (l'astérisque à côté du nom doit avoir disparu — sinon « Déployer » sera grisé). Cliquez sur « Déployer » › « Tester les déploiements » › « Installer ». Autorisez l'accès quand Google le demande. Ouvrez ensuite un mail dans Gmail : le panneau Inboria apparaît à droite. Connectez-vous une fois, c'est prêt.")}
                           </div>
                         </li>
                       </ol>
