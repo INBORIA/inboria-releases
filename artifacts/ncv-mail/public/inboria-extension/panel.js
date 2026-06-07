@@ -329,7 +329,7 @@
       sendDraft(draft, sendBtn, editBtn, status);
     };
     editBtn.onclick = function () {
-      openDraftInApp();
+      openDraftInApp(draft);
     };
 
     row.appendChild(sendBtn);
@@ -341,13 +341,26 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  // « Modifier dans Inboria » : ouvre le mail dans l'app (ou le tableau de bord).
-  function openDraftInApp() {
-    if (currentEmailId) {
-      openMailById(currentEmailId);
-      return;
-    }
-    post("open", { url: INBORIA_BASE + "/dashboard?from=extension" });
+  // « Modifier dans Inboria » : ouvre le composeur d'Inboria DÉJÀ pré-rempli
+  // (destinataire + objet + corps) avec le brouillon proposé. Le brouillon est
+  // transporté dans le fragment d'URL (#inboria-draft=...) : gère les brouillons
+  // longs sans stockage serveur et reste hors des journaux serveur.
+  function openDraftInApp(draft) {
+    var to = "";
+    var subject = "";
+    var body = "";
+    try {
+      to =
+        extractEmail((draft && draft.to) || "") ||
+        extractEmail(currentContext.from) ||
+        "";
+      subject = (draft && draft.subject) || currentContext.subject || "";
+      body = (draft && draft.body) || "";
+    } catch (e) {}
+    var payload = { to: to, subject: subject, body: body };
+    if (currentEmailId) payload.emailId = currentEmailId;
+    var frag = "#inboria-draft=" + encodeURIComponent(JSON.stringify(payload));
+    post("open", { url: INBORIA_BASE + "/dashboard?from=extension" + frag });
   }
 
   // Extrait une adresse email pure depuis "Nom <email>" ou une chaîne email.

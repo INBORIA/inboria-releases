@@ -537,7 +537,27 @@ function runChat_(e, payload) {
 }
 
 function handleOpen_(e) {
+  var p = (e && e.parameters) || {};
   var emailId = resolveEmailId_(e);
+  // « Modifier dans Inboria » sur un brouillon : ouvre le composeur DÉJÀ
+  // pré-rempli (destinataire + objet + corps) en transportant le brouillon dans
+  // le fragment d'URL (#inboria-draft=...) — gère les brouillons longs sans
+  // stockage serveur et reste hors des journaux serveur.
+  if (p.draftBody || p.draftSubject || p.draftTo) {
+    var payload = {
+      to: p.draftTo || "",
+      subject: p.draftSubject || "",
+      body: p.draftBody || "",
+    };
+    if (emailId) payload.emailId = emailId;
+    var durl =
+      INBORIA_BASE +
+      "/dashboard?from=gmail#inboria-draft=" +
+      encodeURIComponent(JSON.stringify(payload));
+    return CardService.newActionResponseBuilder()
+      .setOpenLink(CardService.newOpenLink().setUrl(durl))
+      .build();
+  }
   var url = emailId
     ? INBORIA_BASE + "/dashboard?emailId=" + emailId + "&from=gmail"
     : INBORIA_BASE + "/dashboard?from=gmail";
@@ -579,7 +599,15 @@ function draftSection_(draft) {
   s.addWidget(
     CardService.newTextButton()
       .setText("Modifier dans Inboria")
-      .setOnClickAction(CardService.newAction().setFunctionName("handleOpen_"))
+      .setOnClickAction(
+        CardService.newAction()
+          .setFunctionName("handleOpen_")
+          .setParameters({
+            draftTo: draft.to || "",
+            draftSubject: draft.subject || "",
+            draftBody: draft.body || "",
+          })
+      )
   );
   return s;
 }

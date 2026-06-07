@@ -235,7 +235,7 @@
     status.style.cssText = "font-size:12px;margin-top:6px;";
 
     sendBtn.onclick = function () { sendDraft(draft, sendBtn, editBtn, status); };
-    editBtn.onclick = function () { openDraftInApp(); };
+    editBtn.onclick = function () { openDraftInApp(draft); };
 
     row.appendChild(sendBtn);
     row.appendChild(editBtn);
@@ -246,10 +246,26 @@
     box.scrollTop = box.scrollHeight;
   }
 
-  // « Modifier dans Inboria » : ouvre le mail dans l'app (ou le tableau de bord).
-  function openDraftInApp() {
-    if (currentEmailId) { openMailById(currentEmailId); return; }
-    var url = ORIGIN + "/dashboard?from=outlook";
+  // « Modifier dans Inboria » : ouvre le composeur d'Inboria DÉJÀ pré-rempli
+  // (destinataire + objet + corps) avec le brouillon proposé. Le brouillon est
+  // transporté dans le fragment d'URL (#inboria-draft=...) : gère les brouillons
+  // longs sans stockage serveur et reste hors des journaux serveur.
+  function openDraftInApp(draft) {
+    var to = "", subject = "", body = "";
+    try {
+      var item = Office.context && Office.context.mailbox && Office.context.mailbox.item;
+      to =
+        extractEmail((draft && draft.to) || "") ||
+        extractEmail((item && item.from && item.from.emailAddress) || "");
+      subject = (draft && draft.subject) || (item && item.subject) || "";
+      body = (draft && draft.body) || "";
+    } catch (e) {}
+    var payload = { to: to, subject: subject, body: body };
+    if (currentEmailId) payload.emailId = currentEmailId;
+    var url =
+      ORIGIN +
+      "/dashboard?from=outlook#inboria-draft=" +
+      encodeURIComponent(JSON.stringify(payload));
     try {
       if (Office.context.ui && Office.context.ui.openBrowserWindow) {
         Office.context.ui.openBrowserWindow(url);

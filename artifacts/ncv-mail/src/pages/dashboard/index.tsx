@@ -3984,7 +3984,15 @@ export default function Dashboard() {
 
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("compose") === "1") consumePrefillAndOpen();
+      let pendingOpen = false;
+      try {
+        pendingOpen =
+          sessionStorage.getItem("inboria.compose.pendingOpen") === "1";
+        if (pendingOpen) sessionStorage.removeItem("inboria.compose.pendingOpen");
+      } catch {
+        /* noop */
+      }
+      if (params.get("compose") === "1" || pendingOpen) consumePrefillAndOpen();
     } catch {
       /* noop */
     }

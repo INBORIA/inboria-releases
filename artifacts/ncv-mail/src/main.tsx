@@ -58,6 +58,46 @@ if (typeof window !== "undefined") {
         );
       }
     }
+    // Pont « Modifier dans Inboria » : le brouillon proposé est transporté dans
+    // le FRAGMENT d'URL (#inboria-draft=...). Avantages : gère les brouillons
+    // longs sans stockage serveur ni migration, et le texte n'apparaît pas dans
+    // les journaux serveur (le fragment n'est jamais envoyé au serveur). On le
+    // capture ici, au tout premier instant, car le hash peut être perdu pendant
+    // la danse d'authentification. On le range dans la MÊME clé que le
+    // pré-remplissage du composeur interne (chat Inboria) pour réutiliser le
+    // même consommateur côté Dashboard.
+    const hash = window.location.hash || "";
+    const DRAFT_MARK = "#inboria-draft=";
+    if (
+      window.location.pathname.includes("/dashboard") &&
+      (from === "gmail" || from === "outlook" || from === "extension") &&
+      hash.indexOf(DRAFT_MARK) === 0
+    ) {
+      try {
+        const parsed = JSON.parse(
+          decodeURIComponent(hash.slice(DRAFT_MARK.length)),
+        );
+        window.sessionStorage.setItem(
+          "inboria.compose.prefill",
+          JSON.stringify({
+            to: typeof parsed?.to === "string" ? parsed.to : "",
+            subject: typeof parsed?.subject === "string" ? parsed.subject : "",
+            body: typeof parsed?.body === "string" ? parsed.body : "",
+          }),
+        );
+        window.sessionStorage.setItem("inboria.compose.pendingOpen", "1");
+      } catch {
+        // fragment illisible — on ouvrira simplement le tableau de bord.
+      }
+      // On retire le fragment pour qu'un rechargement ne rouvre pas le composeur.
+      try {
+        const u = new URL(window.location.href);
+        u.hash = "";
+        window.history.replaceState({}, "", u.pathname + u.search);
+      } catch {
+        /* noop */
+      }
+    }
   } catch {
     // sessionStorage indisponible (mode privé) — non fatal.
   }
