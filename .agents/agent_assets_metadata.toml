@@ -227,3 +227,15 @@ id = "P-OVv_qxgt5-SEoV12cw6"
 uri = "file://extension-build/inboria-extension.zip"
 type = "unspecified"
 title = "Extension Inboria (corrigée) — à installer dans Chrome/Edge"
+
+[[outputs]]
+id = "2Scil4Zuf56Xpb3iKktzb"
+uri = "file://exports/inboria-gmail-addon.zip"
+type = "unspecified"
+title = "Gmail — add-on Inboria à jour (contient Code.gs)"
+
+[[outputs]]
+id = "Cz7JpHEx_X4FUl9KIidrC"
+uri = "file://exports/inboria-extension.zip"
+type = "unspecified"
+title = "OVH — extension Inboria à jour"
