@@ -14,6 +14,8 @@
   var session = null; // { access_token, refresh_token, expires_at, email }
   var history = []; // [{ role, content }]
   var currentEmailId = null; // id interne résolu (peut rester null)
+  var currentEmailMsgId = null; // internetMessageId pour lequel currentEmailId a été résolu
+  var itemChangedWired = false; // handler ItemChanged enregistré une seule fois
   var busy = false;
 
   function $(id) { return document.getElementById(id); }
@@ -261,7 +263,8 @@
       body = (draft && draft.body) || "";
     } catch (e) {}
     var payload = { to: to, subject: subject, body: body };
-    if (currentEmailId) payload.emailId = currentEmailId;
+    var srcId = draft && draft.sourceEmailId != null ? draft.sourceEmailId : currentEmailId;
+    if (srcId) payload.emailId = srcId;
     var url =
       ORIGIN +
       "/dashboard?from=outlook#inboria-draft=" +
@@ -302,7 +305,8 @@
       subject: draft.subject || "(sans objet)",
       body: draft.body,
     };
-    if (currentEmailId) payload.replyToEmailId = currentEmailId;
+    var srcId = draft && draft.sourceEmailId != null ? draft.sourceEmailId : currentEmailId;
+    if (srcId) payload.replyToEmailId = srcId;
     apiFetch("/api/emails/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -333,7 +337,13 @@
   // Affiche la réponse : carte brouillon (avec boutons) si présente, sinon texte.
   function renderAssistantReply(raw) {
     var draft = parseDraft(raw);
-    if (draft && draft.body) { renderDraftCard(draft); return; }
+    if (draft && draft.body) {
+      // Fige le mail source au moment de la génération : si l'utilisateur change
+      // de mail ensuite, « Envoyer » / « Modifier » resteront sur le bon mail.
+      draft.sourceEmailId = currentEmailId;
+      renderDraftCard(draft);
+      return;
+    }
     addMessage("bot", cleanReply(raw) || "(réponse vide)");
   }
 
@@ -433,21 +443,26 @@
     if (!msg) return;
     busy = true;
     $("sendBtn").disabled = true;
-    addMessage("user", displayText.trim());
-    var typing = addTyping();
-    callChat(msg)
-      .then(function (reply) {
-        typing.remove();
-        renderAssistantReply(reply);
-      })
-      .catch(function (err) {
-        typing.remove();
-        if (/not authenticated|refresh failed|401/.test(String(err && err.message))) {
-          clearSession();
-          show("login");
-        } else {
-          addMessage("bot", "⚠️ " + (err && err.message ? err.message : "Erreur."));
-        }
+    // Toujours réconcilier le mail courant AVANT d'envoyer : garantit qu'Inboria
+    // répond au mail réellement affiché, pas à un mail précédent.
+    ensureCurrentEmailId()
+      .then(function () {
+        addMessage("user", displayText.trim());
+        var typing = addTyping();
+        return callChat(msg)
+          .then(function (reply) {
+            typing.remove();
+            renderAssistantReply(reply);
+          })
+          .catch(function (err) {
+            typing.remove();
+            if (/not authenticated|refresh failed|401/.test(String(err && err.message))) {
+              clearSession();
+              show("login");
+            } else {
+              addMessage("bot", "⚠️ " + (err && err.message ? err.message : "Erreur."));
+            }
+          });
       })
       .finally(function () {
         busy = false;
@@ -506,13 +521,43 @@
       .catch(function () { done(ORIGIN + "/dashboard?from=outlook"); });
   }
 
-  // Tente de résoudre l'emailId courant en arrière-plan (contexte chat).
-  function prefetchEmailId() {
+  // Réinitialise la conversation (nouveau mail ouvert = nouveau contexte).
+  function resetConversation() {
+    history = [];
+    var box = $("messages");
+    if (box) box.innerHTML = "";
+    addGreeting();
+  }
+
+  // Garantit que currentEmailId correspond TOUJOURS au mail actuellement ouvert
+  // dans Outlook. Sans ça, quand le volet reste ouvert d'un mail à l'autre
+  // (volet épinglé ou réutilisé par Outlook), l'ancien emailId restait actif et
+  // Inboria répondait au MAUVAIS mail (le serveur l'injecte en tête de contexte
+  // comme « MAIL ACTUELLEMENT OUVERT À L'ÉCRAN »). Renvoie une promesse.
+  function ensureCurrentEmailId() {
     var msgId = getMessageId();
-    if (!msgId) return;
-    apiFetch("/api/inboria/resolve-email?providerMessageId=" + encodeURIComponent(msgId))
+    if (!msgId) {
+      // Aucun mail exploitable : on purge pour ne JAMAIS réutiliser un ancien id.
+      currentEmailId = null;
+      currentEmailMsgId = null;
+      return Promise.resolve();
+    }
+    if (msgId === currentEmailMsgId) return Promise.resolve();
+    var hadPrevious = currentEmailMsgId !== null;
+    currentEmailMsgId = msgId;
+    currentEmailId = null;
+    // Changement réel de mail : on repart d'une conversation propre.
+    if (hadPrevious) resetConversation();
+    return apiFetch(
+      "/api/inboria/resolve-email?providerMessageId=" + encodeURIComponent(msgId),
+    )
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) { if (data && data.emailId) currentEmailId = data.emailId; })
+      .then(function (data) {
+        // On ne garde l'id que si l'utilisateur n'a pas encore re-changé de mail.
+        if (data && data.emailId && getMessageId() === msgId) {
+          currentEmailId = data.emailId;
+        }
+      })
       .catch(function () {});
   }
 
@@ -563,7 +608,24 @@
     if ($("messages").childElementCount === 0) {
       addGreeting();
     }
-    prefetchEmailId();
+    ensureCurrentEmailId();
+    // Volet épinglé / réutilisé : recharge le contexte quand l'utilisateur
+    // passe à un autre mail sans fermer le volet. Enregistré une seule fois.
+    if (!itemChangedWired) {
+      try {
+        if (Office.context && Office.context.mailbox && Office.context.mailbox.addHandlerAsync) {
+          Office.context.mailbox.addHandlerAsync(
+            Office.EventType.ItemChanged,
+            function () { ensureCurrentEmailId(); },
+            function (res) {
+              // Ne marque « câblé » que si l'enregistrement a réussi (sinon retry
+              // au prochain enterChat).
+              if (res && res.status === "succeeded") itemChangedWired = true;
+            },
+          );
+        }
+      } catch (e) {}
+    }
   }
 
   function wireLogin() {
