@@ -20,7 +20,20 @@
   var cfg = { supabaseUrl: "", supabaseAnonKey: "" };
   var session = null;
   var history = [];
-  var currentContext = { subject: "", from: "", body: "", messageId: "", nativeId: "" };
+  var currentContext = { subject: "", from: "", body: "", messageId: "", nativeId: "", provider: "" };
+
+  // Paramètre « &wm=<webmail> » ajouté aux URL d'ouverture d'Inboria : permet au
+  // bandeau « Revenir à … » côté app d'afficher le nom réel du webmail d'origine
+  // (Gmail, OVH, Yahoo…). Vide si le webmail n'est pas reconnu.
+  function wmQS() {
+    try {
+      return currentContext && currentContext.provider
+        ? "&wm=" + encodeURIComponent(currentContext.provider)
+        : "";
+    } catch (e) {
+      return "";
+    }
+  }
   var currentEmailId = null;
   var busy = false;
 
@@ -361,7 +374,9 @@
     if (currentEmailId) payload.emailId = currentEmailId;
     var fragUrl =
       INBORIA_BASE +
-      "/dashboard?from=extension#inboria-draft=" +
+      "/dashboard?from=extension" +
+      wmQS() +
+      "#inboria-draft=" +
       encodeURIComponent(JSON.stringify(payload));
     // Transport principal : jeton serveur éphémère. L'ouverture d'un nouvel
     // onglet + la danse d'auth (/login) peuvent perdre le fragment (#...) ; la
@@ -376,7 +391,7 @@
       .then(function (data) {
         if (data && data.token) {
           post("open", {
-            url: INBORIA_BASE + "/dashboard?from=extension&draft=" + encodeURIComponent(data.token),
+            url: INBORIA_BASE + "/dashboard?from=extension&draft=" + encodeURIComponent(data.token) + wmQS(),
           });
         } else {
           post("open", { url: fragUrl });
@@ -481,7 +496,7 @@
   // Ouvre un mail précis dans Inboria (depuis un jeton [mail#123] du chat).
   function openMailById(id) {
     post("open", {
-      url: INBORIA_BASE + "/dashboard?emailId=" + id + "&from=extension",
+      url: INBORIA_BASE + "/dashboard?emailId=" + id + "&from=extension" + wmQS(),
     });
   }
   // Petit bouton cliquable « ↗ Ouvrir » (parité avec le chat de l'app Inboria).
@@ -623,7 +638,7 @@
       qs.push("subject=" + encodeURIComponent(currentContext.subject));
     if (currentContext.from)
       qs.push("from=" + encodeURIComponent(currentContext.from));
-    if (!qs.length) return done(INBORIA_BASE + "/dashboard?from=extension");
+    if (!qs.length) return done(INBORIA_BASE + "/dashboard?from=extension" + wmQS());
     // URL de repli : on transmet les identifiants BRUTS à l'app web (préfixe x*
     // pour ne pas entrer en collision avec le marqueur `from=extension`). L'app,
     // authentifiée par sa propre session, résout alors le mail elle-même — fiable
@@ -640,6 +655,7 @@
     var rawUrl =
       INBORIA_BASE +
       "/dashboard?from=extension" +
+      wmQS() +
       (xqs.length ? "&" + xqs.join("&") : "");
     apiFetch("/api/inboria/resolve-email?" + qs.join("&"))
       .then(function (r) {
@@ -648,7 +664,7 @@
       .then(function (data) {
         if (data && data.emailId) {
           currentEmailId = data.emailId;
-          done(INBORIA_BASE + "/dashboard?emailId=" + data.emailId + "&from=extension");
+          done(INBORIA_BASE + "/dashboard?emailId=" + data.emailId + "&from=extension" + wmQS());
         } else {
           done(rawUrl);
         }

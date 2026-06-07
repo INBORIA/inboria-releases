@@ -59,6 +59,28 @@
     return false;
   }
 
+  // Nom lisible du webmail courant (pour le bandeau « Revenir à … » d'Inboria).
+  // Renvoie "" si non reconnu → Inboria affiche alors le libellé générique.
+  function webmailName() {
+    try {
+      var h = location.hostname.toLowerCase();
+      if (/mail\.google\.com$/.test(h) || /(^|\.)googlemail\./.test(h)) return "Gmail";
+      if (/ovh|ovhcloud/.test(h)) return "OVH";
+      if (/(^|\.)(outlook|live|hotmail|office365|office)\./.test(h) || /owa/.test(h)) return "Outlook";
+      if (/(^|\.)yahoo\./.test(h)) return "Yahoo";
+      if (/icloud/.test(h)) return "iCloud";
+      if (/(^|\.)gmx\./.test(h)) return "GMX";
+      if (/zoho/.test(h)) return "Zoho";
+      if (/proton/.test(h)) return "Proton";
+      if (/fastmail/.test(h)) return "Fastmail";
+      if (/zimbra/.test(h)) return "Zimbra";
+      if (/roundcube/.test(h)) return "Roundcube";
+      return "";
+    } catch (e) {
+      return "";
+    }
+  }
+
   // ---- Lecture du mail affiché (best-effort, Étape 1) ----------------------
   function txt(el) {
     return el ? String(el.innerText || el.textContent || "").trim() : "";
@@ -279,7 +301,7 @@
   }
 
   function scrapeContext() {
-    var ctx = { subject: "", from: "", body: "", messageId: "", nativeId: "" };
+    var ctx = { subject: "", from: "", body: "", messageId: "", nativeId: "", provider: webmailName() };
 
     var selection = "";
     try {

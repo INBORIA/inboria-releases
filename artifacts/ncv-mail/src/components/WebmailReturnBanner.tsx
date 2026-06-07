@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeft, X } from "lucide-react";
 
 const FLAG_KEY = "inboria.fromExtension";
+const WM_KEY = "inboria.fromExtensionWm";
 
 /**
  * Bandeau affiché quand Inboria est ouvert depuis l'extension navigateur
@@ -18,6 +19,7 @@ const FLAG_KEY = "inboria.fromExtension";
 export function WebmailReturnBanner() {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
+  const [webmailName, setWebmailName] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -26,7 +28,14 @@ export function WebmailReturnBanner() {
       const fromExtension = url.searchParams.get("from") === "extension";
       if (fromExtension) {
         window.sessionStorage.setItem(FLAG_KEY, "1");
+        const wm = url.searchParams.get("wm");
+        if (wm) {
+          window.sessionStorage.setItem(WM_KEY, wm);
+        } else {
+          window.sessionStorage.removeItem(WM_KEY);
+        }
         url.searchParams.delete("from");
+        url.searchParams.delete("wm");
         window.history.replaceState(
           {},
           "",
@@ -35,6 +44,8 @@ export function WebmailReturnBanner() {
       }
       if (window.sessionStorage.getItem(FLAG_KEY) === "1") {
         setVisible(true);
+        const storedWm = window.sessionStorage.getItem(WM_KEY);
+        if (storedWm) setWebmailName(storedWm);
       }
     } catch {
       /* noop */
@@ -46,6 +57,7 @@ export function WebmailReturnBanner() {
   const dismiss = () => {
     try {
       window.sessionStorage.removeItem(FLAG_KEY);
+      window.sessionStorage.removeItem(WM_KEY);
     } catch {
       /* noop */
     }
@@ -57,6 +69,7 @@ export function WebmailReturnBanner() {
     // le focus à l'onglet du webmail resté ouvert derrière.
     try {
       window.sessionStorage.removeItem(FLAG_KEY);
+      window.sessionStorage.removeItem(WM_KEY);
     } catch {
       /* noop */
     }
@@ -71,17 +84,27 @@ export function WebmailReturnBanner() {
       <div className="flex items-center gap-3 max-w-4xl mx-auto">
         <ArrowLeft className="w-4 h-4 text-primary shrink-0" />
         <p className="flex-1 text-[12px] text-[#b8c5d6]">
-          {t(
-            "webmailBanner.openedFrom",
-            "Ouvert depuis votre webmail. Cliquez pour revenir, ou rebasculez simplement sur l'onglet de votre webmail.",
-          )}
+          {webmailName
+            ? t(
+                "webmailBanner.openedFromNamed",
+                "Ouvert depuis {{name}}. Cliquez pour revenir, ou rebasculez simplement sur l'onglet {{name}}.",
+                { name: webmailName },
+              )
+            : t(
+                "webmailBanner.openedFrom",
+                "Ouvert depuis votre webmail. Cliquez pour revenir, ou rebasculez simplement sur l'onglet de votre webmail.",
+              )}
         </p>
         <button
           type="button"
           onClick={backToWebmail}
           className="shrink-0 h-7 rounded-md bg-primary px-3 text-[12px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
-          {t("webmailBanner.back", "Revenir à mon webmail")}
+          {webmailName
+            ? t("webmailBanner.backNamed", "Revenir à {{name}}", {
+                name: webmailName,
+              })
+            : t("webmailBanner.back", "Revenir à mon webmail")}
         </button>
         <button
           type="button"
