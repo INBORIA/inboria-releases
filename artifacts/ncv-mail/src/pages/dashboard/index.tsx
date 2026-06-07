@@ -87,6 +87,7 @@ import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, mem
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { RecipientInput } from "@/components/email-list/RecipientInput";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useRowDragOut } from "@/hooks/use-row-drag-out";
@@ -593,7 +594,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
         )}
         <div>
           <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.to")}</label>
-          <Input value={to} onChange={(e) => setTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
+          <RecipientInput value={to} onChange={setTo} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
         </div>
         <div>
           <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.subject")}</label>

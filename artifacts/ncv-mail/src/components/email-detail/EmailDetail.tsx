@@ -13,6 +13,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { RecipientInput } from "@/components/email-list/RecipientInput";
 import { Textarea } from "@/components/ui/textarea";
 import { SignatureEditor } from "@/components/signature/signature-editor";
 import { CollaborativeComposer } from "@/components/email-detail/CollaborativeComposer";
@@ -1471,9 +1472,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 )}
                 <div>
                   <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
-                  <Input
+                  <RecipientInput
                     value={replyTo}
-                    onChange={(e) => setReplyTo(e.target.value)}
+                    onChange={setReplyTo}
+                    orgMembers={orgMembers}
                     placeholder="email@exemple.com"
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
@@ -1683,9 +1685,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 )}
                 <div>
                   <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
-                  <Input
+                  <RecipientInput
                     value={forwardTo}
-                    onChange={(e) => setForwardTo(e.target.value)}
+                    onChange={setForwardTo}
+                    orgMembers={orgMembers}
                     placeholder="email@exemple.com"
                     className="bg-background border-border text-white text-[12px] h-8"
                   />

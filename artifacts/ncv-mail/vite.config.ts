@@ -119,6 +119,10 @@ export default defineConfig({
           /^\/api\//,
           /^\/inboria-addin\//,
           /^\/inboria-gmail-addon\//,
+          // Les fichiers téléchargeables (ex: l'extension navigateur) ne doivent
+          // jamais être avalés par le navigateFallback → sinon le SW renvoie
+          // index.html (page 404) au lieu de servir/télécharger le .zip.
+          /\.zip$/,
         ],
         // Force the new SW to activate immediately on install so the
         // PWA picks up the latest deployment without requiring the
