@@ -3,6 +3,7 @@ import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { SnoozedPanel } from "@/components/dashboard/snoozed-panel";
 import { extractEmailAddress } from "@/lib/utils";
+import { authJson } from "@/lib/api-fetch";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -3957,7 +3958,55 @@ export default function Dashboard() {
   // l'utilisateur est deja sur le dashboard (les query params seuls ne
   // remontent pas le composant).
   useEffect(() => {
+    const cleanComposeParam = () => {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has("compose")) {
+          url.searchParams.delete("compose");
+          window.history.replaceState(
+            {},
+            "",
+            url.pathname + (url.search ? url.search : ""),
+          );
+        }
+      } catch {
+        /* noop */
+      }
+    };
+
     const consumePrefillAndOpen = () => {
+      // Cas pont « Modifier dans Inboria » : un jeton serveur éphémère a été
+      // mémorisé au boot (main.tsx). On récupère le brouillon via l'API PUIS on
+      // ouvre le composeur (ComposeDialogBody lit initialBody au montage, donc
+      // composePrefill doit être posé AVANT l'ouverture).
+      let draftToken: string | null = null;
+      try {
+        draftToken = sessionStorage.getItem("inboria.compose.draftToken");
+        if (draftToken) sessionStorage.removeItem("inboria.compose.draftToken");
+      } catch {
+        /* noop */
+      }
+      if (draftToken) {
+        authJson<{ to?: string; subject?: string; body?: string }>(
+          `api/inboria/draft-handoff/${encodeURIComponent(draftToken)}`,
+        )
+          .then((d) => {
+            setComposePrefill({
+              to: typeof d?.to === "string" ? d.to : "",
+              subject: typeof d?.subject === "string" ? d.subject : "",
+              body: typeof d?.body === "string" ? d.body : "",
+            });
+            setIsComposeOpen(true);
+          })
+          .catch(() => {
+            // Jeton expiré / erreur réseau — on ouvre un composeur vide plutôt
+            // que rien, l'utilisateur peut recoller son texte.
+            setComposePrefill({ to: "", subject: "", body: "" });
+            setIsComposeOpen(true);
+          });
+        cleanComposeParam();
+        return;
+      }
       try {
         const raw = sessionStorage.getItem("inboria.compose.prefill");
         if (raw) {

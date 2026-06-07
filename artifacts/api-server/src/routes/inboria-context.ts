@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import { randomUUID } from "node:crypto";
 import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
@@ -524,6 +525,107 @@ router.get("/inboria/addin-config", (req, res): void => {
   }
   res.json({ supabaseUrl, supabaseAnonKey });
 });
+
+// ---------------------------------------------------------------------------
+// Transfert de brouillon « Modifier dans Inboria » (ponts → app web)
+// ---------------------------------------------------------------------------
+// Les ponts (add-in Outlook, add-on Gmail, extension) ouvrent l'app dans le
+// navigateur par défaut. openBrowserWindow d'Outlook NE PRÉSERVE PAS le
+// fragment d'URL (#...), seul transport historique du brouillon → composeur
+// vide. On stocke donc le brouillon côté serveur sous un jeton opaque
+// éphémère (TTL 10 min, usage unique) et l'URL ne porte que ?draft=<jeton> :
+// la query survit à openBrowserWindow, aucun contenu de mail ne finit dans les
+// journaux serveur, et l'URL reste courte.
+type HandoffDraft = {
+  to: string;
+  subject: string;
+  body: string;
+  emailId?: number | string;
+};
+const draftHandoffStore = new Map<
+  string,
+  { userId: string; draft: HandoffDraft; expiresAt: number }
+>();
+const DRAFT_HANDOFF_TTL_MS = 10 * 60 * 1000;
+const DRAFT_HANDOFF_MAX = 5000;
+
+function pruneDraftHandoff(): void {
+  const now = Date.now();
+  for (const [k, v] of draftHandoffStore) {
+    if (v.expiresAt <= now) draftHandoffStore.delete(k);
+  }
+}
+
+router.post(
+  "/inboria/draft-handoff",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      pruneDraftHandoff();
+      if (draftHandoffStore.size >= DRAFT_HANDOFF_MAX) {
+        res
+          .status(503)
+          .json({ error: "Trop de brouillons en attente, réessayez." });
+        return;
+      }
+      const b = req.body || {};
+      const draft: HandoffDraft = {
+        to: typeof b.to === "string" ? b.to.slice(0, 2000) : "",
+        subject: typeof b.subject === "string" ? b.subject.slice(0, 2000) : "",
+        body: typeof b.body === "string" ? b.body.slice(0, 50000) : "",
+      };
+      if (
+        b.emailId != null &&
+        (typeof b.emailId === "number" || typeof b.emailId === "string")
+      ) {
+        draft.emailId = b.emailId;
+      }
+      const token = randomUUID();
+      draftHandoffStore.set(token, {
+        userId,
+        draft,
+        expiresAt: Date.now() + DRAFT_HANDOFF_TTL_MS,
+      });
+      res.json({ token });
+    } catch (err: any) {
+      req.log.error(
+        { err: err?.message },
+        "[inboria-draft-handoff] create failed",
+      );
+      res.status(500).json({ error: "Internal error" });
+    }
+  },
+);
+
+router.get(
+  "/inboria/draft-handoff/:token",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      pruneDraftHandoff();
+      const token = String(req.params.token || "");
+      const entry = draftHandoffStore.get(token);
+      if (!entry || entry.expiresAt <= Date.now()) {
+        res.status(404).json({ error: "Brouillon expiré ou introuvable." });
+        return;
+      }
+      if (entry.userId !== userId) {
+        res.status(403).json({ error: "Forbidden" });
+        return;
+      }
+      draftHandoffStore.delete(token); // usage unique
+      res.json(entry.draft);
+    } catch (err: any) {
+      req.log.error(
+        { err: err?.message },
+        "[inboria-draft-handoff] fetch failed",
+      );
+      res.status(500).json({ error: "Internal error" });
+    }
+  },
+);
 
 // Manifest XML de l'add-in Outlook, généré dynamiquement avec le host courant
 // pour que les URLs (taskpane, icônes) collent à l'environnement (dev/prod)

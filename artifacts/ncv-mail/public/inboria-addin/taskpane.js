@@ -265,15 +265,37 @@
     var payload = { to: to, subject: subject, body: body };
     var srcId = draft && draft.sourceEmailId != null ? draft.sourceEmailId : currentEmailId;
     if (srcId) payload.emailId = srcId;
-    var url =
+
+    function openUrl(u) {
+      try {
+        if (Office.context.ui && Office.context.ui.openBrowserWindow) {
+          Office.context.ui.openBrowserWindow(u);
+        } else { window.open(u, "_blank"); }
+      } catch (e) { window.open(u, "_blank"); }
+    }
+    var fragmentUrl =
       ORIGIN +
       "/dashboard?from=outlook#inboria-draft=" +
       encodeURIComponent(JSON.stringify(payload));
-    try {
-      if (Office.context.ui && Office.context.ui.openBrowserWindow) {
-        Office.context.ui.openBrowserWindow(url);
-      } else { window.open(url, "_blank"); }
-    } catch (e) { window.open(url, "_blank"); }
+
+    // Transport principal : jeton serveur éphémère. openBrowserWindow d'Outlook
+    // NE conserve PAS le fragment (#...) → le composeur s'ouvrait vide. La query
+    // (?draft=) survit, et le contenu du mail reste hors des journaux serveur.
+    // Repli sur le fragment si la création du jeton échoue (hors-ligne / 401).
+    apiFetch("/api/inboria/draft-handoff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && data.token) {
+          openUrl(ORIGIN + "/dashboard?from=outlook&draft=" + encodeURIComponent(data.token));
+        } else {
+          openUrl(fragmentUrl);
+        }
+      })
+      .catch(function () { openUrl(fragmentUrl); });
   }
 
   // Extrait une adresse email pure depuis "Nom <email>" ou une chaîne email.

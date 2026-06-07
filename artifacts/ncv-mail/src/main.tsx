@@ -98,6 +98,32 @@ if (typeof window !== "undefined") {
         /* noop */
       }
     }
+    // Transport principal du brouillon « Modifier dans Inboria » : jeton serveur
+    // éphémère passé en query (?draft=...). La query SURVIT à openBrowserWindow
+    // d'Outlook (contrairement au fragment ci-dessus) et à la danse d'auth. On
+    // mémorise le jeton ; le Dashboard récupère le brouillon via l'API à son
+    // montage (après l'éventuelle redirection /login).
+    const draftToken = params.get("draft");
+    if (
+      window.location.pathname.includes("/dashboard") &&
+      (from === "gmail" || from === "outlook" || from === "extension") &&
+      draftToken
+    ) {
+      window.sessionStorage.setItem("inboria.compose.draftToken", draftToken);
+      window.sessionStorage.setItem("inboria.compose.pendingOpen", "1");
+      // On retire le jeton de l'URL pour éviter une réouverture au rechargement.
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.delete("draft");
+        window.history.replaceState(
+          {},
+          "",
+          u.pathname + (u.search || "") + u.hash,
+        );
+      } catch {
+        /* noop */
+      }
+    }
   } catch {
     // sessionStorage indisponible (mode privé) — non fatal.
   }

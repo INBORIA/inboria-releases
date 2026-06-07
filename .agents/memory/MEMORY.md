@@ -28,3 +28,4 @@
 - [ncv-mail i18n lazy-load](ncv-mail-i18n-lazy-load.md) — only fr bundled at boot, 42 locales load on demand (1 chunk/lang); needs bindI18nStore:'added'; zh-TW collapses to zh under load:languageOnly so boot reads raw localStorage code.
 - [Drag-out to desktop (DownloadURL)](ncv-mail-drag-out-desktop.md) — dataTransfer is writable ONLY sync in dragstart; prefetch blob on hover/pointerdown; blocked in the Replit preview iframe (test in a real tab), Chromium-only.
 - [optimistic-email cache-head coupling](optimistic-email-cache-heads.md) — shared optimistic helpers patch only caches whose query-key head matches the predicate (/api/emails + /api/folders/:id/emails); other heads = silent no-op. Check the head before wiring a new mail page.
+- [Bridge draft handoff](inboria-bridge-draft-handoff.md) — Outlook openBrowserWindow strips URL fragment (#); hand off proposed draft via ephemeral server token in query (?draft=), not the hash. Query also survives auth redirect.
