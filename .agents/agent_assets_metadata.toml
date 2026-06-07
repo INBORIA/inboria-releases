@@ -239,3 +239,9 @@ id = "Cz7JpHEx_X4FUl9KIidrC"
 uri = "file://exports/inboria-extension.zip"
 type = "unspecified"
 title = "Extension OVH/webmail (corrigée — adresse inboria.com)"
+
+[[outputs]]
+id = "tj-9Jv9p7pd_zDv67KH2v"
+uri = "file://exports/Inboria_vs_Concurrents.pdf"
+type = "pdf"
+title = "Inboria vs Concurrents — Analyse comparative (PDF)"
