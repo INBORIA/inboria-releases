@@ -14,7 +14,7 @@
   "use strict";
 
   // URL publique de l'application Inboria (injectée au téléchargement depuis l'app).
-  var INBORIA_BASE = "https://2f7c7417-8ab2-41fb-9fcc-9eddd617f0df-00-5fb1cmje57my.picard.replit.dev";
+  var INBORIA_BASE = "https://inboria.com";
 
   var SESSION_KEY = "inboria.ext.session";
   var cfg = { supabaseUrl: "", supabaseAnonKey: "" };
