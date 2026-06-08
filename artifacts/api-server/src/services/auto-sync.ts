@@ -530,10 +530,29 @@ export async function saveEmailWithTriage(
     .eq("external_id", externalId)
     .maybeSingle();
 
+  // L'external_id IMAP a le format `imap:${email}:${uid}` où `uid` est un entier
+  // attribué PAR BOÎTE (séquence locale), donc NON unique globalement : la boîte A
+  // et la boîte B ont chacune un message d'UID 7. On retient le préfixe de boîte
+  // (`imap:${email}:`) pour scoper correctement la dédup ci-dessous et ne jamais
+  // confondre deux boîtes différentes.
+  const isImapExternalId = externalId.startsWith("imap:");
+  const imapMailboxLikePrefix =
+    isImapExternalId && externalId.lastIndexOf(":") > 0
+      ? externalId
+          .slice(0, externalId.lastIndexOf(":") + 1)
+          .replace(/[%_\\]/g, (m) => `\\${m}`)
+      : null;
+
   // Dedup robuste : si un email existe avec un external_id finissant par ":${nativeMessageId}"
   // (ancien format ${connId}:${msgId}), on le considère comme le même message — évite les
-  // doublons massifs après reconnexion d'un compte (Gmail/Outlook/IMAP).
-  if (!existing && nativeMessageId) {
+  // doublons massifs après reconnexion d'un compte (Gmail/Outlook).
+  // IMPORTANT : on EXCLUT l'IMAP de cette dédup par suffixe. Pour Gmail/Outlook,
+  // nativeMessageId est un identifiant globalement unique ; pour l'IMAP c'est un UID
+  // court (ex. "7") et `external_id LIKE %:7` matcherait à tort un mail d'une AUTRE
+  // boîte IMAP finissant en `:7` → le mail entrant serait jeté et n'arriverait jamais
+  // en Réception. Pour l'IMAP, l'external_id exact + le Message-ID RFC822 (ci-dessous)
+  // assurent déjà la dédup intra-boîte et la résistance aux changements d'UIDVALIDITY.
+  if (!existing && nativeMessageId && !isImapExternalId) {
     const escaped = nativeMessageId.replace(/[%_\\]/g, (m) => `\\${m}`);
     // Dedup CONSCIENT des boîtes partagées : une copie reçue dans une boîte
     // partagée NE doit PAS être jetée parce qu'une copie perso/envoyée porte le
@@ -587,6 +606,15 @@ export async function saveEmailWithTriage(
       msgIdQuery = sharedMailboxId
         ? msgIdQuery.eq("shared_mailbox_id", sharedMailboxId)
         : msgIdQuery.is("shared_mailbox_id", null);
+      // Pour l'IMAP : on ne déduplique que contre la MÊME boîte (même préfixe
+      // `imap:${email}:`). Sans ça, un mail que l'utilisateur s'envoie depuis une
+      // autre de ses boîtes connectées (même Message-ID RFC822) serait fusionné avec
+      // la copie « envoyée » et n'apparaîtrait jamais dans la Réception de cette
+      // boîte-ci. Objectif : une copie par boîte. (La résistance aux changements
+      // d'UIDVALIDITY reste assurée : l'ancien et le nouvel UID partagent ce préfixe.)
+      if (imapMailboxLikePrefix) {
+        msgIdQuery = msgIdQuery.like("external_id", `${imapMailboxLikePrefix}%`);
+      }
       const { data: existingByMsgId, error: msgIdErr } = await msgIdQuery
         .limit(1)
         .maybeSingle();
