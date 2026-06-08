@@ -7327,6 +7327,7 @@ export default function Dashboard() {
               onCreateTask={handleCreateTask}
               connections={composeConnections}
               sharedMailboxes={sharedMailboxes}
+              stickyTopClass="top-0"
             />
           </div>
         ) : null}
