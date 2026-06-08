@@ -189,6 +189,25 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // Force le hook de glisser-dehors (.eml) ET le composant DragOutAvatar
+        // dans un chunk partagé dédié. Sinon, comme la Réception (index.tsx)
+        // importe le hook en inline, Rollup l'embarque dans le GROS chunk de
+        // route de la Réception ; DragOutAvatar (utilisé par Envoyés, Reportés,
+        // Archives, Corbeille, etc.) dépendait alors de ce chunk de route non
+        // chargé sur ces pages → le glisser ne marchait QUE sur la Réception.
+        // Un chunk dédié casse cette dépendance route→route.
+        manualChunks(id) {
+          if (
+            id.includes("use-row-drag-out") ||
+            id.includes("DragOutAvatar")
+          ) {
+            return "drag-out";
+          }
+        },
+      },
+    },
   },
   server: {
     port,
