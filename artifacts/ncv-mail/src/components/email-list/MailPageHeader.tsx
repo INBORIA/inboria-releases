@@ -44,6 +44,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
+import { ViewOptionsMenu } from "@/components/email-list/ViewOptionsMenu";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PanelRight, PanelRightClose } from "lucide-react";
 import {
@@ -474,6 +475,8 @@ function MailPageHeaderImpl({
             )}
           </DialogContent>
         </Dialog>
+
+        <ViewOptionsMenu />
 
         {showReadingPaneToggle && (
           <button

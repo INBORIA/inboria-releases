@@ -98,7 +98,9 @@ import { Eye } from "lucide-react";
 import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from "@/lib/mailbox-resolver";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { MailReadingPane } from "@/components/email-list/MailReadingPane";
-import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
+import { ViewOptionsMenu } from "@/components/email-list/ViewOptionsMenu";
+import { useReadingPaneEnabled, useReadingPanePosition } from "@/lib/use-reading-pane";
+import { useMailDensity, mailRowHeight } from "@/lib/use-mail-density";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
@@ -262,11 +264,13 @@ function clearPendingResolve(): void {
 // (Composant HoverActions extrait dans @/components/email-list/HoverActions
 // — réutilisé tel quel par Envoyés pour parité 1:1.)
 
-function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders, hoverProjects }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number, x: number, y: number, additive: boolean) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[]; hoverProjects?: any[] }) {
+function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders, hoverProjects, rowHeightPx }: { email: any; onClick: () => void; onPrefetch?: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number, x: number, y: number, additive: boolean) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[]; hoverProjects?: any[]; rowHeightPx?: number }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const [rowLocation] = useLocation();
+  const [rowDensity] = useMailDensity();
+  const effectiveRowHeight = rowHeightPx ?? mailRowHeight(rowDensity);
   const isClassicMirror = rowLocation.includes("inbox-classic");
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
   const dragOut = useRowDragOut(email.id, email.subject);
@@ -284,9 +288,10 @@ function EmailRowImpl({ email, onClick, onPrefetch, onArchive, onDelete, onCateg
       data-email-row
       data-row-id={email.id}
       title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${format(new Date(email.createdAt), "PPp", { locale: dateFnsLocale })}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
-      className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-[color:var(--mail-border)] hover:border-b-[color:var(--mail-border-hover)] transition-colors ${
+      className={`group relative flex items-center gap-3 pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-[color:var(--mail-border)] hover:border-b-[color:var(--mail-border-hover)] transition-colors ${
         isSelected ? "bg-primary/[0.10]" : "hover:bg-white/[0.03]"
       }`}
+      style={{ height: effectiveRowHeight }}
       onClick={onClick}
       onMouseEnter={() => onPrefetch?.(email.id)}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
@@ -441,6 +446,7 @@ const EmailRow = memo(EmailRowImpl, (prev, next) => {
     prev.selectionMode === next.selectionMode &&
     prev.isSlaBreach === next.isSlaBreach &&
     prev.showMailboxBadge === next.showMailboxBadge &&
+    prev.rowHeightPx === next.rowHeightPx &&
     prev.email === next.email &&
     prev.mailboxBadge === next.mailboxBadge &&
     prev.hoverCb === next.hoverCb &&
@@ -3302,6 +3308,9 @@ export default function Dashboard() {
     }
   }, [smartSort]);
   const [readingPaneEnabled] = useReadingPaneEnabled();
+  const [readingPanePosition] = useReadingPanePosition();
+  const [mailDensity] = useMailDensity();
+  const rowHeightPx = mailRowHeight(mailDensity);
   const [mailHeaderCollapsed] = useMailHeaderCollapsed();
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
@@ -6222,6 +6231,8 @@ export default function Dashboard() {
               )}
             </div>
 
+            <ViewOptionsMenu />
+
             <Button
               variant="outline"
               size="sm"
@@ -6909,6 +6920,7 @@ export default function Dashboard() {
                         <div>
                           <VirtualizedMailList
                             items={visible}
+                            estimateSize={rowHeightPx}
                             keyExtractor={(e: any) => e.id}
                             renderRow={(email: any) => {
                             const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
@@ -7045,6 +7057,7 @@ export default function Dashboard() {
                     <div>
                       <VirtualizedMailList
                         items={sharedEmailsList}
+                        estimateSize={rowHeightPx}
                         keyExtractor={(e: any) => e.id}
                         renderRow={(email: any) => {
                         const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
@@ -7287,6 +7300,7 @@ export default function Dashboard() {
       {renderContextMenu()}
       <MailReadingPane
         open={readingPaneEnabled && !!selectedEmail}
+        position={readingPanePosition}
         onClose={() => setSelectedEmailId(null)}
       >
         {selectedEmail ? (
