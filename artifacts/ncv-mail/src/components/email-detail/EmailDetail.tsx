@@ -759,7 +759,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               </div>
             )}
 
-            <div className="p-4">
+            <div className="p-4 max-w-[720px]">
               {email.body ? (
                 <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.senderEmail || email.sender} />
               ) : (
