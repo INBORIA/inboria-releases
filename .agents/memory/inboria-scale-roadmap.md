@@ -9,7 +9,7 @@ User goal: assumer 5000 abonnés "sans le moindre souci". Done one-by-one,
 interactively (user wants feedback before each major step; no isolated task agents).
 
 ## The 6 load points (from a scalability audit)
-1. 🔴 No distributed lock / dedup across server instances → double-processing the day we run >1 instance. (Only matters with multiple instances.)
+1. 🔴 No distributed lock / dedup across server instances → double-processing the day we run >1 instance. (Only matters with multiple instances.) **DONE** — per-connection lease.
 2. 🔴 Sequential mailbox sync (`for...of await`). **DONE** — parallelized.
 3. 🟠 AI/workers run in-process (same Node as the API).
 4. 🟠 ~3 realtime channels per opened mail.

@@ -26,6 +26,8 @@ import {
 } from "./connection-health";
 import { runFollowupDetectionForAllUsers } from "./follow-up-detector";
 import { repairMojibake } from "../lib/text-encoding";
+import { hostname } from "node:os";
+import { randomUUID } from "node:crypto";
 
 interface SaveEmailOptions {
   forceSpam?: boolean;
@@ -1888,6 +1890,103 @@ const defaultDispatcher: AutoSyncDispatcher = async (conn) => {
   return 0;
 };
 
+// ── Point n°1 : verrou distribué (réservation partagée des boîtes) ──────────
+// Identité unique de CE processus serveur. Sert à savoir qui détient quelle
+// réservation quand plusieurs instances tournent en parallèle.
+const INSTANCE_ID = `${hostname()}:${process.pid}:${randomUUID().slice(0, 8)}`;
+// Taille d'un lot réservé par appel (work-stealing : les instances se partagent
+// la file en piochant des lots successifs).
+const SYNC_CLAIM_BATCH = Math.max(1, Number(process.env["SYNC_CLAIM_BATCH"]) || 250);
+// Durée du bail d'une réservation : doit DÉPASSER le temps de traitement d'un
+// lot, sinon une autre instance pourrait re-réserver une boîte encore en cours.
+const SYNC_LEASE_TTL_SECONDS = Math.max(
+  60,
+  Number(process.env["SYNC_LEASE_TTL_SECONDS"]) || 600,
+);
+
+// null = pas encore testé ; true/false = migration 2026_06_08_sync_claims.sql
+// appliquée ou non. En cache pour tout le process (pas de re-test à chaque appel).
+let syncClaimsSupported: boolean | null = null;
+
+// Distingue « la migration n'est pas appliquée » (fonction/colonne absente →
+// repli mono-serveur définitif) d'une simple erreur réseau passagère (à retenter).
+function isMissingClaimSupport(error: { code?: string; message?: string }): boolean {
+  const code = error?.code ?? "";
+  const msg = (error?.message ?? "").toLowerCase();
+  return (
+    code === "PGRST202" || // fonction absente du schema cache (PostgREST)
+    code === "42883" || // undefined_function
+    code === "42703" || // undefined_column
+    msg.includes("could not find the function") ||
+    msg.includes("does not exist") ||
+    msg.includes("schema cache")
+  );
+}
+
+// Réserve atomiquement un lot de connexions.
+// Retourne null SEULEMENT si le verrou distribué n'existe pas (migration absente)
+//   → l'appelant retombe alors sur l'ancien comportement mono-serveur.
+// Retourne [] sur erreur transitoire (réseau/timeout) → on saute ce lot ce cycle
+//   SANS désactiver le mode distribué (évite de re-tomber en mono après un blip).
+async function claimConnections(limit: number): Promise<any[] | null> {
+  if (syncClaimsSupported === false) return null;
+  const { data, error } = await supabaseAdmin.rpc("claim_email_connections", {
+    p_instance: INSTANCE_ID,
+    p_limit: limit,
+    p_ttl_seconds: SYNC_LEASE_TTL_SECONDS,
+  });
+  if (error) {
+    if (isMissingClaimSupport(error)) {
+      logger.warn(
+        { service: "auto-sync", err: error.message },
+        "Verrou distribué indisponible (migration 2026_06_08_sync_claims.sql non appliquée ?) — relève en mode mono-serveur",
+      );
+      syncClaimsSupported = false;
+      return null;
+    }
+    logger.warn(
+      { service: "auto-sync", err: error.message },
+      "Réservation distribuée : erreur transitoire, lot ignoré ce cycle (mode distribué conservé)",
+    );
+    return [];
+  }
+  syncClaimsSupported = true;
+  return (data as any[]) ?? [];
+}
+
+// Prolonge le bail des connexions encore en cours de traitement (heartbeat).
+// Indispensable : un lot lourd (gros premier sync) peut durer plus longtemps que
+// le TTL ; sans renouvellement, une autre instance pourrait re-réserver une boîte
+// encore en traitement → double exécution. On ne prolonge QUE nos propres baux.
+async function renewConnections(ids: string[]): Promise<void> {
+  if (syncClaimsSupported !== true || ids.length === 0) return;
+  const until = new Date(Date.now() + SYNC_LEASE_TTL_SECONDS * 1000).toISOString();
+  const { error } = await supabaseAdmin
+    .from("email_connections")
+    .update({ sync_locked_until: until })
+    .in("id", ids)
+    .eq("sync_locked_by", INSTANCE_ID);
+  if (error) {
+    logger.warn({ service: "auto-sync", err: error.message }, "Renouvellement du bail échoué");
+  }
+}
+
+// Libère un lot après traitement (le bail expirerait seul, mais on libère tôt
+// pour rendre les boîtes disponibles aux autres instances sans attendre le TTL).
+async function releaseConnections(ids: string[]): Promise<void> {
+  if (syncClaimsSupported !== true || ids.length === 0) return;
+  const { error } = await supabaseAdmin.rpc("release_email_connections", {
+    p_instance: INSTANCE_ID,
+    p_ids: ids,
+  });
+  if (error) {
+    logger.warn(
+      { service: "auto-sync", err: error.message },
+      "Libération des réservations échouée (le bail expirera seul)",
+    );
+  }
+}
+
 export async function runAutoSync(overrides?: {
   connections?: any[];
   dispatcher?: AutoSyncDispatcher;
@@ -1904,26 +2003,10 @@ export async function runAutoSync(overrides?: {
   const startTime = Date.now();
 
   try {
-    let connections: any[] | null = overrides?.connections ?? null;
+    const dispatcher = overrides?.dispatcher ?? defaultDispatcher;
 
-    if (!connections) {
-      const { data, error: connErr } = await supabaseAdmin
-        .from("email_connections")
-        .select("*");
-
-      if (connErr) {
-        cycleLog.error({ err: connErr.message }, "Failed to fetch connections");
-        return;
-      }
-      connections = data;
-    }
-
-    if (!connections || connections.length === 0) {
-      return;
-    }
-
-    cycleLog.info({ count: connections.length }, "Starting sync cycle");
-
+    // Carte connexion -> boîte partagée (table légère) + rattrapage shared_mailbox_id.
+    // Calculé UNE fois par tournée (idempotent), indépendamment du verrou.
     const connToSharedMailbox: Record<string, string> = {};
     if (!overrides?.skipBackfill) {
       const { data: sharedMailboxes } = await supabaseAdmin
@@ -1936,41 +2019,110 @@ export async function runAutoSync(overrides?: {
           }
         }
       }
-    }
 
-    for (const connId of Object.keys(connToSharedMailbox)) {
-      const sharedMbId = connToSharedMailbox[connId];
-      const { data: backfilledRows, error: bfError } = await supabaseAdmin
-        .from("emails")
-        .update({ shared_mailbox_id: sharedMbId })
-        .like("external_id", `${connId}:%`)
-        .is("shared_mailbox_id", null)
-        .select("id");
-      if (bfError) {
-        cycleLog.error({ connId, err: bfError.message }, "Shared mailbox backfill error");
-      } else if (backfilledRows && backfilledRows.length > 0) {
-        cycleLog.info({ connId, sharedMbId, count: backfilledRows.length }, "Shared mailbox backfilled");
+      for (const connId of Object.keys(connToSharedMailbox)) {
+        const sharedMbId = connToSharedMailbox[connId];
+        const { data: backfilledRows, error: bfError } = await supabaseAdmin
+          .from("emails")
+          .update({ shared_mailbox_id: sharedMbId })
+          .like("external_id", `${connId}:%`)
+          .is("shared_mailbox_id", null)
+          .select("id");
+        if (bfError) {
+          cycleLog.error({ connId, err: bfError.message }, "Shared mailbox backfill error");
+        } else if (backfilledRows && backfilledRows.length > 0) {
+          cycleLog.info({ connId, sharedMbId, count: backfilledRows.length }, "Shared mailbox backfilled");
+        }
       }
     }
 
-    for (const c of connections) {
-      (c as any)._sharedMailboxId = connToSharedMailbox[c.id] || null;
-    }
+    // Traite un lot de connexions et journalise le résultat par connexion.
+    const processBatch = async (batch: any[]) => {
+      for (const c of batch) {
+        (c as any)._sharedMailboxId = connToSharedMailbox[c.id] || null;
+      }
+      const loopResult = await runSyncLoop(batch, dispatcher);
+      for (const r of loopResult.perConnection) {
+        if (r.synced < 0) {
+          cycleLog.error({ connId: r.id, email: r.email }, "Connection sync failed");
+        } else {
+          cycleLog.info({ connId: r.id, email: r.email, synced: r.synced }, "Connection sync done");
+        }
+      }
+      return loopResult;
+    };
 
-    const dispatcher = overrides?.dispatcher ?? defaultDispatcher;
-    const loopResult = await runSyncLoop(connections, dispatcher);
+    let totalSynced = 0;
+    let failures = 0;
+    let processed = 0;
 
-    for (const r of loopResult.perConnection) {
-      if (r.synced < 0) {
-        cycleLog.error({ connId: r.id, email: r.email }, "Connection sync failed");
+    const explicitConnections: any[] | null = overrides?.connections ?? null;
+
+    if (explicitConnections) {
+      // Chemin direct (tests / sync ciblée) : pas de réservation distribuée.
+      if (explicitConnections.length > 0) {
+        cycleLog.info({ count: explicitConnections.length }, "Starting sync cycle");
+        const r = await processBatch(explicitConnections);
+        totalSynced += r.totalSynced;
+        failures += r.failureCount;
+        processed += explicitConnections.length;
+      }
+    } else {
+      // Point n°1 : réservation partagée. On tente de réserver un premier lot ;
+      // si le verrou distribué n'existe pas encore (migration absente), claim
+      // renvoie null et on retombe sur l'ancien comportement mono-serveur.
+      const firstBatch = await claimConnections(SYNC_CLAIM_BATCH);
+
+      if (firstBatch === null) {
+        // Mode mono-serveur : on relève toutes les connexions, une passe.
+        const { data, error: connErr } = await supabaseAdmin
+          .from("email_connections")
+          .select("*");
+        if (connErr) {
+          cycleLog.error({ err: connErr.message }, "Failed to fetch connections");
+          return;
+        }
+        const all = data ?? [];
+        if (all.length > 0) {
+          cycleLog.info({ count: all.length, mode: "single-instance" }, "Starting sync cycle");
+          const r = await processBatch(all);
+          totalSynced += r.totalSynced;
+          failures += r.failureCount;
+          processed += all.length;
+        }
       } else {
-        cycleLog.info({ connId: r.id, email: r.email, synced: r.synced }, "Connection sync done");
+        // Mode multi-serveurs : on draine la file par lots réservés (work-stealing).
+        // Chaque instance pioche des lots DIFFÉRENTS (FOR UPDATE SKIP LOCKED).
+        cycleLog.info({ instance: INSTANCE_ID, mode: "leased" }, "Starting sync cycle");
+        let batch = firstBatch;
+        let safety = 0;
+        const MAX_BATCHES = 1000;
+        // Renouvellement du bail à 1/3 du TTL : largement avant l'expiration,
+        // même si le traitement d'un lot lourd dure plus longtemps que le TTL.
+        const renewMs = Math.max(15_000, Math.floor((SYNC_LEASE_TTL_SECONDS * 1000) / 3));
+        while (batch.length > 0 && safety < MAX_BATCHES) {
+          safety += 1;
+          const ids = batch.map((c) => String(c.id));
+          const heartbeat = setInterval(() => {
+            void renewConnections(ids);
+          }, renewMs);
+          try {
+            const r = await processBatch(batch);
+            totalSynced += r.totalSynced;
+            failures += r.failureCount;
+            processed += batch.length;
+          } finally {
+            clearInterval(heartbeat);
+            await releaseConnections(ids);
+          }
+          batch = (await claimConnections(SYNC_CLAIM_BATCH)) ?? [];
+        }
       }
     }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     cycleLog.info(
-      { totalSynced: loopResult.totalSynced, failures: loopResult.failureCount, elapsedSeconds: elapsed },
+      { totalSynced, failures, processed, elapsedSeconds: elapsed },
       "Auto-sync cycle done",
     );
 
