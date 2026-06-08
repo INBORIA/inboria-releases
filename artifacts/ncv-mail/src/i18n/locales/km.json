@@ -23,7 +23,16 @@
     "add": "សូមបន្ថែម",
     "edit": "សូមកែប្រែ",
     "reset": "សូមកំណត់ឡើងវិញ",
-    "more": "បន្ថែម"
+    "more": "បន្ថែម",
+    "notAuthenticated": "មិនបានផ្ទៀងផ្ទាត់",
+    "collapse": "លាក់ប្រភេទ",
+    "send": "ផ្ញើ",
+    "dismiss": "បិទ",
+    "create": "បង្កើត",
+    "remove": "ដកចេញ",
+    "select": "ជ្រើសរើស",
+    "copyFailed": "មិនអាចចម្លង",
+    "expand": "បង្ហាញប្រភេទ"
   },
   "nav": {
     "extensions": "ផ្នែកបន្ថែម",
@@ -37,7 +46,18 @@
     "login": "ចូល",
     "signup": "ចុះឈ្មោះ",
     "logout": "ចេញ",
-    "openMenu": "បើកម៉ឺនុយ"
+    "openMenu": "បើកម៉ឺនុយ",
+    "categories": "ប្រភេទ",
+    "archives": "បណ្ណាល័យ",
+    "dailyBrief": "សង្ខេបប្រចាំថ្ងៃ",
+    "folders": "ថតរបស់ខ្ញុំ",
+    "tasks": "ភារកិច្ច",
+    "followups": "ការតាមដាន",
+    "inbox": "ប្រអប់ទទួល",
+    "sent": "បានផ្ញើ",
+    "scheduled": "បានកំណត់",
+    "snoozed": "បានពន្យាពេល",
+    "contacts": "ទំនាក់ទំនង"
   },
   "sidebar": {
     "inbox": "ប្រអប់សំបុត្រ",
@@ -66,7 +86,10 @@
     "followups": "ការតាមដាន",
     "contacts": "ទំនាក់ទំនង",
     "assigned": "បានចាត់តាំង",
-    "myTasks": "ភារកិច្ចរបស់ខ្ញុំ"
+    "myTasks": "ភារកិច្ចរបស់ខ្ញុំ",
+    "expand": "ពង្រីកម៉ឺនុយ",
+    "collapse": "បង្រួមម៉ឺនុយ",
+    "resize": "បង្រួមបញ្ជី"
   },
   "dashboard": {
     "expiredSubscription": "ការជាវរបស់លោកអ្នកបានផុតកំណត់",
@@ -529,10 +552,17 @@
       "important": "សំខាន់"
     },
     "date": {
-      "all": "កាលបរិច្ឆេទទាំងអស់"
+      "all": "កាលបរិច្ឆេទទាំងអស់",
+      "yesterday": "ម្សិលមិញ",
+      "thisMonth": "ខែនេះ",
+      "today": "ថ្ងៃនេះ",
+      "last7": "៧ ថ្ងៃចុងក្រោយ",
+      "last30": "៣០ ថ្ងៃចុងក្រោយ"
     },
     "read": {
-      "all": "ទាំងអស់"
+      "all": "ទាំងអស់",
+      "read": "បានអាន",
+      "unread": "មិនទាន់អាន"
     },
     "sharedDraft": "រូបមន្តចែករំលែក",
     "sharedDraftOn": "រូបមន្តចែករំលែកបើក",
@@ -564,7 +594,113 @@
       "label": "បង្ហាញបន្ទះ",
       "overlay": "លើបណ្តោះអាសន្ន",
       "split": "ជាប់គ្នា"
-    }
+    },
+    "unknownSender": "មិនស្គាល់",
+    "scSearch": "ស្វែងរក",
+    "scNext": "អ៊ីមែលបន្ទាប់",
+    "snoozedFor24h": "ពន្យារពេលដល់ថ្ងៃស្អែក",
+    "collisionViewingOne": "{{name}} កំពុងមើលអ៊ីមែលនេះផងដែរ",
+    "markedAsUnread": "បានសម្គាល់ថាមិនទាន់អាន",
+    "theme": {
+      "switchLight": "របៀបភ្លឺ",
+      "switchDark": "របៀបងងឹត"
+    },
+    "archived": "បានបញ្ចូលក្នុងបណ្ណាល័យ",
+    "loadingEmail": "កំពុងផ្ទុកអ៊ីមែល...",
+    "searchOpAttachment": "អ៊ីមែលដែលមានឯកសារភ្ជាប់",
+    "moreActions": "សកម្មភាពបន្ថែម",
+    "searchOpSubject": "ត្រង់តាមប្រធានបទ",
+    "markAsRead": "សម្គាល់ថាអានរួច",
+    "collisionViewingMany": "{{count}} នាក់ផ្សេងទៀតកំពុងមើលអ៊ីមែលនេះ",
+    "scGotoInbox": "ទៅកាន់ប្រអប់ទទួល",
+    "scGotoSnoozed": "ទៅកាន់ការពន្យារពេល",
+    "scSnooze": "ពន្យារពេល (24 ម៉ោង)",
+    "close": "បិទ",
+    "composeRestore": "បន្តព្រាង",
+    "scDelete": "លុប",
+    "density": {
+      "normal": "ធម្មតា",
+      "label": "ដង់ស៊ីតេនៃការបង្ហាញ",
+      "compact": "តូច",
+      "comfortable": "មានផាសុខភាព"
+    },
+    "headerCollapse": "លាក់ផ្ទាំងនិងតម្រង",
+    "composeUntitled": "ព្រាងគ្មានប្រធានបទ",
+    "backHint": "ត្រឡប់ (Esc) — J/K ដើម្បីរុករក, R ឆ្លើយតប, E បញ្ចូលបណ្ណាល័យ",
+    "loadingTitle": "កំពុងផ្ទុក…",
+    "draftYou": "អ្នក",
+    "copySender": "ចម្លងអាសយដ្ឋាន",
+    "slaOverdue": "SLA លើសកំណត់",
+    "assigneeFilterMember": "សមាជិកនេះ",
+    "draftRelease": "ដោះលែង",
+    "scArchive": "បញ្ចូលបណ្ណាល័យ",
+    "markAsReadUnread": "សម្គាល់ថា អាន / មិនទាន់អាន",
+    "scForward": "បញ្ជូនបន្ត",
+    "draftSomeoneSends": "{{name}} នឹងផ្ញើវា",
+    "searchOpSender": "ត្រងតាមអ្នកផ្ញើ",
+    "readingPanePos": {
+      "off": "បានលាក់",
+      "right": "នៅខាងស្តាំ",
+      "label": "ផ្ទាំងអាន",
+      "bottom": "ខាងក្រោម"
+    },
+    "scGotoContacts": "ទៅកាន់ទំនាក់ទំនង",
+    "markAsUnread": "សម្គាល់ថាមិនទាន់អាន",
+    "composeDiscard": "បោះបង់",
+    "snooze3h": "ក្នុង 3 ម៉ោង",
+    "importanceLabel": "ការបង្ហាញ",
+    "copiedSenderEmail": "អាសយដ្ឋានបានចម្លង",
+    "scPalette": "បញ្ជីពណ៌បញ្ជា",
+    "copiedSubject": "ប្រធានបទបានចម្លង",
+    "myFoldersLabel": "ថតរបស់ខ្ញុំ",
+    "copySenderEmail": "ចម្លងអាសយដ្ឋានអ្នកផ្ញើ",
+    "viewOptions": "ជម្រើសការបង្ហាញ",
+    "shortcutsTitle": "ផ្លូវកាត់ក្តារចុច",
+    "assignedNoTeam": "ទិដ្ឋភាពនេះត្រូវការក្រុម (2 សមាជិក ឬច្រើនជាងនេះ)។",
+    "collisionReplyingMany": "{{count}} នាក់កំពុងឆ្លើយតបអ៊ីមែលនេះរួចហើយ",
+    "assignToProject": "ផ្ដល់ទៅថតក្រុម",
+    "searchGroupOperators": "ធ្វើឱ្យប្រសើរ",
+    "composeAria": "សរសេរអ៊ីមែល",
+    "downloadEml": "ទាញយកជា .eml",
+    "headerExpand": "បង្ហាញផ្ទាំង និងតម្រង",
+    "scClose": "បិទអ៊ីមែល",
+    "composeDiscardConfirm": "បោះបង់សេចក្តីព្រាងនេះ?",
+    "readingPaneOff": "បិទផ្ទាំងអាន",
+    "searchGroupSenders": "អ្នកផ្ញើ",
+    "scGotoTasks": "ទៅកាន់ការងារ",
+    "printPopupBlocked": "មិនអាចបើកបង្អួចបោះពុម្ពបានទេ",
+    "copied": "បានចម្លង",
+    "snooze": "ពន្យាពេល",
+    "exportEml": "ទាញយក .eml",
+    "categorized": "ចាត់ថ្នាក់",
+    "markedAsRead": "បានសម្គាល់ថា អានរួច",
+    "teamBadge": "ក្រុម",
+    "priorityLabel": "អាទិភាព",
+    "backToGmailHint": "បើកអ៊ីមែលនេះក្នុង Gmail",
+    "snoozeTomorrow": "ព្រឹកស្អែក",
+    "composeMinimize": "បង្រួមសេចក្តីព្រាង",
+    "scGotoSent": "ទៅកាន់ បានផ្ញើ",
+    "readingPaneOn": "បើកផ្ទាំងអាន (៣ ជួរ)",
+    "collisionReplyingOne": "{{name}} កំពុងឆ្លើយអ៊ីមែលនេះ",
+    "createAndAssignTask": "បង្កើត និងផ្ដល់…",
+    "copyAddress": "ចម្លងអាសយដ្ឋាន",
+    "copySubject": "ចម្លងប្រធានបទ",
+    "loadEmailError": "មិនអាចផ្ទុកអ៊ីមែល។",
+    "draftYouSend": "អ្នកជាអ្នកផ្ញើ",
+    "scGotoArchives": "ទៅកាន់ បណ្ណសារ",
+    "scReply": "ឆ្លើយតប",
+    "backToGmail": "ត្រឡប់ទៅ Gmail",
+    "moveToFolder": "ផ្លាស់ទីទៅថត",
+    "print": "បោះពុម្ព",
+    "scPrev": "អ៊ីមែលមុន",
+    "draftClaimSend": "ខ្ញុំជាអ្នកផ្ញើ",
+    "draftLiveCoedit": "កែសម្រួលរួមផ្ទាល់",
+    "draftTakeOverHint": "យកការផ្ញើវិញប្រសិនបើមិត្តរួមការងារនេះមិនអាចប្រើបាន",
+    "scHelp": "បង្ហាញជំនួយនេះ",
+    "filtersReset": "កំណត់ឡើងវិញតម្រង",
+    "draftTakeOver": "យកវិញ",
+    "searchGroupEmails": "អ៊ីមែល",
+    "filterByCategory": "តម្រង"
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",
@@ -649,7 +785,16 @@
     "blockFailed": "មិនអាចបិទបានទេ",
     "blockNoEmail": "អាសយដ្ឋានអ្នកផ្ញើមិនអាចរកឃើញបាន",
     "blockNoConnection": "គណនីអ៊ីមែលមិនបានភ្ជាប់",
-    "emptied": "ថតទទេ"
+    "emptied": "ថតទទេ",
+    "noBlocked": "គ្មានអ្នកផ្ញើដែលត្រូវបានបិទ",
+    "openRestored": "បើក",
+    "fetchingFromProvider": "កំពុងទាញយកមាតិកាពីអ្នកផ្គត់ផ្គង់របស់អ្នក…",
+    "retryFetch": "សាកល្បងម្តងទៀត",
+    "unblocked": "អ្នកផ្ញើបានដោះសោរ",
+    "blockedList": "អ្នកផ្ញើដែលបានបិទ",
+    "unblock": "ដោះសោ",
+    "fetchFailed": "មិនអាចទាញយកមាតិកាអ៊ីមែលនេះ។",
+    "blockSenderSuccess": "អ្នកផ្ញើបានបិទ"
   },
   "trash": {
     "title": "សطل",
@@ -794,7 +939,18 @@
     "movedToDone": "ការងារដែលបានបញ្ចប់",
     "movedToTodo": "ការងារដែលបានដាក់វិញដើម្បីធ្វើ",
     "statusUpdated": "ស្ថានភាពត្រូវបានអាប់ដេត",
-    "taskCreated": "ការងារបង្កើតឡើង"
+    "taskCreated": "ការងារបង្កើតឡើង",
+    "titleCopied": "ចំណងជើងបានចម្លង",
+    "reassign": "ផ្តល់ជូនម្ដងទៀត",
+    "openInInbox": "បើកក្នុងប្រអប់ទទួល",
+    "copyTitle": "ចម្លងចំណងជើង",
+    "noLinkedEmail": "ភារកិច្ចនេះមិនត្រូវបានភ្ជាប់ជាមួយអ៊ីមែលណាមួយទេ។",
+    "unassign": "ដកចេញពីការចាត់តាំង",
+    "linkedEmailActions": "នៅលើអ៊ីមែលដែលបានភ្ជាប់",
+    "reassigned": "ការងារបានចាត់តាំងឡើងវិញ",
+    "markAsDone": "សម្គាល់ថា បានបញ្ចប់",
+    "loadingTitle": "កំពុងផ្ទុកភារកិច្ច…",
+    "markAsTodo": "សម្គាល់ថា ត្រូវធ្វើ"
   },
   "projects": {
     "title": "ថតក្រុម",
@@ -851,7 +1007,14 @@
     "exportError": "មានកំហុសក្នុងការនាំចេញ",
     "searchProjects": "ស្វែងរកគម្រោង...",
     "noProjectsAlt": "សូមបង្កើតគម្រោងដំបូងរបស់លោកអ្នកដើម្បីប្រមូលអ៊ីមែល និងការងារ។",
-    "viewDetail": "មើលព័ត៌មានលម្អិត"
+    "viewDetail": "មើលព័ត៌មានលម្អិត",
+    "taskAssigned": "ភារកិច្ចបានផ្តល់",
+    "taskUnassigned": "ភារកិច្ចមិនបានផ្តល់",
+    "detachEmail": "ដកចេញពីគម្រោង",
+    "assignTo": "ផ្ដល់ទៅ…",
+    "openEmail": "បើកអ៊ីមែល",
+    "emailDetached": "អ៊ីមែលបានដកចេញពីគម្រោង",
+    "unassigned": "មិនបានផ្ដល់"
   },
   "classification": {
     "title": "ប្រភេទ",
@@ -1135,7 +1298,8 @@
       "cannotRename": "ប្រភេទប្រព័ន្ធនេះមិនអាចត្រូវបានប្តូរឈ្មោះបាន។",
       "cannotMerge": "ប្រភេទ « មិនបានចាត់ចែង » មិនអាចត្រូវបានភ្ជាប់បាន។",
       "goToInbox": "តម្រៀបអ៊ីមែលទាំងនេះ"
-    }
+    },
+    "adminOnlyNotice": "ការគ្រប់គ្រងប្រភេទ (បង្កើត, កែប្រែ, លុប, កញ្ចប់មុខរបរ) គឺសម្រាប់អ្នកគ្រប់គ្រងក្រុមប៉ុណ្ណោះ ដើម្បីធានាការបែងចែកត្រឹមត្រូវ។ អ្នកអាចមើលប្រភេទនិងអ៊ីមែលរបស់ពួកវាបាន។"
   },
   "settings": {
     "title": "ការកំណត់",
@@ -1268,7 +1432,9 @@
       "privacy": "ភាពឯកជន និងការចូលដំណើរការក្រុម",
       "privacyDesc": "អ៊ីមែលឯកជនរបស់លោកអ្នក និងកំណត់ហេតុការពិនិត្យ admin",
       "calendars": "ប្រតិទិន",
-      "calendarsDesc": "ភ្ជាប់ Google Calendar និង Outlook Calendar"
+      "calendarsDesc": "ភ្ជាប់ Google Calendar និង Outlook Calendar",
+      "administration": "ការគ្រប់គ្រង",
+      "administrationDesc": "ការកំណត់សម្រាប់អ្នកគ្រប់គ្រងអង្គការ"
     },
     "b2bSection": "ភាពជឿជាក់ B2B",
     "slaCard": "SLA សម្រាប់ប្រអប់ចែករំលែក",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "ការប្រជុំជាវីដេអូលំនាំដើម",
     "preferredVideoDesc": "សូមជ្រើសរើសអ្នកផ្តល់សេវាកម្មការប្រជុំជាវីដេអូលំនាំដើមសម្រាប់ការណាត់ជួបថ្មី។ Meet ត្រូវការប្រតិទិន Google ដែលបានភ្ជាប់ ហើយ Teams ត្រូវការ Outlook។ Jitsi ដំណើរការដោយមិនចាំបាច់មានគណនី។",
     "meetingRemindersDesc": "Inboria ផ្ញើការរំលឹកយ៉ាងគួរសមទៅកាន់ទំនាក់ទំនង 48 ម៉ោងបន្ទាប់ពីការផ្តល់ជូនការណាត់ជួបមិនទាន់បានឆ្លើយតប។",
-    "meetingRemindersTitle": "ការរំលឹកការណាត់ជួបដោយស្វ័យប្រវត្តិ"
+    "meetingRemindersTitle": "ការរំលឹកការណាត់ជួបដោយស្វ័យប្រវត្តិ",
+    "outlookAddinSection": "Inboria ក្នុង Outlook",
+    "personalVideoUrlDesc": "បិទភ្ជាប់តំណបន្ទប់ Teams ឬ Meet របស់អ្នក (https://...)។ Inboria នឹងប្រើវានៅក្នុងការណាត់ជួបទាំងអស់។",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud និងវេបម៉ែលភាគច្រើន។ បន្ថែមជំនួយការរបស់ Inboria ដោយផ្ទាល់ក្នុងប្រអប់សាររបស់អ្នក។",
+    "outlookAddinTitle": "ប៊ូតុង « សួរជូន Inboria » ក្នុង Outlook",
+    "webmailDownload": "ទាញយកផ្នែកបន្ថែម",
+    "webmailCopyUrl": "ចម្លង chrome://extensions",
+    "personalVideoUrlInvalid": "តំណមិនត្រឹមត្រូវ (ត្រូវការប្រភេទ https://)",
+    "webmailUrlCopied": "អាសយដ្ឋានបានចម្លង ✓",
+    "outlookOpenAddinsPage": "បើកបន្ថែម Outlook",
+    "outlookDownloadManifest": "ទាញយកឯកសារ",
+    "outlookStep2": "នៅក្នុង Outlook បើក « ទទួលបានបន្ថែម » › « បន្ថែមរបស់ខ្ញុំ » › « បន្ថែមបន្ថែមផ្ទាល់ខ្លួន » › « ពីឯកសារ » ហើយជ្រើសឯកសារដែលបានទាញយក។",
+    "outlookGuideIntro": "បីជំហានសាមញ្ញ។ មិនចាំបាច់ស្វែងរកក្នុងម៉ឺនុយទេ៖ គ្រប់គ្រងទាំងអស់។",
+    "webmailExtInstall": "ដំឡើងក្នុងកម្មវិធីរុករករបស់ខ្ញុំ",
+    "webmailGuideIntro": "ធ្វើការជាមួយ Gmail, OVH, Yahoo, iCloud និង webmails ភាគច្រើន ក្នុង Chrome ឬ Edge។ បីជំហានសាមញ្ញ ម្តងតែប៉ុណ្ណោះ។",
+    "webmailStep2": "នៅក្នុង Chrome ឬ Edge បើកទំព័របន្ថែម៖ វាយ chrome://extensions ក្នុងរបារអាសយដ្ឋាន ហើយបើក « របៀបអ្នកអភិវឌ្ឍន៍ » (បិទបើកនៅខាងស្តាំខាងលើ)។",
+    "webmailGuideTitle": "ដំឡើង Inboria ក្នុង webmail របស់អ្នក",
+    "webmailExtTitle": "ប៊ូតុង « សូមស្នើរទៅ Inboria » ក្នុង webmail របស់អ្នក",
+    "webmailStep3": "ចុច « បញ្ចូលផ្នែកបន្ថែមដែលមិនបានបោះបង់ » ហើយជ្រើសរើសថត « inboria-extension » ដែលបានបញ្ចេញ។ បើក webmail របស់អ្នក: ប៊ូតុង « សូមស្នើរទៅ Inboria » បង្ហាញ។ ចូលម្តង, រួចរាល់។",
+    "outlookStep1": "ទាញយកឯកសារចូល Inboria។",
+    "reconnect": "ភ្ជាប់ឡើងវិញ",
+    "outlookAddinDesc": "បន្ថែមជំនួយ Inboria ដោយផ្ទាល់ក្នុង Outlook របស់អ្នក, ដោយមិនចាកចេញពីអ៊ីមែល។",
+    "personalVideoUrlLabel": "តំណវីដេអូផ្ទាល់ខ្លួន",
+    "outlookStep3": "បើកអ៊ីមែលមួយ: ប៊ូតុង « សូមស្នើរទៅ Inboria » បង្ហាញក្នុងបន្ទះ។ ចូលម្តងជាមួយគណនី Inboria របស់អ្នក, រួចរាល់។",
+    "outlookGuideTitle": "ដំឡើង Inboria ក្នុង Outlook",
+    "webmailExtSection": "Inboria ក្នុង webmail របស់អ្នក",
+    "outlookAddinInstall": "ដំឡើងក្នុង Outlook",
+    "webmailStep1": "ទាញយកផ្នែកបន្ថែម Inboria, បន្ទាប់មកបញ្ចេញឯកសារ (ចុចស្ដាំ › « បញ្ចេញទាំងអស់ »)។ អ្នកនឹងទទួលបានថត « inboria-extension »។"
   },
   "subscription": {
     "title": "គ្រប់គ្រងការជាវរបស់លោកអ្នក។",
@@ -1426,7 +1619,10 @@
     "start": "ចាប់ផ្តើម",
     "numberOfCollaborators": "ចំនួនអ្នករួមការងារ",
     "total": "សរុប",
-    "seatsExample": "ឧទាហរណ៍៖ 3 អ្នករួមការងារ = 50,97€/ខែ — អាចកែប្រែបានគ្រប់ពេលពីកន្លែងរបស់លោកអ្នក។"
+    "seatsExample": "ឧទាហរណ៍៖ 3 អ្នករួមការងារ = 50,97€/ខែ — អាចកែប្រែបានគ្រប់ពេលពីកន្លែងរបស់លោកអ្នក។",
+    "billingMonthly": "ប្រចាំខែ",
+    "perMonthBilledYearly": "/ខែ (គិតលុយប្រចាំឆ្នាំ)",
+    "billingYearly": "ប្រចាំឆ្នាំ"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "កំហុសក្នុងការផ្ញើ",
     "changeRole": "ប្តូរតួនាទី",
     "adminDesc": "អាចគ្រប់គ្រងក្រុម, ការជាវ និងអ៊ីមែលទាំងអស់",
-    "memberDesc": "ចូលដំណើរការទៅអ៊ីមែលរបស់ខ្លួន និងភារកិច្ចដែលបានចែករំលែក"
+    "memberDesc": "ចូលដំណើរការទៅអ៊ីមែលរបស់ខ្លួន និងភារកិច្ចដែលបានចែករំលែក",
+    "trialTeamHint": "សាកល្បងក្រុម៖ អញ្ជើញមិត្តរួមការងាររហូតដល់ 3 នាក់។ ម្នាក់ៗទទួលបានការសាកល្បង 4,500 ឥណទានផ្ទាល់ខ្លួន ហើយអ្នកបើកប្រអប់ចែករំលែក ការចាត់តាំង និងកំណត់ចំណាំផ្ទៃក្នុង។",
+    "trialTeamLabel": "ក្រុមសាកល្បង"
   },
   "sharedMailboxes": {
     "title": "ប្រអប់ដែលបានចែករំលែក",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} បានចាត់តាំងអ៊ីមែលនេះទៅ {{target}}",
     "systemSelfAssigned": "{{actor}} បានទទួលយកអ៊ីមែលនេះ",
     "systemReassigned": "{{actor}} បានចាត់តាំងឡើងវិញពី {{previous}} ទៅ {{target}}",
-    "systemUnassigned": "{{actor}} បានដកការចាត់តាំងពី {{previous}}"
+    "systemUnassigned": "{{actor}} បានដកការចាត់តាំងពី {{previous}}",
+    "recipientsFilter": "ស្វែងរកសមាជិក…",
+    "typingMany": "មនុស្សជាច្រើនកំពុងវាយ…",
+    "recipientsClear": "សម្អាត",
+    "placeholderSimple": "បញ្ចូលសាររបស់អ្នក…",
+    "viewing": "កំពុងមើលឥឡូវនេះ",
+    "internalNote": "កំណត់ចំណាំ",
+    "recipients": "អ្នកទទួល",
+    "recipientsPick": "អ្នកទទួលកំណត់ចំណាំ",
+    "typingOne": "{{name}} កំពុងវាយ…",
+    "recipientsEmpty": "គ្មានសមាជិក",
+    "recipientsSelected": "{{count}} បានជ្រើសរើស",
+    "emailMessage": "អ៊ីមែល"
   },
   "attachments": {
     "title": "ឯកសារភ្ជាប់",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "កំពុងរង់ចាំ",
     "statusPendingShort": "កំពុងរង់ចាំ",
     "syncFailed": "ការសមកាលកម្មបានបរាជ័យ",
-    "viewDetails": "មើលព័ត៌មានលម្អិត"
+    "viewDetails": "មើលព័ត៌មានលម្អិត",
+    "internalAppointment": "ការណាត់ជួបផ្ទៃក្នុង",
+    "duplicateError": "កំហុសចម្លង",
+    "duplicatedDesc": "បានបង្កើតចម្លង 7 ថ្ងៃក្រោយ។",
+    "noteSelectedCount": "{{count}} អ្នកទទួល",
+    "forwardWhere": "ទីតាំង",
+    "askInboriaNewSlotPrefill": "ការផ្តល់ជូនរបស់ {{contact}}{{slot}} មិនសមស្រប។ សូមផ្តល់ជូនពេលវេលាផ្សេងទៀតដែលសមស្របជាមួយប្រតិទិនរបស់ខ្ញុំ។",
+    "duplicated": "ការណាត់ជួបបានចម្លង",
+    "ctxNoProject": "គ្មានគម្រោង",
+    "noteError": "កំហុសបន្ថែមកំណត់ចំណាំ",
+    "filterExternal": "អតិថិជន",
+    "autoConfirmed": {
+      "desc": "{{count}} ការណាត់ជួបត្រូវបានបញ្ជាក់ដោយស្វ័យប្រវត្តិពីអ៊ីមែលដែលបានទទួល។",
+      "title": "ការបញ្ជាក់ត្រូវបានរកឃើញ"
+    },
+    "ctxDup7": "ក្នុង 7 ថ្ងៃ",
+    "forwardIntro": "សួស្តី,",
+    "statusPendingHint": "Inboria នឹងផ្ញើអ៊ីមែលផ្តល់ជូនទៅអតិថិជនដោយស្វ័យប្រវត្តិ។",
+    "markConfirmed": "សម្គាល់ថាបានបញ្ជាក់",
+    "newInternalAppointment": "ការណាត់ជួបផ្ទៃក្នុង",
+    "ctxEdit": "កែប្រែ",
+    "theContact": "ទំនាក់ទំនង",
+    "statusLabel": "ស្ថានភាព",
+    "notesEmpty": "គ្មានកំណត់ចំណាំ។ កំណត់ចំណាំនៅផ្ទៃក្នុង — មិនដែលផ្ញើទៅអតិថិជន។",
+    "expandSuggestions": "បង្ហាញសំណើ",
+    "forwardTitle": "ចំណងជើង",
+    "noteAllTeam": "ក្រុមទាំងមូល",
+    "internalMembers": "សមាជិកក្រុមដែលបានអញ្ជើញ",
+    "noteRecipientsLabel": "ទៅកាន់",
+    "ctxMarkAs": "សម្គាល់ជា",
+    "singleDay": "ត្រឡប់ទៅរយៈពេលមួយថ្ងៃ",
+    "ctxDupNextDay": "ថ្ងៃបន្ទាប់",
+    "counterDeclined": "បានបញ្ជូនការបដិសេធទៅកាន់ទំនាក់ទំនង",
+    "ctxDup14": "ក្នុង 14 ថ្ងៃ",
+    "collapseSuggestions": "លាក់ការផ្តល់យោបល់",
+    "formInternalNoteLabel": "កំណត់ចំណាំផ្ទៃក្នុង (ជាជម្រើស)",
+    "forwardBody": "ខ្ញុំកំពុងបញ្ជូនព័ត៌មានលម្អិតនៃការណាត់ជួបនេះទៅអ្នក៖",
+    "multiDay": "ច្រើនថ្ងៃ…",
+    "ctxForward": "បញ្ជូនតាមអ៊ីមែល",
+    "forwardVideo": "តំណភ្ជាប់វីដេអូ",
+    "internalMembersEmpty": "គ្មានសមាជិកដែលបានអញ្ជើញ។ ចុច « + បន្ថែម » ដើម្បីជ្រើសមិត្តរួមការងាររបស់អ្នក។",
+    "forwardWhen": "កាលបរិច្ឆេទ",
+    "pickDate": "ជ្រើសកាលបរិច្ឆេទ",
+    "ctxDuplicate": "ចម្លង",
+    "coorgNoCandidate": "គ្មានសមាជិកដែលអាចប្រើបាន។",
+    "ctxDupCustomMenu": "ផ្ទាល់ខ្លួន…",
+    "ctxDupCustom": "ចម្លងក្នុងប៉ុន្មានថ្ងៃ?",
+    "ctxOpen": "បើក",
+    "notePlaceholder": "កំណត់ចំណាំផ្ទៃក្នុង (មើលឃើញដោយក្រុមតែប៉ុណ្ណោះ មិនដែលផ្ញើទៅអតិថិជន)…",
+    "confirmError": "កំហុសក្នុងការបញ្ជាក់",
+    "ctxDelete": "លុប",
+    "duration": "រយៈពេល",
+    "internalNotes": "កំណត់ចំណាំផ្ទៃក្នុង",
+    "ctxDup30": "ក្នុង ១ ខែ",
+    "formInternalNotePlaceholder": "ឧទាហរណ៍: អតិថិជន VIP, ប្រយ័ត្នសំឡេង។ មិនដែលផ្ញើទៅអតិថិជន។",
+    "askInboriaNewSlot": "សូមស្នើរទៅ Inboria កាលវិភាគថ្មី",
+    "filterAll": "ទាំងអស់",
+    "confirmWithInboria": "បញ្ជាក់ជាមួយ Inboria",
+    "ctxProject": "គម្រោង",
+    "coorgAdd": "+ បន្ថែម",
+    "ctxDup90": "ក្នុង ៣ ខែ",
+    "confirmDelete": "លុបកាលវិភាគនេះ?",
+    "forwardOutro": "សូមគោរព,",
+    "forwardSubject": "TR : កាលវិភាគ",
+    "filterInternal": "ក្នុង"
   },
   "supportChat": {
     "title": "ជំនួយ Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "សូមសួរខ្ញុំអំពីសំណួរណាមួយដែលទាក់ទងនឹង Inboria៖ មុខងារ, ការកំណត់, ការជាវ, និងផ្សេងៗទៀត។",
     "placeholder": "សូមវាយសំណួររបស់លោកអ្នក...",
     "poweredBy": "បានជំរុញដោយ Inboria",
-    "errorMessage": "សូមអភ័យទោស មានកំហុសមួយកើតឡើង។ សូមព្យាយាមម្តងទៀត ឬទំនាក់ទំនង support@inboria.com។"
+    "errorMessage": "សូមអភ័យទោស មានកំហុសមួយកើតឡើង។ សូមព្យាយាមម្តងទៀត ឬទំនាក់ទំនង support@inboria.com។",
+    "send": "ផ្ញើ",
+    "clear": "សម្អាតការជជែក"
   },
   "inboriaChat": {
     "openLabel": "បើកជជែក Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "កំពុងរង់ចាំ",
       "relance": "កំពុងដំណើរការ",
       "termine": "បានបញ្ចប់"
-    }
+    },
+    "bulkDismissedToast": "{{count}} បានមិនអើពើ",
+    "bulkMarkedRepliedToast": "{{count}} បានសម្គាល់ថា បានឆ្លើយ"
   },
   "contacts": {
     "title": "ទំនាក់ទំនង 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "បានបើក",
     "openedBadgeCount": "បានបើក {{count}} ដង",
     "openedAtLabel": "ការបើកដំបូង៖ {{date}}",
-    "notOpenedYet": "មិនទាន់បានបើក"
+    "notOpenedYet": "មិនទាន់បានបើក",
+    "scheduledCancelError": "បរាជ័យក្នុងការលុបចោល",
+    "scheduledCancelPartial": "{{failed}} ការបោះបង់លើ {{total}} បានបរាជ័យ",
+    "scheduledNoRecipient": "គ្មានអ្នកទទួល"
   },
   "templates": {
     "title": "គំរូ",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "អ៊ីមែលដែលបានធ្វើឱ្យច្បាស់",
     "privateOnDesc": "អ៊ីមែលនេះឥឡូវនេះមិនអាចមើលឃើញសម្រាប់អ្នកគ្រប់គ្រងរបស់លោកអ្នកទេ (មើលឯកសារក្រុម + Inboria)។",
     "privateOffDesc": "អ៊ីមែលនេះត្រឡប់មកវិញដើម្បីមើលឃើញសម្រាប់អ្នកគ្រប់គ្រងរបស់លោកអ្នក (មើលឯកសារក្រុម + Inboria)។",
-    "privateError": "មិនអាចធ្វើបច្ចុប្បន្នភាពភាពឯកជនបានទេ។"
+    "privateError": "មិនអាចធ្វើបច្ចុប្បន្នភាពភាពឯកជនបានទេ។",
+    "details": "ព័ត៌មានលម្អិត",
+    "actionsMenu": "សកម្មភាព"
   },
   "privacy": {
     "title": "ភាពឯកជន និងការចូលដំណើរការក្រុម",
@@ -3456,7 +3739,10 @@
       "followup": "ការបញ្ចេញសំណើ",
       "appointment": "កាលវិភាគ",
       "team": "សកម្មភាពក្រុម"
-    }
+    },
+    "addDescription": "បង្កើតកំណត់ត្រាដើម្បីតាមដានអ្នកដែលមិនទាន់បង្ហាញក្នុងប្រអប់របស់អ្នក។",
+    "openContact": "មើលកាតទំនាក់ទំនង",
+    "deleteDescription": "ប្រវត្តិអ៊ីមែលដែលភ្ជាប់នឹងអាសយដ្ឋាននេះមិនត្រូវបានលុប។ មានតែបណ្ណដៃប៉ុណ្ណោះដែលបាត់បង់។"
   },
   "folders": {
     "title": "ថតរបស់ខ្ញុំ",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "កាលវិភាគ",
     "system": "ប្រព័ន្ធ"
+  },
+  "signature": {
+    "imageTooLarge": "រូបភាពធំពេក (អតិបរមា 200 Ko)",
+    "linkUrlPrompt": "URL តំណ (https://...)",
+    "size": "ទំហំ",
+    "italic": "អក្សរត្រៀម",
+    "clear": "លុបការរចនា",
+    "imageInvalid": "ឯកសាររូបភាពមិនត្រឹមត្រូវ",
+    "highlight": "បន្លិចពន្លឺ",
+    "bold": "ដិត",
+    "underline": "គូសបន្ទាត់ក្រោម",
+    "image": "រូបភាព / រូបសញ្ញា",
+    "color": "ពណ៌អត្ថបទ",
+    "imageHint": "គន្លឹះ៖ បញ្ចូលរូបសញ្ញា PNG/JPG (អតិបរមា 200 Ko)។ រូបភាពត្រូវបានបញ្ចូលដោយផ្ទាល់ក្នុងហត្ថលេខា។",
+    "font": "ពុម្ពអក្សរ",
+    "link": "តំណ",
+    "orderedList": "បញ្ជីលេខរៀង",
+    "moreColors": "ពណ៌បន្ថែម…",
+    "bulletList": "បញ្ជីគ្រាប់"
+  },
+  "palette": {
+    "compose": "អ៊ីមែលថ្មី",
+    "shortcuts": "ផ្លូវកាត់ក្តារចុច",
+    "navigate": "រុករក",
+    "empty": "គ្មានលទ្ធផល។",
+    "actions": "សកម្មភាព",
+    "placeholder": "វាយបញ្ជា ឬស្វែងរក…"
+  },
+  "outlookBanner": {
+    "back": "ត្រឡប់ទៅ Outlook",
+    "openedFrom": "បានបើកពី Outlook។ ចុចដើម្បីត្រឡប់, ឬប្ដូរត្រលប់ទៅផ្ទាំង Outlook។"
+  },
+  "gmailBanner": {
+    "openedFrom": "បានបើកពី Gmail។ ចុចដើម្បីត្រឡប់, ឬប្ដូរទៅផ្ទាំង Gmail។",
+    "back": "ត្រឡប់ទៅ Gmail"
+  },
+  "webmailBanner": {
+    "back": "ត្រឡប់ទៅ Webmail របស់ខ្ញុំ",
+    "openedFromNamed": "បានបើកពី {{name}}។ ចុចដើម្បីត្រឡប់មកវិញ ឬប្ដូរទៅផ្ទាំង {{name}}។",
+    "openedFrom": "បានបើកពី webmail របស់អ្នក។ ចុចដើម្បីត្រឡប់មកវិញ ឬប្ដូរទៅផ្ទាំង webmail របស់អ្នក។",
+    "backNamed": "ត្រឡប់ទៅ {{name}}"
   }
 }

@@ -23,7 +23,16 @@
     "add": "Lisää",
     "edit": "Muokkaa",
     "reset": "Nollaa",
-    "more": "Lisää"
+    "more": "Lisää",
+    "notAuthenticated": "Ei todennettu",
+    "collapse": "Piilota kategoriat",
+    "send": "Lähetä",
+    "dismiss": "Sulje",
+    "create": "Luo",
+    "remove": "Poista",
+    "select": "Valitse",
+    "copyFailed": "Kopiointi epäonnistui",
+    "expand": "Näytä kategoriat"
   },
   "nav": {
     "extensions": "Laajennukset",
@@ -37,7 +46,18 @@
     "login": "Kirjaudu sisään",
     "signup": "Rekisteröidy",
     "logout": "Kirjaudu ulos",
-    "openMenu": "Avaa valikko"
+    "openMenu": "Avaa valikko",
+    "categories": "Kategoriat",
+    "archives": "Arkistot",
+    "dailyBrief": "Päivittäinen yhteenveto",
+    "folders": "Omat kansiot",
+    "tasks": "Tehtävät",
+    "followups": "Seurannat",
+    "inbox": "Saapuneet",
+    "sent": "Lähetetyt",
+    "scheduled": "Aikataulutetut",
+    "snoozed": "Torkutetut",
+    "contacts": "Yhteystiedot"
   },
   "sidebar": {
     "inbox": "Saapuneet",
@@ -66,7 +86,10 @@
     "followups": "Muistutukset",
     "contacts": "Yhteystiedot",
     "assigned": "Määrätyt",
-    "myTasks": "Omat tehtävät"
+    "myTasks": "Omat tehtävät",
+    "expand": "Laajenna valikko",
+    "collapse": "Supista valikko",
+    "resize": "Muuta valikon kokoa"
   },
   "dashboard": {
     "expiredSubscription": "Tilauksenne on vanhentunut",
@@ -529,10 +552,17 @@
       "important": "Tärkeät"
     },
     "date": {
-      "all": "Kaikki päivämäärät"
+      "all": "Kaikki päivämäärät",
+      "yesterday": "Eilen",
+      "thisMonth": "Tässä kuussa",
+      "today": "Tänään",
+      "last7": "Viimeiset 7 päivää",
+      "last30": "Viimeiset 30 päivää"
     },
     "read": {
-      "all": "Kaikki"
+      "all": "Kaikki",
+      "read": "Luetut",
+      "unread": "Lukemattomat"
     },
     "sharedDraft": "Jaettu luonnos",
     "sharedDraftOn": "Jaettu luonnos päällä",
@@ -564,7 +594,113 @@
       "label": "Näyttöruudut",
       "overlay": "Päällekkäin",
       "split": "Rinnakkain"
-    }
+    },
+    "unknownSender": "Tuntematon",
+    "scSearch": "Hae",
+    "scNext": "Seuraava sähköposti",
+    "snoozedFor24h": "Siirretty huomiselle",
+    "collisionViewingOne": "{{name}} katsoo myös tätä sähköpostia",
+    "markedAsUnread": "Merkitty lukemattomaksi",
+    "theme": {
+      "switchLight": "Vaalea tila",
+      "switchDark": "Tumma tila"
+    },
+    "archived": "Arkistoitu",
+    "loadingEmail": "Ladataan sähköpostia...",
+    "searchOpAttachment": "sähköpostit liitteellä",
+    "moreActions": "Lisää toimintoja",
+    "searchOpSubject": "suodata aiheen mukaan",
+    "markAsRead": "Merkitse luetuksi",
+    "collisionViewingMany": "{{count}} muuta henkilöä katsoo tätä sähköpostia",
+    "scGotoInbox": "Siirry Saapuneet-kansioon",
+    "scGotoSnoozed": "Siirry Siirrettyihin",
+    "scSnooze": "Siirrä (24 h)",
+    "close": "Sulje",
+    "composeRestore": "Jatka luonnosta",
+    "scDelete": "Poista",
+    "density": {
+      "normal": "Normaali",
+      "label": "Näyttötiheys",
+      "compact": "Tiivis",
+      "comfortable": "Mukava"
+    },
+    "headerCollapse": "Piilota välilehdet ja suodattimet",
+    "composeUntitled": "Luonnos ilman otsikkoa",
+    "backHint": "Takaisin (Esc) — J/K navigointiin, R vastaa, E arkistoi",
+    "loadingTitle": "Ladataan…",
+    "draftYou": "Sinä",
+    "copySender": "Kopioi osoite",
+    "slaOverdue": "SLA myöhässä",
+    "assigneeFilterMember": "tämä jäsen",
+    "draftRelease": "Vapauta",
+    "scArchive": "Arkistoi",
+    "markAsReadUnread": "Merkitse luetuksi / lukemattomaksi",
+    "scForward": "Välitä",
+    "draftSomeoneSends": "{{name}} lähettää sen",
+    "searchOpSender": "suodata lähettäjän mukaan",
+    "readingPanePos": {
+      "off": "Piilotettu",
+      "right": "Oikealla",
+      "label": "Lukupaneeli",
+      "bottom": "Alhaalla"
+    },
+    "scGotoContacts": "Siirry yhteystietoihin",
+    "markAsUnread": "Merkitse lukemattomaksi",
+    "composeDiscard": "Hylkää",
+    "snooze3h": "3 tunnin kuluttua",
+    "importanceLabel": "Näyttö",
+    "copiedSenderEmail": "Osoite kopioitu",
+    "scPalette": "Komennot",
+    "copiedSubject": "Aihe kopioitu",
+    "myFoldersLabel": "Omat kansiot",
+    "copySenderEmail": "Kopioi lähettäjän osoite",
+    "viewOptions": "Näyttöasetukset",
+    "shortcutsTitle": "Pikanäppäimet",
+    "assignedNoTeam": "Tämä näkymä vaatii tiimin (vähintään 2 jäsentä).",
+    "collisionReplyingMany": "{{count}} henkilöä vastaa jo tähän sähköpostiin",
+    "assignToProject": "Määritä tiimikansioon",
+    "searchGroupOperators": "Tarkenna",
+    "composeAria": "Kirjoita sähköposti",
+    "downloadEml": "Lataa .eml-muodossa",
+    "headerExpand": "Näytä välilehdet ja suodattimet",
+    "scClose": "Sulje sähköposti",
+    "composeDiscardConfirm": "Hylkää tämä luonnos?",
+    "readingPaneOff": "Poista lukupaneeli käytöstä",
+    "searchGroupSenders": "Lähettäjät",
+    "scGotoTasks": "Siirry tehtäviin",
+    "printPopupBlocked": "Tulostusikkunaa ei voi avata",
+    "copied": "Kopioitu",
+    "snooze": "Torkuta",
+    "exportEml": "Lataa .eml",
+    "categorized": "Luokiteltu",
+    "markedAsRead": "Merkitty luetuksi",
+    "teamBadge": "Tiimi",
+    "priorityLabel": "Prioriteetti",
+    "backToGmailHint": "Avaa tämä tarkka sähköposti Gmailissa",
+    "snoozeTomorrow": "Huomenaamuna",
+    "composeMinimize": "Pienennä luonnos",
+    "scGotoSent": "Siirry Lähetettyihin",
+    "readingPaneOn": "Ota lukupaneeli käyttöön (3 saraketta)",
+    "collisionReplyingOne": "{{name}} vastaa jo tähän sähköpostiin",
+    "createAndAssignTask": "Luo ja osoita…",
+    "copyAddress": "Kopioi osoite",
+    "copySubject": "Kopioi aihe",
+    "loadEmailError": "Sähköpostia ei voitu ladata.",
+    "draftYouSend": "Sinä lähetät",
+    "scGotoArchives": "Siirry Arkistoihin",
+    "scReply": "Vastaa",
+    "backToGmail": "Takaisin Gmailiin",
+    "moveToFolder": "Siirrä kansioon",
+    "print": "Tulosta",
+    "scPrev": "Edellinen sähköposti",
+    "draftClaimSend": "Minä lähetän",
+    "draftLiveCoedit": "Yhteismuokkaus reaaliajassa",
+    "draftTakeOverHint": "Ota lähetys haltuun, jos tämä kollega ei ole enää käytettävissä",
+    "scHelp": "Näytä tämä ohje",
+    "filtersReset": "Nollaa suodattimet",
+    "draftTakeOver": "Ota haltuun",
+    "searchGroupEmails": "Sähköpostit",
+    "filterByCategory": "Suodata"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",
@@ -649,7 +785,16 @@
     "blockFailed": "Estäminen epäonnistui",
     "blockNoEmail": "Lähettäjän osoitetta ei löytynyt",
     "blockNoConnection": "Ei liitettyä sähköpostitiliä",
-    "emptied": "Kansio tyhjennetty"
+    "emptied": "Kansio tyhjennetty",
+    "noBlocked": "Ei estettyjä lähettäjiä",
+    "openRestored": "Avaa",
+    "fetchingFromProvider": "Sisältöä haetaan palveluntarjoajaltasi…",
+    "retryFetch": "Yritä uudelleen",
+    "unblocked": "Lähettäjä vapautettu",
+    "blockedList": "Estetyt lähettäjät",
+    "unblock": "Poista esto",
+    "fetchFailed": "Sähköpostin sisältöä ei voitu noutaa.",
+    "blockSenderSuccess": "Lähettäjä estetty"
   },
   "trash": {
     "title": "Roskakori",
@@ -794,7 +939,18 @@
     "movedToDone": "Tehtävä merkitty valmiiksi",
     "movedToTodo": "Tehtävä palautettu tehtävälistalle",
     "statusUpdated": "Tila päivitetty",
-    "taskCreated": "Tehtävä luotu"
+    "taskCreated": "Tehtävä luotu",
+    "titleCopied": "Otsikko kopioitu",
+    "reassign": "Uudelleenmääritä",
+    "openInInbox": "Avaa Saapuneet-kansiossa",
+    "copyTitle": "Kopioi otsikko",
+    "noLinkedEmail": "Tätä tehtävää ei ole liitetty mihinkään sähköpostiin.",
+    "unassign": "Poista tehtävä",
+    "linkedEmailActions": "Liitettyyn sähköpostiin",
+    "reassigned": "Tehtävä uudelleenmääritetty",
+    "markAsDone": "Merkitse valmiiksi",
+    "loadingTitle": "Tehtävien lataus…",
+    "markAsTodo": "Merkitse tehtäväksi"
   },
   "projects": {
     "title": "Tiimikansiot",
@@ -851,7 +1007,14 @@
     "exportError": "Virhe viennissä",
     "searchProjects": "Etsi projektia...",
     "noProjectsAlt": "Luo ensimmäinen projektisi yhdistääksesi sähköpostit ja tehtävät.",
-    "viewDetail": "Näytä yksityiskohdat"
+    "viewDetail": "Näytä yksityiskohdat",
+    "taskAssigned": "Tehtävä määritetty",
+    "taskUnassigned": "Tehtävä poistettu",
+    "detachEmail": "Poista projektista",
+    "assignTo": "Määritä…",
+    "openEmail": "Avaa sähköposti",
+    "emailDetached": "Sähköposti poistettu projektista",
+    "unassigned": "Ei osoitettu"
   },
   "classification": {
     "title": "Luokat",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Tätä järjestelmäkategoriaa ei voi nimetä uudelleen.",
       "cannotMerge": "Kategoriaa « Luokittelematon » ei voi yhdistää.",
       "goToInbox": "Lajittele nämä sähköpostit"
-    }
+    },
+    "adminOnlyNotice": "Kategorioiden hallinta (luominen, muokkaus, poistaminen, toimialapaketit) on varattu tiimin ylläpitäjälle yhtenäisen luokittelun varmistamiseksi. Voit tarkastella kategorioita ja niiden sähköposteja."
   },
   "settings": {
     "title": "Asetukset",
@@ -1268,7 +1432,9 @@
       "privacy": "Yksityisyys ja tiimin pääsy",
       "privacyDesc": "Yksityiset sähköpostinne ja ylläpitäjän tarkastuspäiväkirja",
       "calendars": "Kalenterit",
-      "calendarsDesc": "Yhdistä Google- ja Outlook-kalenteri"
+      "calendarsDesc": "Yhdistä Google- ja Outlook-kalenteri",
+      "administration": "Hallinto",
+      "administrationDesc": "Asetukset organisaation ylläpitäjille"
     },
     "b2bSection": "B2B-uskottavuus",
     "slaCard": "Jaettujen laatikoiden SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Oletusvideoneuvottelu",
     "preferredVideoDesc": "Valitse uusien tapaamisten oletusvideopalveluntarjoaja. Meet vaatii yhdistetyn Google-kalenterin; Teams vaatii Outlookin. Jitsi toimii ilman tiliä.",
     "meetingRemindersDesc": "Inboria lähettää kohteliaan muistutuksen yhteyshenkilölle 48 tuntia ehdotetun tapaamisen jälkeen, jos vastausta ei ole saatu.",
-    "meetingRemindersTitle": "Automaattiset tapaamismuistutukset"
+    "meetingRemindersTitle": "Automaattiset tapaamismuistutukset",
+    "outlookAddinSection": "Inboria Outlookissa",
+    "personalVideoUrlDesc": "Liitä pysyvän Teams- tai Meet-huoneesi linkki (https://...). Inboria käyttää sitä kaikissa tapaamisehdotuksissa.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud ja useimmat webmailit. Lisää Inboria-avustaja suoraan sähköpostiisi, poistumatta postilaatikostasi.",
+    "outlookAddinTitle": "Inboria-painike Outlookissa",
+    "webmailDownload": "Lataa laajennus",
+    "webmailCopyUrl": "Kopioi chrome://extensions",
+    "personalVideoUrlInvalid": "Virheellinen linkki (https:// vaaditaan)",
+    "webmailUrlCopied": "Osoite kopioitu ✓",
+    "outlookOpenAddinsPage": "Avaa Outlook-lisäosat",
+    "outlookDownloadManifest": "Lataa tiedosto",
+    "outlookStep2": "Outlookissa avaa « Hanki lisäosia » › « Omat lisäosat » › « Lisää mukautettu lisäosa » › « Tiedostosta », ja valitse ladattu tiedosto.",
+    "outlookGuideIntro": "Kolme helppoa vaihetta. Ei tarvitse etsiä valikoista: kaikki on ohjattu.",
+    "webmailExtInstall": "Asenna selaimeeni",
+    "webmailGuideIntro": "Toimii Gmailin, OVH:n, Yahoon, iCloudin ja useimpien webmailien kanssa, Chromessa tai Edgessä. Kolme helppoa vaihetta, vain kerran.",
+    "webmailStep2": "Avaa Chromessa tai Edgessä laajennussivu: kirjoita chrome://extensions osoiteriville ja ota käyttöön « Kehittäjätila » (kytkin oikeassa yläkulmassa).",
+    "webmailGuideTitle": "Asenna Inboria webmailiisi",
+    "webmailExtTitle": "« Kysy Inborialta » -painike webmailissasi",
+    "webmailStep3": "Klikkaa « Lataa pakkaamaton laajennus » ja valitse purettu « inboria-extension » -kansio. Avaa sitten webmailisi: « Kysy Inborialta » -painike ilmestyy. Kirjaudu kerran, ja se on valmis.",
+    "outlookStep1": "Lataa Inborian kirjautumistiedosto.",
+    "reconnect": "Yhdistä uudelleen",
+    "outlookAddinDesc": "Lisää Inborian avustaja suoraan Outlookiisi, poistumatta sähköposteistasi.",
+    "personalVideoUrlLabel": "Henkilökohtainen videolinkki",
+    "outlookStep3": "Avaa sähköposti: « Kysy Inborialta » -painike ilmestyy nauhaan. Kirjaudu kerran Inboria-tililläsi, ja se on valmis.",
+    "outlookGuideTitle": "Asenna Inboria Outlookiin",
+    "webmailExtSection": "Inboria webmailissasi",
+    "outlookAddinInstall": "Asenna Outlookiin",
+    "webmailStep1": "Lataa Inboria-laajennus ja pura tiedosto (oikea klikkaus › « Pura kaikki »). Saat « inboria-extension » -kansion."
   },
   "subscription": {
     "title": "Hallinnoi tilaustanne",
@@ -1426,7 +1619,10 @@
     "start": "Aloita",
     "numberOfCollaborators": "Työntekijöiden määrä",
     "total": "Yhteensä",
-    "seatsExample": "Esimerkki: 3 työntekijää = 50,97€/kuukausi — muokattavissa milloin tahansa omasta tilasta."
+    "seatsExample": "Esimerkki: 3 työntekijää = 50,97€/kuukausi — muokattavissa milloin tahansa omasta tilasta.",
+    "billingMonthly": "Kuukausittain",
+    "perMonthBilledYearly": "/kuukausi (laskutetaan vuosittain)",
+    "billingYearly": "Vuosittain"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Virhe lähetyksessä",
     "changeRole": "Vaihda roolia",
     "adminDesc": "Voi hallita tiimiä, tilausta ja kaikkia sähköposteja",
-    "memberDesc": "Pääsy omiin sähköposteihin ja jaettuihin tehtäviin"
+    "memberDesc": "Pääsy omiin sähköposteihin ja jaettuihin tehtäviin",
+    "trialTeamHint": "Tiimikokeilu: kutsu enintään 3 kollegaa. Jokainen saa oman 4 500 krediitin kokeilunsa, ja avaat jaetut laatikot, tehtävien määrityksen ja sisäiset kommentit.",
+    "trialTeamLabel": "Tiimikoe"
   },
   "sharedMailboxes": {
     "title": "Jaetut postilaatikot",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} osoitti tämän sähköpostin käyttäjälle {{target}}",
     "systemSelfAssigned": "{{actor}} otti tämän sähköpostin hoitaakseen",
     "systemReassigned": "{{actor}} siirsi osoituksen käyttäjältä {{previous}} käyttäjälle {{target}}",
-    "systemUnassigned": "{{actor}} poisti käyttäjän {{previous}} osoituksen"
+    "systemUnassigned": "{{actor}} poisti käyttäjän {{previous}} osoituksen",
+    "recipientsFilter": "Etsi jäsentä…",
+    "typingMany": "Useita henkilöitä kirjoittaa…",
+    "recipientsClear": "Tyhjennä",
+    "placeholderSimple": "Kirjoita viestisi…",
+    "viewing": "Katsoo nyt",
+    "internalNote": "Muistiinpano",
+    "recipients": "Vastaanottajat",
+    "recipientsPick": "Muistiinpanon vastaanottajat",
+    "typingOne": "{{name}} kirjoittaa…",
+    "recipientsEmpty": "Ei jäseniä",
+    "recipientsSelected": "{{count}} valittu",
+    "emailMessage": "Sähköposti"
   },
   "attachments": {
     "title": "Liitteet",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Odottaa",
     "statusPendingShort": "Odottaa",
     "syncFailed": "Synkronointi epäonnistui",
-    "viewDetails": "Näytä tiedot"
+    "viewDetails": "Näytä tiedot",
+    "internalAppointment": "Sisäinen tapaaminen",
+    "duplicateError": "Kaksoiskappalevirhe",
+    "duplicatedDesc": "Kopio luotu 7 päivää myöhemmin.",
+    "noteSelectedCount": "{{count}} vastaanottaja(a)",
+    "forwardWhere": "Paikka",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}}:n vastaehdotus ei sovi minulle. Ehdota hänelle muita aikatauluuni sopivia aikoja.",
+    "duplicated": "Tapaaminen kopioitu",
+    "ctxNoProject": "Ei projektia",
+    "noteError": "Virhe lisättäessä muistiinpanoa",
+    "filterExternal": "Asiakas",
+    "autoConfirmed": {
+      "desc": "{{count}} tapaamista on juuri vahvistettu automaattisesti vastaanotetuista sähköposteista.",
+      "title": "Vahvistukset havaittu"
+    },
+    "ctxDup7": "7 päivän kuluttua",
+    "forwardIntro": "Hei,",
+    "statusPendingHint": "Inboria lähettää automaattisesti ehdotussähköpostin asiakkaalle.",
+    "markConfirmed": "Merkitse vahvistetuksi",
+    "newInternalAppointment": "Sisäinen tapaaminen",
+    "ctxEdit": "Muokkaa",
+    "theContact": "yhteyshenkilö",
+    "statusLabel": "Tila",
+    "notesEmpty": "Ei muistiinpanoja. Muistiinpanot pysyvät sisäisinä — niitä ei koskaan lähetetä asiakkaalle.",
+    "expandSuggestions": "Näytä ehdotukset",
+    "forwardTitle": "Otsikko",
+    "noteAllTeam": "Koko tiimi",
+    "internalMembers": "Kutsutut tiimin jäsenet",
+    "noteRecipientsLabel": "Vastaanottaja",
+    "ctxMarkAs": "Merkitse",
+    "singleDay": "Palaa yksipäiväiseen",
+    "ctxDupNextDay": "Seuraavana päivänä",
+    "counterDeclined": "Kieltäytyminen lähetetty yhteyshenkilölle",
+    "ctxDup14": "14 päivän kuluttua",
+    "collapseSuggestions": "Piilota ehdotukset",
+    "formInternalNoteLabel": "Sisäinen muistiinpano (valinnainen)",
+    "forwardBody": "Lähetän sinulle tämän tapaamisen tiedot:",
+    "multiDay": "Useita päiviä…",
+    "ctxForward": "Välitä sähköpostitse",
+    "forwardVideo": "Videolinkki",
+    "internalMembersEmpty": "Ei kutsuttuja jäseniä. Napsauta « + Lisää » valitaksesi kollegasi.",
+    "forwardWhen": "Päivämäärä",
+    "pickDate": "Valitse päivämäärä",
+    "ctxDuplicate": "Kaksoiskappale",
+    "coorgNoCandidate": "Ei saatavilla olevia jäseniä.",
+    "ctxDupCustomMenu": "Mukautettu…",
+    "ctxDupCustom": "Kaksoiskappale kuinka monen päivän kuluttua?",
+    "ctxOpen": "Avaa",
+    "notePlaceholder": "Sisäinen muistiinpano (näkyy vain tiimille, ei koskaan asiakkaalle)…",
+    "confirmError": "Virhe vahvistuksessa",
+    "ctxDelete": "Poista",
+    "duration": "Kesto",
+    "internalNotes": "Sisäiset muistiinpanot",
+    "ctxDup30": "1 kuukauden kuluttua",
+    "formInternalNotePlaceholder": "Esim: VIP-asiakas, huomioi sävy. Ei koskaan lähetetä asiakkaalle.",
+    "askInboriaNewSlot": "Kysy Inborialta uusi tapaaminen",
+    "filterAll": "Kaikki",
+    "confirmWithInboria": "Vahvista Inborian kanssa",
+    "ctxProject": "Projekti",
+    "coorgAdd": "+ Lisää",
+    "ctxDup90": "3 kuukauden kuluttua",
+    "confirmDelete": "Poistetaanko tämä tapaaminen?",
+    "forwardOutro": "Ystävällisin terveisin,",
+    "forwardSubject": "VL: Tapaaminen",
+    "filterInternal": "Sisäinen"
   },
   "supportChat": {
     "title": "Inboria-avustaja",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Kysykää minulta mitä tahansa Inboriasta: ominaisuudet, asetukset, tilaus ja paljon muuta.",
     "placeholder": "Kirjoittakaa kysymyksenne...",
     "poweredBy": "Inboria voimanlähteenä",
-    "errorMessage": "Anteeksi, tapahtui virhe. Yrittäkää uudelleen tai ottakaa yhteyttä support@inboria.com."
+    "errorMessage": "Anteeksi, tapahtui virhe. Yrittäkää uudelleen tai ottakaa yhteyttä support@inboria.com.",
+    "send": "Lähetä",
+    "clear": "Tyhjennä keskustelu"
   },
   "inboriaChat": {
     "openLabel": "Avaa Inboria-chat",
@@ -2911,7 +3187,9 @@
       "en_attente": "Odottaa",
       "relance": "Käynnissä",
       "termine": "Valmis"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ohitettu",
+    "bulkMarkedRepliedToast": "{{count}} merkitty vastatuksi"
   },
   "contacts": {
     "title": "Kontaktit 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Avattu",
     "openedBadgeCount": "Avattu {{count}} kertaa",
     "openedAtLabel": "Ensimmäinen avaus: {{date}}",
-    "notOpenedYet": "Ei vielä avattu"
+    "notOpenedYet": "Ei vielä avattu",
+    "scheduledCancelError": "Peruutus epäonnistui",
+    "scheduledCancelPartial": "{{failed}} peruutus(t) {{total}} epäonnistui",
+    "scheduledNoRecipient": "Ei vastaanottajaa"
   },
   "templates": {
     "title": "Mallipohjat",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Sähköposti tehty näkyväksi",
     "privateOnDesc": "Tämä sähköposti on nyt näkymätön adminneillenne (tiimin kansio + Inboria).",
     "privateOffDesc": "Tämä sähköposti tulee jälleen näkyväksi adminneillenne (tiimin kansio + Inboria).",
-    "privateError": "Yksityisyyden päivittäminen epäonnistui."
+    "privateError": "Yksityisyyden päivittäminen epäonnistui.",
+    "details": "Tiedot",
+    "actionsMenu": "Toiminnot"
   },
   "privacy": {
     "title": "Yksityisyys ja tiimin pääsy",
@@ -3456,7 +3739,10 @@
       "followup": "Seuranta",
       "appointment": "Kalenteri",
       "team": "Tiimitoiminta"
-    }
+    },
+    "addDescription": "Luo kortti seurataksesi henkilöä, joka ei vielä näy postilaatikossasi.",
+    "openContact": "Näytä yhteystietokortti",
+    "deleteDescription": "Tähän osoitteeseen liittyvää sähköpostihistoriaa ei poisteta. Vain manuaalinen kortti katoaa."
   },
   "folders": {
     "title": "Omat kansiot",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Aikataulu",
     "system": "Järjestelmä"
+  },
+  "signature": {
+    "imageTooLarge": "Kuva liian suuri (max 200 kt)",
+    "linkUrlPrompt": "Linkin URL (https://...)",
+    "size": "Koko",
+    "italic": "Kursiivi",
+    "clear": "Tyhjennä muotoilu",
+    "imageInvalid": "Virheellinen kuvatiedosto",
+    "highlight": "Korostus",
+    "bold": "Lihavoitu",
+    "underline": "Alleviivattu",
+    "image": "Kuva / logo",
+    "color": "Tekstin väri",
+    "imageHint": "Vinkki: lisää PNG/JPG-logo (max 200 kt). Kuva liitetään suoraan allekirjoitukseen.",
+    "font": "Fontti",
+    "link": "Linkki",
+    "orderedList": "Numeroitu lista",
+    "moreColors": "Lisää värejä…",
+    "bulletList": "Luettelomerkit"
+  },
+  "palette": {
+    "compose": "Uusi sähköposti",
+    "shortcuts": "Pikanäppäimet",
+    "navigate": "Navigoi",
+    "empty": "Ei tuloksia.",
+    "actions": "Toiminnot",
+    "placeholder": "Kirjoita komento tai etsi…"
+  },
+  "outlookBanner": {
+    "back": "Palaa Outlookiin",
+    "openedFrom": "Avattu Outlookista. Klikkaa palataksesi tai vaihda vain takaisin Outlook-välilehteen."
+  },
+  "gmailBanner": {
+    "openedFrom": "Avattu Gmailista. Napsauta palataksesi tai vaihda yksinkertaisesti Gmail-välilehteen.",
+    "back": "Palaa Gmailiin"
+  },
+  "webmailBanner": {
+    "back": "Palaa webmailiini",
+    "openedFromNamed": "Avattu {{name}}:sta. Napsauta palataksesi tai vaihda vain takaisin välilehteen {{name}}.",
+    "openedFrom": "Avattu webmailistasi. Napsauta palataksesi tai vaihda vain takaisin webmail-välilehteen.",
+    "backNamed": "Palaa {{name}}"
   }
 }

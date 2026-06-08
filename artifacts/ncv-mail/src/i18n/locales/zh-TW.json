@@ -23,7 +23,16 @@
     "add": "新增",
     "edit": "修改",
     "reset": "重設",
-    "more": "更多"
+    "more": "更多",
+    "expand": "顯示類別",
+    "select": "選擇",
+    "dismiss": "關閉",
+    "remove": "移除",
+    "copyFailed": "無法複製",
+    "collapse": "隱藏類別",
+    "notAuthenticated": "未驗證",
+    "create": "創建",
+    "send": "發送"
   },
   "nav": {
     "extensions": "擴充功能",
@@ -37,7 +46,18 @@
     "login": "登入",
     "signup": "註冊",
     "logout": "登出",
-    "openMenu": "打開菜單"
+    "openMenu": "打開菜單",
+    "sent": "已發送",
+    "archives": "歸檔",
+    "dailyBrief": "每日簡報",
+    "snoozed": "已延後",
+    "scheduled": "已排程",
+    "categories": "類別",
+    "followups": "後續",
+    "inbox": "收件匣",
+    "folders": "我的資料夾",
+    "tasks": "任務",
+    "contacts": "聯絡人"
   },
   "sidebar": {
     "inbox": "收件箱",
@@ -66,7 +86,10 @@
     "followups": "提醒",
     "contacts": "聯絡人",
     "assigned": "已指派",
-    "myTasks": "我的任務"
+    "myTasks": "我的任務",
+    "collapse": "收起選單",
+    "resize": "調整選單大小",
+    "expand": "展開選單"
   },
   "dashboard": {
     "expiredSubscription": "您的訂閱已過期",
@@ -529,10 +552,17 @@
       "important": "重要"
     },
     "date": {
-      "all": "全部日期"
+      "all": "全部日期",
+      "today": "今天",
+      "last30": "最近 30 天",
+      "thisMonth": "本月",
+      "last7": "過去 7 天",
+      "yesterday": "昨天"
     },
     "read": {
-      "all": "全部"
+      "all": "全部",
+      "unread": "未讀",
+      "read": "已讀"
     },
     "sharedDraft": "共享草稿",
     "sharedDraftOn": "共享草稿已開啟",
@@ -564,7 +594,113 @@
       "label": "顯示窗格",
       "overlay": "重疊",
       "split": "並排"
-    }
+    },
+    "assignedNoTeam": "此視圖需要一個團隊（2 名成員或以上）。",
+    "markAsRead": "標記為已讀",
+    "filtersReset": "重設篩選器",
+    "loadEmailError": "無法載入電子郵件。",
+    "scArchive": "歸檔",
+    "draftTakeOver": "接管",
+    "collisionViewingOne": "{{name}} 也在查看此郵件",
+    "scForward": "轉寄",
+    "scGotoTasks": "前往任務",
+    "composeMinimize": "縮小草稿",
+    "theme": {
+      "switchDark": "深色模式",
+      "switchLight": "淺色模式"
+    },
+    "searchGroupSenders": "發件人",
+    "copySubject": "複製主題",
+    "markAsReadUnread": "標記為已讀 / 未讀",
+    "scHelp": "顯示此幫助",
+    "teamBadge": "團隊",
+    "backHint": "返回（Esc）— J/K 瀏覽，R 回覆，E 歸檔",
+    "draftYou": "您",
+    "copied": "已複製",
+    "loadingTitle": "載入中…",
+    "importanceLabel": "顯示",
+    "headerCollapse": "隱藏標籤和篩選器",
+    "printPopupBlocked": "無法開啟列印視窗",
+    "priorityLabel": "優先級",
+    "copiedSenderEmail": "地址已複製",
+    "copySender": "複製地址",
+    "density": {
+      "label": "顯示密度",
+      "comfortable": "舒適",
+      "normal": "正常",
+      "compact": "緊湊"
+    },
+    "draftLiveCoedit": "即時共同編輯",
+    "composeDiscardConfirm": "放棄此草稿？",
+    "scGotoSent": "前往已發送",
+    "assignToProject": "分配至團隊資料夾",
+    "copiedSubject": "主題已複製",
+    "archived": "已歸檔",
+    "backToGmail": "返回 Gmail",
+    "searchOpAttachment": "帶附件的郵件",
+    "copyAddress": "複製地址",
+    "collisionReplyingOne": "{{name}} 已在回覆此郵件",
+    "snoozedFor24h": "延後至明天",
+    "snooze": "延後",
+    "exportEml": "下載 .eml",
+    "filterByCategory": "篩選",
+    "scSnooze": "延後（24 小時）",
+    "assigneeFilterMember": "此成員",
+    "readingPanePos": {
+      "right": "在右側",
+      "off": "隱藏",
+      "bottom": "底部",
+      "label": "閱讀窗格"
+    },
+    "copySenderEmail": "複製寄件者地址",
+    "searchGroupOperators": "精確搜尋",
+    "scGotoSnoozed": "前往延後處理",
+    "viewOptions": "顯示選項",
+    "scDelete": "刪除",
+    "searchGroupEmails": "郵件",
+    "snoozeTomorrow": "明天早上",
+    "scNext": "下一封郵件",
+    "searchOpSender": "按寄件者篩選",
+    "draftYouSend": "您發送的",
+    "categorized": "已分類",
+    "close": "關閉",
+    "loadingEmail": "正在載入電子郵件...",
+    "scClose": "關閉郵件",
+    "moveToFolder": "移動到",
+    "readingPaneOff": "停用閱讀窗格",
+    "headerExpand": "顯示標籤和篩選器",
+    "draftRelease": "釋放",
+    "searchOpSubject": "按主題篩選",
+    "readingPaneOn": "啟用閱讀窗格（三欄）",
+    "backToGmailHint": "在 Gmail 中開啟此郵件",
+    "snooze3h": "3 小時後",
+    "markedAsRead": "標記為已讀",
+    "shortcutsTitle": "鍵盤快捷鍵",
+    "markAsUnread": "標記為未讀",
+    "composeRestore": "恢復草稿",
+    "moreActions": "更多操作",
+    "scGotoArchives": "前往歸檔",
+    "unknownSender": "未知",
+    "markedAsUnread": "標記為未讀",
+    "scPalette": "命令調色盤",
+    "myFoldersLabel": "我的資料夾",
+    "createAndAssignTask": "創建並分配…",
+    "collisionReplyingMany": "{{count}} 人已在回覆此郵件",
+    "print": "列印",
+    "downloadEml": "下載為 .eml",
+    "composeUntitled": "無主題草稿",
+    "collisionViewingMany": "{{count}} 人正在查看此郵件",
+    "draftTakeOverHint": "如果這位同事不再可用，請接手發送",
+    "scReply": "回覆",
+    "slaOverdue": "SLA 逾期",
+    "composeDiscard": "放棄",
+    "scSearch": "搜尋",
+    "draftClaimSend": "我來發送",
+    "composeAria": "撰寫電子郵件",
+    "scGotoContacts": "前往聯絡人",
+    "scPrev": "上一封郵件",
+    "draftSomeoneSends": "{{name}} 將發送",
+    "scGotoInbox": "前往收件匣"
   },
   "sent": {
     "title": "已發送的電子郵件",
@@ -649,7 +785,16 @@
     "blockFailed": "無法封鎖",
     "blockNoEmail": "找不到發件人地址",
     "blockNoConnection": "未連接任何電子郵件帳戶",
-    "emptied": "資料夾已清空"
+    "emptied": "資料夾已清空",
+    "unblocked": "發件人已解除封鎖",
+    "openRestored": "開啟",
+    "blockSenderSuccess": "寄件者已封鎖",
+    "noBlocked": "無封鎖的寄件者",
+    "retryFetch": "重試",
+    "unblock": "解除封鎖",
+    "fetchingFromProvider": "從您的供應商檢索內容…",
+    "blockedList": "已封鎖的寄件者",
+    "fetchFailed": "無法檢索此郵件的內容。"
   },
   "trash": {
     "title": "垃圾桶",
@@ -794,7 +939,18 @@
     "movedToDone": "任務已完成",
     "movedToTodo": "任務已重新設置為待辦",
     "statusUpdated": "狀態已更新",
-    "taskCreated": "任務已創建"
+    "taskCreated": "任務已創建",
+    "linkedEmailActions": "在相關郵件上",
+    "reassign": "重新分配",
+    "openInInbox": "在收件箱中開啟",
+    "noLinkedEmail": "此任務未連結任何郵件。",
+    "markAsTodo": "標記為待辦",
+    "unassign": "取消指派",
+    "titleCopied": "標題已複製",
+    "reassigned": "任務已重新指派",
+    "markAsDone": "標記為完成",
+    "copyTitle": "複製標題",
+    "loadingTitle": "正在載入任務…"
   },
   "projects": {
     "title": "團隊資料夾",
@@ -851,7 +1007,14 @@
     "exportError": "匯出時發生錯誤",
     "searchProjects": "搜尋專案...",
     "noProjectsAlt": "創建您的第一個專案以便整合電子郵件和任務。",
-    "viewDetail": "查看詳細資訊"
+    "viewDetail": "查看詳細資訊",
+    "detachEmail": "從專案中移除",
+    "unassigned": "未分配",
+    "emailDetached": "郵件已從專案中移除",
+    "openEmail": "開啟郵件",
+    "taskAssigned": "任務已指派",
+    "assignTo": "指派給…",
+    "taskUnassigned": "任務未分配"
   },
   "classification": {
     "title": "類別",
@@ -1135,7 +1298,8 @@
       "cannotRename": "此系統類別無法被重命名。",
       "cannotMerge": "「未分類」類別無法合併。",
       "goToInbox": "排序這些電子郵件"
-    }
+    },
+    "adminOnlyNotice": "類別管理（創建、修改、刪除、業務包）僅限團隊管理員，以確保分類一致。您可以查看類別及其電郵。"
   },
   "settings": {
     "title": "設定",
@@ -1268,7 +1432,9 @@
       "privacy": "隱私與團隊存取",
       "privacyDesc": "您的私人電子郵件及管理員查詢日誌",
       "calendars": "日曆",
-      "calendarsDesc": "連接 Google Calendar 和 Outlook Calendar"
+      "calendarsDesc": "連接 Google Calendar 和 Outlook Calendar",
+      "administrationDesc": "僅限組織管理員的設定",
+      "administration": "管理"
     },
     "b2bSection": "B2B 信譽",
     "slaCard": "共享信箱的 SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "預設視訊會議",
     "preferredVideoDesc": "請為您的新約會選擇預設的視訊會議服務。Meet 需要已連接的 Google 行事曆；Teams 需要 Outlook。Jitsi 無需帳戶即可使用。",
     "meetingRemindersDesc": "Inboria 在會議提議未回覆後 48 小時內向聯絡人發送禮貌提醒。",
-    "meetingRemindersTitle": "自動會議提醒"
+    "meetingRemindersTitle": "自動會議提醒",
+    "webmailGuideIntro": "適用於 Gmail、OVH、Yahoo、iCloud 和大多數網頁郵件，在 Chrome 或 Edge 中使用。三個簡單步驟，一次設定。",
+    "outlookGuideIntro": "三個簡單步驟。無需在選單中搜尋：一切皆有指引。",
+    "personalVideoUrlInvalid": "無效連結（需要 https://）",
+    "outlookDownloadManifest": "下載文件",
+    "webmailExtInstall": "安裝到我的瀏覽器",
+    "webmailStep1": "下載 Inboria 擴充功能，然後解壓縮檔案（右鍵點擊 › 「全部提取」）。您將獲得一個「inboria-extension」資料夾。",
+    "webmailStep2": "在 Chrome 或 Edge 中，打開擴充功能頁面：在地址欄中輸入 chrome://extensions，然後啟用「開發者模式」（右上角開關）。",
+    "outlookGuideTitle": "在 Outlook 中安裝 Inboria",
+    "outlookStep1": "下載 Inboria 連接檔案。",
+    "outlookAddinSection": "Outlook 中的 Inboria",
+    "webmailExtDesc": "Gmail、OVH、Yahoo、iCloud 及大多數的網頁郵件。直接在您的郵件中添加 Inboria 助手，無需離開郵件。",
+    "outlookStep3": "打開一封郵件：「詢問 Inboria」按鈕會出現在功能區中。使用您的 Inboria 帳戶登入一次，即可使用。",
+    "webmailUrlCopied": "地址已複製 ✓",
+    "personalVideoUrlLabel": "個人視訊連結",
+    "outlookAddinDesc": "直接在您的 Outlook 中添加 Inboria 助手，無需離開郵件。",
+    "reconnect": "重新連接",
+    "outlookAddinTitle": "Outlook 中的「詢問 Inboria」按鈕",
+    "webmailGuideTitle": "在您的網頁郵件中安裝 Inboria",
+    "webmailStep3": "點擊「載入未打包的擴充功能」，選擇解壓縮的「inboria-extension」資料夾。然後打開您的網頁郵件：「詢問 Inboria」按鈕會出現。登入一次，即可使用。",
+    "personalVideoUrlDesc": "貼上您的 Teams 或 Meet 永久會議室連結 (https://...)。Inboria 將在所有會議邀請中使用此連結。",
+    "outlookAddinInstall": "安裝至 Outlook",
+    "webmailExtSection": "Inboria 在您的網頁郵件中",
+    "webmailDownload": "下載擴充功能",
+    "outlookOpenAddinsPage": "開啟 Outlook 增益集",
+    "outlookStep2": "在 Outlook 中，開啟「取得增益集」›「我的增益集」›「添加自訂增益集」›「從檔案」，然後選擇下載的檔案。",
+    "webmailCopyUrl": "複製 chrome://extensions",
+    "webmailExtTitle": "在您的網頁郵件中「詢問 Inboria」按鈕"
   },
   "subscription": {
     "title": "管理您的訂閱",
@@ -1426,7 +1619,10 @@
     "start": "開始",
     "numberOfCollaborators": "合作人數",
     "total": "總計",
-    "seatsExample": "例如：3 位合作人 = 50.97€/月 — 可隨時在您的空間中修改。"
+    "seatsExample": "例如：3 位合作人 = 50.97€/月 — 可隨時在您的空間中修改。",
+    "billingMonthly": "每月",
+    "perMonthBilledYearly": "/月（按年計費）",
+    "billingYearly": "年度"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "發送時出錯",
     "changeRole": "更改角色",
     "adminDesc": "可以管理團隊、訂閱和所有電子郵件",
-    "memberDesc": "訪問其電子郵件和共享任務"
+    "memberDesc": "訪問其電子郵件和共享任務",
+    "trialTeamLabel": "團隊試用",
+    "trialTeamHint": "團隊試用：邀請最多 3 位同事。每人獲得 4,500 點試用積分，並解鎖共享信箱、指派和內部評論功能。"
   },
   "sharedMailboxes": {
     "title": "共享郵箱",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} 已將此電郵指派給 {{target}}",
     "systemSelfAssigned": "{{actor}} 已接手此電郵",
     "systemReassigned": "{{actor}} 已將指派從 {{previous}} 改為 {{target}}",
-    "systemUnassigned": "{{actor}} 已取消 {{previous}} 的指派"
+    "systemUnassigned": "{{actor}} 已取消 {{previous}} 的指派",
+    "viewing": "正在查看",
+    "recipientsPick": "備註收件人",
+    "recipientsSelected": "{{count}} 已選擇",
+    "recipientsFilter": "搜尋成員…",
+    "emailMessage": "電郵",
+    "recipients": "收件者",
+    "recipientsClear": "清空",
+    "typingMany": "多位人士正在輸入…",
+    "typingOne": "{{name}} 正在輸入…",
+    "recipientsEmpty": "無成員",
+    "internalNote": "備註",
+    "placeholderSimple": "輸入您的訊息…"
   },
   "attachments": {
     "title": "附件",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "待定",
     "statusPendingShort": "待定",
     "syncFailed": "同步失敗",
-    "viewDetails": "查看詳情"
+    "viewDetails": "查看詳情",
+    "coorgAdd": "+ 新增",
+    "notePlaceholder": "內部備註（僅團隊可見，絕不發送給客戶）…",
+    "pickDate": "選擇日期",
+    "newInternalAppointment": "內部會議",
+    "duplicatedDesc": "複製品在 7 天後創建。",
+    "formInternalNotePlaceholder": "例如：VIP 客戶，注意語氣。絕不發送給客戶。",
+    "duplicated": "會議已複製",
+    "notesEmpty": "無備註。備註僅限內部使用，絕不發送給客戶。",
+    "ctxDuplicate": "複製",
+    "coorgNoCandidate": "無可用成員。",
+    "filterAll": "全部",
+    "singleDay": "返回單日模式",
+    "autoConfirmed": {
+      "desc": "{{count}} 個約會已自動從收到的郵件中確認。",
+      "title": "已檢測到確認"
+    },
+    "ctxProject": "專案",
+    "formInternalNoteLabel": "內部備註（選填）",
+    "forwardVideo": "視訊連結",
+    "duration": "持續時間",
+    "ctxForward": "透過電郵轉發",
+    "internalNotes": "內部備註",
+    "confirmWithInboria": "使用 Inboria 確認",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} 的建議時間不合適。請為其提供與我的日程相符的其他時間。",
+    "filterInternal": "內部",
+    "internalAppointment": "內部約會",
+    "forwardSubject": "轉寄：約會",
+    "ctxDup90": "3 個月後",
+    "theContact": "聯絡人",
+    "askInboriaNewSlot": "詢問 Inboria 新的會議時間",
+    "statusLabel": "狀態",
+    "markConfirmed": "標記為已確認",
+    "forwardOutro": "敬上，",
+    "ctxNoProject": "無專案",
+    "counterDeclined": "已向聯絡人發送拒絕",
+    "ctxDup7": "7 天後",
+    "confirmError": "確認時出錯",
+    "ctxDupCustomMenu": "自訂…",
+    "noteSelectedCount": "{{count}} 收件人",
+    "ctxDup30": "1 個月後",
+    "noteAllTeam": "全隊",
+    "duplicateError": "複製錯誤",
+    "forwardIntro": "您好，",
+    "ctxDupNextDay": "次日",
+    "ctxDupCustom": "複製多少天後？",
+    "confirmDelete": "刪除此約會？",
+    "forwardTitle": "標題",
+    "multiDay": "多天…",
+    "forwardWhere": "地點",
+    "ctxDelete": "刪除",
+    "internalMembersEmpty": "沒有邀請成員。點擊「+ 添加」以選擇您的同事。",
+    "noteError": "添加備註錯誤",
+    "collapseSuggestions": "隱藏建議",
+    "expandSuggestions": "顯示建議",
+    "noteRecipientsLabel": "收件者",
+    "internalMembers": "邀請的團隊成員",
+    "forwardWhen": "日期",
+    "ctxOpen": "開啟",
+    "ctxEdit": "編輯",
+    "ctxDup14": "14 天後",
+    "filterExternal": "客戶",
+    "ctxMarkAs": "標記為",
+    "statusPendingHint": "Inboria 將自動向客戶發送提案郵件。",
+    "forwardBody": "我將轉寄此約會的詳細資訊給您："
   },
   "supportChat": {
     "title": "Inboria 助手",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "請隨時詢問我任何有關 Inboria 的問題：功能、設定、訂閱等。",
     "placeholder": "請輸入您的問題...",
     "poweredBy": "由 Inboria 提供技術支持",
-    "errorMessage": "抱歉，發生錯誤。請重試或聯繫 support@inboria.com。"
+    "errorMessage": "抱歉，發生錯誤。請重試或聯繫 support@inboria.com。",
+    "clear": "清除對話",
+    "send": "發送"
   },
   "inboriaChat": {
     "openLabel": "打開 Inboria 聊天",
@@ -2911,7 +3187,9 @@
       "en_attente": "待處理",
       "relance": "進行中",
       "termine": "已完成"
-    }
+    },
+    "bulkDismissedToast": "{{count}} 已忽略",
+    "bulkMarkedRepliedToast": "{{count}} 已標記為已回覆"
   },
   "contacts": {
     "title": "360° 聯絡人",
@@ -3016,7 +3294,10 @@
     "openedBadge": "已開啟",
     "openedBadgeCount": "已開啟 {{count}} 次",
     "openedAtLabel": "第一次開啟：{{date}}",
-    "notOpenedYet": "尚未開啟"
+    "notOpenedYet": "尚未開啟",
+    "scheduledNoRecipient": "無收件者",
+    "scheduledCancelError": "取消失敗",
+    "scheduledCancelPartial": "{{failed}} 項取消中的 {{total}} 項失敗"
   },
   "templates": {
     "title": "範本",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "電子郵件已設為可見",
     "privateOnDesc": "此電子郵件現在對您的管理員不可見（團隊資料夾 + Inboria 的視圖）。",
     "privateOffDesc": "此電子郵件重新對您的管理員可見（團隊資料夾 + Inboria 的視圖）。",
-    "privateError": "無法更新隱私設定。"
+    "privateError": "無法更新隱私設定。",
+    "details": "詳細資訊",
+    "actionsMenu": "操作"
   },
   "privacy": {
     "title": "隱私與團隊訪問",
@@ -3456,7 +3739,10 @@
       "followup": "跟進",
       "appointment": "日曆",
       "team": "團隊活動"
-    }
+    },
+    "openContact": "查看聯絡人資料",
+    "addDescription": "建立一個檔案以追蹤尚未出現在您的信箱中的人。",
+    "deleteDescription": "與此地址相關的電子郵件歷史記錄不會被刪除。只有手動檔案會消失。"
   },
   "folders": {
     "title": "我的資料夾",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "議程",
     "system": "系統"
+  },
+  "signature": {
+    "linkUrlPrompt": "連結網址 (https://...)",
+    "image": "圖片 / 標誌",
+    "imageTooLarge": "圖片過大（最大 200 KB）",
+    "highlight": "高亮",
+    "imageHint": "提示：插入 PNG/JPG 標誌（最大 200 KB）。圖片直接嵌入簽名中。",
+    "clear": "清除格式",
+    "bulletList": "項目符號清單",
+    "color": "文字顏色",
+    "italic": "斜體",
+    "moreColors": "更多顏色…",
+    "font": "字體",
+    "size": "大小",
+    "underline": "底線",
+    "bold": "粗體",
+    "imageInvalid": "無效的圖片檔案",
+    "orderedList": "編號清單",
+    "link": "連結"
+  },
+  "webmailBanner": {
+    "openedFrom": "從您的網頁郵件中開啟。點擊以返回，或直接切換到您的網頁郵件標籤。",
+    "backNamed": "返回 {{name}}",
+    "back": "返回我的網頁郵件",
+    "openedFromNamed": "從 {{name}} 開啟。點擊以返回，或直接切換到 {{name}} 標籤。"
+  },
+  "palette": {
+    "compose": "新郵件",
+    "shortcuts": "鍵盤快捷鍵",
+    "placeholder": "輸入命令或搜尋…",
+    "empty": "沒有結果。",
+    "navigate": "瀏覽",
+    "actions": "操作"
+  },
+  "outlookBanner": {
+    "openedFrom": "從 Outlook 開啟。點擊以返回，或直接切換回 Outlook 標籤。",
+    "back": "返回 Outlook"
+  },
+  "gmailBanner": {
+    "openedFrom": "從 Gmail 開啟。點擊以返回，或直接切換回 Gmail 標籤。",
+    "back": "返回 Gmail"
   }
 }

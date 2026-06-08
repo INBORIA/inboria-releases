@@ -23,7 +23,16 @@
     "add": "Afegir",
     "edit": "Modificar",
     "reset": "Reiniciar",
-    "more": "Més"
+    "more": "Més",
+    "notAuthenticated": "No autenticat",
+    "collapse": "Amagar categories",
+    "send": "Enviar",
+    "dismiss": "Tancar",
+    "create": "Crear",
+    "remove": "Retirar",
+    "select": "Seleccionar",
+    "copyFailed": "Còpia impossible",
+    "expand": "Mostrar les categories"
   },
   "nav": {
     "extensions": "Extensions",
@@ -37,7 +46,18 @@
     "login": "Iniciar sessió",
     "signup": "Inscriure's",
     "logout": "Tancar sessió",
-    "openMenu": "Obrir el menú"
+    "openMenu": "Obrir el menú",
+    "categories": "Categories",
+    "archives": "Arxius",
+    "dailyBrief": "Informe diari",
+    "folders": "Les meves carpetes",
+    "tasks": "Tasques",
+    "followups": "Seguiments",
+    "inbox": "Recepció",
+    "sent": "Enviats",
+    "scheduled": "Programats",
+    "snoozed": "Posposats",
+    "contacts": "Contactes"
   },
   "sidebar": {
     "inbox": "Recepció",
@@ -66,7 +86,10 @@
     "followups": "Recordatoris",
     "contacts": "Contactes",
     "assigned": "Assignats",
-    "myTasks": "Les meves tasques"
+    "myTasks": "Les meves tasques",
+    "expand": "Ampliar el menú",
+    "collapse": "Reduir el menú",
+    "resize": "Redimensionar el menú"
   },
   "dashboard": {
     "expiredSubscription": "La vostra subscripció ha caducat",
@@ -529,10 +552,17 @@
       "important": "Importants"
     },
     "date": {
-      "all": "Totes les dates"
+      "all": "Totes les dates",
+      "yesterday": "Ahir",
+      "thisMonth": "Aquest mes",
+      "today": "Avui",
+      "last7": "Últims 7 dies",
+      "last30": "Últims 30 dies"
     },
     "read": {
-      "all": "Tots"
+      "all": "Tots",
+      "read": "Llegits",
+      "unread": "No llegits"
     },
     "sharedDraft": "Borrador compartit",
     "sharedDraftOn": "Borrador compartit activat",
@@ -564,7 +594,113 @@
       "label": "Mostreu els panells",
       "overlay": "Superposat",
       "split": "Costat a costat"
-    }
+    },
+    "unknownSender": "Desconegut",
+    "scSearch": "Cercar",
+    "scNext": "Correu següent",
+    "snoozedFor24h": "Posposat fins demà",
+    "collisionViewingOne": "{{name}} també està consultant aquest correu",
+    "markedAsUnread": "Marcat com a no llegit",
+    "theme": {
+      "switchLight": "Mode clar",
+      "switchDark": "Mode fosc"
+    },
+    "archived": "Arxivat",
+    "loadingEmail": "Carregant el correu...",
+    "searchOpAttachment": "correus amb adjunt",
+    "moreActions": "Més accions",
+    "searchOpSubject": "filtrar per assumpte",
+    "markAsRead": "Marcar com a llegit",
+    "collisionViewingMany": "{{count}} altres persones estan consultant aquest correu",
+    "scGotoInbox": "Anar a la Recepció",
+    "scGotoSnoozed": "Anar als Posposats",
+    "scSnooze": "Posposar (24 h)",
+    "close": "Tancar",
+    "composeRestore": "Reprendre l'esborrany",
+    "scDelete": "Eliminar",
+    "density": {
+      "normal": "Normal",
+      "label": "Densitat de visualització",
+      "compact": "Compacte",
+      "comfortable": "Còmode"
+    },
+    "headerCollapse": "Amagar pestanyes i filtres",
+    "composeUntitled": "Esborrany sense assumpte",
+    "backHint": "Tornar (Esc) — J/K per navegar, R per respondre, E per arxivar",
+    "loadingTitle": "Carregant…",
+    "draftYou": "Vostè",
+    "copySender": "Copiar l'adreça",
+    "slaOverdue": "SLA vençut",
+    "assigneeFilterMember": "aquest membre",
+    "draftRelease": "Alliberar",
+    "scArchive": "Arxivar",
+    "markAsReadUnread": "Marcar com a llegit / no llegit",
+    "scForward": "Reenviar",
+    "draftSomeoneSends": "{{name}} l'enviarà",
+    "searchOpSender": "filtrar per remitent",
+    "readingPanePos": {
+      "off": "Amagat",
+      "right": "A la dreta",
+      "label": "Panell de lectura",
+      "bottom": "A baix"
+    },
+    "scGotoContacts": "Anar als Contactes",
+    "markAsUnread": "Marcar com a no llegit",
+    "composeDiscard": "Descartar",
+    "snooze3h": "En 3h",
+    "importanceLabel": "Visualització",
+    "copiedSenderEmail": "Adreça copiada",
+    "scPalette": "Paleta de comandes",
+    "copiedSubject": "Assumpte copiat",
+    "myFoldersLabel": "Les meves carpetes",
+    "copySenderEmail": "Copiar l'adreça del remitent",
+    "viewOptions": "Opcions de visualització",
+    "shortcutsTitle": "Dreceres de teclat",
+    "assignedNoTeam": "Aquesta vista requereix un equip (2 membres o més).",
+    "collisionReplyingMany": "{{count}} persones ja estan responent aquest correu",
+    "assignToProject": "Assignar a una carpeta d'equip",
+    "searchGroupOperators": "Afinar",
+    "composeAria": "Redactar un correu electrònic",
+    "downloadEml": "Descarregar en .eml",
+    "headerExpand": "Mostrar pestanyes i filtres",
+    "scClose": "Tancar el correu",
+    "composeDiscardConfirm": "Descartar aquest esborrany?",
+    "readingPaneOff": "Desactivar el panell de lectura",
+    "searchGroupSenders": "Remitents",
+    "scGotoTasks": "Anar a les Tasques",
+    "printPopupBlocked": "No es pot obrir la finestra d'impressió",
+    "copied": "Copiat",
+    "snooze": "Posposar",
+    "exportEml": "Descarregar .eml",
+    "categorized": "Categoritzat",
+    "markedAsRead": "Marcat com a llegit",
+    "teamBadge": "Equip",
+    "priorityLabel": "Prioritat",
+    "backToGmailHint": "Obrir aquest correu exacte a Gmail",
+    "snoozeTomorrow": "Demà al matí",
+    "composeMinimize": "Reduir l'esborrany",
+    "scGotoSent": "Anar als Enviats",
+    "readingPaneOn": "Activar el panell de lectura (3 columnes)",
+    "collisionReplyingOne": "{{name}} ja està responent a aquest correu",
+    "createAndAssignTask": "Crear i assignar…",
+    "copyAddress": "Copiar l'adreça",
+    "copySubject": "Copiar l'assumpte",
+    "loadEmailError": "No es pot carregar el correu.",
+    "draftYouSend": "Sou vosaltres qui envieu",
+    "scGotoArchives": "Anar als Arxius",
+    "scReply": "Respondre",
+    "backToGmail": "Tornar a Gmail",
+    "moveToFolder": "Moure a",
+    "print": "Imprimir",
+    "scPrev": "Correu anterior",
+    "draftClaimSend": "Sóc jo qui envia",
+    "draftLiveCoedit": "Coedició en directe",
+    "draftTakeOverHint": "Reprendre l'enviament si aquest col·lega ja no està disponible",
+    "scHelp": "Mostrar aquesta ajuda",
+    "filtersReset": "Restablir els filtres",
+    "draftTakeOver": "Reprendre",
+    "searchGroupEmails": "Correus",
+    "filterByCategory": "Filtrar"
   },
   "sent": {
     "title": "Correu electrònic enviats",
@@ -649,7 +785,16 @@
     "blockFailed": "Impossible de bloquejar",
     "blockNoEmail": "Adreça del remitent no trobada",
     "blockNoConnection": "Cap compte de correu electrònic connectat",
-    "emptied": "Dossier buit"
+    "emptied": "Dossier buit",
+    "noBlocked": "Cap remitent bloquejat",
+    "openRestored": "Obrir",
+    "fetchingFromProvider": "Recuperant el contingut des del vostre proveïdor…",
+    "retryFetch": "Reintentar",
+    "unblocked": "Remitent desbloquejat",
+    "blockedList": "Remitents bloquejats",
+    "unblock": "Desbloquejar",
+    "fetchFailed": "No es pot recuperar el contingut d'aquest correu.",
+    "blockSenderSuccess": "Remitent bloquejat"
   },
   "trash": {
     "title": "Paperera",
@@ -794,7 +939,18 @@
     "movedToDone": "Tasques finalitzada",
     "movedToTodo": "Tasques tornada a fer",
     "statusUpdated": "Estat actualitzat",
-    "taskCreated": "Tasques creada"
+    "taskCreated": "Tasques creada",
+    "titleCopied": "Títol copiat",
+    "reassign": "Reassignar",
+    "openInInbox": "Obrir a la Recepció",
+    "copyTitle": "Copiar el títol",
+    "noLinkedEmail": "Aquesta tasca no està vinculada a cap correu.",
+    "unassign": "Desassignar",
+    "linkedEmailActions": "Sobre el correu vinculat",
+    "reassigned": "Tasca reassignada",
+    "markAsDone": "Marcar com a completada",
+    "loadingTitle": "Carregant tasques…",
+    "markAsTodo": "Marcar com a pendent"
   },
   "projects": {
     "title": "Carpetes d'equip",
@@ -851,7 +1007,14 @@
     "exportError": "Error durant l'exportació",
     "searchProjects": "Cercar un projecte...",
     "noProjectsAlt": "Creeu el vostre primer projecte per agrupar correus electrònics i tasques.",
-    "viewDetail": "Veure el detall"
+    "viewDetail": "Veure el detall",
+    "taskAssigned": "Tasca assignada",
+    "taskUnassigned": "Tasca desassignada",
+    "detachEmail": "Retirar del projecte",
+    "assignTo": "Assignar a…",
+    "openEmail": "Obrir el correu electrònic",
+    "emailDetached": "Correu retirat del projecte",
+    "unassigned": "No assignada"
   },
   "classification": {
     "title": "Categories",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Aquesta categoria del sistema no es pot renombrar.",
       "cannotMerge": "La categoria « No classificat » no es pot fusionar.",
       "goToInbox": "Ordeneu aquests correus electrònics"
-    }
+    },
+    "adminOnlyNotice": "La gestió de categories (creació, modificació, eliminació, paquets de negoci) està reservada a l'Administrador d'Equip per garantir una classificació coherent. Podeu consultar les categories i els seus correus."
   },
   "settings": {
     "title": "Configuració",
@@ -1268,7 +1432,9 @@
       "privacy": "Privadesa i accés a l'equip",
       "privacyDesc": "Els vostres correus electrònics privats i el diari de consultes d'administració",
       "calendars": "Calendaris",
-      "calendarsDesc": "Connectar Google Calendar i Outlook Calendar"
+      "calendarsDesc": "Connectar Google Calendar i Outlook Calendar",
+      "administration": "Administració",
+      "administrationDesc": "Configuracions reservades als administradors de l'organització"
     },
     "b2bSection": "Credibilitat B2B",
     "slaCard": "SLA caixes compartides",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Videoconferència per defecte",
     "preferredVideoDesc": "Si us plau, escolliu el proveïdor de videoconferència per defecte per a les cites noves. Meet necessita un calendari de Google connectat; Teams necessita Outlook. Jitsi funciona sense compte.",
     "meetingRemindersDesc": "Inboria envia un recordatori educat al contacte 48 h després d'una proposta de cita sense resposta.",
-    "meetingRemindersTitle": "Recordatoris automàtics de RDV"
+    "meetingRemindersTitle": "Recordatoris automàtics de RDV",
+    "outlookAddinSection": "Inboria a Outlook",
+    "personalVideoUrlDesc": "Enganxeu l'enllaç de la vostra sala permanent de Teams o Meet (https://...). Inboria l'utilitzarà en totes les propostes de cita.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud i la majoria de webmails. Afegiu l'assistent Inboria directament al vostre correu, sense sortir dels correus.",
+    "outlookAddinTitle": "Botó «Demaneu a Inboria» a Outlook",
+    "webmailDownload": "Descarregar l'extensió",
+    "webmailCopyUrl": "Copiar chrome://extensions",
+    "personalVideoUrlInvalid": "Enllaç invàlid (https:// requerit)",
+    "webmailUrlCopied": "Adreça copiada ✓",
+    "outlookOpenAddinsPage": "Obrir els complements d'Outlook",
+    "outlookDownloadManifest": "Descarregar el fitxer",
+    "outlookStep2": "A Outlook, obriu «Obtenir complements» › «Els meus complements» › «Afegir un complement personalitzat» › «Des d'un fitxer», i seleccioneu el fitxer descarregat.",
+    "outlookGuideIntro": "Tres passos senzills. No cal buscar als menús: tot està guiat.",
+    "webmailExtInstall": "Instal·lar al meu navegador",
+    "webmailGuideIntro": "Funciona amb Gmail, OVH, Yahoo, iCloud i la majoria de webmails, a Chrome o Edge. Tres passos senzills, només una vegada.",
+    "webmailStep2": "A Chrome o Edge, obriu la pàgina d'extensions: escriviu chrome://extensions a la barra d'adreces, i activeu el «Mode desenvolupador» (interruptor a dalt a la dreta).",
+    "webmailGuideTitle": "Instal·lar Inboria al vostre webmail",
+    "webmailExtTitle": "Botó « Demanar a Inboria » al vostre webmail",
+    "webmailStep3": "Feu clic a « Carregar l'extensió no empaquetada » i seleccioneu la carpeta « inboria-extension » descompressada. A continuació, obriu el vostre webmail: apareixerà el botó « Demanar a Inboria ». Inicieu sessió una vegada, ja està.",
+    "outlookStep1": "Descarregueu el fitxer de connexió Inboria.",
+    "reconnect": "Reconnectar",
+    "outlookAddinDesc": "Afegiu l'assistent Inboria directament al vostre Outlook, sense sortir dels correus.",
+    "personalVideoUrlLabel": "Enllaç de videoconferència personal",
+    "outlookStep3": "Obriu un correu: el botó « Demanar a Inboria » apareixerà a la cinta. Inicieu sessió una vegada amb el vostre compte Inboria, ja està.",
+    "outlookGuideTitle": "Instal·lar Inboria a Outlook",
+    "webmailExtSection": "Inboria al vostre webmail",
+    "outlookAddinInstall": "Instal·lar a Outlook",
+    "webmailStep1": "Descarregueu l'extensió Inboria, després descomprimiu el fitxer (clic dret › « Extreure tot »). Obtindreu una carpeta « inboria-extension »."
   },
   "subscription": {
     "title": "Gereu la vostra subscripció",
@@ -1426,7 +1619,10 @@
     "start": "Començar",
     "numberOfCollaborators": "Nombre de col·laboradors",
     "total": "Total",
-    "seatsExample": "Exemple: 3 col·laboradors = 50,97€/mes — modificable en qualsevol moment des del vostre espai."
+    "seatsExample": "Exemple: 3 col·laboradors = 50,97€/mes — modificable en qualsevol moment des del vostre espai.",
+    "billingMonthly": "Mensual",
+    "perMonthBilledYearly": "/mes (facturat anualment)",
+    "billingYearly": "Anual"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Error en l'enviament",
     "changeRole": "Canviar el rol",
     "adminDesc": "Pot gestionar l'equip, l'abonament i tots els correus electrònics",
-    "memberDesc": "Accés als seus correus electrònics i a les tasques compartides"
+    "memberDesc": "Accés als seus correus electrònics i a les tasques compartides",
+    "trialTeamHint": "Prova d'equip: convideu fins a 3 col·legues. Cadascú rep la seva pròpia prova de 4.500 crèdits, i desbloquegeu les bústies compartides, l'assignació i els comentaris interns.",
+    "trialTeamLabel": "Prova d'equip"
   },
   "sharedMailboxes": {
     "title": "Caixes compartides",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} ha assignat aquest correu a {{target}}",
     "systemSelfAssigned": "{{actor}} s'ha fet càrrec d'aquest correu",
     "systemReassigned": "{{actor}} ha reassignat de {{previous}} a {{target}}",
-    "systemUnassigned": "{{actor}} ha tret l'assignació a {{previous}}"
+    "systemUnassigned": "{{actor}} ha tret l'assignació a {{previous}}",
+    "recipientsFilter": "Cercar un membre…",
+    "typingMany": "Diverses persones estan escrivint…",
+    "recipientsClear": "Buidar",
+    "placeholderSimple": "Introduïu el vostre missatge…",
+    "viewing": "Veient ara",
+    "internalNote": "Nota",
+    "recipients": "Destinataris",
+    "recipientsPick": "Destinataris de la nota",
+    "typingOne": "{{name}} està escrivint…",
+    "recipientsEmpty": "Cap membre",
+    "recipientsSelected": "{{count}} seleccionat(s)",
+    "emailMessage": "Correu electrònic"
   },
   "attachments": {
     "title": "Fitxers adjunts",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Pendent",
     "statusPendingShort": "Pendent",
     "syncFailed": "Sincronització fallida",
-    "viewDetails": "Veure els detalls"
+    "viewDetails": "Veure els detalls",
+    "internalAppointment": "Cita interna",
+    "duplicateError": "Error duplicació",
+    "duplicatedDesc": "Còpia creada 7 dies després.",
+    "noteSelectedCount": "{{count}} destinatari(s)",
+    "forwardWhere": "Lloc",
+    "askInboriaNewSlotPrefill": "La contraproposta de {{contact}}{{slot}} no em convé. Proposeu-li altres franges compatibles amb la meva agenda.",
+    "duplicated": "Cita duplicada",
+    "ctxNoProject": "Cap projecte",
+    "noteError": "Error afegint nota",
+    "filterExternal": "Client",
+    "autoConfirmed": {
+      "desc": "{{count}} cites acaben de ser confirmades automàticament a partir dels correus rebuts.",
+      "title": "Confirmacions detectades"
+    },
+    "ctxDup7": "En 7 dies",
+    "forwardIntro": "Hola,",
+    "statusPendingHint": "Inboria enviarà automàticament el correu de proposta al client.",
+    "markConfirmed": "Marcar com a confirmat",
+    "newInternalAppointment": "Cita interna",
+    "ctxEdit": "Editar",
+    "theContact": "el contacte",
+    "statusLabel": "Estat",
+    "notesEmpty": "Cap nota. Les notes són internes — mai enviades al client.",
+    "expandSuggestions": "Mostrar suggeriments",
+    "forwardTitle": "Títol",
+    "noteAllTeam": "Tot l'equip",
+    "internalMembers": "Membres de l'equip convidats",
+    "noteRecipientsLabel": "Per a",
+    "ctxMarkAs": "Marcar com a",
+    "singleDay": "Tornar a durada simple",
+    "ctxDupNextDay": "L'endemà",
+    "counterDeclined": "Refús enviat al contacte",
+    "ctxDup14": "En 14 dies",
+    "collapseSuggestions": "Amagar les suggerències",
+    "formInternalNoteLabel": "Nota interna (opcional)",
+    "forwardBody": "Us reenvio els detalls d'aquesta cita:",
+    "multiDay": "Diversos dies…",
+    "ctxForward": "Reenviar per correu electrònic",
+    "forwardVideo": "Enllaç de videoconferència",
+    "internalMembersEmpty": "Cap membre convidat. Cliqueu «+ Afegir» per triar els vostres col·legues.",
+    "forwardWhen": "Data",
+    "pickDate": "Triar una data",
+    "ctxDuplicate": "Duplicar",
+    "coorgNoCandidate": "Cap membre disponible.",
+    "ctxDupCustomMenu": "Personalitzat…",
+    "ctxDupCustom": "Duplicar en quants dies?",
+    "ctxOpen": "Obrir",
+    "notePlaceholder": "Nota interna (només visible per l'equip, mai enviada al client)…",
+    "confirmError": "Error en confirmar",
+    "ctxDelete": "Eliminar",
+    "duration": "Durada",
+    "internalNotes": "Notes internes",
+    "ctxDup30": "D'aquí a 1 mes",
+    "formInternalNotePlaceholder": "Ex: Client VIP, atenció al to. Mai enviada al client.",
+    "askInboriaNewSlot": "Demanar a Inboria nova cita",
+    "filterAll": "Tots",
+    "confirmWithInboria": "Confirmar amb Inboria",
+    "ctxProject": "Projecte",
+    "coorgAdd": "+ Afegir",
+    "ctxDup90": "D'aquí a 3 mesos",
+    "confirmDelete": "Suprimir aquesta cita?",
+    "forwardOutro": "Atentament,",
+    "forwardSubject": "RE: Cita",
+    "filterInternal": "Intern"
   },
   "supportChat": {
     "title": "Assistència Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Feu-me qualsevol pregunta sobre Inboria: funcionalitats, configuració, subscripció, i més.",
     "placeholder": "Escriviu la vostra pregunta...",
     "poweredBy": "Impulsat per Inboria",
-    "errorMessage": "Ho sento, ha ocorregut un error. Si us plau, torneu-ho a provar o contacteu amb suport@inboria.com."
+    "errorMessage": "Ho sento, ha ocorregut un error. Si us plau, torneu-ho a provar o contacteu amb suport@inboria.com.",
+    "send": "Enviar",
+    "clear": "Esborrar la conversa"
   },
   "inboriaChat": {
     "openLabel": "Obrir el xat d'Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "En espera",
       "relance": "En curs",
       "termine": "Finalitzada"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorades",
+    "bulkMarkedRepliedToast": "{{count}} marcades com a respostes"
   },
   "contacts": {
     "title": "Contacte 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Obert",
     "openedBadgeCount": "Obert {{count}} vegades",
     "openedAtLabel": "Primera obertura: {{date}}",
-    "notOpenedYet": "Encara no obert"
+    "notOpenedYet": "Encara no obert",
+    "scheduledCancelError": "Error en cancel·lar",
+    "scheduledCancelPartial": "{{failed}} cancel·lació(ns) de {{total}} han fallat",
+    "scheduledNoRecipient": "Sense destinatari"
   },
   "templates": {
     "title": "Plantilles",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Correu electrònic fet visible",
     "privateOnDesc": "Aquest correu electrònic és ara invisible per als vostres administradors (vista carpeta equip + Inboria).",
     "privateOffDesc": "Aquest correu electrònic torna a ser visible per als vostres administradors (vista carpeta equip + Inboria).",
-    "privateError": "Impossible d'actualitzar la privadesa."
+    "privateError": "Impossible d'actualitzar la privadesa.",
+    "details": "Detalls",
+    "actionsMenu": "Accions"
   },
   "privacy": {
     "title": "Privadesa i accés equip",
@@ -3456,7 +3739,10 @@
       "followup": "Reinici",
       "appointment": "Agenda",
       "team": "Activitat equip"
-    }
+    },
+    "addDescription": "Creeu una fitxa per fer seguiment d'algú que encara no apareix a la vostra bústia.",
+    "openContact": "Veure la fitxa de contacte",
+    "deleteDescription": "L'historial de correus electrònics vinculats a aquesta adreça no s'elimina. Només desapareix la fitxa manual."
   },
   "folders": {
     "title": "Les meves carpetes",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "Sistema"
+  },
+  "signature": {
+    "imageTooLarge": "Imatge massa gran (màx. 200 Ko)",
+    "linkUrlPrompt": "URL de l'enllaç (https://...)",
+    "size": "Mida",
+    "italic": "Cursiva",
+    "clear": "Esborrar format",
+    "imageInvalid": "Fitxer d'imatge invàlid",
+    "highlight": "Ressaltat",
+    "bold": "Negreta",
+    "underline": "Subratllat",
+    "image": "Imatge / logotip",
+    "color": "Color del text",
+    "imageHint": "Consell: inseriu un logotip PNG/JPG (màx 200 Ko). La imatge s'integra directament a la signatura.",
+    "font": "Tipus de lletra",
+    "link": "Enllaç",
+    "orderedList": "Llista numerada",
+    "moreColors": "Més colors…",
+    "bulletList": "Llista de punts"
+  },
+  "palette": {
+    "compose": "Nou correu",
+    "shortcuts": "Dreceres de teclat",
+    "navigate": "Navegar",
+    "empty": "Cap resultat.",
+    "actions": "Accions",
+    "placeholder": "Escriviu una comanda o cerqueu…"
+  },
+  "outlookBanner": {
+    "back": "Tornar a Outlook",
+    "openedFrom": "Obert des d'Outlook. Feu clic per tornar, o simplement canvieu a la pestanya Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Obert des de Gmail. Feu clic per tornar, o simplement canvieu a la pestanya de Gmail.",
+    "back": "Tornar a Gmail"
+  },
+  "webmailBanner": {
+    "back": "Tornar al meu webmail",
+    "openedFromNamed": "Obert des de {{name}}. Cliqueu per tornar, o simplement canvieu a la pestanya {{name}}.",
+    "openedFrom": "Obert des del vostre webmail. Cliqueu per tornar, o simplement canvieu a la pestanya del vostre webmail.",
+    "backNamed": "Tornar a {{name}}"
   }
 }

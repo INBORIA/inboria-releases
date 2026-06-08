@@ -23,7 +23,16 @@
     "add": "Tambah",
     "edit": "Ubah",
     "reset": "Atur ulang",
-    "more": "Lainnya"
+    "more": "Lainnya",
+    "notAuthenticated": "Tidak terautentikasi",
+    "collapse": "Sembunyikan kategori",
+    "send": "Kirim",
+    "dismiss": "Tutup",
+    "create": "Buat",
+    "remove": "Hapus",
+    "select": "Pilih",
+    "copyFailed": "Salin gagal",
+    "expand": "Tampilkan kategori"
   },
   "nav": {
     "extensions": "Ekstensi",
@@ -37,7 +46,18 @@
     "login": "Masuk",
     "signup": "Daftar",
     "logout": "Keluar",
-    "openMenu": "Buka menu"
+    "openMenu": "Buka menu",
+    "categories": "Kategori",
+    "archives": "Arsip",
+    "dailyBrief": "Ringkasan harian",
+    "folders": "Folder saya",
+    "tasks": "Tugas",
+    "followups": "Tindak lanjut",
+    "inbox": "Kotak masuk",
+    "sent": "Terkirim",
+    "scheduled": "Dijadwalkan",
+    "snoozed": "Ditunda",
+    "contacts": "Kontak"
   },
   "sidebar": {
     "inbox": "Skrin masuk",
@@ -66,7 +86,10 @@
     "followups": "Pengingat",
     "contacts": "Kontak",
     "assigned": "Ditugaskan",
-    "myTasks": "Tugas Saya"
+    "myTasks": "Tugas Saya",
+    "expand": "Perbesar menu",
+    "collapse": "Perkecil menu",
+    "resize": "Ubah ukuran menu"
   },
   "dashboard": {
     "expiredSubscription": "Langganan Anda telah kedaluwarsa",
@@ -529,10 +552,17 @@
       "important": "Penting"
     },
     "date": {
-      "all": "Semua tanggal"
+      "all": "Semua tanggal",
+      "yesterday": "Kemarin",
+      "thisMonth": "Bulan ini",
+      "today": "Hari ini",
+      "last7": "7 hari terakhir",
+      "last30": "30 hari terakhir"
     },
     "read": {
-      "all": "Semua"
+      "all": "Semua",
+      "read": "Dibaca",
+      "unread": "Belum dibaca"
     },
     "sharedDraft": "Draf bersama",
     "sharedDraftOn": "Draf bersama aktif",
@@ -564,7 +594,113 @@
       "label": "Tampilkan panel",
       "overlay": "Tumpang tindih",
       "split": "Bersebelahan"
-    }
+    },
+    "unknownSender": "Tidak dikenal",
+    "scSearch": "Cari",
+    "scNext": "Email berikutnya",
+    "snoozedFor24h": "Ditunda hingga besok",
+    "collisionViewingOne": "{{name}} juga melihat email ini",
+    "markedAsUnread": "Ditandai sebagai belum dibaca",
+    "theme": {
+      "switchLight": "Mode terang",
+      "switchDark": "Mode gelap"
+    },
+    "archived": "Diarsipkan",
+    "loadingEmail": "Memuat email...",
+    "searchOpAttachment": "email dengan lampiran",
+    "moreActions": "Lebih banyak tindakan",
+    "searchOpSubject": "filter berdasarkan subjek",
+    "markAsRead": "Tandai sebagai sudah dibaca",
+    "collisionViewingMany": "{{count}} orang lain melihat email ini",
+    "scGotoInbox": "Pergi ke Kotak Masuk",
+    "scGotoSnoozed": "Pergi ke Ditunda",
+    "scSnooze": "Tunda (24 jam)",
+    "close": "Tutup",
+    "composeRestore": "Lanjutkan draf",
+    "scDelete": "Hapus",
+    "density": {
+      "normal": "Normal",
+      "label": "Kepadatan tampilan",
+      "compact": "Kompak",
+      "comfortable": "Nyaman"
+    },
+    "headerCollapse": "Sembunyikan tab dan filter",
+    "composeUntitled": "Draf tanpa judul",
+    "backHint": "Kembali (Esc) — J/K untuk navigasi, R balas, E arsip",
+    "loadingTitle": "Memuat…",
+    "draftYou": "Anda",
+    "copySender": "Salin alamat",
+    "slaOverdue": "SLA terlambat",
+    "assigneeFilterMember": "anggota ini",
+    "draftRelease": "Lepaskan",
+    "scArchive": "Arsipkan",
+    "markAsReadUnread": "Tandai sudah dibaca / belum dibaca",
+    "scForward": "Teruskan",
+    "draftSomeoneSends": "{{name}} akan mengirimkannya",
+    "searchOpSender": "filter berdasarkan pengirim",
+    "readingPanePos": {
+      "off": "Tersembunyi",
+      "right": "Di kanan",
+      "label": "Panel baca",
+      "bottom": "Di bawah"
+    },
+    "scGotoContacts": "Pergi ke Kontak",
+    "markAsUnread": "Tandai sebagai belum dibaca",
+    "composeDiscard": "Batalkan",
+    "snooze3h": "Dalam 3 jam",
+    "importanceLabel": "Tampilan",
+    "copiedSenderEmail": "Alamat disalin",
+    "scPalette": "Palet perintah",
+    "copiedSubject": "Subjek disalin",
+    "myFoldersLabel": "Folder saya",
+    "copySenderEmail": "Salin alamat pengirim",
+    "viewOptions": "Opsi tampilan",
+    "shortcutsTitle": "Pintasan keyboard",
+    "assignedNoTeam": "Tampilan ini memerlukan tim (2 anggota atau lebih).",
+    "collisionReplyingMany": "{{count}} orang sudah membalas email ini",
+    "assignToProject": "Tetapkan ke folder tim",
+    "searchGroupOperators": "Perhalus",
+    "composeAria": "Tulis email",
+    "downloadEml": "Unduh sebagai .eml",
+    "headerExpand": "Tampilkan tab dan filter",
+    "scClose": "Tutup email",
+    "composeDiscardConfirm": "Batalkan draf ini?",
+    "readingPaneOff": "Nonaktifkan panel baca",
+    "searchGroupSenders": "Pengirim",
+    "scGotoTasks": "Pergi ke Tugas",
+    "printPopupBlocked": "Tidak dapat membuka jendela cetak",
+    "copied": "Disalin",
+    "snooze": "Tunda",
+    "exportEml": "Unduh .eml",
+    "categorized": "Dikategorikan",
+    "markedAsRead": "Ditandai sebagai dibaca",
+    "teamBadge": "Tim",
+    "priorityLabel": "Prioritas",
+    "backToGmailHint": "Buka email ini di Gmail",
+    "snoozeTomorrow": "Besok pagi",
+    "composeMinimize": "Perkecil draf",
+    "scGotoSent": "Pergi ke Terkirim",
+    "readingPaneOn": "Aktifkan panel baca (3 kolom)",
+    "collisionReplyingOne": "{{name}} sudah membalas email ini",
+    "createAndAssignTask": "Buat dan tetapkan…",
+    "copyAddress": "Salin alamat",
+    "copySubject": "Salin subjek",
+    "loadEmailError": "Tidak dapat memuat email.",
+    "draftYouSend": "Anda yang mengirim",
+    "scGotoArchives": "Pergi ke Arsip",
+    "scReply": "Balas",
+    "backToGmail": "Kembali ke Gmail",
+    "moveToFolder": "Pindahkan ke",
+    "print": "Cetak",
+    "scPrev": "Email sebelumnya",
+    "draftClaimSend": "Saya yang mengirim",
+    "draftLiveCoedit": "Sunting bersama secara langsung",
+    "draftTakeOverHint": "Ambil alih pengiriman jika rekan ini tidak tersedia",
+    "scHelp": "Tampilkan bantuan ini",
+    "filtersReset": "Atur ulang filter",
+    "draftTakeOver": "Ambil alih",
+    "searchGroupEmails": "Email",
+    "filterByCategory": "Saring"
   },
   "sent": {
     "title": "Email yang dikirim",
@@ -649,7 +785,16 @@
     "blockFailed": "Tidak dapat memblokir",
     "blockNoEmail": "Alamat pengirim tidak ditemukan",
     "blockNoConnection": "Tidak ada akun email yang terhubung",
-    "emptied": "Folder kosong"
+    "emptied": "Folder kosong",
+    "noBlocked": "Tidak ada pengirim yang diblokir",
+    "openRestored": "Buka",
+    "fetchingFromProvider": "Mengambil konten dari penyedia Anda…",
+    "retryFetch": "Coba lagi",
+    "unblocked": "Pengirim tidak diblokir",
+    "blockedList": "Pengirim yang diblokir",
+    "unblock": "Buka blokir",
+    "fetchFailed": "Tidak dapat mengambil konten email ini.",
+    "blockSenderSuccess": "Pengirim diblokir"
   },
   "trash": {
     "title": "Tempat Sampah",
@@ -794,7 +939,18 @@
     "movedToDone": "Tugas selesai",
     "movedToTodo": "Tugas dikembalikan ke yang harus dilakukan",
     "statusUpdated": "Status diperbarui",
-    "taskCreated": "Tugas dibuat"
+    "taskCreated": "Tugas dibuat",
+    "titleCopied": "Judul disalin",
+    "reassign": "Tugaskan ulang",
+    "openInInbox": "Buka di Kotak Masuk",
+    "copyTitle": "Salin judul",
+    "noLinkedEmail": "Tugas ini tidak terkait dengan email apa pun.",
+    "unassign": "Batalkan penugasan",
+    "linkedEmailActions": "Pada email terkait",
+    "reassigned": "Tugas ditugaskan ulang",
+    "markAsDone": "Tandai selesai",
+    "loadingTitle": "Memuat tugas…",
+    "markAsTodo": "Tandai untuk dilakukan"
   },
   "projects": {
     "title": "Folder tim",
@@ -851,7 +1007,14 @@
     "exportError": "Kesalahan saat mengekspor",
     "searchProjects": "Cari proyek...",
     "noProjectsAlt": "Buat proyek pertama Anda untuk mengelompokkan email dan tugas.",
-    "viewDetail": "Lihat detail"
+    "viewDetail": "Lihat detail",
+    "taskAssigned": "Tugas ditugaskan",
+    "taskUnassigned": "Tugas tidak ditugaskan",
+    "detachEmail": "Lepaskan dari proyek",
+    "assignTo": "Tugaskan kepada…",
+    "openEmail": "Buka email",
+    "emailDetached": "Email dilepas dari proyek",
+    "unassigned": "Tidak ditugaskan"
   },
   "classification": {
     "title": "Kategori",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Kategori sistem ini tidak dapat diubah namanya.",
       "cannotMerge": "Kategori « Tidak terklasifikasi » tidak dapat digabungkan.",
       "goToInbox": "Urutkan email ini"
-    }
+    },
+    "adminOnlyNotice": "Pengelolaan kategori (pembuatan, modifikasi, penghapusan, paket bisnis) hanya untuk Admin Tim untuk memastikan klasifikasi yang konsisten. Anda dapat melihat kategori dan emailnya."
   },
   "settings": {
     "title": "Pengaturan",
@@ -1268,7 +1432,9 @@
       "privacy": "Privasi dan akses tim",
       "privacyDesc": "Email pribadi Anda dan jurnal konsultasi admin",
       "calendars": "Kalender",
-      "calendarsDesc": "Hubungkan Google Calendar dan Outlook Calendar"
+      "calendarsDesc": "Hubungkan Google Calendar dan Outlook Calendar",
+      "administration": "Administrasi",
+      "administrationDesc": "Pengaturan hanya untuk administrator organisasi"
     },
     "b2bSection": "Kredibilitas B2B",
     "slaCard": "SLA kotak bersama",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Rapat video bawaan",
     "preferredVideoDesc": "Silakan pilih penyedia rapat video bawaan Anda untuk janji temu baru. Meet memerlukan kalender Google yang terhubung; Teams memerlukan Outlook. Jitsi berfungsi tanpa akun.",
     "meetingRemindersDesc": "Inboria mengirimkan pengingat sopan kepada kontak 48 jam setelah usulan janji yang belum dijawab.",
-    "meetingRemindersTitle": "Pengingat otomatis RDV"
+    "meetingRemindersTitle": "Pengingat otomatis RDV",
+    "outlookAddinSection": "Inboria di Outlook",
+    "personalVideoUrlDesc": "Tempelkan tautan ruang permanen Teams atau Meet Anda (https://...). Inboria akan menggunakannya dalam semua usulan janji.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud, dan sebagian besar webmail. Tambahkan asisten Inboria langsung ke email Anda, tanpa meninggalkan kotak masuk.",
+    "outlookAddinTitle": "Tombol « Minta Inboria » di Outlook",
+    "webmailDownload": "Unduh ekstensi",
+    "webmailCopyUrl": "Salin chrome://extensions",
+    "personalVideoUrlInvalid": "Tautan tidak valid (https:// diperlukan)",
+    "webmailUrlCopied": "Alamat disalin ✓",
+    "outlookOpenAddinsPage": "Buka add-in Outlook",
+    "outlookDownloadManifest": "Unduh file",
+    "outlookStep2": "Di Outlook, buka « Dapatkan add-in » › « Add-in Saya » › « Tambahkan add-in kustom » › « Dari file », lalu pilih file yang diunduh.",
+    "outlookGuideIntro": "Tiga langkah sederhana. Tidak perlu mencari di menu: semuanya dipandu.",
+    "webmailExtInstall": "Pasang di peramban saya",
+    "webmailGuideIntro": "Berfungsi dengan Gmail, OVH, Yahoo, iCloud, dan sebagian besar webmail, di Chrome atau Edge. Tiga langkah sederhana, sekali saja.",
+    "webmailStep2": "Di Chrome atau Edge, buka halaman ekstensi: ketik chrome://extensions di bilah alamat, lalu aktifkan « Mode pengembang » (saklar di kanan atas).",
+    "webmailGuideTitle": "Pasang Inboria di webmail Anda",
+    "webmailExtTitle": "Tombol \"Minta ke Inboria\" di webmail Anda",
+    "webmailStep3": "Klik \"Muat ekstensi yang tidak dikemas\" dan pilih folder \"inboria-extension\" yang telah diekstrak. Kemudian buka webmail Anda: tombol \"Minta ke Inboria\" akan muncul. Masuk sekali, selesai.",
+    "outlookStep1": "Unduh file koneksi Inboria.",
+    "reconnect": "Sambungkan kembali",
+    "outlookAddinDesc": "Tambahkan asisten Inboria langsung ke Outlook Anda, tanpa meninggalkan email Anda.",
+    "personalVideoUrlLabel": "Tautan video pribadi",
+    "outlookStep3": "Buka email: tombol \"Minta ke Inboria\" muncul di pita. Masuk sekali dengan akun Inboria Anda, selesai.",
+    "outlookGuideTitle": "Pasang Inboria di Outlook",
+    "webmailExtSection": "Inboria di webmail Anda",
+    "outlookAddinInstall": "Pasang di Outlook",
+    "webmailStep1": "Unduh ekstensi Inboria, lalu ekstrak file (klik kanan › \"Ekstrak semua\"). Anda akan mendapatkan folder \"inboria-extension\"."
   },
   "subscription": {
     "title": "Kelola langganan Anda",
@@ -1426,7 +1619,10 @@
     "start": "Mulai",
     "numberOfCollaborators": "Jumlah kolaborator",
     "total": "Total",
-    "seatsExample": "Contoh: 3 kolaborator = 50,97€/bulan — dapat diubah kapan saja dari ruang Anda."
+    "seatsExample": "Contoh: 3 kolaborator = 50,97€/bulan — dapat diubah kapan saja dari ruang Anda.",
+    "billingMonthly": "Bulanan",
+    "perMonthBilledYearly": "/bulan (ditagih tahunan)",
+    "billingYearly": "Tahunan"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Kesalahan saat mengirim",
     "changeRole": "Ubah peran",
     "adminDesc": "Dapat mengelola tim, langganan, dan semua email",
-    "memberDesc": "Akses ke email dan tugas yang dibagikan"
+    "memberDesc": "Akses ke email dan tugas yang dibagikan",
+    "trialTeamHint": "Uji coba tim: undang hingga 3 kolega. Setiap orang mendapatkan uji coba 4.500 kredit, dan Anda membuka kotak bersama, penugasan, dan komentar internal.",
+    "trialTeamLabel": "Uji coba tim"
   },
   "sharedMailboxes": {
     "title": "Kotak bersama",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} menugaskan email ini kepada {{target}}",
     "systemSelfAssigned": "{{actor}} mengambil alih email ini",
     "systemReassigned": "{{actor}} menugaskan ulang dari {{previous}} kepada {{target}}",
-    "systemUnassigned": "{{actor}} membatalkan penugasan {{previous}}"
+    "systemUnassigned": "{{actor}} membatalkan penugasan {{previous}}",
+    "recipientsFilter": "Cari anggota…",
+    "typingMany": "Beberapa orang sedang mengetik…",
+    "recipientsClear": "Kosongkan",
+    "placeholderSimple": "Masukkan pesan Anda…",
+    "viewing": "Sedang melihat sekarang",
+    "internalNote": "Catatan",
+    "recipients": "Penerima",
+    "recipientsPick": "Penerima catatan",
+    "typingOne": "{{name}} sedang mengetik…",
+    "recipientsEmpty": "Tidak ada anggota",
+    "recipientsSelected": "{{count}} dipilih",
+    "emailMessage": "Email"
   },
   "attachments": {
     "title": "Lampiran",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Menunggu",
     "statusPendingShort": "Menunggu",
     "syncFailed": "Sinkronisasi gagal",
-    "viewDetails": "Lihat detail"
+    "viewDetails": "Lihat detail",
+    "internalAppointment": "Janji internal",
+    "duplicateError": "Kesalahan duplikasi",
+    "duplicatedDesc": "Salinan dibuat 7 hari kemudian.",
+    "noteSelectedCount": "{{count}} penerima",
+    "forwardWhere": "Lokasi",
+    "askInboriaNewSlotPrefill": "Usulan balasan dari {{contact}}{{slot}} tidak sesuai. Mohon tawarkan slot lain yang sesuai dengan agenda saya.",
+    "duplicated": "Janji duplikat",
+    "ctxNoProject": "Tidak ada proyek",
+    "noteError": "Kesalahan menambah catatan",
+    "filterExternal": "Klien",
+    "autoConfirmed": {
+      "desc": "{{count}} janji baru saja dikonfirmasi otomatis dari email yang diterima.",
+      "title": "Konfirmasi terdeteksi"
+    },
+    "ctxDup7": "Dalam 7 hari",
+    "forwardIntro": "Halo,",
+    "statusPendingHint": "Inboria akan secara otomatis mengirim email usulan ke klien.",
+    "markConfirmed": "Tandai sebagai dikonfirmasi",
+    "newInternalAppointment": "Janji internal",
+    "ctxEdit": "Edit",
+    "theContact": "kontak",
+    "statusLabel": "Status",
+    "notesEmpty": "Tidak ada catatan. Catatan tetap internal — tidak pernah dikirim ke klien.",
+    "expandSuggestions": "Tampilkan saran",
+    "forwardTitle": "Judul",
+    "noteAllTeam": "Seluruh tim",
+    "internalMembers": "Anggota tim diundang",
+    "noteRecipientsLabel": "Untuk",
+    "ctxMarkAs": "Tandai sebagai",
+    "singleDay": "Kembali ke durasi tunggal",
+    "ctxDupNextDay": "Hari berikutnya",
+    "counterDeclined": "Penolakan dikirim ke kontak",
+    "ctxDup14": "Dalam 14 hari",
+    "collapseSuggestions": "Sembunyikan saran",
+    "formInternalNoteLabel": "Catatan internal (opsional)",
+    "forwardBody": "Saya meneruskan detail pertemuan ini kepada Anda:",
+    "multiDay": "Beberapa hari…",
+    "ctxForward": "Teruskan melalui email",
+    "forwardVideo": "Tautan video",
+    "internalMembersEmpty": "Tidak ada anggota yang diundang. Klik « + Tambah » untuk memilih kolega Anda.",
+    "forwardWhen": "Tanggal",
+    "pickDate": "Pilih tanggal",
+    "ctxDuplicate": "Duplikat",
+    "coorgNoCandidate": "Tidak ada anggota yang tersedia.",
+    "ctxDupCustomMenu": "Kustom…",
+    "ctxDupCustom": "Duplikat dalam berapa hari?",
+    "ctxOpen": "Buka",
+    "notePlaceholder": "Catatan internal (hanya terlihat oleh tim, tidak pernah dikirim ke klien)…",
+    "confirmError": "Kesalahan saat konfirmasi",
+    "ctxDelete": "Hapus",
+    "duration": "Durasi",
+    "internalNotes": "Catatan internal",
+    "ctxDup30": "Dalam 1 bulan",
+    "formInternalNotePlaceholder": "Contoh: Klien VIP, perhatikan nada bicara. Tidak pernah dikirim ke klien.",
+    "askInboriaNewSlot": "Minta ke Inboria jadwal baru",
+    "filterAll": "Semua",
+    "confirmWithInboria": "Konfirmasi dengan Inboria",
+    "ctxProject": "Proyek",
+    "coorgAdd": "+ Tambah",
+    "ctxDup90": "Dalam 3 bulan",
+    "confirmDelete": "Hapus janji ini?",
+    "forwardOutro": "Hormat kami,",
+    "forwardSubject": "FW: Janji",
+    "filterInternal": "Internal"
   },
   "supportChat": {
     "title": "Asisten Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Ajukan pertanyaan apa pun tentang Inboria: fitur, pengaturan, langganan, dan lainnya.",
     "placeholder": "Ketik pertanyaan Anda...",
     "poweredBy": "Didukung oleh Inboria",
-    "errorMessage": "Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi support@inboria.com."
+    "errorMessage": "Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi support@inboria.com.",
+    "send": "Kirim",
+    "clear": "Hapus percakapan"
   },
   "inboriaChat": {
     "openLabel": "Buka obrolan Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Menunggu",
       "relance": "Sedang berlangsung",
       "termine": "Selesai"
-    }
+    },
+    "bulkDismissedToast": "{{count}} diabaikan",
+    "bulkMarkedRepliedToast": "{{count}} ditandai sebagai dijawab"
   },
   "contacts": {
     "title": "Kontak 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Dibuka",
     "openedBadgeCount": "Dibuka {{count}} kali",
     "openedAtLabel": "Pembukaan pertama: {{date}}",
-    "notOpenedYet": "Belum dibuka"
+    "notOpenedYet": "Belum dibuka",
+    "scheduledCancelError": "Gagal membatalkan",
+    "scheduledCancelPartial": "{{failed}} pembatalan dari {{total}} gagal",
+    "scheduledNoRecipient": "Tanpa penerima"
   },
   "templates": {
     "title": "Template",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Email dijadikan terlihat",
     "privateOnDesc": "Email ini sekarang tidak terlihat untuk admin Anda (tampilan folder tim + Inboria).",
     "privateOffDesc": "Email ini kembali terlihat untuk admin Anda (tampilan folder tim + Inboria).",
-    "privateError": "Tidak dapat memperbarui privasi."
+    "privateError": "Tidak dapat memperbarui privasi.",
+    "details": "Detail",
+    "actionsMenu": "Tindakan"
   },
   "privacy": {
     "title": "Privasi dan akses tim",
@@ -3456,7 +3739,10 @@
       "followup": "Tindak lanjut",
       "appointment": "Agenda",
       "team": "Aktivitas tim"
-    }
+    },
+    "addDescription": "Silakan buat kartu untuk melacak seseorang yang belum ada di kotak Anda.",
+    "openContact": "Lihat kartu kontak",
+    "deleteDescription": "Riwayat email terkait dengan alamat ini tidak dihapus. Hanya kartu manual yang hilang."
   },
   "folders": {
     "title": "Folder Saya",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "Sistem"
+  },
+  "signature": {
+    "imageTooLarge": "Gambar terlalu besar (maks 200 KB)",
+    "linkUrlPrompt": "URL tautan (https://...)",
+    "size": "Ukuran",
+    "italic": "Miring",
+    "clear": "Hapus pemformatan",
+    "imageInvalid": "File gambar tidak valid",
+    "highlight": "Sorot",
+    "bold": "Tebal",
+    "underline": "Garis bawah",
+    "image": "Gambar / logo",
+    "color": "Warna teks",
+    "imageHint": "Tip: sisipkan logo PNG/JPG (maks 200 KB). Gambar terintegrasi langsung dalam tanda tangan.",
+    "font": "Font",
+    "link": "Tautan",
+    "orderedList": "Daftar bernomor",
+    "moreColors": "Lebih banyak warna…",
+    "bulletList": "Daftar berpoin"
+  },
+  "palette": {
+    "compose": "Email baru",
+    "shortcuts": "Pintasan keyboard",
+    "navigate": "Navigasi",
+    "empty": "Tidak ada hasil.",
+    "actions": "Tindakan",
+    "placeholder": "Ketik perintah atau cari…"
+  },
+  "outlookBanner": {
+    "back": "Kembali ke Outlook",
+    "openedFrom": "Dibuka dari Outlook. Klik untuk kembali, atau cukup beralih ke tab Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Dibuka dari Gmail. Klik untuk kembali, atau cukup beralih ke tab Gmail.",
+    "back": "Kembali ke Gmail"
+  },
+  "webmailBanner": {
+    "back": "Kembali ke webmail saya",
+    "openedFromNamed": "Dibuka dari {{name}}. Klik untuk kembali, atau beralih ke tab {{name}}.",
+    "openedFrom": "Dibuka dari webmail Anda. Klik untuk kembali, atau beralih ke tab webmail Anda.",
+    "backNamed": "Kembali ke {{name}}"
   }
 }

@@ -23,7 +23,16 @@
     "add": "जोड़ें",
     "edit": "संशोधित करें",
     "reset": "पुनः सेट करें",
-    "more": "अधिक"
+    "more": "अधिक",
+    "notAuthenticated": "प्रमाणित नहीं",
+    "collapse": "श्रेणियाँ छुपाएँ",
+    "send": "भेजें",
+    "dismiss": "बंद करें",
+    "create": "बनाएं",
+    "remove": "हटाएं",
+    "select": "चुनें",
+    "copyFailed": "कॉपी असफल",
+    "expand": "श्रेणियाँ दिखाएं"
   },
   "nav": {
     "extensions": "एक्सटेंशन",
@@ -37,7 +46,18 @@
     "login": "लॉग इन करें",
     "signup": "साइन अप करें",
     "logout": "लॉग आउट करें",
-    "openMenu": "मेनू खोलें"
+    "openMenu": "मेनू खोलें",
+    "categories": "श्रेणियाँ",
+    "archives": "संग्रह",
+    "dailyBrief": "दैनिक सारांश",
+    "folders": "मेरे फ़ोल्डर्स",
+    "tasks": "कार्य",
+    "followups": "अनुवर्ती",
+    "inbox": "इनबॉक्स",
+    "sent": "भेजे गए",
+    "scheduled": "निर्धारित",
+    "snoozed": "स्थगित",
+    "contacts": "संपर्क"
   },
   "sidebar": {
     "inbox": "प्राप्ति",
@@ -66,7 +86,10 @@
     "followups": "फॉलो-अप",
     "contacts": "संपर्क",
     "assigned": "असाइन किए गए",
-    "myTasks": "मेरे कार्य"
+    "myTasks": "मेरे कार्य",
+    "expand": "मेनू विस्तृत करें",
+    "collapse": "मेनू संक्षिप्त करें",
+    "resize": "मेनू का आकार बदलें"
   },
   "dashboard": {
     "expiredSubscription": "आपकी सदस्यता समाप्त हो गई है",
@@ -529,10 +552,17 @@
       "important": "महत्वपूर्ण"
     },
     "date": {
-      "all": "सभी तिथियाँ"
+      "all": "सभी तिथियाँ",
+      "yesterday": "कल",
+      "thisMonth": "इस महीने",
+      "today": "आज",
+      "last7": "पिछले 7 दिन",
+      "last30": "पिछले 30 दिन"
     },
     "read": {
-      "all": "सभी"
+      "all": "सभी",
+      "read": "पढ़े गए",
+      "unread": "न पढ़े गए"
     },
     "sharedDraft": "साझा ड्राफ्ट",
     "sharedDraftOn": "साझा ड्राफ्ट चालू",
@@ -564,7 +594,113 @@
       "label": "पैन प्रदर्शन",
       "overlay": "ओवरले",
       "split": "साइड बाय साइड"
-    }
+    },
+    "unknownSender": "अज्ञात",
+    "scSearch": "खोजें",
+    "scNext": "अगला मेल",
+    "snoozedFor24h": "कल तक स्थगित",
+    "collisionViewingOne": "{{name}} भी इस मेल को देख रहे हैं",
+    "markedAsUnread": "अचिह्नित किया गया",
+    "theme": {
+      "switchLight": "हल्का मोड",
+      "switchDark": "डार्क मोड"
+    },
+    "archived": "संग्रहीत",
+    "loadingEmail": "ईमेल लोड हो रहा है...",
+    "searchOpAttachment": "संलग्नक वाले मेल",
+    "moreActions": "अधिक क्रियाएँ",
+    "searchOpSubject": "विषय द्वारा फ़िल्टर करें",
+    "markAsRead": "पढ़ा हुआ चिह्नित करें",
+    "collisionViewingMany": "{{count}} अन्य लोग इस मेल को देख रहे हैं",
+    "scGotoInbox": "रिसेप्शन पर जाएं",
+    "scGotoSnoozed": "स्थगित पर जाएं",
+    "scSnooze": "स्थगित करें (24 घंटे)",
+    "close": "बंद करें",
+    "composeRestore": "ड्राफ्ट पुनः प्राप्त करें",
+    "scDelete": "हटाएं",
+    "density": {
+      "normal": "सामान्य",
+      "label": "प्रदर्शन घनत्व",
+      "compact": "कॉम्पैक्ट",
+      "comfortable": "आरामदायक"
+    },
+    "headerCollapse": "टैब और फ़िल्टर छुपाएँ",
+    "composeUntitled": "बिना विषय का ड्राफ्ट",
+    "backHint": "वापस (एस्केप) — नेविगेट करने के लिए J/K, उत्तर देने के लिए R, संग्रहित करने के लिए E",
+    "loadingTitle": "लोड हो रहा है…",
+    "draftYou": "आप",
+    "copySender": "पता कॉपी करें",
+    "slaOverdue": "SLA अतिदेय",
+    "assigneeFilterMember": "यह सदस्य",
+    "draftRelease": "रिलीज़ करें",
+    "scArchive": "संग्रहीत करें",
+    "markAsReadUnread": "पढ़ा / न पढ़ा चिह्नित करें",
+    "scForward": "फॉरवर्ड करें",
+    "draftSomeoneSends": "{{name}} इसे भेजेगा",
+    "searchOpSender": "प्रेषक द्वारा फ़िल्टर करें",
+    "readingPanePos": {
+      "off": "छिपा हुआ",
+      "right": "दाईं ओर",
+      "label": "रीडिंग पेन",
+      "bottom": "नीचे"
+    },
+    "scGotoContacts": "संपर्क पर जाएं",
+    "markAsUnread": "न पढ़ा चिह्नित करें",
+    "composeDiscard": "त्यागें",
+    "snooze3h": "3 घंटे में",
+    "importanceLabel": "प्रदर्शन",
+    "copiedSenderEmail": "पता कॉपी किया गया",
+    "scPalette": "कमांड पैलेट",
+    "copiedSubject": "विषय कॉपी किया गया",
+    "myFoldersLabel": "मेरे फ़ोल्डर",
+    "copySenderEmail": "प्रेषक का पता कॉपी करें",
+    "viewOptions": "प्रदर्शन विकल्प",
+    "shortcutsTitle": "कीबोर्ड शॉर्टकट",
+    "assignedNoTeam": "इस दृश्य के लिए एक टीम (2 सदस्य या अधिक) की आवश्यकता है।",
+    "collisionReplyingMany": "{{count}} लोग पहले से ही इस मेल का जवाब दे रहे हैं",
+    "assignToProject": "टीम फ़ोल्डर को असाइन करें",
+    "searchGroupOperators": "परिष्कृत करें",
+    "composeAria": "एक ईमेल लिखें",
+    "downloadEml": ".eml में डाउनलोड करें",
+    "headerExpand": "टैब और फ़िल्टर दिखाएं",
+    "scClose": "मेल बंद करें",
+    "composeDiscardConfirm": "इस ड्राफ्ट को त्यागें?",
+    "readingPaneOff": "पढ़ने का पैनल बंद करें",
+    "searchGroupSenders": "प्रेषक",
+    "scGotoTasks": "कार्य पर जाएं",
+    "printPopupBlocked": "प्रिंट विंडो खोलने में असमर्थ",
+    "copied": "कॉपी किया गया",
+    "snooze": "पोस्टपोन करें",
+    "exportEml": ".eml डाउनलोड करें",
+    "categorized": "श्रेणीबद्ध",
+    "markedAsRead": "पढ़ा हुआ चिह्नित",
+    "teamBadge": "टीम",
+    "priorityLabel": "प्राथमिकता",
+    "backToGmailHint": "इस मेल को Gmail में खोलें",
+    "snoozeTomorrow": "कल सुबह",
+    "composeMinimize": "ड्राफ्ट को छोटा करें",
+    "scGotoSent": "भेजे गए पर जाएं",
+    "readingPaneOn": "रीडिंग पेन (3 कॉलम) सक्रिय करें",
+    "collisionReplyingOne": "{{name}} पहले से ही इस मेल का जवाब दे रहे हैं",
+    "createAndAssignTask": "बनाएं और असाइन करें…",
+    "copyAddress": "पता कॉपी करें",
+    "copySubject": "विषय कॉपी करें",
+    "loadEmailError": "ईमेल लोड करने में असमर्थ।",
+    "draftYouSend": "आप भेजते हैं",
+    "scGotoArchives": "आर्काइव पर जाएं",
+    "scReply": "जवाब दें",
+    "backToGmail": "Gmail पर वापस जाएँ",
+    "moveToFolder": "फोल्डर में ले जाएं",
+    "print": "प्रिंट करें",
+    "scPrev": "पिछला मेल",
+    "draftClaimSend": "मैं भेजता हूं",
+    "draftLiveCoedit": "लाइव सह-संपादन",
+    "draftTakeOverHint": "यदि यह सहयोगी उपलब्ध नहीं है तो भेजने का कार्य संभालें",
+    "scHelp": "इस सहायता को दिखाएं",
+    "filtersReset": "फिल्टर रीसेट करें",
+    "draftTakeOver": "संभालें",
+    "searchGroupEmails": "मेल",
+    "filterByCategory": "फ़िल्टर करें"
   },
   "sent": {
     "title": "भेजे गए ईमेल",
@@ -649,7 +785,16 @@
     "blockFailed": "ब्लॉक करना संभव नहीं है",
     "blockNoEmail": "प्रेषक का पता नहीं मिला",
     "blockNoConnection": "कोई ईमेल खाता कनेक्ट नहीं है",
-    "emptied": "फोल्डर खाली किया गया"
+    "emptied": "फोल्डर खाली किया गया",
+    "noBlocked": "कोई अवरुद्ध प्रेषक नहीं",
+    "openRestored": "खोलें",
+    "fetchingFromProvider": "आपके प्रदाता से सामग्री प्राप्त की जा रही है…",
+    "retryFetch": "पुनः प्रयास करें",
+    "unblocked": "प्रेषक अनब्लॉक किया गया",
+    "blockedList": "ब्लॉक किए गए प्रेषक",
+    "unblock": "अनब्लॉक करें",
+    "fetchFailed": "इस मेल की सामग्री प्राप्त करने में असमर्थ।",
+    "blockSenderSuccess": "प्रेषक ब्लॉक किया गया"
   },
   "trash": {
     "title": "कचरा पात्र",
@@ -794,7 +939,18 @@
     "movedToDone": "कार्य पूर्ण",
     "movedToTodo": "कार्य करने के लिए वापस डाला गया",
     "statusUpdated": "स्थिति अपडेट की गई",
-    "taskCreated": "कार्य बनाया गया"
+    "taskCreated": "कार्य बनाया गया",
+    "titleCopied": "शीर्षक कॉपी किया गया",
+    "reassign": "पुनः असाइन करें",
+    "openInInbox": "रिसेप्शन में खोलें",
+    "copyTitle": "शीर्षक कॉपी करें",
+    "noLinkedEmail": "यह कार्य किसी ईमेल से जुड़ा नहीं है।",
+    "unassign": "असाइन न करें",
+    "linkedEmailActions": "लिंक किए गए मेल पर",
+    "reassigned": "कार्य पुनः असाइन किया गया",
+    "markAsDone": "समाप्त चिह्नित करें",
+    "loadingTitle": "कार्य लोड हो रहे हैं…",
+    "markAsTodo": "करने के लिए चिह्नित करें"
   },
   "projects": {
     "title": "टीम फ़ोल्डर",
@@ -851,7 +1007,14 @@
     "exportError": "निर्यात के दौरान त्रुटि",
     "searchProjects": "एक परियोजना खोजें...",
     "noProjectsAlt": "ईमेल और कार्यों को समूहित करने के लिए अपनी पहली परियोजना बनाएँ।",
-    "viewDetail": "विवरण देखें"
+    "viewDetail": "विवरण देखें",
+    "taskAssigned": "कार्य असाइन किया गया",
+    "taskUnassigned": "कार्य असाइन नहीं किया गया",
+    "detachEmail": "परियोजना से हटाएं",
+    "assignTo": "को असाइन करें…",
+    "openEmail": "ईमेल खोलें",
+    "emailDetached": "ईमेल परियोजना से हटाया गया",
+    "unassigned": "असाइन नहीं किया गया"
   },
   "classification": {
     "title": "श्रेणियाँ",
@@ -1135,7 +1298,8 @@
       "cannotRename": "यह सिस्टम श्रेणी का नाम नहीं बदला जा सकता।",
       "cannotMerge": "श्रेणी « अवर्गीकृत » को मिलाया नहीं जा सकता।",
       "goToInbox": "इन ईमेल को क्रमबद्ध करें"
-    }
+    },
+    "adminOnlyNotice": "श्रेणियों का प्रबंधन (निर्माण, संशोधन, हटाना, व्यापार पैक) टीम एडमिन के लिए आरक्षित है ताकि एक सुसंगत वर्गीकरण सुनिश्चित हो सके। आप श्रेणियों और उनके ईमेल देख सकते हैं।"
   },
   "settings": {
     "title": "सेटिंग्स",
@@ -1268,7 +1432,9 @@
       "privacy": "गोपनीयता और टीम पहुंच",
       "privacyDesc": "आपके निजी ईमेल और प्रशासनिक परामर्श का लॉग",
       "calendars": "कैलेंडर",
-      "calendarsDesc": "Google Calendar और Outlook Calendar कनेक्ट करें"
+      "calendarsDesc": "Google Calendar और Outlook Calendar कनेक्ट करें",
+      "administration": "प्रशासन",
+      "administrationDesc": "संगठन के प्रशासकों के लिए सेटिंग्स"
     },
     "b2bSection": "B2B विश्वसनीयता",
     "slaCard": "साझा बक्सों के लिए SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "डिफ़ॉल्ट वीडियो मीटिंग",
     "preferredVideoDesc": "कृपया नई मुलाकातों के लिए डिफ़ॉल्ट वीडियो मीटिंग प्रदाता चुनें। Meet के लिए कनेक्टेड Google कैलेंडर आवश्यक है; Teams के लिए Outlook आवश्यक है। Jitsi बिना खाते के काम करता है।",
     "meetingRemindersDesc": "Inboria एक विनम्र अनुस्मारक भेजता है यदि 48 घंटे बाद भी बैठक का प्रस्ताव अनुत्तरित रहता है।",
-    "meetingRemindersTitle": "स्वचालित बैठक अनुस्मारक"
+    "meetingRemindersTitle": "स्वचालित बैठक अनुस्मारक",
+    "outlookAddinSection": "Outlook में Inboria",
+    "personalVideoUrlDesc": "अपनी स्थायी Teams या Meet कक्ष का लिंक चिपकाएं (https://...)। Inboria इसे सभी बैठक प्रस्तावों में उपयोग करेगा।",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud और अधिकांश वेबमेल। अपने मेल छोड़े बिना Inboria सहायक को सीधे अपने मेलबॉक्स में जोड़ें।",
+    "outlookAddinTitle": "Outlook में 'Inboria से पूछें' बटन",
+    "webmailDownload": "विस्तार डाउनलोड करें",
+    "webmailCopyUrl": "chrome://extensions कॉपी करें",
+    "personalVideoUrlInvalid": "अमान्य लिंक (https:// आवश्यक)",
+    "webmailUrlCopied": "पता कॉपी किया गया ✓",
+    "outlookOpenAddinsPage": "Outlook ऐड-इन्स खोलें",
+    "outlookDownloadManifest": "फ़ाइल डाउनलोड करें",
+    "outlookStep2": "Outlook में, 'ऐड-इन्स प्राप्त करें' › 'मेरे ऐड-इन्स' › 'कस्टम ऐड-इन जोड़ें' › 'फ़ाइल से' खोलें, फिर डाउनलोड की गई फ़ाइल चुनें।",
+    "outlookGuideIntro": "तीन सरल चरण। मेनू में खोजने की आवश्यकता नहीं: सब कुछ मार्गदर्शित है।",
+    "webmailExtInstall": "मेरे ब्राउज़र में इंस्टॉल करें",
+    "webmailGuideIntro": "Gmail, OVH, Yahoo, iCloud और अधिकांश वेबमेल के साथ काम करता है, Chrome या Edge में। तीन सरल चरण, केवल एक बार।",
+    "webmailStep2": "Chrome या Edge में, एक्सटेंशन पेज खोलें: एड्रेस बार में chrome://extensions टाइप करें, फिर 'डेवलपर मोड' (ऊपर दाईं ओर स्विच) चालू करें।",
+    "webmailGuideTitle": "अपने वेबमेल में Inboria इंस्टॉल करें",
+    "webmailExtTitle": "आपके वेबमेल में \"Inboria से पूछें\" बटन",
+    "webmailStep3": "\"अनपैक्ड एक्सटेंशन लोड करें\" पर क्लिक करें और अनजिप किए गए \"inboria-extension\" फ़ोल्डर का चयन करें। फिर अपना वेबमेल खोलें: \"Inboria से पूछें\" बटन दिखाई देगा। एक बार लॉगिन करें, यह तैयार है।",
+    "outlookStep1": "Inboria कनेक्शन फ़ाइल डाउनलोड करें।",
+    "reconnect": "पुनः कनेक्ट करें",
+    "outlookAddinDesc": "Inboria सहायक को सीधे अपने Outlook में जोड़ें, बिना अपने मेल छोड़े।",
+    "personalVideoUrlLabel": "व्यक्तिगत वीडियो लिंक",
+    "outlookStep3": "एक मेल खोलें: \"Inboria से पूछें\" बटन रिबन में दिखाई देगा। अपने Inboria खाते से एक बार लॉगिन करें, यह तैयार है।",
+    "outlookGuideTitle": "Outlook में Inboria स्थापित करें",
+    "webmailExtSection": "आपके वेबमेल में Inboria",
+    "outlookAddinInstall": "Outlook में स्थापित करें",
+    "webmailStep1": "Inboria एक्सटेंशन डाउनलोड करें, फिर फ़ाइल को अनजिप करें (राइट क्लिक › \"सभी निकालें\")। आपको \"inboria-extension\" फ़ोल्डर मिलेगा।"
   },
   "subscription": {
     "title": "अपने सब्सक्रिप्शन का प्रबंधन करें",
@@ -1426,7 +1619,10 @@
     "start": "शुरू करें",
     "numberOfCollaborators": "कर्मचारियों की संख्या",
     "total": "कुल",
-    "seatsExample": "उदाहरण: 3 कर्मचारी = 50.97€/महीना — आपके क्षेत्र से कभी भी संशोधित किया जा सकता है।"
+    "seatsExample": "उदाहरण: 3 कर्मचारी = 50.97€/महीना — आपके क्षेत्र से कभी भी संशोधित किया जा सकता है।",
+    "billingMonthly": "मासिक",
+    "perMonthBilledYearly": "/माह (वार्षिक बिल)",
+    "billingYearly": "वार्षिक"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "भेजने में त्रुटि",
     "changeRole": "भूमिका बदलें",
     "adminDesc": "टीम, सदस्यता और सभी ईमेल का प्रबंधन कर सकता है",
-    "memberDesc": "अपने ईमेल और साझा कार्यों तक पहुँच"
+    "memberDesc": "अपने ईमेल और साझा कार्यों तक पहुँच",
+    "trialTeamHint": "टीम परीक्षण: 3 सहयोगियों को आमंत्रित करें। प्रत्येक को 4,500 क्रेडिट का अपना परीक्षण मिलता है, और आप साझा बॉक्स, असाइनमेंट और आंतरिक टिप्पणियाँ अनलॉक करते हैं।",
+    "trialTeamLabel": "टीम परीक्षण"
   },
   "sharedMailboxes": {
     "title": "साझा मेलबॉक्स",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} ने यह ईमेल {{target}} को सौंपा",
     "systemSelfAssigned": "{{actor}} ने यह ईमेल स्वयं ले लिया",
     "systemReassigned": "{{actor}} ने असाइनमेंट {{previous}} से {{target}} को स्थानांतरित किया",
-    "systemUnassigned": "{{actor}} ने {{previous}} का असाइनमेंट हटा दिया"
+    "systemUnassigned": "{{actor}} ने {{previous}} का असाइनमेंट हटा दिया",
+    "recipientsFilter": "सदस्य खोजें…",
+    "typingMany": "कई लोग टाइप कर रहे हैं…",
+    "recipientsClear": "खाली करें",
+    "placeholderSimple": "अपना संदेश दर्ज करें…",
+    "viewing": "अभी देख रहे हैं",
+    "internalNote": "नोट",
+    "recipients": "प्राप्तकर्ता",
+    "recipientsPick": "नोट के प्राप्तकर्ता",
+    "typingOne": "{{name}} टाइप कर रहे हैं…",
+    "recipientsEmpty": "कोई सदस्य नहीं",
+    "recipientsSelected": "{{count}} चयनित",
+    "emailMessage": "ईमेल"
   },
   "attachments": {
     "title": "संलग्नक",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "प्रतीक्षा में",
     "statusPendingShort": "प्रतीक्षा में",
     "syncFailed": "सिंक विफल",
-    "viewDetails": "विवरण देखें"
+    "viewDetails": "विवरण देखें",
+    "internalAppointment": "आंतरिक बैठक",
+    "duplicateError": "प्रतिलिपि त्रुटि",
+    "duplicatedDesc": "7 दिन बाद प्रतिलिपि बनाई गई।",
+    "noteSelectedCount": "{{count}} प्राप्तकर्ता",
+    "forwardWhere": "स्थान",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} का प्रतिप्रस्ताव मुझे उपयुक्त नहीं है। कृपया मेरे कैलेंडर के साथ संगत अन्य स्लॉट्स का प्रस्ताव दें।",
+    "duplicated": "प्रतिलिपि बैठक",
+    "ctxNoProject": "कोई परियोजना नहीं",
+    "noteError": "नोट जोड़ने में त्रुटि",
+    "filterExternal": "ग्राहक",
+    "autoConfirmed": {
+      "desc": "{{count}} बैठकें प्राप्त मेल से स्वचालित रूप से पुष्टि की गई हैं।",
+      "title": "पुष्टिकरण का पता चला"
+    },
+    "ctxDup7": "7 दिनों में",
+    "forwardIntro": "नमस्ते,",
+    "statusPendingHint": "Inboria स्वचालित रूप से ग्राहक को प्रस्ताव मेल भेजेगा।",
+    "markConfirmed": "पुष्टि चिह्नित करें",
+    "newInternalAppointment": "आंतरिक बैठक",
+    "ctxEdit": "संपादित करें",
+    "theContact": "संपर्क",
+    "statusLabel": "स्थिति",
+    "notesEmpty": "कोई नोट नहीं। नोट्स आंतरिक रहते हैं — कभी भी ग्राहक को नहीं भेजे जाते।",
+    "expandSuggestions": "सुझाव दिखाएँ",
+    "forwardTitle": "शीर्षक",
+    "noteAllTeam": "पूरी टीम",
+    "internalMembers": "आमंत्रित टीम सदस्य",
+    "noteRecipientsLabel": "के लिए",
+    "ctxMarkAs": "के रूप में चिह्नित करें",
+    "singleDay": "सिंगल अवधि पर वापस जाएं",
+    "ctxDupNextDay": "अगले दिन",
+    "counterDeclined": "संपर्क को अस्वीकार भेजा गया",
+    "ctxDup14": "14 दिनों में",
+    "collapseSuggestions": "सुझाव छिपाएं",
+    "formInternalNoteLabel": "आंतरिक नोट (वैकल्पिक)",
+    "forwardBody": "मैं आपको इस बैठक का विवरण भेज रहा हूँ:",
+    "multiDay": "कई दिन…",
+    "ctxForward": "ईमेल द्वारा फॉरवर्ड करें",
+    "forwardVideo": "वीडियो लिंक",
+    "internalMembersEmpty": "कोई सदस्य आमंत्रित नहीं। अपने सहयोगियों को चुनने के लिए '+ जोड़ें' पर क्लिक करें।",
+    "forwardWhen": "तारीख",
+    "pickDate": "तारीख चुनें",
+    "ctxDuplicate": "डुप्लिकेट करें",
+    "coorgNoCandidate": "कोई सदस्य उपलब्ध नहीं।",
+    "ctxDupCustomMenu": "कस्टम…",
+    "ctxDupCustom": "कितने दिनों में डुप्लिकेट करें?",
+    "ctxOpen": "खोलें",
+    "notePlaceholder": "आंतरिक नोट (केवल टीम द्वारा देखा जा सकता है, कभी भी ग्राहक को नहीं भेजा गया)…",
+    "confirmError": "पुष्टि करते समय त्रुटि",
+    "ctxDelete": "हटाएं",
+    "duration": "अवधि",
+    "internalNotes": "आंतरिक नोट्स",
+    "ctxDup30": "1 महीने में",
+    "formInternalNotePlaceholder": "उदाहरण: वीआईपी ग्राहक, स्वर पर ध्यान दें। ग्राहक को कभी नहीं भेजा गया।",
+    "askInboriaNewSlot": "Inboria से नया अपॉइंटमेंट पूछें",
+    "filterAll": "सभी",
+    "confirmWithInboria": "Inboria के साथ पुष्टि करें",
+    "ctxProject": "परियोजना",
+    "coorgAdd": "+ जोड़ें",
+    "ctxDup90": "3 महीने में",
+    "confirmDelete": "क्या आप इस अपॉइंटमेंट को हटाना चाहते हैं?",
+    "forwardOutro": "आपका,",
+    "forwardSubject": "फॉरवर्ड: अपॉइंटमेंट",
+    "filterInternal": "आंतरिक"
   },
   "supportChat": {
     "title": "Inboria सहायक",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Inboria के बारे में मुझसे कोई भी प्रश्न पूछें: सुविधाएँ, सेटिंग्स, सदस्यता, और अधिक।",
     "placeholder": "अपना प्रश्न टाइप करें...",
     "poweredBy": "Inboria द्वारा संचालित",
-    "errorMessage": "क्षमा करें, एक त्रुटि हुई है। कृपया पुनः प्रयास करें या support@inboria.com से संपर्क करें।"
+    "errorMessage": "क्षमा करें, एक त्रुटि हुई है। कृपया पुनः प्रयास करें या support@inboria.com से संपर्क करें।",
+    "send": "भेजें",
+    "clear": "वार्तालाप साफ़ करें"
   },
   "inboriaChat": {
     "openLabel": "Inboria चैट खोलें",
@@ -2911,7 +3187,9 @@
       "en_attente": "प्रतीक्षा में",
       "relance": "चल रहा है",
       "termine": "पूर्ण"
-    }
+    },
+    "bulkDismissedToast": "{{count}} अनदेखी की गईं",
+    "bulkMarkedRepliedToast": "{{count}} को उत्तर दिया गया चिह्नित किया गया"
   },
   "contacts": {
     "title": "संपर्क 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "खुला",
     "openedBadgeCount": "खुला {{count}} बार",
     "openedAtLabel": "पहली बार खोलना : {{date}}",
-    "notOpenedYet": "अभी तक नहीं खोला गया"
+    "notOpenedYet": "अभी तक नहीं खोला गया",
+    "scheduledCancelError": "रद्द करने में विफल",
+    "scheduledCancelPartial": "{{total}} में से {{failed}} रद्दीकरण विफल",
+    "scheduledNoRecipient": "कोई प्राप्तकर्ता नहीं"
   },
   "templates": {
     "title": "टेम्पलेट्स",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "ईमेल को दृश्यमान बनाया गया",
     "privateOnDesc": "यह ईमेल अब आपके प्रशासकों के लिए अदृश्य है (टीम फ़ोल्डर दृश्य + Inboria)।",
     "privateOffDesc": "यह ईमेल अब आपके प्रशासकों के लिए दृश्यमान हो गया है (टीम फ़ोल्डर दृश्य + Inboria)।",
-    "privateError": "गोपनीयता को अपडेट करना असंभव है।"
+    "privateError": "गोपनीयता को अपडेट करना असंभव है।",
+    "details": "विवरण",
+    "actionsMenu": "क्रियाएँ"
   },
   "privacy": {
     "title": "गोपनीयता और टीम तक पहुँच",
@@ -3456,7 +3739,10 @@
       "followup": "फॉलो-अप",
       "appointment": "एजेंडा",
       "team": "टीम गतिविधि"
-    }
+    },
+    "addDescription": "किसी ऐसे व्यक्ति का अनुसरण करने के लिए एक फाइल बनाएं जो अभी तक आपके बॉक्स में नहीं है।",
+    "openContact": "संपर्क फाइल देखें",
+    "deleteDescription": "इस पते से जुड़े ईमेल इतिहास को नहीं हटाया गया है। केवल मैनुअल फाइल गायब हो जाती है।"
   },
   "folders": {
     "title": "मेरे फ़ोल्डर",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "एजेंडा",
     "system": "सिस्टम"
+  },
+  "signature": {
+    "imageTooLarge": "छवि बहुत बड़ी है (अधिकतम 200 Ko)",
+    "linkUrlPrompt": "लिंक का URL (https://...)",
+    "size": "आकार",
+    "italic": "इटैलिक",
+    "clear": "स्वरूपण साफ़ करें",
+    "imageInvalid": "अमान्य छवि फ़ाइल",
+    "highlight": "हाइलाइट",
+    "bold": "बोल्ड",
+    "underline": "रेखांकित",
+    "image": "छवि / लोगो",
+    "color": "पाठ का रंग",
+    "imageHint": "संकेत: एक PNG/JPG लोगो (अधिकतम 200 Ko) डालें। छवि सीधे हस्ताक्षर में एम्बेड की जाती है।",
+    "font": "फ़ॉन्ट",
+    "link": "लिंक",
+    "orderedList": "क्रमांकित सूची",
+    "moreColors": "अधिक रंग…",
+    "bulletList": "बुलेट सूची"
+  },
+  "palette": {
+    "compose": "नया ईमेल",
+    "shortcuts": "कुंजीपटल शॉर्टकट",
+    "navigate": "नेविगेट करें",
+    "empty": "कोई परिणाम नहीं।",
+    "actions": "क्रियाएँ",
+    "placeholder": "एक कमांड टाइप करें या खोजें…"
+  },
+  "outlookBanner": {
+    "back": "Outlook पर लौटें",
+    "openedFrom": "Outlook से खोला गया। वापस जाने के लिए क्लिक करें, या बस Outlook टैब पर स्विच करें।"
+  },
+  "gmailBanner": {
+    "openedFrom": "Gmail से खोला गया। लौटने के लिए क्लिक करें, या बस Gmail टैब पर स्विच करें।",
+    "back": "Gmail पर वापस जाएं"
+  },
+  "webmailBanner": {
+    "back": "मेरे वेबमेल पर वापस जाएं",
+    "openedFromNamed": "{{name}} से खोला गया। वापस जाने के लिए क्लिक करें, या बस {{name}} टैब पर स्विच करें।",
+    "openedFrom": "आपके वेबमेल से खोला गया। वापस जाने के लिए क्लिक करें, या बस अपने वेबमेल टैब पर स्विच करें।",
+    "backNamed": "{{name}} पर वापस जाएं"
   }
 }

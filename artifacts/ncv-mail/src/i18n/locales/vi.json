@@ -23,7 +23,16 @@
     "add": "Thêm",
     "edit": "Chỉnh sửa",
     "reset": "Đặt lại",
-    "more": "Thêm"
+    "more": "Thêm",
+    "remove": "Gỡ bỏ",
+    "send": "Gửi",
+    "expand": "Hiển thị các danh mục",
+    "create": "Tạo",
+    "select": "Chọn",
+    "dismiss": "Đóng",
+    "copyFailed": "Không thể sao chép",
+    "collapse": "Ẩn danh mục",
+    "notAuthenticated": "Chưa xác thực"
   },
   "nav": {
     "extensions": "Tiện ích mở rộng",
@@ -37,7 +46,18 @@
     "login": "Đăng nhập",
     "signup": "Đăng ký",
     "logout": "Đăng xuất",
-    "openMenu": "Mở menu"
+    "openMenu": "Mở menu",
+    "inbox": "Hộp thư đến",
+    "sent": "Đã gửi",
+    "archives": "Lưu trữ",
+    "dailyBrief": "Tóm tắt hàng ngày",
+    "snoozed": "Đã hoãn",
+    "scheduled": "Đã lên lịch",
+    "categories": "Danh mục",
+    "followups": "Theo dõi",
+    "folders": "Thư mục của tôi",
+    "tasks": "Nhiệm vụ",
+    "contacts": "Danh bạ"
   },
   "sidebar": {
     "inbox": "Hộp thư đến",
@@ -66,7 +86,10 @@
     "followups": "Nhắc nhở",
     "contacts": "Liên hệ",
     "assigned": "Được chỉ định",
-    "myTasks": "Nhiệm vụ của tôi"
+    "myTasks": "Nhiệm vụ của tôi",
+    "collapse": "Thu gọn menu",
+    "resize": "Thay đổi kích thước menu",
+    "expand": "Mở rộng menu"
   },
   "dashboard": {
     "expiredSubscription": "Gói đăng ký của Quý khách đã hết hạn",
@@ -529,10 +552,17 @@
       "important": "Quan trọng"
     },
     "date": {
-      "all": "Tất cả ngày"
+      "all": "Tất cả ngày",
+      "yesterday": "Hôm qua",
+      "thisMonth": "Tháng này",
+      "today": "Hôm nay",
+      "last30": "30 ngày qua",
+      "last7": "7 ngày qua"
     },
     "read": {
-      "all": "Tất cả"
+      "all": "Tất cả",
+      "unread": "Chưa đọc",
+      "read": "Đã đọc"
     },
     "sharedDraft": "Bản nháp chia sẻ",
     "sharedDraftOn": "Bản nháp chia sẻ đã bật",
@@ -564,7 +594,113 @@
       "label": "Hiển thị ngăn",
       "overlay": "Chồng lên",
       "split": "Cạnh nhau"
-    }
+    },
+    "scSearch": "Tìm kiếm",
+    "scGotoSent": "Đi đến Đã gửi",
+    "draftSomeoneSends": "{{name}} sẽ gửi",
+    "draftTakeOver": "Tiếp quản",
+    "composeUntitled": "Bản nháp không tiêu đề",
+    "scGotoArchives": "Đi đến Lưu trữ",
+    "scGotoTasks": "Đi đến Nhiệm vụ",
+    "scSnooze": "Hoãn lại (24 giờ)",
+    "filterByCategory": "Lọc",
+    "viewOptions": "Tùy chọn hiển thị",
+    "copySubject": "Sao chép chủ đề",
+    "unknownSender": "Người gửi không xác định",
+    "headerExpand": "Hiển thị tab và bộ lọc",
+    "loadingEmail": "Đang tải email...",
+    "assigneeFilterMember": "thành viên này",
+    "printPopupBlocked": "Không thể mở cửa sổ in",
+    "collisionReplyingMany": "{{count}} người đang trả lời email này",
+    "snoozeTomorrow": "Sáng mai",
+    "scHelp": "Hiển thị trợ giúp này",
+    "teamBadge": "Đội",
+    "composeRestore": "Khôi phục bản nháp",
+    "draftLiveCoedit": "Đồng chỉnh sửa trực tiếp",
+    "downloadEml": "Tải xuống dưới dạng .eml",
+    "density": {
+      "label": "Mật độ hiển thị",
+      "normal": "Bình thường",
+      "comfortable": "Thoải mái",
+      "compact": "Gọn"
+    },
+    "snooze": "Hoãn lại",
+    "scArchive": "Lưu trữ",
+    "composeAria": "Soạn email",
+    "scDelete": "Xóa",
+    "backHint": "Quay lại (Esc) — J/K để điều hướng, R trả lời, E lưu trữ",
+    "scGotoSnoozed": "Đi đến Hoãn lại",
+    "copiedSenderEmail": "Địa chỉ đã sao chép",
+    "readingPanePos": {
+      "label": "Ngăn đọc",
+      "right": "Bên phải",
+      "off": "Ẩn",
+      "bottom": "Dưới cùng"
+    },
+    "filtersReset": "Đặt lại bộ lọc",
+    "theme": {
+      "switchDark": "Chế độ tối",
+      "switchLight": "Chế độ sáng"
+    },
+    "backToGmailHint": "Mở email này chính xác trong Gmail",
+    "searchOpAttachment": "email có tệp đính kèm",
+    "copySender": "Sao chép địa chỉ",
+    "archived": "Đã lưu trữ",
+    "searchOpSubject": "lọc theo chủ đề",
+    "searchGroupOperators": "Tinh chỉnh",
+    "markedAsUnread": "Đánh dấu là chưa đọc",
+    "searchOpSender": "lọc theo người gửi",
+    "draftClaimSend": "Tôi sẽ gửi",
+    "assignedNoTeam": "Chế độ xem này yêu cầu một nhóm (2 thành viên trở lên).",
+    "markAsRead": "Đánh dấu là đã đọc",
+    "loadEmailError": "Không thể tải email.",
+    "collisionViewingOne": "{{name}} cũng đang xem email này",
+    "scForward": "Chuyển tiếp",
+    "composeMinimize": "Thu nhỏ bản nháp",
+    "searchGroupSenders": "Người gửi",
+    "markAsReadUnread": "Đánh dấu đã đọc / chưa đọc",
+    "draftYou": "Quý vị",
+    "copied": "Đã sao chép",
+    "loadingTitle": "Đang tải…",
+    "importanceLabel": "Hiển thị",
+    "headerCollapse": "Ẩn tab và bộ lọc",
+    "priorityLabel": "Ưu tiên",
+    "composeDiscardConfirm": "Bỏ bản nháp này?",
+    "assignToProject": "Gán vào thư mục nhóm",
+    "copiedSubject": "Chủ đề đã sao chép",
+    "backToGmail": "Quay lại Gmail",
+    "copyAddress": "Sao chép địa chỉ",
+    "collisionReplyingOne": "{{name}} đã trả lời email này",
+    "snoozedFor24h": "Hoãn đến ngày mai",
+    "exportEml": "Tải xuống .eml",
+    "copySenderEmail": "Sao chép địa chỉ người gửi",
+    "searchGroupEmails": "Thư",
+    "scNext": "Email tiếp theo",
+    "draftYouSend": "Quý khách gửi",
+    "categorized": "Đã phân loại",
+    "close": "Đóng",
+    "scClose": "Đóng email",
+    "moveToFolder": "Di chuyển đến",
+    "readingPaneOff": "Tắt ngăn đọc",
+    "draftRelease": "Giải phóng",
+    "readingPaneOn": "Bật ngăn đọc (3 cột)",
+    "snooze3h": "Trong 3 giờ",
+    "markedAsRead": "Đã đánh dấu là đã đọc",
+    "shortcutsTitle": "Phím tắt",
+    "markAsUnread": "Đánh dấu là chưa đọc",
+    "moreActions": "Thêm hành động",
+    "scPalette": "Bảng lệnh",
+    "myFoldersLabel": "Thư mục của tôi",
+    "createAndAssignTask": "Tạo và giao nhiệm vụ…",
+    "print": "In",
+    "collisionViewingMany": "{{count}} người khác đang xem email này",
+    "draftTakeOverHint": "Tiếp tục gửi nếu đồng nghiệp này không còn khả dụng",
+    "scReply": "Trả lời",
+    "slaOverdue": "SLA quá hạn",
+    "composeDiscard": "Hủy bỏ",
+    "scGotoContacts": "Đi tới Danh bạ",
+    "scPrev": "Email trước",
+    "scGotoInbox": "Đi đến Hộp thư đến"
   },
   "sent": {
     "title": "Email đã gửi",
@@ -649,7 +785,16 @@
     "blockFailed": "Không thể chặn",
     "blockNoEmail": "Địa chỉ người gửi không tìm thấy",
     "blockNoConnection": "Không có tài khoản email nào được kết nối",
-    "emptied": "Thư mục đã được làm trống"
+    "emptied": "Thư mục đã được làm trống",
+    "openRestored": "Mở",
+    "unblock": "Bỏ chặn",
+    "fetchFailed": "Không thể lấy nội dung của email này.",
+    "retryFetch": "Thử lại",
+    "noBlocked": "Không có người gửi bị chặn",
+    "unblocked": "Người gửi đã được mở khóa",
+    "blockSenderSuccess": "Người gửi đã bị chặn",
+    "fetchingFromProvider": "Đang lấy nội dung từ nhà cung cấp của quý khách…",
+    "blockedList": "Người gửi bị chặn"
   },
   "trash": {
     "title": "Thùng rác",
@@ -794,7 +939,18 @@
     "movedToDone": "Nhiệm vụ đã hoàn thành",
     "movedToTodo": "Nhiệm vụ đã được đưa lại vào danh sách cần làm",
     "statusUpdated": "Trạng thái đã được cập nhật",
-    "taskCreated": "Nhiệm vụ đã được tạo"
+    "taskCreated": "Nhiệm vụ đã được tạo",
+    "markAsDone": "Đánh dấu đã hoàn thành",
+    "markAsTodo": "Đánh dấu để làm",
+    "titleCopied": "Tiêu đề đã sao chép",
+    "noLinkedEmail": "Nhiệm vụ này không liên kết với email nào.",
+    "unassign": "Hủy phân công",
+    "linkedEmailActions": "Trên email liên kết",
+    "reassign": "Giao lại",
+    "openInInbox": "Mở trong Hộp thư đến",
+    "reassigned": "Nhiệm vụ được giao lại",
+    "copyTitle": "Sao chép tiêu đề",
+    "loadingTitle": "Đang tải nhiệm vụ…"
   },
   "projects": {
     "title": "Thư mục nhóm",
@@ -851,7 +1007,14 @@
     "exportError": "Lỗi khi xuất",
     "searchProjects": "Tìm kiếm một dự án...",
     "noProjectsAlt": "Xin vui lòng tạo dự án đầu tiên của Quý khách để nhóm các email và nhiệm vụ lại với nhau.",
-    "viewDetail": "Xem chi tiết"
+    "viewDetail": "Xem chi tiết",
+    "taskUnassigned": "Nhiệm vụ chưa được gán",
+    "assignTo": "Gán cho…",
+    "openEmail": "Mở email",
+    "detachEmail": "Gỡ khỏi dự án",
+    "unassigned": "Chưa được giao",
+    "emailDetached": "Email đã được gỡ khỏi dự án",
+    "taskAssigned": "Nhiệm vụ được giao"
   },
   "classification": {
     "title": "Danh mục",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Danh mục hệ thống này không thể bị đổi tên.",
       "cannotMerge": "Danh mục « Không phân loại » không thể được hợp nhất.",
       "goToInbox": "Sắp xếp các email này"
-    }
+    },
+    "adminOnlyNotice": "Quản lý danh mục (tạo, sửa đổi, xóa, gói ngành) chỉ dành cho Quản trị viên Đội để đảm bảo phân loại nhất quán. Quý khách có thể xem danh mục và email của chúng."
   },
   "settings": {
     "title": "Cài đặt",
@@ -1268,7 +1432,9 @@
       "privacy": "Quyền riêng tư và truy cập nhóm",
       "privacyDesc": "Email riêng tư của Quý khách và nhật ký truy cập quản trị",
       "calendars": "Lịch",
-      "calendarsDesc": "Kết nối Google Calendar và Outlook Calendar"
+      "calendarsDesc": "Kết nối Google Calendar và Outlook Calendar",
+      "administrationDesc": "Cài đặt dành riêng cho quản trị viên tổ chức",
+      "administration": "Quản trị"
     },
     "b2bSection": "Độ tin cậy B2B",
     "slaCard": "SLA hộp thư chia sẻ",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Họp trực tuyến mặc định",
     "preferredVideoDesc": "Quý khách vui lòng chọn nhà cung cấp họp trực tuyến mặc định cho các cuộc hẹn mới. Meet yêu cầu lịch Google đã kết nối; Teams yêu cầu Outlook. Jitsi hoạt động không cần tài khoản.",
     "meetingRemindersDesc": "Inboria gửi nhắc nhở lịch sự đến liên hệ sau 48 giờ nếu đề xuất cuộc hẹn không được phản hồi.",
-    "meetingRemindersTitle": "Nhắc nhở tự động cho cuộc hẹn"
+    "meetingRemindersTitle": "Nhắc nhở tự động cho cuộc hẹn",
+    "webmailStep2": "Trong Chrome hoặc Edge, mở trang tiện ích: nhập chrome://extensions vào thanh địa chỉ, sau đó bật 'Chế độ nhà phát triển' (công tắc ở góc trên bên phải).",
+    "outlookDownloadManifest": "Tải xuống tệp",
+    "outlookAddinTitle": "Nút « Yêu cầu Inboria » trong Outlook",
+    "outlookAddinDesc": "Thêm trợ lý Inboria trực tiếp vào Outlook của quý khách, không cần rời khỏi email.",
+    "reconnect": "Kết nối lại",
+    "webmailExtSection": "Inboria trong webmail của quý khách",
+    "webmailGuideIntro": "Hoạt động với Gmail, OVH, Yahoo, iCloud và hầu hết các webmail, trong Chrome hoặc Edge. Ba bước đơn giản, chỉ một lần.",
+    "outlookOpenAddinsPage": "Mở trang bổ trợ Outlook",
+    "outlookGuideIntro": "Ba bước đơn giản. Không cần tìm kiếm trong menu: mọi thứ đều được hướng dẫn.",
+    "personalVideoUrlInvalid": "Liên kết không hợp lệ (yêu cầu https://)",
+    "webmailExtInstall": "Cài đặt trong trình duyệt của tôi",
+    "webmailStep1": "Tải xuống tiện ích Inboria, sau đó giải nén tệp (nhấp chuột phải › « Giải nén tất cả »). Quý vị sẽ có một thư mục « inboria-extension ».",
+    "outlookGuideTitle": "Cài đặt Inboria trong Outlook",
+    "outlookStep1": "Tải xuống tệp kết nối Inboria.",
+    "outlookAddinSection": "Inboria trong Outlook",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud và hầu hết các webmail. Thêm trợ lý Inboria trực tiếp vào hộp thư của quý khách mà không cần rời khỏi email.",
+    "outlookStep3": "Mở một email: nút « Yêu cầu Inboria » xuất hiện trên ruy-băng. Đăng nhập một lần với tài khoản Inboria của quý khách, đã sẵn sàng.",
+    "webmailUrlCopied": "Địa chỉ đã sao chép ✓",
+    "personalVideoUrlLabel": "Liên kết video cá nhân",
+    "webmailGuideTitle": "Cài đặt Inboria trong webmail của quý khách",
+    "webmailStep3": "Nhấp vào « Tải tiện ích mở rộng chưa đóng gói » và chọn thư mục « inboria-extension » đã giải nén. Sau đó mở webmail của quý khách: nút « Yêu cầu Inboria » xuất hiện. Đăng nhập một lần, đã sẵn sàng.",
+    "personalVideoUrlDesc": "Dán liên kết phòng họp Teams hoặc Meet cố định của quý khách (https://...). Inboria sẽ sử dụng nó trong tất cả các đề xuất cuộc hẹn.",
+    "outlookAddinInstall": "Cài đặt trong Outlook",
+    "webmailDownload": "Tải xuống tiện ích mở rộng",
+    "outlookStep2": "Trong Outlook, mở « Nhận tiện ích bổ sung » › « Tiện ích bổ sung của tôi » › « Thêm tiện ích bổ sung tùy chỉnh » › « Từ tệp », sau đó chọn tệp đã tải xuống.",
+    "webmailCopyUrl": "Sao chép chrome://extensions",
+    "webmailExtTitle": "Nút « Yêu cầu Inboria » trong webmail của quý khách"
   },
   "subscription": {
     "title": "Quản lý đăng ký của Quý khách",
@@ -1426,7 +1619,10 @@
     "start": "Bắt đầu",
     "numberOfCollaborators": "Số lượng nhân viên",
     "total": "Tổng cộng",
-    "seatsExample": "Ví dụ: 3 nhân viên = 50,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách."
+    "seatsExample": "Ví dụ: 3 nhân viên = 50,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách.",
+    "perMonthBilledYearly": "/tháng (tính phí hàng năm)",
+    "billingMonthly": "Hàng tháng",
+    "billingYearly": "Hàng năm"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Lỗi khi gửi",
     "changeRole": "Thay đổi vai trò",
     "adminDesc": "Có thể quản lý đội ngũ, đăng ký và tất cả các email",
-    "memberDesc": "Truy cập vào email của mình và các nhiệm vụ đã chia sẻ"
+    "memberDesc": "Truy cập vào email của mình và các nhiệm vụ đã chia sẻ",
+    "trialTeamLabel": "Thử nghiệm nhóm",
+    "trialTeamHint": "Thử nghiệm nhóm: mời tối đa 3 đồng nghiệp. Mỗi người nhận được thử nghiệm 4.500 tín dụng riêng, và quý khách mở khóa hộp thư chia sẻ, phân công và bình luận nội bộ."
   },
   "sharedMailboxes": {
     "title": "Hộp thư chia sẻ",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} đã giao thư này cho {{target}}",
     "systemSelfAssigned": "{{actor}} đã nhận thư này",
     "systemReassigned": "{{actor}} đã chuyển giao từ {{previous}} sang {{target}}",
-    "systemUnassigned": "{{actor}} đã hủy giao cho {{previous}}"
+    "systemUnassigned": "{{actor}} đã hủy giao cho {{previous}}",
+    "viewing": "Đang xem",
+    "placeholderSimple": "Nhập tin nhắn của quý khách…",
+    "typingOne": "{{name}} đang nhập…",
+    "recipientsEmpty": "Không có thành viên",
+    "recipientsPick": "Người nhận ghi chú",
+    "recipientsSelected": "{{count}} đã chọn",
+    "recipientsFilter": "Tìm kiếm thành viên…",
+    "emailMessage": "Email",
+    "recipients": "Người nhận",
+    "recipientsClear": "Xóa",
+    "typingMany": "Nhiều người đang nhập…",
+    "internalNote": "Ghi chú"
   },
   "attachments": {
     "title": "Tập tin đính kèm",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Đang chờ",
     "statusPendingShort": "Đang chờ",
     "syncFailed": "Đồng bộ thất bại",
-    "viewDetails": "Xem chi tiết"
+    "viewDetails": "Xem chi tiết",
+    "ctxDupCustomMenu": "Tùy chỉnh…",
+    "confirmError": "Lỗi khi xác nhận",
+    "confirmWithInboria": "Xác nhận với Inboria",
+    "coorgAdd": "+ Thêm",
+    "theContact": "liên hệ",
+    "ctxDupNextDay": "Ngày hôm sau",
+    "ctxDelete": "Xóa",
+    "ctxMarkAs": "Đánh dấu là",
+    "singleDay": "Quay lại thời lượng đơn",
+    "forwardBody": "Tôi chuyển tiếp chi tiết cuộc hẹn này cho quý vị:",
+    "forwardVideo": "Liên kết video",
+    "notesEmpty": "Không có ghi chú nào. Ghi chú chỉ nội bộ — không bao giờ gửi đến khách hàng.",
+    "internalNotes": "Ghi chú nội bộ",
+    "filterAll": "Tất cả",
+    "noteAllTeam": "Toàn bộ đội",
+    "noteRecipientsLabel": "Đến",
+    "forwardSubject": "TR: Cuộc hẹn",
+    "statusLabel": "Trạng thái",
+    "multiDay": "Nhiều ngày…",
+    "forwardIntro": "Xin chào,",
+    "collapseSuggestions": "Ẩn đề xuất",
+    "notePlaceholder": "Ghi chú nội bộ (chỉ hiển thị cho nhóm, không bao giờ gửi cho khách hàng)…",
+    "pickDate": "Chọn ngày",
+    "newInternalAppointment": "Cuộc hẹn nội bộ",
+    "duplicatedDesc": "Bản sao được tạo sau 7 ngày.",
+    "formInternalNotePlaceholder": "Ví dụ: Khách hàng VIP, chú ý giọng điệu. Không bao giờ gửi cho khách hàng.",
+    "duplicated": "Cuộc hẹn bị trùng",
+    "ctxDuplicate": "Sao chép",
+    "coorgNoCandidate": "Không có thành viên nào khả dụng.",
+    "autoConfirmed": {
+      "desc": "{{count}} cuộc hẹn vừa được xác nhận tự động từ các email nhận được.",
+      "title": "Xác nhận được phát hiện"
+    },
+    "ctxProject": "Dự án",
+    "formInternalNoteLabel": "Ghi chú nội bộ (tùy chọn)",
+    "duration": "Thời lượng",
+    "ctxForward": "Chuyển tiếp qua email",
+    "askInboriaNewSlotPrefill": "Đề xuất của {{contact}}{{slot}} không phù hợp với tôi. Đề nghị họ các khung giờ khác phù hợp với lịch của tôi.",
+    "filterInternal": "Nội bộ",
+    "internalAppointment": "Cuộc hẹn nội bộ",
+    "ctxDup90": "Trong 3 tháng",
+    "askInboriaNewSlot": "Yêu cầu Inboria cuộc hẹn mới",
+    "markConfirmed": "Đánh dấu đã xác nhận",
+    "forwardOutro": "Trân trọng,",
+    "ctxNoProject": "Không có dự án",
+    "counterDeclined": "Từ chối đã gửi đến liên hệ",
+    "ctxDup7": "Trong 7 ngày",
+    "noteSelectedCount": "{{count}} người nhận",
+    "ctxDup30": "Trong 1 tháng",
+    "duplicateError": "Lỗi sao chép",
+    "ctxDupCustom": "Sao chép trong bao nhiêu ngày?",
+    "confirmDelete": "Xóa cuộc hẹn này?",
+    "forwardTitle": "Tiêu đề",
+    "forwardWhere": "Địa điểm",
+    "internalMembersEmpty": "Không có thành viên nào được mời. Nhấp « + Thêm » để chọn đồng nghiệp của quý khách.",
+    "noteError": "Lỗi thêm ghi chú",
+    "expandSuggestions": "Hiển thị gợi ý",
+    "internalMembers": "Thành viên đội được mời",
+    "forwardWhen": "Ngày",
+    "ctxOpen": "Mở",
+    "ctxEdit": "Chỉnh sửa",
+    "ctxDup14": "Trong 14 ngày",
+    "filterExternal": "Khách hàng",
+    "statusPendingHint": "Inboria sẽ tự động gửi email đề xuất đến khách hàng."
   },
   "supportChat": {
     "title": "Trợ lý Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Xin vui lòng đặt bất kỳ câu hỏi nào về Inboria: tính năng, cài đặt, đăng ký, và nhiều hơn nữa.",
     "placeholder": "Gõ câu hỏi của Quý khách...",
     "poweredBy": "Được hỗ trợ bởi Inboria",
-    "errorMessage": "Xin lỗi, đã xảy ra lỗi. Xin vui lòng thử lại hoặc liên hệ với support@inboria.com."
+    "errorMessage": "Xin lỗi, đã xảy ra lỗi. Xin vui lòng thử lại hoặc liên hệ với support@inboria.com.",
+    "clear": "Xóa cuộc trò chuyện",
+    "send": "Gửi"
   },
   "inboriaChat": {
     "openLabel": "Mở chat Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Đang chờ",
       "relance": "Đang tiến hành",
       "termine": "Đã hoàn thành"
-    }
+    },
+    "bulkDismissedToast": "{{count}} đã bị bỏ qua",
+    "bulkMarkedRepliedToast": "{{count}} được đánh dấu là đã trả lời"
   },
   "contacts": {
     "title": "Liên hệ 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Đã mở",
     "openedBadgeCount": "Đã mở {{count}} lần",
     "openedAtLabel": "Mở lần đầu: {{date}}",
-    "notOpenedYet": "Chưa mở"
+    "notOpenedYet": "Chưa mở",
+    "scheduledCancelPartial": "{{failed}} hủy trên {{total}} đã thất bại",
+    "scheduledNoRecipient": "Không có người nhận",
+    "scheduledCancelError": "Hủy thất bại"
   },
   "templates": {
     "title": "Mẫu",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Email đã được làm cho hiển thị",
     "privateOnDesc": "Email này hiện đã không hiển thị với các quản trị viên của Quý vị (xem thư mục đội + Inboria).",
     "privateOffDesc": "Email này lại trở nên hiển thị với các quản trị viên của Quý vị (xem thư mục đội + Inboria).",
-    "privateError": "Không thể cập nhật quyền riêng tư."
+    "privateError": "Không thể cập nhật quyền riêng tư.",
+    "actionsMenu": "Hành động",
+    "details": "Chi tiết"
   },
   "privacy": {
     "title": "Quyền riêng tư và quyền truy cập đội",
@@ -3456,7 +3739,10 @@
       "followup": "Theo dõi",
       "appointment": "Lịch",
       "team": "Hoạt động nhóm"
-    }
+    },
+    "openContact": "Xem thông tin liên hệ",
+    "addDescription": "Tạo một hồ sơ để theo dõi ai đó chưa xuất hiện trong hộp thư của quý khách.",
+    "deleteDescription": "Lịch sử email liên quan đến địa chỉ này không bị xóa. Chỉ hồ sơ thủ công biến mất."
   },
   "folders": {
     "title": "Thư mục của tôi",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Lịch trình",
     "system": "Hệ thống"
+  },
+  "webmailBanner": {
+    "backNamed": "Quay lại {{name}}",
+    "openedFrom": "Đã mở từ webmail của quý vị. Nhấp để quay lại, hoặc chỉ cần chuyển đổi sang tab webmail của quý vị.",
+    "openedFromNamed": "Đã mở từ {{name}}. Nhấp để quay lại, hoặc chỉ cần chuyển sang tab {{name}}.",
+    "back": "Quay lại webmail của tôi"
+  },
+  "palette": {
+    "shortcuts": "Phím tắt",
+    "navigate": "Điều hướng",
+    "empty": "Không có kết quả.",
+    "compose": "Email mới",
+    "placeholder": "Nhập lệnh hoặc tìm kiếm…",
+    "actions": "Hành động"
+  },
+  "signature": {
+    "underline": "Gạch chân",
+    "orderedList": "Danh sách có thứ tự",
+    "image": "Hình ảnh / logo",
+    "bulletList": "Danh sách dấu đầu dòng",
+    "italic": "In nghiêng",
+    "bold": "Đậm",
+    "imageHint": "Mẹo: chèn logo PNG/JPG (tối đa 200 KB). Hình ảnh được nhúng trực tiếp vào chữ ký.",
+    "linkUrlPrompt": "URL của liên kết (https://...)",
+    "imageTooLarge": "Hình ảnh quá lớn (tối đa 200 Ko)",
+    "highlight": "Đánh dấu",
+    "clear": "Xóa định dạng",
+    "color": "Màu văn bản",
+    "moreColors": "Thêm màu…",
+    "font": "Phông chữ",
+    "size": "Kích thước",
+    "imageInvalid": "Tệp hình ảnh không hợp lệ",
+    "link": "Liên kết"
+  },
+  "outlookBanner": {
+    "openedFrom": "Mở từ Outlook. Nhấp để quay lại, hoặc chỉ cần chuyển sang tab Outlook.",
+    "back": "Quay lại Outlook"
+  },
+  "gmailBanner": {
+    "openedFrom": "Mở từ Gmail. Nhấp để quay lại, hoặc chỉ cần chuyển sang tab Gmail.",
+    "back": "Quay lại Gmail"
   }
 }

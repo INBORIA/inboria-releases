@@ -23,7 +23,16 @@
     "add": "Додати",
     "edit": "Редагувати",
     "reset": "Скинути",
-    "more": "Більше"
+    "more": "Більше",
+    "expand": "Показати категорії",
+    "send": "Надіслати",
+    "collapse": "Приховати категорії",
+    "create": "Створити",
+    "dismiss": "Закрити",
+    "select": "Вибрати",
+    "copyFailed": "Копіювання неможливе",
+    "notAuthenticated": "Не автентифіковано",
+    "remove": "Видалити"
   },
   "nav": {
     "extensions": "Розширення",
@@ -37,7 +46,18 @@
     "login": "Увійти",
     "signup": "Зареєструватися",
     "logout": "Вийти",
-    "openMenu": "Відкрити меню"
+    "openMenu": "Відкрити меню",
+    "dailyBrief": "Щоденний звіт",
+    "categories": "Категорії",
+    "folders": "Мої папки",
+    "archives": "Архіви",
+    "snoozed": "Відкладені",
+    "inbox": "Вхідні",
+    "tasks": "Завдання",
+    "scheduled": "Заплановані",
+    "sent": "Відправлені",
+    "contacts": "Контакти",
+    "followups": "Нагадування"
   },
   "sidebar": {
     "inbox": "Вхідні",
@@ -66,7 +86,10 @@
     "followups": "Нагадування",
     "contacts": "Контакти",
     "assigned": "Призначені",
-    "myTasks": "Мої завдання"
+    "myTasks": "Мої завдання",
+    "collapse": "Згорнути меню",
+    "expand": "Розгорнути меню",
+    "resize": "Змінити розмір меню"
   },
   "dashboard": {
     "expiredSubscription": "Ваше підписання закінчилося",
@@ -529,10 +552,17 @@
       "important": "Важливі"
     },
     "date": {
-      "all": "Усі дати"
+      "all": "Усі дати",
+      "last7": "Останні 7 днів",
+      "thisMonth": "Цього місяця",
+      "today": "Сьогодні",
+      "yesterday": "Вчора",
+      "last30": "Останні 30 днів"
     },
     "read": {
-      "all": "Усі"
+      "all": "Усі",
+      "unread": "Непрочитані",
+      "read": "Прочитані"
     },
     "sharedDraft": "Спільний чернетка",
     "sharedDraftOn": "Спільний чернетка увімкнено",
@@ -564,7 +594,113 @@
       "label": "Відображення панелей",
       "overlay": "Накладення",
       "split": "Поруч"
-    }
+    },
+    "categorized": "Категоризовано",
+    "readingPanePos": {
+      "bottom": "Внизу",
+      "label": "Панель читання",
+      "off": "Приховано",
+      "right": "Справа"
+    },
+    "scHelp": "Показати цю допомогу",
+    "moreActions": "Більше дій",
+    "composeAria": "Написати електронний лист",
+    "draftTakeOverHint": "Продовжити відправлення, якщо цей колега більше недоступний",
+    "scArchive": "Архівувати",
+    "priorityLabel": "Пріоритет",
+    "printPopupBlocked": "Не вдалося відкрити вікно друку",
+    "draftYou": "Ви",
+    "scDelete": "Видалити",
+    "theme": {
+      "switchLight": "Світлий режим",
+      "switchDark": "Темний режим"
+    },
+    "snooze": "Відкласти",
+    "filtersReset": "Скинути фільтри",
+    "loadingEmail": "Завантаження електронної пошти...",
+    "myFoldersLabel": "Мої папки",
+    "copiedSenderEmail": "Адреса скопійована",
+    "composeUntitled": "Чернетка без теми",
+    "loadEmailError": "Не вдалося завантажити електронну пошту.",
+    "copySenderEmail": "Скопіювати адресу відправника",
+    "backHint": "Назад (Esc) — J/K для навігації, R відповісти, E архівувати",
+    "markAsUnread": "Позначити як непрочитане",
+    "copied": "Скопійовано",
+    "scGotoInbox": "Перейти до Вхідних",
+    "searchGroupEmails": "Листи",
+    "composeDiscardConfirm": "Відхилити цей чернетку?",
+    "scNext": "Наступний лист",
+    "scPrev": "Попередній лист",
+    "density": {
+      "normal": "Звичайний",
+      "comfortable": "Комфортний",
+      "label": "Щільність відображення",
+      "compact": "Компактний"
+    },
+    "scGotoContacts": "Перейти до Контактів",
+    "loadingTitle": "Завантаження…",
+    "snooze3h": "Через 3 години",
+    "scGotoSent": "Перейти до Відправлених",
+    "collisionReplyingOne": "{{name}} вже відповідає на цей лист",
+    "draftTakeOver": "Продовжити",
+    "draftLiveCoedit": "Спільне редагування в реальному часі",
+    "draftYouSend": "Це Ви відправляєте",
+    "shortcutsTitle": "Гарячі клавіші",
+    "teamBadge": "Команда",
+    "copySender": "Скопіювати адресу",
+    "scPalette": "Палітра команд",
+    "backToGmailHint": "Відкрити цей лист безпосередньо в Gmail",
+    "searchGroupOperators": "Уточнити",
+    "scSearch": "Шукати",
+    "headerExpand": "Показати вкладки та фільтри",
+    "filterByCategory": "Фільтрувати",
+    "viewOptions": "Параметри перегляду",
+    "snoozeTomorrow": "Завтра вранці",
+    "composeRestore": "Відновити чернетку",
+    "searchOpSubject": "фільтрувати за темою",
+    "assignToProject": "Призначити до команди",
+    "scForward": "Переслати",
+    "collisionReplyingMany": "{{count}} осіб вже відповідають на цей лист",
+    "archived": "Архівовано",
+    "searchOpAttachment": "листи з вкладенням",
+    "importanceLabel": "Відображення",
+    "backToGmail": "Повернутися до Gmail",
+    "composeMinimize": "Згорнути чернетку",
+    "composeDiscard": "Відхилити",
+    "assignedNoTeam": "Цей перегляд вимагає команди (2 учасники або більше).",
+    "searchGroupSenders": "Відправники",
+    "markedAsUnread": "Позначено як непрочитане",
+    "slaOverdue": "SLA прострочено",
+    "createAndAssignTask": "Створити та призначити…",
+    "snoozedFor24h": "Відкладено до завтра",
+    "exportEml": "Завантажити .eml",
+    "copySubject": "Копіювати тему",
+    "collisionViewingMany": "{{count}} інші особи переглядають цей лист",
+    "copiedSubject": "Тему скопійовано",
+    "scGotoSnoozed": "Перейти до Відкладених",
+    "searchOpSender": "фільтрувати за відправником",
+    "markAsRead": "Позначити як прочитане",
+    "readingPaneOn": "Увімкнути панель читання (3 колонки)",
+    "moveToFolder": "Перемістити до",
+    "draftRelease": "Звільнити",
+    "scClose": "Закрити лист",
+    "copyAddress": "Копіювати адресу",
+    "draftSomeoneSends": "{{name}} надішле",
+    "markAsReadUnread": "Позначити як прочитане / непрочитане",
+    "readingPaneOff": "Вимкнути панель читання",
+    "headerCollapse": "Приховати вкладки та фільтри",
+    "downloadEml": "Завантажити у .eml",
+    "scGotoTasks": "Перейти до Завдань",
+    "markedAsRead": "Позначено як прочитане",
+    "close": "Закрити",
+    "scGotoArchives": "Перейти до Архівів",
+    "collisionViewingOne": "{{name}} також переглядає цей лист",
+    "draftClaimSend": "Я надішлю",
+    "print": "Друкувати",
+    "scSnooze": "Відкласти (24 год)",
+    "scReply": "Відповісти",
+    "assigneeFilterMember": "цей учасник",
+    "unknownSender": "Невідомий"
   },
   "sent": {
     "title": "Відправлені електронні листи",
@@ -649,7 +785,16 @@
     "blockFailed": "Неможливо заблокувати",
     "blockNoEmail": "Адресу відправника не знайдено",
     "blockNoConnection": "Жодного підключеного електронного рахунку",
-    "emptied": "Папка очищена"
+    "emptied": "Папка очищена",
+    "openRestored": "Відкрити",
+    "unblocked": "Відправник розблокований",
+    "retryFetch": "Спробувати знову",
+    "blockSenderSuccess": "Відправника заблоковано",
+    "unblock": "Розблокувати",
+    "fetchingFromProvider": "Отримання вмісту від Вашого постачальника…",
+    "noBlocked": "Жодного заблокованого відправника",
+    "blockedList": "Заблоковані відправники",
+    "fetchFailed": "Не вдалося отримати вміст цього листа."
   },
   "trash": {
     "title": "Кошик",
@@ -794,7 +939,18 @@
     "movedToDone": "Завдання завершено",
     "movedToTodo": "Завдання повернуто до виконання",
     "statusUpdated": "Статус оновлено",
-    "taskCreated": "Завдання створено"
+    "taskCreated": "Завдання створено",
+    "titleCopied": "Назва скопійована",
+    "markAsDone": "Позначити як виконане",
+    "markAsTodo": "Позначити як до виконання",
+    "linkedEmailActions": "На пов'язаному листі",
+    "loadingTitle": "Завантаження завдань…",
+    "reassign": "Перепризначити",
+    "reassigned": "Завдання перепризначено",
+    "noLinkedEmail": "Це завдання не пов'язане з жодним електронним листом.",
+    "unassign": "Зняти призначення",
+    "openInInbox": "Відкрити у Вхідних",
+    "copyTitle": "Копіювати заголовок"
   },
   "projects": {
     "title": "Папки команди",
@@ -851,7 +1007,14 @@
     "exportError": "Помилка під час експорту",
     "searchProjects": "Шукати проект...",
     "noProjectsAlt": "Створіть Ваш перший проект для об'єднання електронних листів та завдань.",
-    "viewDetail": "Переглянути деталі"
+    "viewDetail": "Переглянути деталі",
+    "unassigned": "Не призначено",
+    "taskUnassigned": "Завдання знято",
+    "assignTo": "Призначити…",
+    "openEmail": "Відкрити електронний лист",
+    "detachEmail": "Вилучити з проекту",
+    "taskAssigned": "Завдання призначено",
+    "emailDetached": "Електронний лист вилучено з проекту"
   },
   "classification": {
     "title": "Категорії",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Цю системну категорію не можна перейменувати.",
       "cannotMerge": "Категорію «Не класифіковано» не можна об'єднати.",
       "goToInbox": "Сортувати ці електронні листи"
-    }
+    },
+    "adminOnlyNotice": "Управління категоріями (створення, редагування, видалення, пакети) доступне лише Адміністратору Команди для забезпечення узгодженої класифікації. Ви можете переглядати категорії та їхні листи."
   },
   "settings": {
     "title": "Налаштування",
@@ -1268,7 +1432,9 @@
       "privacy": "Конфіденційність та доступ команди",
       "privacyDesc": "Ваші приватні електронні листи та журнал адміністративних консультацій",
       "calendars": "Календарі",
-      "calendarsDesc": "Підключити Google Calendar та Outlook Calendar"
+      "calendarsDesc": "Підключити Google Calendar та Outlook Calendar",
+      "administrationDesc": "Налаштування доступні лише адміністраторам організації",
+      "administration": "Адміністрування"
     },
     "b2bSection": "B2B довіра",
     "slaCard": "SLA спільних поштових скриньок",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Відеоконференція за замовчуванням",
     "preferredVideoDesc": "Виберіть постачальника відеоконференцій за замовчуванням для нових зустрічей. Meet потребує підключеного календаря Google; Teams потребує Outlook. Jitsi працює без облікового запису.",
     "meetingRemindersDesc": "Inboria надсилає ввічливе нагадування контакту через 48 годин після пропозиції зустрічі, яка залишилася без відповіді.",
-    "meetingRemindersTitle": "Автоматичні нагадування про зустрічі"
+    "meetingRemindersTitle": "Автоматичні нагадування про зустрічі",
+    "personalVideoUrlLabel": "Персональне посилання на відео",
+    "webmailStep3": "Натисніть «Завантажити неупаковане розширення» та виберіть розпаковану папку «inboria-extension». Потім відкрийте свій вебмейл: з'явиться кнопка «Запитати Inboria». Увійдіть один раз, і все готово.",
+    "outlookAddinInstall": "Встановити в Outlook",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud та більшість вебмейлів. Додайте помічника Inboria безпосередньо у свою пошту, не виходячи з неї.",
+    "webmailStep1": "Завантажте розширення Inboria, потім розпакуйте файл (правий клік › «Витягти все»). Ви отримаєте папку «inboria-extension».",
+    "outlookGuideTitle": "Встановити Inboria в Outlook",
+    "webmailExtTitle": "Кнопка «Запитати Inboria» у Вашій вебпошті",
+    "personalVideoUrlInvalid": "Недійсне посилання (потрібно https://)",
+    "outlookAddinTitle": "Кнопка «Запитати Inboria» в Outlook",
+    "webmailExtInstall": "Встановити в мій браузер",
+    "outlookStep2": "В Outlook відкрийте «Отримати доповнення» › «Мої доповнення» › «Додати власне доповнення» › «З файлу», потім виберіть завантажений файл.",
+    "outlookStep1": "Завантажте файл підключення Inboria.",
+    "webmailGuideTitle": "Встановити Inboria у Ваш вебмейл",
+    "webmailCopyUrl": "Скопіювати chrome://extensions",
+    "outlookGuideIntro": "Три прості кроки. Не потрібно шукати в меню: все керується.",
+    "outlookAddinDesc": "Додайте помічника Inboria безпосередньо у Ваш Outlook, не залишаючи пошту.",
+    "outlookAddinSection": "Inboria в Outlook",
+    "webmailGuideIntro": "Працює з Gmail, OVH, Yahoo, iCloud та більшістю вебмейлів, у Chrome або Edge. Три прості кроки, один раз.",
+    "personalVideoUrlDesc": "Вставте посилання на Вашу постійну кімнату Teams або Meet (https://...). Inboria використовуватиме його у всіх пропозиціях зустрічей.",
+    "webmailDownload": "Завантажити розширення",
+    "webmailUrlCopied": "Адресу скопійовано ✓",
+    "reconnect": "Перепідключити",
+    "webmailExtSection": "Inboria у Вашій вебпошті",
+    "outlookStep3": "Відкрийте лист: кнопка «Запитати Inboria» з'явиться на стрічці. Увійдіть один раз зі своїм обліковим записом Inboria, і все готово.",
+    "webmailStep2": "У Chrome або Edge відкрийте сторінку розширень: введіть chrome://extensions у адресний рядок, потім увімкніть «Режим розробника» (перемикач у верхньому правому куті).",
+    "outlookDownloadManifest": "Завантажити файл",
+    "outlookOpenAddinsPage": "Відкрити доповнення Outlook"
   },
   "subscription": {
     "title": "Керуйте своїм підпискою",
@@ -1426,7 +1619,10 @@
     "start": "Почати",
     "numberOfCollaborators": "Кількість співробітників",
     "total": "Всього",
-    "seatsExample": "Приклад: 3 співробітники = 50,97€/місяць — змінюється в будь-який час з Вашого простору."
+    "seatsExample": "Приклад: 3 співробітники = 50,97€/місяць — змінюється в будь-який час з Вашого простору.",
+    "billingYearly": "Щорічно",
+    "perMonthBilledYearly": "/місяць (оплата щорічно)",
+    "billingMonthly": "Щомісячно"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Помилка під час надсилання",
     "changeRole": "Змінити роль",
     "adminDesc": "Може керувати командою, підпискою та всіма електронними листами",
-    "memberDesc": "Доступ до своїх електронних листів та спільних завдань"
+    "memberDesc": "Доступ до своїх електронних листів та спільних завдань",
+    "trialTeamHint": "Командний пробний період: запросіть до 3 колег. Кожен отримує власний пробний період на 4 500 кредитів, і Ви розблоковуєте спільні скриньки, призначення та внутрішні коментарі.",
+    "trialTeamLabel": "Командний пробний період"
   },
   "sharedMailboxes": {
     "title": "Спільні поштові скриньки",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} призначив(-ла) цей лист {{target}}",
     "systemSelfAssigned": "{{actor}} взяв(-ла) цей лист",
     "systemReassigned": "{{actor}} перепризначив(-ла) з {{previous}} на {{target}}",
-    "systemUnassigned": "{{actor}} зняв(-ла) призначення {{previous}}"
+    "systemUnassigned": "{{actor}} зняв(-ла) призначення {{previous}}",
+    "recipientsSelected": "{{count}} вибрано",
+    "recipientsFilter": "Шукати учасника…",
+    "emailMessage": "Електронна пошта",
+    "placeholderSimple": "Введіть своє повідомлення…",
+    "recipientsClear": "Очистити",
+    "recipients": "Одержувачі",
+    "viewing": "Переглядає зараз",
+    "recipientsEmpty": "Жодного учасника",
+    "internalNote": "Нотатка",
+    "recipientsPick": "Одержувачі нотатки",
+    "typingMany": "Кілька осіб друкують…",
+    "typingOne": "{{name}} друкує…"
   },
   "attachments": {
     "title": "Вкладення",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Очікує",
     "statusPendingShort": "Очікує",
     "syncFailed": "Синхронізація не вдалася",
-    "viewDetails": "Переглянути деталі"
+    "viewDetails": "Переглянути деталі",
+    "expandSuggestions": "Показати пропозиції",
+    "ctxDup7": "Через 7 днів",
+    "ctxMarkAs": "Позначити як",
+    "forwardVideo": "Посилання на відео",
+    "collapseSuggestions": "Приховати пропозиції",
+    "ctxDupCustomMenu": "Налаштоване…",
+    "forwardWhen": "Дата",
+    "statusPendingHint": "Inboria автоматично надішле листа з пропозицією клієнту.",
+    "internalMembers": "Запрошені члени команди",
+    "filterInternal": "Внутрішнє",
+    "formInternalNoteLabel": "Внутрішня примітка (необов'язково)",
+    "forwardBody": "Пересилаю Вам деталі цієї зустрічі:",
+    "ctxOpen": "Відкрити",
+    "internalAppointment": "Внутрішня зустріч",
+    "coorgAdd": "+ Додати",
+    "coorgNoCandidate": "Немає доступних учасників.",
+    "ctxProject": "Проєкт",
+    "forwardTitle": "Заголовок",
+    "ctxEdit": "Редагувати",
+    "notesEmpty": "Нотаток немає. Нотатки залишаються внутрішніми — ніколи не відправляються клієнту.",
+    "forwardWhere": "Місце",
+    "ctxDup14": "Через 14 днів",
+    "ctxForward": "Переслати електронною поштою",
+    "ctxDupNextDay": "Наступного дня",
+    "askInboriaNewSlot": "Запитати у Inboria нову зустріч",
+    "pickDate": "Вибрати дату",
+    "internalNotes": "Внутрішні нотатки",
+    "autoConfirmed": {
+      "title": "Виявлені підтвердження",
+      "desc": "{{count}} зустрічей щойно автоматично підтверджено з отриманих листів."
+    },
+    "askInboriaNewSlotPrefill": "Контрпропозиція {{contact}}{{slot}} мене не влаштовує. Запропонуйте інші варіанти, сумісні з моїм розкладом.",
+    "statusLabel": "Статус",
+    "duplicatedDesc": "Копія створена через 7 днів.",
+    "multiDay": "Кілька днів…",
+    "ctxDupCustom": "Дублювати через скільки днів?",
+    "noteSelectedCount": "{{count}} одержувач(ів)",
+    "ctxDuplicate": "Дублювати",
+    "forwardOutro": "З повагою,",
+    "formInternalNotePlaceholder": "Напр.: VIP клієнт, зверніть увагу на тон. Ніколи не надсилається клієнту.",
+    "theContact": "контакт",
+    "forwardSubject": "ПЕР: Зустріч",
+    "markConfirmed": "Позначити підтвердженим",
+    "counterDeclined": "Відмова надіслана контакту",
+    "ctxDup30": "Через 1 місяць",
+    "filterExternal": "Клієнт",
+    "duplicateError": "Помилка дублювання",
+    "internalMembersEmpty": "Жодного запрошеного члена. Натисніть «+ Додати», щоб вибрати колег.",
+    "noteRecipientsLabel": "Для",
+    "forwardIntro": "Добрий день,",
+    "confirmDelete": "Видалити цю зустріч?",
+    "ctxNoProject": "Жодного проекту",
+    "duplicated": "Дубльована зустріч",
+    "newInternalAppointment": "Внутрішня зустріч",
+    "noteError": "Помилка додавання нотатки",
+    "confirmWithInboria": "Підтвердити з Inboria",
+    "ctxDup90": "Через 3 місяці",
+    "duration": "Тривалість",
+    "filterAll": "Усі",
+    "singleDay": "Повернутися до простої тривалості",
+    "confirmError": "Помилка під час підтвердження",
+    "notePlaceholder": "Внутрішня нотатка (видима лише команді, ніколи не надсилається клієнту)…",
+    "noteAllTeam": "Вся команда",
+    "ctxDelete": "Видалити"
   },
   "supportChat": {
     "title": "Асистент Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Задайте мені будь-яке питання про Inboria: функції, налаштування, підписку та інше.",
     "placeholder": "Введіть Ваше питання...",
     "poweredBy": "Запущено Inboria",
-    "errorMessage": "Вибачте, сталася помилка. Будь ласка, спробуйте ще раз або зверніться за адресою support@inboria.com."
+    "errorMessage": "Вибачте, сталася помилка. Будь ласка, спробуйте ще раз або зверніться за адресою support@inboria.com.",
+    "send": "Надіслати",
+    "clear": "Очистити розмову"
   },
   "inboriaChat": {
     "openLabel": "Відкрити чат Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "В очікуванні",
       "relance": "В процесі",
       "termine": "Завершено"
-    }
+    },
+    "bulkMarkedRepliedToast": "{{count}} позначено як відповіли",
+    "bulkDismissedToast": "{{count}} проігноровано"
   },
   "contacts": {
     "title": "Контакт 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Відкрито",
     "openedBadgeCount": "Відкрито {{count}} разів",
     "openedAtLabel": "Перше відкриття: {{date}}",
-    "notOpenedYet": "Ще не відкрито"
+    "notOpenedYet": "Ще не відкрито",
+    "scheduledCancelError": "Не вдалося скасувати",
+    "scheduledCancelPartial": "{{failed}} скасування(нь) з {{total}} не вдалося",
+    "scheduledNoRecipient": "Без одержувача"
   },
   "templates": {
     "title": "Шаблони",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Електронна пошта стала видимою",
     "privateOnDesc": "Ця електронна пошта тепер невидима для ваших адміністраторів (перегляд папки команди + Inboria).",
     "privateOffDesc": "Ця електронна пошта знову стає видимою для ваших адміністраторів (перегляд папки команди + Inboria).",
-    "privateError": "Неможливо оновити конфіденційність."
+    "privateError": "Неможливо оновити конфіденційність.",
+    "details": "Деталі",
+    "actionsMenu": "Дії"
   },
   "privacy": {
     "title": "Конфіденційність та доступ команди",
@@ -3456,7 +3739,10 @@
       "followup": "Нагадування",
       "appointment": "Календар",
       "team": "Командна активність"
-    }
+    },
+    "openContact": "Переглянути контакт",
+    "addDescription": "Створіть картку, щоб відстежувати когось, хто ще не з'явився у Вашій скриньці.",
+    "deleteDescription": "Історія електронних листів, пов'язаних з цією адресою, не видаляється. Зникає лише ручна картка."
   },
   "folders": {
     "title": "Мої теки",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Порядок денний",
     "system": "Система"
+  },
+  "signature": {
+    "moreColors": "Більше кольорів…",
+    "size": "Розмір",
+    "imageHint": "Порада: вставте логотип PNG/JPG (макс 200 Кб). Зображення вбудовується безпосередньо у підпис.",
+    "underline": "Підкреслений",
+    "imageInvalid": "Недійсний файл зображення",
+    "highlight": "Виділення",
+    "imageTooLarge": "Зображення занадто велике (макс 200 Кб)",
+    "bold": "Жирний",
+    "italic": "Курсив",
+    "image": "Зображення / логотип",
+    "orderedList": "Нумерований список",
+    "link": "Посилання",
+    "bulletList": "Маркірований список",
+    "clear": "Очистити форматування",
+    "color": "Колір тексту",
+    "font": "Шрифт",
+    "linkUrlPrompt": "URL посилання (https://...)"
+  },
+  "webmailBanner": {
+    "back": "Повернутися до моєї вебпошти",
+    "openedFrom": "Відкрито з Вашої вебпошти. Натисніть, щоб повернутися, або просто перемкніться на вкладку Вашої вебпошти.",
+    "openedFromNamed": "Відкрито з {{name}}. Натисніть, щоб повернутися, або просто перемкніться на вкладку {{name}}.",
+    "backNamed": "Повернутися до {{name}}"
+  },
+  "gmailBanner": {
+    "back": "Повернутися до Gmail",
+    "openedFrom": "Відкрито з Gmail. Натисніть, щоб повернутися, або просто перемкніться на вкладку Gmail."
+  },
+  "palette": {
+    "placeholder": "Введіть команду або шукайте…",
+    "compose": "Новий лист",
+    "empty": "Немає результатів.",
+    "actions": "Дії",
+    "shortcuts": "Клавіатурні скорочення",
+    "navigate": "Навігація"
+  },
+  "outlookBanner": {
+    "back": "Повернутися до Outlook",
+    "openedFrom": "Відкрито з Outlook. Натисніть, щоб повернутися, або просто перемкніться на вкладку Outlook."
   }
 }

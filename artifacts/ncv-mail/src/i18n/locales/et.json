@@ -23,7 +23,16 @@
     "add": "Lisa",
     "edit": "Muuda",
     "reset": "Taasta",
-    "more": "Veel"
+    "more": "Veel",
+    "notAuthenticated": "Pole autentitud",
+    "collapse": "Peida kategooriad",
+    "send": "Saada",
+    "dismiss": "Sulge",
+    "create": "Loo",
+    "remove": "Eemalda",
+    "select": "Valige",
+    "copyFailed": "Kopeerimine ebaõnnestus",
+    "expand": "Kuva kategooriad"
   },
   "nav": {
     "extensions": "Laiendused",
@@ -37,7 +46,18 @@
     "login": "Logige sisse",
     "signup": "Registreeru",
     "logout": "Logige välja",
-    "openMenu": "Avage menüü"
+    "openMenu": "Avage menüü",
+    "categories": "Kategooriad",
+    "archives": "Arhiivid",
+    "dailyBrief": "Päevakokkuvõte",
+    "folders": "Minu kaustad",
+    "tasks": "Ülesanded",
+    "followups": "Järeltegevused",
+    "inbox": "Postkast",
+    "sent": "Saadetud",
+    "scheduled": "Planeeritud",
+    "snoozed": "Edasi lükatud",
+    "contacts": "Kontaktid"
   },
   "sidebar": {
     "inbox": "Saadetud",
@@ -66,7 +86,10 @@
     "followups": "Meeldetuletused",
     "contacts": "Kontaktid",
     "assigned": "Määratud",
-    "myTasks": "Minu ülesanded"
+    "myTasks": "Minu ülesanded",
+    "expand": "Laienda menüüd",
+    "collapse": "Ahenda menüü",
+    "resize": "Muuda menüü suurust"
   },
   "dashboard": {
     "expiredSubscription": "Teie tellimus on aegunud",
@@ -529,10 +552,17 @@
       "important": "Olulised"
     },
     "date": {
-      "all": "Kõik kuupäevad"
+      "all": "Kõik kuupäevad",
+      "yesterday": "Eile",
+      "thisMonth": "Sel kuul",
+      "today": "Täna",
+      "last7": "Viimased 7 päeva",
+      "last30": "Viimased 30 päeva"
     },
     "read": {
-      "all": "Kõik"
+      "all": "Kõik",
+      "read": "Loetud",
+      "unread": "Lugemata"
     },
     "sharedDraft": "Jagatud mustand",
     "sharedDraftOn": "Jagatud mustand sisse",
@@ -564,7 +594,113 @@
       "label": "Kuvapaneelid",
       "overlay": "Peale asetatud",
       "split": "Kõrvuti"
-    }
+    },
+    "unknownSender": "Tundmatu",
+    "scSearch": "Otsing",
+    "scNext": "Järgmine e-kiri",
+    "snoozedFor24h": "Edasi lükatud homseks",
+    "collisionViewingOne": "{{name}} vaatab ka seda e-kirja",
+    "markedAsUnread": "Märgitud lugemata",
+    "theme": {
+      "switchLight": "Hele režiim",
+      "switchDark": "Tume režiim"
+    },
+    "archived": "Arhiveeritud",
+    "loadingEmail": "E-kirja laadimine...",
+    "searchOpAttachment": "e-kirjad manusega",
+    "moreActions": "Rohkem toiminguid",
+    "searchOpSubject": "filtreeri teema järgi",
+    "markAsRead": "Märgi loetuks",
+    "collisionViewingMany": "{{count}} muud inimest vaatavad seda e-kirja",
+    "scGotoInbox": "Mine postkasti",
+    "scGotoSnoozed": "Mine edasi lükatud",
+    "scSnooze": "Lükka edasi (24 h)",
+    "close": "Sulge",
+    "composeRestore": "Taasta mustand",
+    "scDelete": "Kustuta",
+    "density": {
+      "normal": "Tavaline",
+      "label": "Kuvamise tihedus",
+      "compact": "Kompaktne",
+      "comfortable": "Mugav"
+    },
+    "headerCollapse": "Peida vahekaardid ja filtrid",
+    "composeUntitled": "Pealkirjata mustand",
+    "backHint": "Tagasi (Esc) — J/K navigeerimiseks, R vastamiseks, E arhiveerimiseks",
+    "loadingTitle": "Laadimine…",
+    "draftYou": "Teie",
+    "copySender": "Kopeeri aadress",
+    "slaOverdue": "SLA aegunud",
+    "assigneeFilterMember": "see liige",
+    "draftRelease": "Vabasta",
+    "scArchive": "Arhiveeri",
+    "markAsReadUnread": "Märgista loetuks / lugemata",
+    "scForward": "Edasta",
+    "draftSomeoneSends": "{{name}} saadab selle",
+    "searchOpSender": "filtreeri saatja järgi",
+    "readingPanePos": {
+      "off": "Peidetud",
+      "right": "Paremal",
+      "label": "Lugemispaan",
+      "bottom": "All"
+    },
+    "scGotoContacts": "Mine Kontaktidesse",
+    "markAsUnread": "Märgista kui lugemata",
+    "composeDiscard": "Loobu",
+    "snooze3h": "3 tunni pärast",
+    "importanceLabel": "Kuvamine",
+    "copiedSenderEmail": "Aadress kopeeritud",
+    "scPalette": "Käskude palett",
+    "copiedSubject": "Teema kopeeritud",
+    "myFoldersLabel": "Minu kaustad",
+    "copySenderEmail": "Kopeeri saatja aadress",
+    "viewOptions": "Kuvamisvalikud",
+    "shortcutsTitle": "Kiirklahvid",
+    "assignedNoTeam": "See vaade nõuab meeskonda (vähemalt 2 liiget).",
+    "collisionReplyingMany": "{{count}} inimest vastavad juba sellele kirjale",
+    "assignToProject": "Määra meeskonna kausta",
+    "searchGroupOperators": "Täpsusta",
+    "composeAria": "Koosta e-kiri",
+    "downloadEml": "Laadi alla .eml",
+    "headerExpand": "Kuva vahekaardid ja filtrid",
+    "scClose": "Sulge kiri",
+    "composeDiscardConfirm": "Loobuda sellest mustandist?",
+    "readingPaneOff": "Lugemispaani keelamine",
+    "searchGroupSenders": "Saatjad",
+    "scGotoTasks": "Mine Ülesannetele",
+    "printPopupBlocked": "Prindiakent ei saa avada",
+    "copied": "Kopeeritud",
+    "snooze": "Edasi lükata",
+    "exportEml": "Laadige alla .eml",
+    "categorized": "Kategoriseeritud",
+    "markedAsRead": "Märgitud loetuks",
+    "teamBadge": "Meeskond",
+    "priorityLabel": "Prioriteet",
+    "backToGmailHint": "Avage see täpne meil Gmailis",
+    "snoozeTomorrow": "Homme hommikul",
+    "composeMinimize": "Minimeeri mustand",
+    "scGotoSent": "Mine Saadetud kausta",
+    "readingPaneOn": "Lülita lugemispaan sisse (3 veergu)",
+    "collisionReplyingOne": "{{name}} vastab juba sellele kirjale",
+    "createAndAssignTask": "Loo ja määrake…",
+    "copyAddress": "Kopeeri aadress",
+    "copySubject": "Kopeeri teema",
+    "loadEmailError": "E-kirja laadimine ebaõnnestus.",
+    "draftYouSend": "Teie saadate",
+    "scGotoArchives": "Mine Arhiivi",
+    "scReply": "Vasta",
+    "backToGmail": "Tagasi Gmaili",
+    "moveToFolder": "Liiguta kausta",
+    "print": "Prindi",
+    "scPrev": "Eelmine e-kiri",
+    "draftClaimSend": "Mina saadan",
+    "draftLiveCoedit": "Reaalajas kaasredigeerimine",
+    "draftTakeOverHint": "Võtke saatmine üle, kui see kolleeg pole enam saadaval",
+    "scHelp": "Kuva see abi",
+    "filtersReset": "Lähtesta filtrid",
+    "draftTakeOver": "Võtke üle",
+    "searchGroupEmails": "Kirjad",
+    "filterByCategory": "Filtreeri"
   },
   "sent": {
     "title": "Saadetud e-kirjad",
@@ -649,7 +785,16 @@
     "blockFailed": "Blokeerimine ebaõnnestus",
     "blockNoEmail": "Saatja aadressi ei leitud",
     "blockNoConnection": "Ühtegi e-posti kontot ei ole ühendatud",
-    "emptied": "Kaust tühi"
+    "emptied": "Kaust tühi",
+    "noBlocked": "Pole blokeeritud saatjaid",
+    "openRestored": "Ava",
+    "fetchingFromProvider": "Sisu toomine teie teenusepakkujalt…",
+    "retryFetch": "Proovi uuesti",
+    "unblocked": "Saatja blokeering eemaldatud",
+    "blockedList": "Blokeeritud saatjad",
+    "unblock": "Deblokeeri",
+    "fetchFailed": "Selle kirja sisu ei saa kätte.",
+    "blockSenderSuccess": "Saatja blokeeritud"
   },
   "trash": {
     "title": "Prügikast",
@@ -794,7 +939,18 @@
     "movedToDone": "Ülesanne lõpetatud",
     "movedToTodo": "Ülesanne pandud uuesti tegemiseks",
     "statusUpdated": "Staatus uuendatud",
-    "taskCreated": "Ülesanne loodud"
+    "taskCreated": "Ülesanne loodud",
+    "titleCopied": "Pealkiri kopeeritud",
+    "reassign": "Määrake uuesti",
+    "openInInbox": "Ava postkastis",
+    "copyTitle": "Kopeeri pealkiri",
+    "noLinkedEmail": "See ülesanne pole seotud ühegi e-kirjaga.",
+    "unassign": "Tühista määramine",
+    "linkedEmailActions": "Seotud e-kirja peal",
+    "reassigned": "Ülesanne uuesti määratud",
+    "markAsDone": "Märgista lõpetatuks",
+    "loadingTitle": "Ülesannete laadimine…",
+    "markAsTodo": "Märgista tegemiseks"
   },
   "projects": {
     "title": "Meeskonna kaustad",
@@ -851,7 +1007,14 @@
     "exportError": "Ekspordi ajal tekkis viga",
     "searchProjects": "Otsige projekti...",
     "noProjectsAlt": "Looge oma esimene projekt, et grupeerida e-kirju ja ülesandeid.",
-    "viewDetail": "Vaadake detaile"
+    "viewDetail": "Vaadake detaile",
+    "taskAssigned": "Ülesanne määratud",
+    "taskUnassigned": "Ülesanne määramata",
+    "detachEmail": "Eemalda projektist",
+    "assignTo": "Määra kellelegi…",
+    "openEmail": "Ava e-kiri",
+    "emailDetached": "E-kiri projektist eemaldatud",
+    "unassigned": "Määramata"
   },
   "classification": {
     "title": "Kategooriad",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Seda süsteemi kategooriat ei saa ümber nimetada.",
       "cannotMerge": "Kategooriat « Klassifitseerimata » ei saa ühendada.",
       "goToInbox": "Sorteeri need e-kirjad"
-    }
+    },
+    "adminOnlyNotice": "Kategooriate haldamine (loomine, muutmine, kustutamine, äripakid) on reserveeritud meeskonna administraatorile, et tagada järjepidev klassifikatsioon. Saate vaadata kategooriaid ja nende e-kirju."
   },
   "settings": {
     "title": "Seaded",
@@ -1268,7 +1432,9 @@
       "privacy": "Privaatsus ja meeskonna juurdepääs",
       "privacyDesc": "Teie isiklikud e-kirjad ja administraatori vaatamiste ajalugu",
       "calendars": "Kalendrid",
-      "calendarsDesc": "Ühenda Google Calendar ja Outlook Calendar"
+      "calendarsDesc": "Ühenda Google Calendar ja Outlook Calendar",
+      "administration": "Administratsioon",
+      "administrationDesc": "Seaded, mis on reserveeritud organisatsiooni administraatoritele"
     },
     "b2bSection": "B2B usaldusväärsus",
     "slaCard": "Jagatud postkastide SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Vaikimisi videokoosolek",
     "preferredVideoDesc": "Valige uute kohtumiste jaoks vaikimisi videokoosoleku pakkuja. Meet nõuab ühendatud Google'i kalendrit; Teams nõuab Outlooki. Jitsi töötab ilma kontota.",
     "meetingRemindersDesc": "Inboria saadab viisakalt meeldetuletuse kontaktile 48 tundi pärast vastuseta jäänud kohtumise ettepanekut.",
-    "meetingRemindersTitle": "Automaatne kohtumiste meeldetuletus"
+    "meetingRemindersTitle": "Automaatne kohtumiste meeldetuletus",
+    "outlookAddinSection": "Inboria Outlookis",
+    "personalVideoUrlDesc": "Kleepige oma püsiva Teams või Meet ruumi link (https://...). Inboria kasutab seda kõigis kohtumiste ettepanekutes.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud ja enamik veebimeile. Lisage Inboria assistent otse oma postkasti, ilma e-kirju lahkumata.",
+    "outlookAddinTitle": "„Küsi Inborialt” nupp Outlookis",
+    "webmailDownload": "Laadi alla laiendus",
+    "webmailCopyUrl": "Kopeeri chrome://extensions",
+    "personalVideoUrlInvalid": "Kehtetu link (https:// nõutud)",
+    "webmailUrlCopied": "Aadress kopeeritud ✓",
+    "outlookOpenAddinsPage": "Ava Outlooki lisandmoodulid",
+    "outlookDownloadManifest": "Laadi alla fail",
+    "outlookStep2": "Outlookis avage „Hangi lisandmooduleid“ › „Minu lisandmoodulid“ › „Lisa kohandatud lisandmoodul“ › „Failist“, seejärel valige allalaaditud fail.",
+    "outlookGuideIntro": "Kolm lihtsat sammu. Pole vaja menüüdes otsida: kõik on juhendatud.",
+    "webmailExtInstall": "Installi minu brauserisse",
+    "webmailGuideIntro": "Töötab Gmaili, OVH, Yahoo, iCloudi ja enamiku veebimeilidega, Chrome'is või Edge'is. Kolm lihtsat sammu, ainult üks kord.",
+    "webmailStep2": "Chrome'is või Edge'is avage laienduste leht: tippige aadressiribale chrome://extensions, seejärel aktiveerige „Arendaja režiim“ (lüliti üleval paremal).",
+    "webmailGuideTitle": "Installige Inboria oma veebimeilile",
+    "webmailExtTitle": "„Küsi Inborialt” nupp Teie veebimeilis",
+    "webmailStep3": "Klõpsake „Laadi pakkimata laiendus” ja valige lahti pakitud „inboria-extension” kaust. Seejärel avage oma veebimeil: „Küsi Inborialt” nupp ilmub. Logige sisse üks kord, ja ongi valmis.",
+    "outlookStep1": "Laadige alla Inboria ühendusfail.",
+    "reconnect": "Ühenda uuesti",
+    "outlookAddinDesc": "Lisage Inboria assistent otse oma Outlooki, ilma et peaksite kirjadest lahkuma.",
+    "personalVideoUrlLabel": "Isikliku videokõne link",
+    "outlookStep3": "Avage e-kiri: „Küsi Inborialt” nupp ilmub lindile. Logige sisse üks kord oma Inboria kontoga, ja ongi valmis.",
+    "outlookGuideTitle": "Paigaldage Inboria Outlooki",
+    "webmailExtSection": "Inboria Teie veebimeilis",
+    "outlookAddinInstall": "Paigaldage Outlooki",
+    "webmailStep1": "Laadige alla Inboria laiendus ja pakkige fail lahti (paremklõps › „Ekstraheerige kõik”). Saate „inboria-extension” kausta."
   },
   "subscription": {
     "title": "Halda oma tellimust",
@@ -1426,7 +1619,10 @@
     "start": "Alustama",
     "numberOfCollaborators": "Koostöötajate arv",
     "total": "Kokku",
-    "seatsExample": "Näide: 3 koostöötajat = 50,97€/kuu — muudetav igal ajal Teie ruumis."
+    "seatsExample": "Näide: 3 koostöötajat = 50,97€/kuu — muudetav igal ajal Teie ruumis.",
+    "billingMonthly": "Igakuine",
+    "perMonthBilledYearly": "/kuus (arveldatakse aastas)",
+    "billingYearly": "Aastane"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Viga saatmisel",
     "changeRole": "Muuda rolli",
     "adminDesc": "Saab hallata meeskonda, tellimust ja kõiki e-kirju",
-    "memberDesc": "Juurdepääs oma e-kirjadele ja jagatud ülesannetele"
+    "memberDesc": "Juurdepääs oma e-kirjadele ja jagatud ülesannetele",
+    "trialTeamHint": "Meeskonna prooviversioon: kutsuge kuni 3 kolleegi. Igaüks saab oma 4 500 krediidi prooviversiooni ning Te avate jagatud postkastid, määramise ja sisemised kommentaarid.",
+    "trialTeamLabel": "Meeskonna prooviperiood"
   },
   "sharedMailboxes": {
     "title": "Jagatud postkastid",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} määras selle e-kirja kasutajale {{target}}",
     "systemSelfAssigned": "{{actor}} võttis selle e-kirja enda peale",
     "systemReassigned": "{{actor}} määras ümber kasutajalt {{previous}} kasutajale {{target}}",
-    "systemUnassigned": "{{actor}} eemaldas kasutaja {{previous}} määrangu"
+    "systemUnassigned": "{{actor}} eemaldas kasutaja {{previous}} määrangu",
+    "recipientsFilter": "Otsi liiget…",
+    "typingMany": "Mitu inimest kirjutab…",
+    "recipientsClear": "Tühjenda",
+    "placeholderSimple": "Sisestage oma sõnum…",
+    "viewing": "Praegu vaatamas",
+    "internalNote": "Märkus",
+    "recipients": "Saajad",
+    "recipientsPick": "Märkuse saajad",
+    "typingOne": "{{name}} kirjutab…",
+    "recipientsEmpty": "Pole liikmeid",
+    "recipientsSelected": "{{count}} valitud",
+    "emailMessage": "E-kiri"
   },
   "attachments": {
     "title": "Manused",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Ootel",
     "statusPendingShort": "Ootel",
     "syncFailed": "Sünkroonimine ebaõnnestus",
-    "viewDetails": "Vaata üksikasju"
+    "viewDetails": "Vaata üksikasju",
+    "internalAppointment": "Sisemine kohtumine",
+    "duplicateError": "Duplikaadi viga",
+    "duplicatedDesc": "Koopia loodud 7 päeva hiljem.",
+    "noteSelectedCount": "{{count}} saaja(t)",
+    "forwardWhere": "Koht",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} vastuväide ei sobi mulle. Paku talle muid aegu, mis sobivad minu ajakavaga.",
+    "duplicated": "Kohtumine duplitseeritud",
+    "ctxNoProject": "Pole projekti",
+    "noteError": "Märkuse lisamise viga",
+    "filterExternal": "Klient",
+    "autoConfirmed": {
+      "desc": "{{count}} kohtumist on automaatselt kinnitatud vastuvõetud e-kirjadest.",
+      "title": "Kinnitused tuvastatud"
+    },
+    "ctxDup7": "7 päeva pärast",
+    "forwardIntro": "Tere,",
+    "statusPendingHint": "Inboria saadab automaatselt ettepaneku e-kirja kliendile.",
+    "markConfirmed": "Märgi kinnitatuks",
+    "newInternalAppointment": "Sisemine kohtumine",
+    "ctxEdit": "Muuda",
+    "theContact": "kontakt",
+    "statusLabel": "Olek",
+    "notesEmpty": "Märkmeid pole. Märkmed jäävad sisemiseks — neid ei saadeta kunagi kliendile.",
+    "expandSuggestions": "Kuva soovitused",
+    "forwardTitle": "Pealkiri",
+    "noteAllTeam": "Kogu meeskond",
+    "internalMembers": "Kutsutud meeskonna liikmed",
+    "noteRecipientsLabel": "Kellele",
+    "ctxMarkAs": "Märgista kui",
+    "singleDay": "Tagasi ühepäevasele kestusele",
+    "ctxDupNextDay": "Järgmisel päeval",
+    "counterDeclined": "Keeldumine saadetud kontaktile",
+    "ctxDup14": "14 päeva pärast",
+    "collapseSuggestions": "Peida soovitused",
+    "formInternalNoteLabel": "Sisemine märkus (valikuline)",
+    "forwardBody": "Saadan Teile edasi selle kohtumise üksikasjad:",
+    "multiDay": "Mitu päeva…",
+    "ctxForward": "Edasta e-posti teel",
+    "forwardVideo": "Videokõne link",
+    "internalMembersEmpty": "Pole kutsutud liikmeid. Klõpsake „+ Lisa“, et valida oma kolleege.",
+    "forwardWhen": "Kuupäev",
+    "pickDate": "Vali kuupäev",
+    "ctxDuplicate": "Duplikeeri",
+    "coorgNoCandidate": "Pole saadaval liikmeid.",
+    "ctxDupCustomMenu": "Kohandatud…",
+    "ctxDupCustom": "Duplikeeri mitme päeva pärast?",
+    "ctxOpen": "Ava",
+    "notePlaceholder": "Sisemine märkus (nähtav ainult meeskonnale, mitte kunagi kliendile saadetud)…",
+    "confirmError": "Kinnitamisel tekkis viga",
+    "ctxDelete": "Kustuta",
+    "duration": "Kestus",
+    "internalNotes": "Sisemised märkused",
+    "ctxDup30": "1 kuu pärast",
+    "formInternalNotePlaceholder": "Nt: VIP klient, pöörake tähelepanu toonile. Ei saadeta kunagi kliendile.",
+    "askInboriaNewSlot": "Küsi Inborialt uus kohtumine",
+    "filterAll": "Kõik",
+    "confirmWithInboria": "Kinnita Inboria abil",
+    "ctxProject": "Projekt",
+    "coorgAdd": "+ Lisa",
+    "ctxDup90": "3 kuu pärast",
+    "confirmDelete": "Kas kustutada see kohtumine?",
+    "forwardOutro": "Lugupidamisega,",
+    "forwardSubject": "ED: Kohtumine",
+    "filterInternal": "Sisemine"
   },
   "supportChat": {
     "title": "Inboria assistent",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Küsi minult ükskõik milline küsimus Inboria kohta: funktsioonid, seaded, tellimus ja palju muud.",
     "placeholder": "Sisestage oma küsimus...",
     "poweredBy": "Toetatud Inboria poolt",
-    "errorMessage": "Kahjuks tekkis viga. Palun proovige uuesti või võtke ühendust support@inboria.com."
+    "errorMessage": "Kahjuks tekkis viga. Palun proovige uuesti või võtke ühendust support@inboria.com.",
+    "send": "Saada",
+    "clear": "Kustuta vestlus"
   },
   "inboriaChat": {
     "openLabel": "Ava Inboria vestlus",
@@ -2911,7 +3187,9 @@
       "en_attente": "Ootel",
       "relance": "Käimas",
       "termine": "Lõpetatud"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignoreeritud",
+    "bulkMarkedRepliedToast": "{{count}} märgitud vastatuks"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Avatud",
     "openedBadgeCount": "Avatud {{count}} korda",
     "openedAtLabel": "Esimene avamine: {{date}}",
-    "notOpenedYet": "Veel ei ole avatud"
+    "notOpenedYet": "Veel ei ole avatud",
+    "scheduledCancelError": "Tühistamine ebaõnnestus",
+    "scheduledCancelPartial": "{{failed}} tühistamine(t) {{total}}-st ebaõnnestus",
+    "scheduledNoRecipient": "Ilma saajata"
   },
   "templates": {
     "title": "Mallid",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-kiri tehtud nähtavaks",
     "privateOnDesc": "See e-kiri on nüüd Teie administraatorite jaoks nähtamatu (meeskonna kaust + Inboria).",
     "privateOffDesc": "See e-kiri muutub taas nähtavaks Teie administraatoritele (meeskonna kaust + Inboria).",
-    "privateError": "Privaatsuse uuendamine ei õnnestunud."
+    "privateError": "Privaatsuse uuendamine ei õnnestunud.",
+    "details": "Üksikasjad",
+    "actionsMenu": "Toimingud"
   },
   "privacy": {
     "title": "Privaatsus ja meeskonna ligipääs",
@@ -3456,7 +3739,10 @@
       "followup": "Jätkamine",
       "appointment": "Kalender",
       "team": "Meeskonna tegevus"
-    }
+    },
+    "addDescription": "Looge kirje, et jälgida kedagi, kes Teie postkastis veel ei ilmu.",
+    "openContact": "Vaata kontaktikirjet",
+    "deleteDescription": "Selle aadressiga seotud e-kirjade ajalugu ei kustutata. Ainult käsitsi kirje kaob."
   },
   "folders": {
     "title": "Minu kaustad",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Kava",
     "system": "Süsteem"
+  },
+  "signature": {
+    "imageTooLarge": "Pilt liiga suur (max 200 KB)",
+    "linkUrlPrompt": "Lingitud URL (https://...)",
+    "size": "Suurus",
+    "italic": "Kursiiv",
+    "clear": "Eemalda vormindus",
+    "imageInvalid": "Kehtetu pildifail",
+    "highlight": "Esiletõstmine",
+    "bold": "Rasvane",
+    "underline": "Allajoonitud",
+    "image": "Pilt / logo",
+    "color": "Teksti värv",
+    "imageHint": "Näpunäide: lisage PNG/JPG logo (max 200 KB). Pilt on otse allkirjas.",
+    "font": "Font",
+    "link": "Link",
+    "orderedList": "Nummerdatud loetelu",
+    "moreColors": "Rohkem värve…",
+    "bulletList": "Punktloetelu"
+  },
+  "palette": {
+    "compose": "Uus e-kiri",
+    "shortcuts": "Kiirklahvid",
+    "navigate": "Navigeeri",
+    "empty": "Tulemusi pole.",
+    "actions": "Tegevused",
+    "placeholder": "Sisestage käsk või otsige…"
+  },
+  "outlookBanner": {
+    "back": "Tagasi Outlooki",
+    "openedFrom": "Avatud Outlookist. Klõpsake, et naasta, või lülitage lihtsalt tagasi Outlooki vahekaardile."
+  },
+  "gmailBanner": {
+    "openedFrom": "Avatud Gmailist. Klõpsake, et naasta, või vahetage lihtsalt Gmaili vahekaardile.",
+    "back": "Tagasi Gmailile"
+  },
+  "webmailBanner": {
+    "back": "Tagasi minu veebimeilile",
+    "openedFromNamed": "Avatud {{name}}-st. Klõpsake, et naasta, või lülituge lihtsalt {{name}} vahekaardile.",
+    "openedFrom": "Avatud Teie veebimeilist. Klõpsake, et naasta, või lülituge lihtsalt oma veebimeili vahekaardile.",
+    "backNamed": "Tagasi {{name}} juurde"
   }
 }

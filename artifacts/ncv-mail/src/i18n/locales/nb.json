@@ -23,7 +23,16 @@
     "add": "Legg til",
     "edit": "Rediger",
     "reset": "Tilbakestill",
-    "more": "Mer"
+    "more": "Mer",
+    "notAuthenticated": "Ikke autentisert",
+    "collapse": "Skjul kategorier",
+    "send": "Send",
+    "dismiss": "Lukk",
+    "create": "Opprett",
+    "remove": "Fjern",
+    "select": "Velg",
+    "copyFailed": "Kopiering mislyktes",
+    "expand": "Vis kategorier"
   },
   "nav": {
     "extensions": "Utvidelser",
@@ -37,7 +46,18 @@
     "login": "Logg inn",
     "signup": "Registrer deg",
     "logout": "Logg ut",
-    "openMenu": "Åpne menyen"
+    "openMenu": "Åpne menyen",
+    "categories": "Kategorier",
+    "archives": "Arkiv",
+    "dailyBrief": "Daglig oppsummering",
+    "folders": "Mine mapper",
+    "tasks": "Oppgaver",
+    "followups": "Oppfølginger",
+    "inbox": "Innboks",
+    "contacts": "Kontakter",
+    "scheduled": "Planlagte",
+    "snoozed": "Utsatte",
+    "sent": "Sendt"
   },
   "sidebar": {
     "inbox": "Mottak",
@@ -66,7 +86,10 @@
     "followups": "Oppfølginger",
     "contacts": "Kontakter",
     "assigned": "Tildelt",
-    "myTasks": "Mine oppgaver"
+    "myTasks": "Mine oppgaver",
+    "expand": "Utvid menyen",
+    "collapse": "Reduser menyen",
+    "resize": "Endre størrelsen på menyen"
   },
   "dashboard": {
     "expiredSubscription": "Abonnementet ditt har utløpt",
@@ -529,10 +552,17 @@
       "important": "Viktig"
     },
     "date": {
-      "all": "Alle datoer"
+      "all": "Alle datoer",
+      "yesterday": "I går",
+      "thisMonth": "Denne måneden",
+      "today": "I dag",
+      "last30": "Siste 30 dager",
+      "last7": "Siste 7 dager"
     },
     "read": {
-      "all": "Alle"
+      "all": "Alle",
+      "read": "Lest",
+      "unread": "Ulest"
     },
     "sharedDraft": "Delt utkast",
     "sharedDraftOn": "Delt utkast aktivert",
@@ -564,7 +594,113 @@
       "label": "Visningsruter",
       "overlay": "Overlegg",
       "split": "Side ved side"
-    }
+    },
+    "unknownSender": "Ukjent",
+    "scSearch": "Søk",
+    "scNext": "Neste e-post",
+    "snoozedFor24h": "Utsatt til i morgen",
+    "collisionViewingOne": "{{name}} ser også på denne e-posten",
+    "markedAsUnread": "Merket som ulest",
+    "theme": {
+      "switchLight": "Lyst modus",
+      "switchDark": "Mørk modus"
+    },
+    "archived": "Arkivert",
+    "loadingEmail": "Laster e-post...",
+    "searchOpAttachment": "e-poster med vedlegg",
+    "moreActions": "Flere handlinger",
+    "searchOpSubject": "filtrer etter emne",
+    "markAsRead": "Merk som lest",
+    "collisionViewingMany": "{{count}} andre ser på denne e-posten",
+    "scGotoInbox": "Gå til Innboksen",
+    "scGotoSnoozed": "Gå til Utsatte",
+    "scSnooze": "Utsett (24 t)",
+    "close": "Lukk",
+    "composeRestore": "Gjenoppta utkast",
+    "scDelete": "Slett",
+    "density": {
+      "normal": "Normal",
+      "label": "Visningstetthet",
+      "compact": "Kompakt",
+      "comfortable": "Komfortabel"
+    },
+    "headerCollapse": "Skjul faner og filtre",
+    "composeUntitled": "Uten tittel",
+    "backHint": "Tilbake (Esc) — J/K for å navigere, R for å svare, E for å arkivere",
+    "loadingTitle": "Laster…",
+    "draftYou": "Du",
+    "copySender": "Kopier adresse",
+    "slaOverdue": "SLA forfalt",
+    "assigneeFilterMember": "dette medlemmet",
+    "draftRelease": "Frigjør",
+    "scArchive": "Arkiver",
+    "markAsReadUnread": "Merk som lest / ulest",
+    "scForward": "Videresend",
+    "draftSomeoneSends": "{{name}} vil sende den",
+    "searchOpSender": "filtrer etter avsender",
+    "readingPanePos": {
+      "off": "Skjult",
+      "right": "Til høyre",
+      "label": "Leserute",
+      "bottom": "Nederst"
+    },
+    "scGotoContacts": "Gå til Kontakter",
+    "markAsUnread": "Merk som ulest",
+    "composeDiscard": "Forkast",
+    "snooze3h": "Om 3t",
+    "importanceLabel": "Visning",
+    "copiedSenderEmail": "Adresse kopiert",
+    "scPalette": "Kommando palett",
+    "copiedSubject": "Emne kopiert",
+    "myFoldersLabel": "Mine mapper",
+    "copySenderEmail": "Kopier avsenderens adresse",
+    "viewOptions": "Visningsalternativer",
+    "shortcutsTitle": "Tastatursnarveier",
+    "assignedNoTeam": "Denne visningen krever et team (2 medlemmer eller flere).",
+    "collisionReplyingMany": "{{count}} personer svarer allerede på denne e-posten",
+    "assignToProject": "Tildel til et teammappe",
+    "searchGroupOperators": "Forbedre",
+    "composeAria": "Skriv en e-post",
+    "downloadEml": "Last ned som .eml",
+    "headerExpand": "Vis faner og filtre",
+    "scClose": "Lukk e-posten",
+    "composeDiscardConfirm": "Forkaste dette utkastet?",
+    "readingPaneOff": "Deaktiver leseruten",
+    "searchGroupSenders": "Avsendere",
+    "scGotoTasks": "Gå til Oppgaver",
+    "printPopupBlocked": "Kan ikke åpne utskriftsvinduet",
+    "copied": "Kopiert",
+    "snooze": "Utsett",
+    "teamBadge": "Team",
+    "backToGmail": "Tilbake til Gmail",
+    "print": "Skriv ut",
+    "snoozeTomorrow": "I morgen tidlig",
+    "scHelp": "Vis denne hjelpen",
+    "moveToFolder": "Flytt til",
+    "draftTakeOver": "Overta",
+    "composeMinimize": "Minimer utkast",
+    "searchGroupEmails": "E-poster",
+    "backToGmailHint": "Åpne denne eksakte e-posten i Gmail",
+    "draftLiveCoedit": "Samskriving i sanntid",
+    "categorized": "Kategorisert",
+    "scGotoSent": "Gå til Sendt",
+    "collisionReplyingOne": "{{name}} svarer allerede på denne e-posten",
+    "exportEml": "Last ned .eml",
+    "filterByCategory": "Filtrer",
+    "scReply": "Svar",
+    "draftTakeOverHint": "Overta sendingen hvis denne kollegaen ikke er tilgjengelig lenger",
+    "markedAsRead": "Merket som lest",
+    "readingPaneOn": "Aktiver leserute (3 kolonner)",
+    "filtersReset": "Tilbakestill filtre",
+    "createAndAssignTask": "Opprett og tildel…",
+    "priorityLabel": "Prioritet",
+    "scPrev": "Forrige e-post",
+    "copyAddress": "Kopier adresse",
+    "draftClaimSend": "Jeg sender",
+    "copySubject": "Kopier emne",
+    "scGotoArchives": "Gå til arkiv",
+    "draftYouSend": "Du sender",
+    "loadEmailError": "Kan ikke laste e-posten."
   },
   "sent": {
     "title": "Sendte e-poster",
@@ -649,7 +785,16 @@
     "blockFailed": "Kan ikke blokkere",
     "blockNoEmail": "Avsenderadresse ikke funnet",
     "blockNoConnection": "Ingen tilkoblede e-postkontoer",
-    "emptied": "Mappen er tømt"
+    "emptied": "Mappen er tømt",
+    "noBlocked": "Ingen blokkerte avsendere",
+    "openRestored": "Åpne",
+    "fetchingFromProvider": "Henter innhold fra leverandøren din…",
+    "retryFetch": "Prøv igjen",
+    "unblocked": "Avsender blokkert opphevet",
+    "blockedList": "Blokkerte avsendere",
+    "fetchFailed": "Kunne ikke hente innholdet i denne e-posten.",
+    "blockSenderSuccess": "Avsender blokkert",
+    "unblock": "Opphev blokkering"
   },
   "trash": {
     "title": "Papirkurv",
@@ -794,7 +939,18 @@
     "movedToDone": "Oppgave fullført",
     "movedToTodo": "Oppgave satt tilbake til å gjøre",
     "statusUpdated": "Status oppdatert",
-    "taskCreated": "Oppgave opprettet"
+    "taskCreated": "Oppgave opprettet",
+    "titleCopied": "Tittel kopiert",
+    "reassign": "Tildele på nytt",
+    "openInInbox": "Åpne i Innboksen",
+    "copyTitle": "Kopier tittel",
+    "noLinkedEmail": "Denne oppgaven er ikke knyttet til noen e-post.",
+    "unassign": "Fjern tildeling",
+    "linkedEmailActions": "På den tilknyttede e-posten",
+    "reassigned": "Oppgave tildelt på nytt",
+    "markAsTodo": "Merk som å gjøre",
+    "loadingTitle": "Laster oppgaver…",
+    "markAsDone": "Merk som ferdig"
   },
   "projects": {
     "title": "Teammapper",
@@ -851,7 +1007,14 @@
     "exportError": "Feil under eksporten",
     "searchProjects": "Søk etter et prosjekt...",
     "noProjectsAlt": "Opprett ditt første prosjekt for å samle e-poster og oppgaver.",
-    "viewDetail": "Se detaljene"
+    "viewDetail": "Se detaljene",
+    "taskAssigned": "Oppgave tildelt",
+    "taskUnassigned": "Oppgave ikke tildelt",
+    "detachEmail": "Fjern fra prosjekt",
+    "assignTo": "Tildel til…",
+    "openEmail": "Åpne e-posten",
+    "emailDetached": "E-post fjernet fra prosjektet",
+    "unassigned": "Ikke tildelt"
   },
   "classification": {
     "title": "Kategorier",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Denne systemkategorien kan ikke omdøpes.",
       "cannotMerge": "Kategorien « Usortert » kan ikke slås sammen.",
       "goToInbox": "Sorter disse e-postene"
-    }
+    },
+    "adminOnlyNotice": "Administrasjon av kategorier (opprettelse, endring, sletting, bransjepakker) er forbeholdt Team Admin for å sikre en konsistent klassifisering. Du kan se kategoriene og deres e-poster."
   },
   "settings": {
     "title": "Innstillinger",
@@ -1268,7 +1432,9 @@
       "privacy": "Personvern og teamtilgang",
       "privacyDesc": "Dine private e-poster og loggen over admin-tilganger",
       "calendars": "Kalendere",
-      "calendarsDesc": "Koble til Google Kalender og Outlook Kalender"
+      "calendarsDesc": "Koble til Google Kalender og Outlook Kalender",
+      "administrationDesc": "Innstillinger forbeholdt organisasjonens administratorer",
+      "administration": "Administrasjon"
     },
     "b2bSection": "B2B-troverdighet",
     "slaCard": "SLA for delte bokser",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Standard videomøte",
     "preferredVideoDesc": "Velg standard videomøteleverandør for nye avtaler. Meet krever en tilkoblet Google-kalender; Teams krever Outlook. Jitsi fungerer uten konto.",
     "meetingRemindersDesc": "Inboria sender en høflig påminnelse til kontakten 48 timer etter et ubehandlet møteforslag.",
-    "meetingRemindersTitle": "Automatiske møtepåminnelser"
+    "meetingRemindersTitle": "Automatiske møtepåminnelser",
+    "outlookAddinSection": "Inboria i Outlook",
+    "personalVideoUrlDesc": "Lim inn lenken til ditt faste Teams- eller Meet-rom (https://...). Inboria vil bruke den i alle møteforslag.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud og de fleste webmailer. Legg til Inboria-assistenten direkte i e-posten din, uten å forlate innboksen.",
+    "outlookAddinTitle": "«Be Inboria»-knapp i Outlook",
+    "webmailDownload": "Last ned utvidelsen",
+    "webmailCopyUrl": "Kopier chrome://extensions",
+    "personalVideoUrlInvalid": "Ugyldig lenke (https:// kreves)",
+    "webmailUrlCopied": "Adresse kopiert ✓",
+    "outlookOpenAddinsPage": "Åpne Outlook-tillegg",
+    "outlookDownloadManifest": "Last ned filen",
+    "outlookStep2": "I Outlook, åpne « Få tillegg » › « Mine tillegg » › « Legg til egendefinert tillegg » › « Fra en fil », og velg deretter den nedlastede filen.",
+    "outlookGuideIntro": "Tre enkle trinn. Ingen behov for å lete i menyer: alt er veiledet.",
+    "webmailExtInstall": "Installer i nettleseren min",
+    "webmailGuideIntro": "Fungerer med Gmail, OVH, Yahoo, iCloud og de fleste webmailer, i Chrome eller Edge. Tre enkle trinn, bare én gang.",
+    "webmailStep2": "I Chrome eller Edge, åpne utvidelsessiden: skriv chrome://extensions i adressefeltet, og aktiver « Utviklermodus » (bryter øverst til høyre).",
+    "webmailGuideTitle": "Installer Inboria i din webmail",
+    "outlookStep3": "Åpne en e-post: knappen «Be Inboria» vises i båndet. Logg inn én gang med din Inboria-konto, så er det klart.",
+    "personalVideoUrlLabel": "Personlig videolenke",
+    "webmailExtSection": "Inboria i din webmail",
+    "webmailExtTitle": "Knapp «Be Inboria» i din webmail",
+    "webmailStep3": "Klikk på «Last inn upakket utvidelse» og velg den utpakkede «inboria-extension»-mappen. Åpne deretter din webmail: knappen «Be Inboria» vises. Logg inn én gang, så er det klart.",
+    "outlookAddinDesc": "Legg til Inboria-assistenten direkte i Outlook, uten å forlate e-postene dine.",
+    "outlookAddinInstall": "Installer i Outlook",
+    "outlookStep1": "Last ned Inboria-tilkoblingsfilen.",
+    "reconnect": "Koble til igjen",
+    "webmailStep1": "Last ned Inboria-utvidelsen, og pakk ut filen (høyreklikk › «Pakk ut alle»). Du får en mappe «inboria-extension».",
+    "outlookGuideTitle": "Installer Inboria i Outlook"
   },
   "subscription": {
     "title": "Administrer abonnementet ditt",
@@ -1426,7 +1619,10 @@
     "start": "Begynn",
     "numberOfCollaborators": "Antall medarbeidere",
     "total": "Totalt",
-    "seatsExample": "Eksempel: 3 medarbeidere = 50,97€/måned — kan endres når som helst fra din konto."
+    "seatsExample": "Eksempel: 3 medarbeidere = 50,97€/måned — kan endres når som helst fra din konto.",
+    "billingMonthly": "Månedlig",
+    "perMonthBilledYearly": "/måned (fakturert årlig)",
+    "billingYearly": "Årlig"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Feil under sending",
     "changeRole": "Endre rollen",
     "adminDesc": "Kan administrere teamet, abonnementet og alle e-poster",
-    "memberDesc": "Tilgang til sine e-poster og delte oppgaver"
+    "memberDesc": "Tilgang til sine e-poster og delte oppgaver",
+    "trialTeamHint": "Teamprøve: inviter opptil 3 kolleger. Hver får sin egen prøve på 4 500 kreditter, og du låser opp delte bokser, tildeling og interne kommentarer.",
+    "trialTeamLabel": "Teamprøve"
   },
   "sharedMailboxes": {
     "title": "Delte postkasser",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} tildelte denne e-posten til {{target}}",
     "systemSelfAssigned": "{{actor}} tok over denne e-posten",
     "systemReassigned": "{{actor}} omfordelte fra {{previous}} til {{target}}",
-    "systemUnassigned": "{{actor}} fjernet tildelingen av {{previous}}"
+    "systemUnassigned": "{{actor}} fjernet tildelingen av {{previous}}",
+    "recipientsFilter": "Søk etter medlem…",
+    "typingMany": "Flere skriver…",
+    "recipientsClear": "Tøm",
+    "placeholderSimple": "Skriv meldingen din…",
+    "viewing": "Ser nå",
+    "internalNote": "Notat",
+    "recipients": "Mottakere",
+    "recipientsPick": "Mottakere av notatet",
+    "typingOne": "{{name}} skriver…",
+    "recipientsEmpty": "Ingen medlemmer",
+    "emailMessage": "E-post",
+    "recipientsSelected": "{{count}} valgt"
   },
   "attachments": {
     "title": "Vedlegg",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Venter",
     "statusPendingShort": "Venter",
     "syncFailed": "Synkronisering mislyktes",
-    "viewDetails": "Se detaljer"
+    "viewDetails": "Se detaljer",
+    "internalAppointment": "Internt møte",
+    "duplicateError": "Dupliseringsfeil",
+    "duplicatedDesc": "Kopi opprettet 7 dager senere.",
+    "noteSelectedCount": "{{count}} mottaker(e)",
+    "forwardWhere": "Sted",
+    "askInboriaNewSlotPrefill": "Motforslaget fra {{contact}}{{slot}} passer ikke. Foreslå andre tider som passer min kalender.",
+    "duplicated": "Duplisert møte",
+    "ctxNoProject": "Ingen prosjekt",
+    "noteError": "Feil ved notatlegging",
+    "filterExternal": "Kunde",
+    "autoConfirmed": {
+      "desc": "{{count}} møter er automatisk bekreftet fra mottatte e-poster.",
+      "title": "Oppdagede bekreftelser"
+    },
+    "ctxDup7": "Om 7 dager",
+    "forwardIntro": "Hei,",
+    "statusPendingHint": "Inboria vil automatisk sende forslags-e-posten til kunden.",
+    "markConfirmed": "Merk som bekreftet",
+    "newInternalAppointment": "Internt møte",
+    "ctxEdit": "Rediger",
+    "theContact": "kontakten",
+    "statusLabel": "Status",
+    "notesEmpty": "Ingen notater. Notater forblir interne — aldri sendt til kunden.",
+    "expandSuggestions": "Vis forslag",
+    "forwardTitle": "Tittel",
+    "noteAllTeam": "Hele teamet",
+    "internalMembers": "Inviterte teammedlemmer",
+    "noteRecipientsLabel": "Til",
+    "ctxMarkAs": "Merk som",
+    "singleDay": "Tilbake til enkel varighet",
+    "ctxDupNextDay": "Neste dag",
+    "counterDeclined": "Avslag sendt til kontakt",
+    "ctxDup14": "Om 14 dager",
+    "collapseSuggestions": "Skjul forslag",
+    "formInternalNoteLabel": "Intern notat (valgfritt)",
+    "forwardBody": "Jeg videresender detaljene for dette møtet:",
+    "multiDay": "Flere dager…",
+    "ctxForward": "Videresend via e-post",
+    "forwardVideo": "Videolink",
+    "internalMembersEmpty": "Ingen medlemmer invitert. Klikk « + Legg til » for å velge kollegene dine.",
+    "forwardWhen": "Dato",
+    "pickDate": "Velg en dato",
+    "ctxDuplicate": "Dupliser",
+    "coorgNoCandidate": "Ingen medlemmer tilgjengelige.",
+    "ctxDupCustomMenu": "Tilpasset…",
+    "ctxDupCustom": "Dupliser om hvor mange dager?",
+    "ctxOpen": "Åpne",
+    "notePlaceholder": "Intern notat (kun synlig for teamet, aldri sendt til kunden)…",
+    "confirmError": "Feil ved bekreftelse",
+    "ctxDelete": "Slett",
+    "duration": "Varighet",
+    "internalNotes": "Interne notater",
+    "confirmDelete": "Slette denne avtalen?",
+    "ctxDup30": "Om 1 måned",
+    "forwardSubject": "VS: Møte",
+    "ctxProject": "Prosjekt",
+    "filterInternal": "Intern",
+    "ctxDup90": "Om 3 måneder",
+    "formInternalNotePlaceholder": "F.eks.: VIP-kunde, vær oppmerksom på tonen. Aldri sendt til kunden.",
+    "filterAll": "Alle",
+    "confirmWithInboria": "Bekreft med Inboria",
+    "askInboriaNewSlot": "Be Inboria om ny avtale",
+    "forwardOutro": "Med vennlig hilsen,",
+    "coorgAdd": "+ Legg til"
   },
   "supportChat": {
     "title": "Inboria-assistent",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Still meg hvilket som helst spørsmål om Inboria: funksjoner, innstillinger, abonnement, og mer.",
     "placeholder": "Skriv inn spørsmålet ditt...",
     "poweredBy": "Drevet av Inboria",
-    "errorMessage": "Beklager, det oppstod en feil. Vennligst prøv igjen eller kontakt support@inboria.com."
+    "errorMessage": "Beklager, det oppstod en feil. Vennligst prøv igjen eller kontakt support@inboria.com.",
+    "send": "Send",
+    "clear": "Tøm samtalen"
   },
   "inboriaChat": {
     "openLabel": "Åpne Inboria-chatten",
@@ -2911,7 +3187,9 @@
       "en_attente": "Venter",
       "relance": "Pågår",
       "termine": "Fullført"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorert",
+    "bulkMarkedRepliedToast": "{{count}} merket som besvart"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Åpnet",
     "openedBadgeCount": "Åpnet {{count}} ganger",
     "openedAtLabel": "Første åpning: {{date}}",
-    "notOpenedYet": "Ikke åpnet ennå"
+    "notOpenedYet": "Ikke åpnet ennå",
+    "scheduledCancelError": "Kansellering mislyktes",
+    "scheduledCancelPartial": "{{failed}} av {{total}} avbestillinger mislyktes",
+    "scheduledNoRecipient": "Ingen mottaker"
   },
   "templates": {
     "title": "Malene",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-post gjort synlig",
     "privateOnDesc": "Denne e-posten er nå usynlig for dine administratorer (teammappevisning + Inboria).",
     "privateOffDesc": "Denne e-posten blir synlig igjen for dine administratorer (teammappevisning + Inboria).",
-    "privateError": "Det er ikke mulig å oppdatere personvernet."
+    "privateError": "Det er ikke mulig å oppdatere personvernet.",
+    "details": "Detaljer",
+    "actionsMenu": "Handlinger"
   },
   "privacy": {
     "title": "Personvern og teamtilgang",
@@ -3456,7 +3739,10 @@
       "followup": "Oppfølging",
       "appointment": "Agenda",
       "team": "Teamaktivitet"
-    }
+    },
+    "addDescription": "Opprett en kontakt for å følge noen som ikke vises i innboksen din ennå.",
+    "openContact": "Se kontaktkort",
+    "deleteDescription": "E-posthistorikken knyttet til denne adressen slettes ikke. Bare det manuelle kortet forsvinner."
   },
   "folders": {
     "title": "Mine mapper",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "System"
+  },
+  "signature": {
+    "imageTooLarge": "Bildet er for stort (maks 200 KB)",
+    "linkUrlPrompt": "Lenke-URL (https://...)",
+    "size": "Størrelse",
+    "italic": "Kursiv",
+    "clear": "Fjern formatering",
+    "imageInvalid": "Ugyldig bildefil",
+    "highlight": "Utheving",
+    "bold": "Fet",
+    "underline": "Understreket",
+    "image": "Bilde / logo",
+    "color": "Tekstfarge",
+    "imageHint": "Tips: sett inn en PNG/JPG-logo (maks 200 KB). Bildet er direkte integrert i signaturen.",
+    "font": "Skrift",
+    "bulletList": "Punktliste",
+    "link": "Lenke",
+    "orderedList": "Nummerert liste",
+    "moreColors": "Flere farger…"
+  },
+  "palette": {
+    "compose": "Ny e-post",
+    "shortcuts": "Hurtigtaster",
+    "navigate": "Naviger",
+    "empty": "Ingen resultater.",
+    "actions": "Handlinger",
+    "placeholder": "Skriv en kommando eller søk…"
+  },
+  "outlookBanner": {
+    "back": "Tilbake til Outlook",
+    "openedFrom": "Åpnet fra Outlook. Klikk for å gå tilbake, eller bytt bare til Outlook-fanen."
+  },
+  "gmailBanner": {
+    "openedFrom": "Åpnet fra Gmail. Klikk for å gå tilbake, eller bytt bare til Gmail-fanen.",
+    "back": "Tilbake til Gmail"
+  },
+  "webmailBanner": {
+    "back": "Tilbake til min webmail",
+    "openedFromNamed": "Åpnet fra {{name}}. Klikk for å gå tilbake, eller bytt enkelt til {{name}}-fanen.",
+    "openedFrom": "Åpnet fra din webmail. Klikk for å gå tilbake, eller bytt enkelt til webmail-fanen.",
+    "backNamed": "Tilbake til {{name}}"
   }
 }

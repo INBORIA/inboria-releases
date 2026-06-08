@@ -23,7 +23,16 @@
     "add": "Cuir leis",
     "edit": "Cuir in eagar",
     "reset": "Athshocraigh",
-    "more": "Tuilleadh"
+    "more": "Tuilleadh",
+    "notAuthenticated": "Neamh-aitheanta",
+    "collapse": "Folaigh na catagóirí",
+    "send": "Seol",
+    "dismiss": "Dún",
+    "create": "Cruthaigh",
+    "remove": "Bain",
+    "select": "Roghnaigh",
+    "copyFailed": "Níor éirigh le cóipeáil",
+    "expand": "Taispeáin na catagóirí"
   },
   "nav": {
     "extensions": "Eisínteachtaí",
@@ -37,7 +46,18 @@
     "login": "Logáil isteach",
     "signup": "Cláraigh",
     "logout": "Logáil amach",
-    "openMenu": "Oscail an roghchlár"
+    "openMenu": "Oscail an roghchlár",
+    "categories": "Catagóirí",
+    "archives": "Cartlanna",
+    "dailyBrief": "Achoimre laethúil",
+    "folders": "Mo fhillteáin",
+    "tasks": "Tascanna",
+    "followups": "Leanúintí",
+    "inbox": "Bosca isteach",
+    "sent": "Seolta",
+    "scheduled": "Cláraithe",
+    "snoozed": "Curtha ar athló",
+    "contacts": "Teagmhálacha"
   },
   "sidebar": {
     "inbox": "Posta in arrivo",
@@ -66,7 +86,10 @@
     "followups": "Athchóirithe",
     "contacts": "Teagmhálacha",
     "assigned": "Socrú",
-    "myTasks": "Mo Thascanna"
+    "myTasks": "Mo Thascanna",
+    "expand": "Leathnaigh an roghchlár",
+    "collapse": "Laghdaigh an roghchlár",
+    "resize": "Athraigh méid an roghchláir"
   },
   "dashboard": {
     "expiredSubscription": "Tá bhur síntiús imithe in éag",
@@ -529,10 +552,17 @@
       "important": "Tábhachtach"
     },
     "date": {
-      "all": "Gach dáta"
+      "all": "Gach dáta",
+      "yesterday": "Inné",
+      "thisMonth": "An mhí seo",
+      "today": "Inniu",
+      "last7": "7 lá anuas",
+      "last30": "30 lá anuas"
     },
     "read": {
-      "all": "Uile"
+      "all": "Uile",
+      "read": "Léite",
+      "unread": "Neamh-léite"
     },
     "sharedDraft": "Dréacht comhoibrithe",
     "sharedDraftOn": "Dréacht comhoibrithe ar",
@@ -564,7 +594,113 @@
       "label": "Painéil taispeána",
       "overlay": "Forleagan",
       "split": "Taobh le taobh"
-    }
+    },
+    "unknownSender": "Anaithnid",
+    "scSearch": "Cuardaigh",
+    "scNext": "Ríomhphost eile",
+    "snoozedFor24h": "Curtha ar athló go dtí amárach",
+    "collisionViewingOne": "{{name}} ag féachaint ar an ríomhphost seo freisin",
+    "markedAsUnread": "Marcáilte mar neamh-léite",
+    "theme": {
+      "switchLight": "Mód éadrom",
+      "switchDark": "Modh dorcha"
+    },
+    "archived": "Cartlannaithe",
+    "loadingEmail": "Ag luchtú an ríomhphoist...",
+    "searchOpAttachment": "ríomhphoist le ceangaltán",
+    "moreActions": "Tuilleadh gníomhartha",
+    "searchOpSubject": "scagadh de réir ábhair",
+    "markAsRead": "Marcáil mar léite",
+    "collisionViewingMany": "{{count}} daoine eile ag féachaint ar an ríomhphost seo",
+    "scGotoInbox": "Téigh go dtí an Bosca Isteach",
+    "scGotoSnoozed": "Téigh go dtí na Curtha ar Athló",
+    "scSnooze": "Cur ar athló (24 u)",
+    "close": "Dún",
+    "composeRestore": "Athghabh an dréacht",
+    "scDelete": "Scrios",
+    "density": {
+      "normal": "Gnáth",
+      "label": "Dlús taispeána",
+      "compact": "Dlúth",
+      "comfortable": "Compordach"
+    },
+    "headerCollapse": "Folaigh cluaisíní agus scagairí",
+    "composeUntitled": "Dréacht gan ábhar",
+    "backHint": "Ar ais (Éalú) — J/K le nascleanúint a dhéanamh, R freagair, E cartlannaigh",
+    "loadingTitle": "Ag luchtú…",
+    "draftYou": "Tú",
+    "copySender": "Cóipeáil an seoladh",
+    "slaOverdue": "SLA thar téarma",
+    "assigneeFilterMember": "an ball seo",
+    "draftRelease": "Scaoil",
+    "scArchive": "Cartlannaigh",
+    "markAsReadUnread": "Marcáil mar léite / neamh-léite",
+    "scForward": "Seol ar aghaidh",
+    "draftSomeoneSends": "Tá {{name}} chun é a sheoladh",
+    "searchOpSender": "scagadh de réir seoltóra",
+    "readingPanePos": {
+      "off": "Folaigh",
+      "right": "Ar dheis",
+      "label": "Painéal léitheoireachta",
+      "bottom": "Ag bun"
+    },
+    "scGotoContacts": "Téigh chuig Teagmhálacha",
+    "markAsUnread": "Marcáil mar neamh-léite",
+    "composeDiscard": "Tréig",
+    "snooze3h": "I 3h",
+    "importanceLabel": "Taispeántas",
+    "copiedSenderEmail": "Seoladh cóipeáilte",
+    "scPalette": "Pailéad orduithe",
+    "copiedSubject": "Ábhar cóipeáilte",
+    "myFoldersLabel": "Mo fhillteáin",
+    "copySenderEmail": "Cóipeáil seoladh an tseoltóra",
+    "viewOptions": "Roghanna taispeána",
+    "shortcutsTitle": "Aicearraí méarchláir",
+    "assignedNoTeam": "Teastaíonn foireann (2 bhall nó níos mó) ón radharc seo.",
+    "collisionReplyingMany": "{{count}} duine ag freagairt cheana féin ar an ríomhphost seo",
+    "assignToProject": "Sann do chomhad foirne",
+    "searchGroupOperators": "Rafineáil",
+    "composeAria": "Scríobh ríomhphost",
+    "downloadEml": "Íoslódáil mar .eml",
+    "headerExpand": "Taispeáin cluaisíní agus scagairí",
+    "scClose": "Dún an ríomhphost",
+    "composeDiscardConfirm": "Tréig an dréacht seo?",
+    "readingPaneOff": "Díchumasaigh an painéal léitheoireachta",
+    "searchGroupSenders": "Seoltóirí",
+    "scGotoTasks": "Téigh chuig Tascanna",
+    "printPopupBlocked": "Ní féidir an fhuinneog priontála a oscailt",
+    "copied": "Cóipeáilte",
+    "snooze": "Athchur",
+    "exportEml": "Íoslódáil .eml",
+    "categorized": "Catagóirithe",
+    "markedAsRead": "Marcáilte mar léite",
+    "teamBadge": "Foireann",
+    "priorityLabel": "Tosaíocht",
+    "backToGmailHint": "Oscail an ríomhphost seo go díreach i Gmail",
+    "snoozeTomorrow": "Maidin amárach",
+    "composeMinimize": "Íoslaghdaigh an dréacht",
+    "scGotoSent": "Téigh chuig Seolta",
+    "readingPaneOn": "Cumasaigh an painéal léitheoireachta (3 cholún)",
+    "collisionReplyingOne": "{{name}} ag freagairt cheana féin ar an ríomhphost seo",
+    "createAndAssignTask": "Cruthaigh agus sann…",
+    "copyAddress": "Cóipeáil an seoladh",
+    "copySubject": "Cóipeáil an t-ábhar",
+    "loadEmailError": "Ní féidir an ríomhphost a luchtú.",
+    "draftYouSend": "Is tusa a sheolann",
+    "scGotoArchives": "Téigh chuig Cartlanna",
+    "scReply": "Freagair",
+    "backToGmail": "Ar ais go Gmail",
+    "moveToFolder": "Bog chuig",
+    "print": "Priontáil",
+    "scPrev": "Ríomhphost roimhe seo",
+    "draftClaimSend": "Is mise a sheolann",
+    "draftLiveCoedit": "Comheagarthóireacht bheo",
+    "draftTakeOverHint": "Glac seilbh ar an seoladh má tá an comhghleacaí seo as láthair",
+    "scHelp": "Taispeáin an cúnamh seo",
+    "filtersReset": "Athshocraigh na scagairí",
+    "draftTakeOver": "Glac seilbh",
+    "searchGroupEmails": "Ríomhphoist",
+    "filterByCategory": "Scag"
   },
   "sent": {
     "title": "Ríomhphoist seolta",
@@ -649,7 +785,16 @@
     "blockFailed": "Ní féidir blocáil",
     "blockNoEmail": "Níor aimsíodh seoladh an seoltóra",
     "blockNoConnection": "Níl aon chuntas ríomhphoist ceangailte",
-    "emptied": "Comhad folamh"
+    "emptied": "Comhad folamh",
+    "noBlocked": "Gan aon seoltóir blocáilte",
+    "openRestored": "Oscail",
+    "fetchingFromProvider": "Ábhar á fháil ó do sholáthraí…",
+    "retryFetch": "Athiarraidh",
+    "unblocked": "Seoltóir díghlasáilte",
+    "blockedList": "Seoltóirí blocáilte",
+    "unblock": "Díbhlocáil",
+    "fetchFailed": "Ní féidir ábhar an ríomhphoist seo a fháil.",
+    "blockSenderSuccess": "Seoltóir blocáilte"
   },
   "trash": {
     "title": "Córas bruscair",
@@ -794,7 +939,18 @@
     "movedToDone": "Tasc críochnaithe",
     "movedToTodo": "Tasc curtha ar ais le déanamh",
     "statusUpdated": "Stádas nuashonraithe",
-    "taskCreated": "Tasc cruthaithe"
+    "taskCreated": "Tasc cruthaithe",
+    "titleCopied": "Teideal cóipeáilte",
+    "reassign": "Athshann",
+    "openInInbox": "Oscail sa Bhosca Isteach",
+    "copyTitle": "Cóipeáil an teideal",
+    "noLinkedEmail": "Níl an tasc seo nasctha le haon ríomhphost.",
+    "unassign": "Díshann",
+    "linkedEmailActions": "Ar an ríomhphost nasctha",
+    "reassigned": "Tasc athshannadh",
+    "markAsDone": "Marcáilte mar chríochnaithe",
+    "loadingTitle": "Ag luchtú tascanna…",
+    "markAsTodo": "Marcáilte le déanamh"
   },
   "projects": {
     "title": "Fillteáin foirne",
@@ -851,7 +1007,14 @@
     "exportError": "Earráid le linn an onnmhairiú",
     "searchProjects": "Cuardaigh tionscadal...",
     "noProjectsAlt": "Cruthaigh bhur dtionscadal chéad chun ríomhphoist agus tascanna a ghrúpáil.",
-    "viewDetail": "Féach ar an miondealadh"
+    "viewDetail": "Féach ar an miondealadh",
+    "taskAssigned": "Tasc sannaithe",
+    "taskUnassigned": "Tasc díshannaithe",
+    "detachEmail": "Bain ón tionscadal",
+    "assignTo": "Sann do…",
+    "openEmail": "Oscail an ríomhphost",
+    "emailDetached": "Ríomhphost bainte den tionscadal",
+    "unassigned": "Neamhshannaithe"
   },
   "classification": {
     "title": "Catagóirí",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Ní féidir an catagóir córas seo a athainmniú.",
       "cannotMerge": "Ní féidir an catagóir « Gan rangú » a comhoibriú.",
       "goToInbox": "Cuir na ríomhphoist seo in ord"
-    }
+    },
+    "adminOnlyNotice": "Tá bainistíocht catagóirí (cruthú, modhnú, scriosadh, pacáistí gnó) in áirithe don Riarthóir Foirne chun aicmiú comhsheasmhach a chinntiú. Is féidir leat na catagóirí agus a ríomhphoist a fheiceáil."
   },
   "settings": {
     "title": "Socruithe",
@@ -1268,7 +1432,9 @@
       "privacy": "Príobháideachas agus rochtain na foirne",
       "privacyDesc": "Bhur ríomhphoist phríobháideacha agus an dialann comhoibrithe riaracháin",
       "calendars": "Féilirí",
-      "calendarsDesc": "Ceangail Google Calendar agus Outlook Calendar"
+      "calendarsDesc": "Ceangail Google Calendar agus Outlook Calendar",
+      "administration": "Riarachán",
+      "administrationDesc": "Socruithe do riarthóirí na heagraíochta amháin"
     },
     "b2bSection": "Creidiúnacht B2B",
     "slaCard": "SLA boscaí roinnte",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Cruinniú físe réamhshocraithe",
     "preferredVideoDesc": "Le bhur dtoil, roghnaigh an soláthraí cruinnithe físe réamhshocraithe do na coinní nua. Éilíonn Meet féilire Google atá ceangailte; éilíonn Teams Outlook. Oibríonn Jitsi gan cuntas.",
     "meetingRemindersDesc": "Seolann Inboria rabhadh béasach chuig an teagmháil 48 uair an chloig tar éis togra cruinnithe gan freagra.",
-    "meetingRemindersTitle": "Rabhaidh uathoibríocha CRB"
+    "meetingRemindersTitle": "Rabhaidh uathoibríocha CRB",
+    "outlookAddinSection": "Inboria in Outlook",
+    "personalVideoUrlDesc": "Greamaigh nasc do sheomra buan Teams nó Meet (https://...). Úsáidfidh Inboria é i ngach togra cruinnithe.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud agus an chuid is mó de na ríomhphoist ghréasáin. Cuir cúntóir Inboria go díreach i do bhosca ríomhphoist, gan do ríomhphoist a fhágáil.",
+    "outlookAddinTitle": "Cnaipe « Iarr ar Inboria » in Outlook",
+    "webmailDownload": "Íoslódáil an síneadh",
+    "webmailCopyUrl": "Cóipeáil chrome://extensions",
+    "personalVideoUrlInvalid": "Nasc neamhbhailí (https:// riachtanach)",
+    "webmailUrlCopied": "Seoladh cóipeáilte ✓",
+    "outlookOpenAddinsPage": "Oscail forlíontáin Outlook",
+    "outlookDownloadManifest": "Íoslódáil an comhad",
+    "outlookStep2": "In Outlook, oscail « Faigh forlíontáin » › « Mo fhorlíontáin » › « Cuir forlíontán saincheaptha leis » › « Ó chomhad », ansin roghnaigh an comhad íoslódáilte.",
+    "outlookGuideIntro": "Trí chéim shimplí. Níl gá le cuardach sna biachláir: tá gach rud treoraithe.",
+    "webmailExtInstall": "Suiteáil i mo bhrabhsálaí",
+    "webmailGuideIntro": "Oibríonn le Gmail, OVH, Yahoo, iCloud agus an chuid is mó de na ríomhphoist ghréasáin, i Chrome nó Edge. Trí chéim shimplí, uair amháin.",
+    "webmailStep2": "I Chrome nó Edge, oscail an leathanach síneadh: clóscríobh chrome://extensions sa bharra seolta, ansin cuir an « Mód forbróra » ar siúl (lasca in airde ar dheis).",
+    "webmailGuideTitle": "Suiteáil Inboria i do ríomhphost gréasáin",
+    "webmailExtTitle": "Cnaipe ‘Iarr ar Inboria’ i do ríomhphost gréasáin",
+    "webmailStep3": "Cliceáil ar ‘Luchtaigh an síneadh neamhphacáilte’ agus roghnaigh an fillteán ‘inboria-extension’ díphacáilte. Oscail do ríomhphost gréasáin ansin: taispeánfar an cnaipe ‘Iarr ar Inboria’. Logáil isteach uair amháin, tá sé réidh.",
+    "outlookStep1": "Íoslódáil comhad logála isteach Inboria.",
+    "reconnect": "Athcheangail",
+    "outlookAddinDesc": "Cuir cúntóir Inboria díreach isteach i do Outlook, gan do ríomhphoist a fhágáil.",
+    "personalVideoUrlLabel": "Nasc físe pearsanta",
+    "outlookStep3": "Oscail ríomhphost: taispeánfar an cnaipe ‘Iarr ar Inboria’ sa ribín. Logáil isteach uair amháin le do chuntas Inboria, tá sé réidh.",
+    "outlookGuideTitle": "Suiteáil Inboria in Outlook",
+    "webmailExtSection": "Inboria i do ríomhphost gréasáin",
+    "outlookAddinInstall": "Suiteáil in Outlook",
+    "webmailStep1": "Íoslódáil an síneadh Inboria, ansin díphacáil an comhad (cliceáil ar dheis › ‘Sliocht gach rud’). Gheobhaidh tú fillteán ‘inboria-extension’."
   },
   "subscription": {
     "title": "Bainistigh bhur síntiús",
@@ -1426,7 +1619,10 @@
     "start": "Tús a chur",
     "numberOfCollaborators": "Uimhir na gcomhoibrithe",
     "total": "Iomlán",
-    "seatsExample": "Sampla: 3 comhoibrithe = 50,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás."
+    "seatsExample": "Sampla: 3 comhoibrithe = 50,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás.",
+    "billingMonthly": "Míosúil",
+    "perMonthBilledYearly": "/mí (billeáilte go bliantúil)",
+    "billingYearly": "Bliantúil"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Earráid ag seoladh",
     "changeRole": "Athraigh an ról",
     "adminDesc": "Is féidir leis an gcruinniú, an síntiús agus gach ríomhphost a bhainistiú",
-    "memberDesc": "Rochtain ar a ríomhphoist agus ar na tascanna roinnte"
+    "memberDesc": "Rochtain ar a ríomhphoist agus ar na tascanna roinnte",
+    "trialTeamHint": "Triail foirne: cuir suas le 3 comhghleacaí. Faigheann gach duine a thriail féin de 4,500 creidmheas, agus díghlasálann tú na boscaí roinnte, sannadh agus nótaí inmheánacha.",
+    "trialTeamLabel": "Triail foirne"
   },
   "sharedMailboxes": {
     "title": "Boscaí roinnte",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "Sann {{actor}} an ríomhphost seo do {{target}}",
     "systemSelfAssigned": "Ghlac {{actor}} cúram an ríomhphoist seo",
     "systemReassigned": "D'athshann {{actor}} ó {{previous}} go {{target}}",
-    "systemUnassigned": "Bhain {{actor}} sannadh {{previous}}"
+    "systemUnassigned": "Bhain {{actor}} sannadh {{previous}}",
+    "recipientsFilter": "Cuardaigh ball…",
+    "typingMany": "Tá roinnt daoine ag clóscríobh…",
+    "recipientsClear": "Glan",
+    "placeholderSimple": "Cuir isteach do theachtaireacht…",
+    "viewing": "Ag féachaint anois",
+    "internalNote": "Nóta",
+    "recipients": "Faighteoirí",
+    "recipientsPick": "Faighteoirí an nóta",
+    "typingOne": "Tá {{name}} ag clóscríobh…",
+    "recipientsEmpty": "Gan aon bhall",
+    "recipientsSelected": "{{count}} roghnaithe",
+    "emailMessage": "Ríomhphost"
   },
   "attachments": {
     "title": "Ceangaltáin",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Ar feith.",
     "statusPendingShort": "Ar feitheamh",
     "syncFailed": "Teip ar shioncrónú",
-    "viewDetails": "Féach ar na sonraí"
+    "viewDetails": "Féach ar na sonraí",
+    "internalAppointment": "Cruinniú inmheánach",
+    "duplicateError": "Earráid dúblach",
+    "duplicatedDesc": "Cóip cruthaithe 7 lá ina dhiaidh sin.",
+    "noteSelectedCount": "{{count}} faighteoir(í)",
+    "forwardWhere": "Suíomh",
+    "askInboriaNewSlotPrefill": "Níl an frith-thogra ó {{contact}}{{slot}} oiriúnach dom. Mol dó amanna eile a oireann do mo sceideal.",
+    "duplicated": "Cruinniú dúblach",
+    "ctxNoProject": "Gan aon tionscadal",
+    "noteError": "Earráid ag cur nóta leis",
+    "filterExternal": "Cliant",
+    "autoConfirmed": {
+      "desc": "{{count}} cruinniú díreach deimhnithe go huathoibríoch ó ríomhphoist faighte.",
+      "title": "Deimhnithe braite"
+    },
+    "ctxDup7": "I 7 lá",
+    "forwardIntro": "Dia dhuit,",
+    "statusPendingHint": "Seolfar an ríomhphost togra go huathoibríoch chuig an gcliant ag Inboria.",
+    "markConfirmed": "Marcáil mar dheimhnithe",
+    "newInternalAppointment": "Cruinniú inmheánach",
+    "ctxEdit": "Cuir in eagar",
+    "theContact": "an teagmháil",
+    "statusLabel": "Stádas",
+    "notesEmpty": "Gan aon nótaí. Fanann nótaí inmheánach — ní sheoltar riamh chuig an gcliant.",
+    "expandSuggestions": "Taispeáin moltaí",
+    "forwardTitle": "Teideal",
+    "noteAllTeam": "An fhoireann ar fad",
+    "internalMembers": "Baill foirne cuireadh",
+    "noteRecipientsLabel": "Chun",
+    "ctxMarkAs": "Marcáil mar",
+    "singleDay": "Fill ar thréimhse aonair",
+    "ctxDupNextDay": "An lá dár gcionn",
+    "counterDeclined": "Diúltú seolta chuig an teagmháil",
+    "ctxDup14": "I 14 lá",
+    "collapseSuggestions": "Folaigh na moltaí",
+    "formInternalNoteLabel": "Nóta inmheánach (roghnach)",
+    "forwardBody": "Táim ag seoladh sonraí an chruinnithe seo chugat:",
+    "multiDay": "Il-lá…",
+    "ctxForward": "Seol ar aghaidh trí ríomhphost",
+    "forwardVideo": "Nasc físchomhdhála",
+    "internalMembersEmpty": "Níl aon bhall cuireadh. Cliceáil « + Cuir leis » chun do chomhghleacaithe a roghnú.",
+    "forwardWhen": "Dáta",
+    "pickDate": "Roghnaigh dáta",
+    "ctxDuplicate": "Dúbláil",
+    "coorgNoCandidate": "Níl aon bhall ar fáil.",
+    "ctxDupCustomMenu": "Saincheaptha…",
+    "ctxDupCustom": "Dúbláil i cé mhéad lá?",
+    "ctxOpen": "Oscail",
+    "notePlaceholder": "Nóta inmheánach (le feiceáil ag an bhfoireann amháin, ní sheoltar riamh chuig an gcliant)…",
+    "confirmError": "Earráid le linn dearbhaithe",
+    "ctxDelete": "Scrios",
+    "duration": "Fad",
+    "internalNotes": "Nótaí inmheánacha",
+    "ctxDup30": "I gceann míosa",
+    "formInternalNotePlaceholder": "M.sh.: Cliaint VIP, aire a thabhairt don ton. Ní sheoltar riamh chuig an gcliant.",
+    "askInboriaNewSlot": "Iarr ar Inboria coinne nua",
+    "filterAll": "Gach ceann",
+    "confirmWithInboria": "Deimhnigh le Inboria",
+    "ctxProject": "Tionscadal",
+    "coorgAdd": "+ Cuir leis",
+    "ctxDup90": "I gceann 3 mhí",
+    "confirmDelete": "Scrios an coinne seo?",
+    "forwardOutro": "Le meas,",
+    "forwardSubject": "TR: Coinne",
+    "filterInternal": "Inmheánach"
   },
   "supportChat": {
     "title": "Cabhair Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Cuir ceist ar bith orm faoi Inboria: feidhmeanna, socruithe, síntiús, agus níos mó.",
     "placeholder": "Clóscríobh bhur gceist...",
     "poweredBy": "Tacaíocht ag Inboria",
-    "errorMessage": "Tá brón orm, tharla earráid. Le do thoil, déan iarracht arís nó déan teagmháil le support@inboria.com."
+    "errorMessage": "Tá brón orm, tharla earráid. Le do thoil, déan iarracht arís nó déan teagmháil le support@inboria.com.",
+    "send": "Seol",
+    "clear": "Glan an comhrá"
   },
   "inboriaChat": {
     "openLabel": "Oscail an comhrá Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Ag fanacht",
       "relance": "Ar siúl",
       "termine": "Críochnaithe"
-    }
+    },
+    "bulkDismissedToast": "{{count}} neamhaird",
+    "bulkMarkedRepliedToast": "{{count}} marcáilte mar freagra"
   },
   "contacts": {
     "title": "Teagmháil 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Oscailte",
     "openedBadgeCount": "Oscailte {{count}} uair",
     "openedAtLabel": "An chéad oscailt: {{date}}",
-    "notOpenedYet": "Níl sé oscailte go fóill"
+    "notOpenedYet": "Níl sé oscailte go fóill",
+    "scheduledCancelError": "Teip ar chealú",
+    "scheduledCancelPartial": "{{failed}} cealú ar {{total}} theip orthu",
+    "scheduledNoRecipient": "Gan faighteoir"
   },
   "templates": {
     "title": "Teimpléid",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Ríomhphost a rinneadh infheicthe",
     "privateOnDesc": "Tá an ríomhphost seo anois do bhur n-ardáin dofheicthe (radharc comhoibrithe foirne + Inboria).",
     "privateOffDesc": "Téann an ríomhphost seo ar ais chun a bheith infheicthe do bhur n-ardáin (radharc comhoibrithe foirne + Inboria).",
-    "privateError": "Ní féidir an príobháideacht a nuashonrú."
+    "privateError": "Ní féidir an príobháideacht a nuashonrú.",
+    "details": "Sonraí",
+    "actionsMenu": "Gníomhartha"
   },
   "privacy": {
     "title": "Príobháideacht agus rochtain foirne",
@@ -3456,7 +3739,10 @@
       "followup": "Athchóiriú",
       "appointment": "Clár",
       "team": "Gníomhaíocht foirne"
-    }
+    },
+    "addDescription": "Cruthaigh cárta chun duine nach bhfuil le feiceáil i do bhosca a leanúint.",
+    "openContact": "Féach ar an gcárta teagmhála",
+    "deleteDescription": "Ní scriostar stair ríomhphoist nasctha leis an seoladh seo. Ní imíonn ach an cárta láimhe."
   },
   "folders": {
     "title": "Mo Fhillteáin",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Clár",
     "system": "Córas"
+  },
+  "signature": {
+    "imageTooLarge": "Íomhá ró-mhór (uasmhéid 200 KB)",
+    "linkUrlPrompt": "URL an naisc (https://...)",
+    "size": "Méid",
+    "italic": "Iodálach",
+    "clear": "Glan formáidiú",
+    "imageInvalid": "Comhad íomhá neamhbhailí",
+    "highlight": "Béim",
+    "bold": "Trom",
+    "underline": "Féachlíne",
+    "image": "Íomhá / lógó",
+    "color": "Dath téacs",
+    "imageHint": "Leid: cuir isteach lógó PNG/JPG (uasmhéid 200 KB). Tá an íomhá comhtháite go díreach sa síniú.",
+    "font": "Cló",
+    "link": "Nasc",
+    "orderedList": "Liosta uimhrithe",
+    "moreColors": "Tuilleadh dathanna…",
+    "bulletList": "Liosta le hurchair"
+  },
+  "palette": {
+    "compose": "Ríomhphost nua",
+    "shortcuts": "Aicearraí méarchláir",
+    "navigate": "Nascleanúint",
+    "empty": "Gan aon toradh.",
+    "actions": "Gníomhartha",
+    "placeholder": "Clóscríobh ordú nó cuardaigh…"
+  },
+  "outlookBanner": {
+    "back": "Fill ar Outlook",
+    "openedFrom": "Oscailte ó Outlook. Cliceáil le filleadh, nó athraigh go simplí ar an táb Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Oscailte ó Gmail. Cliceáil chun filleadh, nó athraigh ar ais go simplí chuig an táb Gmail.",
+    "back": "Fill ar Gmail"
+  },
+  "webmailBanner": {
+    "back": "Fill ar mo ríomhphost gréasáin",
+    "openedFromNamed": "Oscailte ó {{name}}. Cliceáil chun filleadh, nó athraigh ar an táb {{name}}.",
+    "openedFrom": "Oscailte ó do ríomhphost gréasáin. Cliceáil chun filleadh, nó athraigh ar an táb de do ríomhphost gréasáin.",
+    "backNamed": "Fill ar {{name}}"
   }
 }

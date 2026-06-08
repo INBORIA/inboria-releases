@@ -23,7 +23,16 @@
     "add": "Dodaj",
     "edit": "Uredi",
     "reset": "Ponastavi",
-    "more": "Več"
+    "more": "Več",
+    "notAuthenticated": "Ni overjeno",
+    "collapse": "Skrij kategorije",
+    "send": "Pošlji",
+    "expand": "Prikaži kategorije",
+    "copyFailed": "Kopiranje ni uspelo",
+    "remove": "Odstrani",
+    "dismiss": "Zapri",
+    "select": "Izberite",
+    "create": "Ustvarite"
   },
   "nav": {
     "extensions": "Razširitve",
@@ -37,7 +46,18 @@
     "login": "Prijavite se",
     "signup": "Registrirajte se",
     "logout": "Odjavite se",
-    "openMenu": "Odprite meni"
+    "openMenu": "Odprite meni",
+    "categories": "Kategorije",
+    "archives": "Arhivi",
+    "dailyBrief": "Dnevni pregled",
+    "folders": "Moje mape",
+    "tasks": "Naloge",
+    "contacts": "Kontakti",
+    "scheduled": "Načrtovano",
+    "followups": "Spremljanja",
+    "inbox": "Prejeto",
+    "sent": "Poslano",
+    "snoozed": "Preloženi"
   },
   "sidebar": {
     "inbox": "Prejeto",
@@ -66,7 +86,10 @@
     "followups": "Opomniki",
     "contacts": "Stiki",
     "assigned": "Dodeljeni",
-    "myTasks": "Moje naloge"
+    "myTasks": "Moje naloge",
+    "expand": "Razširi meni",
+    "collapse": "Skrči meni",
+    "resize": "Spremenite velikost menija"
   },
   "dashboard": {
     "expiredSubscription": "Vaša naročnina je potekla",
@@ -529,10 +552,17 @@
       "important": "Pomembno"
     },
     "date": {
-      "all": "Vsi datumi"
+      "all": "Vsi datumi",
+      "yesterday": "Včeraj",
+      "thisMonth": "Ta mesec",
+      "today": "Danes",
+      "last7": "Zadnjih 7 dni",
+      "last30": "Zadnjih 30 dni"
     },
     "read": {
-      "all": "Vsi"
+      "all": "Vsi",
+      "unread": "Neprebrano",
+      "read": "Prebrano"
     },
     "sharedDraft": "Skupni osnutek",
     "sharedDraftOn": "Skupni osnutek vklopljen",
@@ -564,7 +594,113 @@
       "label": "Prikaz oken",
       "overlay": "Prekrivanje",
       "split": "Drug ob drugem"
-    }
+    },
+    "unknownSender": "Neznano",
+    "scSearch": "Iskanje",
+    "scNext": "Naslednje sporočilo",
+    "snoozedFor24h": "Preloženo na jutri",
+    "collisionViewingOne": "{{name}} si tudi ogleduje to sporočilo",
+    "markedAsUnread": "Označeno kot neprebrano",
+    "theme": {
+      "switchLight": "Svetli način",
+      "switchDark": "Temni način"
+    },
+    "archived": "Arhivirano",
+    "loadingEmail": "Nalaganje e-pošte...",
+    "searchOpAttachment": "sporočila s priponkami",
+    "moreActions": "Več dejanj",
+    "searchOpSubject": "filtriraj po zadevi",
+    "markAsRead": "Označi kot prebrano",
+    "collisionViewingMany": "{{count}} drugih oseb si ogleduje to sporočilo",
+    "scGotoInbox": "Pojdi na Prejeto",
+    "scGotoSnoozed": "Pojdi na Preloženo",
+    "scSnooze": "Preloži (24 h)",
+    "close": "Zapri",
+    "composeRestore": "Nadaljuj osnutek",
+    "scDelete": "Izbriši",
+    "density": {
+      "normal": "Normalno",
+      "comfortable": "Udobno",
+      "label": "Gostota prikaza",
+      "compact": "Kompaktno"
+    },
+    "headerCollapse": "Skrij zavihke in filtre",
+    "composeUntitled": "Osnutek brez zadeve",
+    "backHint": "Nazaj (Esc) — J/K za navigacijo, R za odgovor, E za arhiviranje",
+    "loadingTitle": "Nalaganje…",
+    "draftYou": "Vi",
+    "copySender": "Kopiraj naslov",
+    "slaOverdue": "SLA zamuda",
+    "assigneeFilterMember": "ta član",
+    "draftRelease": "Sprostitev",
+    "scArchive": "Arhiviraj",
+    "readingPanePos": {
+      "bottom": "Spodaj",
+      "label": "Podokno za branje",
+      "right": "Na desni",
+      "off": "Skrito"
+    },
+    "copyAddress": "Kopiraj naslov",
+    "backToGmail": "Nazaj na Gmail",
+    "composeMinimize": "Pomanjšaj osnutek",
+    "draftYouSend": "Vi pošljete",
+    "searchOpSender": "filtriraj po pošiljatelju",
+    "assignedNoTeam": "Ta pogled zahteva ekipo (2 člana ali več).",
+    "readingPaneOff": "Onemogoči podokno za branje",
+    "draftSomeoneSends": "{{name}} bo poslal",
+    "composeDiscard": "Opusti",
+    "copySubject": "Kopiraj zadevo",
+    "downloadEml": "Prenesi kot .eml",
+    "scGotoTasks": "Pojdi na Naloge",
+    "filtersReset": "Ponastavi filtre",
+    "markAsUnread": "Označi kot neprebrano",
+    "searchGroupOperators": "Izboljšaj",
+    "copySenderEmail": "Kopiraj naslov pošiljatelja",
+    "scPrev": "Prejšnje sporočilo",
+    "categorized": "Kategorizirano",
+    "snooze3h": "Čez 3h",
+    "headerExpand": "Prikaži zavihke in filtre",
+    "markAsReadUnread": "Označi kot prebrano/neprebrano",
+    "teamBadge": "Ekipa",
+    "draftLiveCoedit": "Sodelovanje v živo",
+    "copiedSenderEmail": "Naslov kopiran",
+    "shortcutsTitle": "Bližnjice na tipkovnici",
+    "exportEml": "Prenesi .eml",
+    "markedAsRead": "Označeno kot prebrano",
+    "backToGmailHint": "Odprite točno to e-pošto v Gmailu",
+    "scGotoArchives": "Pojdi v Arhiv",
+    "collisionReplyingMany": "{{count}} oseb že odgovarja na to e-pošto",
+    "filterByCategory": "Filtriraj",
+    "priorityLabel": "Prioriteta",
+    "scForward": "Posreduj",
+    "snoozeTomorrow": "Jutri zjutraj",
+    "scHelp": "Prikaži to pomoč",
+    "assignToProject": "Dodeli v mapo ekipe",
+    "searchGroupSenders": "Pošiljatelji",
+    "scGotoSent": "Pojdi v Poslano",
+    "scClose": "Zapri e-pošto",
+    "draftClaimSend": "Jaz pošiljam",
+    "snooze": "Preloži",
+    "readingPaneOn": "Omogoči podokno za branje (3 stolpci)",
+    "myFoldersLabel": "Moje mape",
+    "draftTakeOver": "Prevzemi",
+    "composeDiscardConfirm": "Opustiti ta osnutek?",
+    "copied": "Kopirano",
+    "createAndAssignTask": "Ustvarite in dodelite…",
+    "scGotoContacts": "Pojdi na Stike",
+    "collisionReplyingOne": "{{name}} že odgovarja na to e-pošto",
+    "searchGroupEmails": "E-pošte",
+    "moveToFolder": "Premakni v",
+    "scReply": "Odgovori",
+    "copiedSubject": "Zadeva kopirana",
+    "draftTakeOverHint": "Prevzemite pošiljanje, če ta sodelavec ni več na voljo",
+    "loadEmailError": "Ni mogoče naložiti e-pošte.",
+    "scPalette": "Paleta ukazov",
+    "viewOptions": "Možnosti prikaza",
+    "printPopupBlocked": "Ni mogoče odpreti okna za tiskanje",
+    "composeAria": "Sestavite e-pošto",
+    "importanceLabel": "Prikaz",
+    "print": "Natisnite"
   },
   "sent": {
     "title": "Poslane e-pošte",
@@ -649,7 +785,16 @@
     "blockFailed": "Blokiranje ni mogoče",
     "blockNoEmail": "Naslov pošiljatelja ni mogoče najti",
     "blockNoConnection": "Noben e-poštni račun ni povezan",
-    "emptied": "Mape so prazne"
+    "emptied": "Mape so prazne",
+    "noBlocked": "Ni blokiranih pošiljateljev",
+    "openRestored": "Odpri",
+    "fetchingFromProvider": "Pridobivanje vsebine od vašega ponudnika…",
+    "retryFetch": "Poskusi znova",
+    "fetchFailed": "Ni mogoče pridobiti vsebine tega e-poštnega sporočila.",
+    "unblock": "Odblokiraj",
+    "blockedList": "Blokirani pošiljatelji",
+    "unblocked": "Pošiljatelj odblokiran",
+    "blockSenderSuccess": "Pošiljatelj blokiran"
   },
   "trash": {
     "title": "Koš",
@@ -794,7 +939,18 @@
     "movedToDone": "Zadnja dokončana",
     "movedToTodo": "Zadnja ponovno dodeljena za narediti",
     "statusUpdated": "Status posodobljen",
-    "taskCreated": "Zadnja ustvarjena"
+    "taskCreated": "Zadnja ustvarjena",
+    "titleCopied": "Naslov kopiran",
+    "reassign": "Dodeli znova",
+    "openInInbox": "Odpri v Prejetih",
+    "copyTitle": "Kopiraj naslov",
+    "noLinkedEmail": "Ta naloga ni povezana z nobenim sporočilom.",
+    "markAsDone": "Označi kot dokončano",
+    "linkedEmailActions": "Na povezanem e-poštnem sporočilu",
+    "loadingTitle": "Nalaganje nalog…",
+    "unassign": "Razdodeli",
+    "reassigned": "Naloga prerazporejena",
+    "markAsTodo": "Označi kot opraviti"
   },
   "projects": {
     "title": "Skupinske mape",
@@ -851,7 +1007,14 @@
     "exportError": "Napaka pri izvozu",
     "searchProjects": "Iščite projekt...",
     "noProjectsAlt": "Ustvarite svoj prvi projekt za združitev e-pošt in nalog.",
-    "viewDetail": "Oglejte si podrobnosti"
+    "viewDetail": "Oglejte si podrobnosti",
+    "taskAssigned": "Naloga dodeljena",
+    "taskUnassigned": "Naloga razdodeljena",
+    "detachEmail": "Odstrani iz projekta",
+    "openEmail": "Odpri e-pošto",
+    "unassigned": "Ne dodeljeno",
+    "emailDetached": "E-pošta odstranjena iz projekta",
+    "assignTo": "Dodeli…"
   },
   "classification": {
     "title": "Kategorije",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Te kategorije sistema ni mogoče preimenovati.",
       "cannotMerge": "Kategorije „Nerazvrščeno“ ni mogoče združiti.",
       "goToInbox": "Razvrsti te e-pošte"
-    }
+    },
+    "adminOnlyNotice": "Upravljanje kategorij (ustvarjanje, spreminjanje, brisanje, poslovni paketi) je rezervirano za skrbnika ekipe za zagotovitev dosledne klasifikacije. Lahko si ogledate kategorije in njihova sporočila."
   },
   "settings": {
     "title": "Nastavitve",
@@ -1268,7 +1432,9 @@
       "privacy": "Zasebnost in dostop ekipe",
       "privacyDesc": "Vaše zasebne e-pošte in dnevnik admin pregledov",
       "calendars": "Koledarji",
-      "calendarsDesc": "Povežite Google Calendar in Outlook Calendar"
+      "calendarsDesc": "Povežite Google Calendar in Outlook Calendar",
+      "administration": "Administracija",
+      "administrationDesc": "Nastavitve, rezervirane za skrbnike organizacije"
     },
     "b2bSection": "B2B kredibilnost",
     "slaCard": "SLA za skupne predale",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Privzeti videosestanek",
     "preferredVideoDesc": "Prosimo, izberite privzetega ponudnika videosestankov za nove sestanke. Meet zahteva povezan Googlov koledar; Teams zahteva Outlook. Jitsi deluje brez računa.",
     "meetingRemindersDesc": "Inboria pošlje vljuden opomnik kontaktu 48 ur po predlogu sestanka, ki ostane brez odgovora.",
-    "meetingRemindersTitle": "Samodejni opomniki za RDV"
+    "meetingRemindersTitle": "Samodejni opomniki za RDV",
+    "outlookAddinSection": "Inboria v Outlooku",
+    "personalVideoUrlDesc": "Prilepite povezavo do vaše stalne sobe Teams ali Meet (https://...). Inboria jo bo uporabila v vseh predlogih sestankov.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud in večina spletnih poštnih storitev. Dodajte pomočnika Inboria neposredno v vašo pošto, brez zapuščanja sporočil.",
+    "outlookAddinTitle": "Gumb »Vprašaj Inboria« v Outlooku",
+    "webmailDownload": "Prenesi razširitev",
+    "webmailCopyUrl": "Kopiraj chrome://extensions",
+    "personalVideoUrlInvalid": "Neveljavna povezava (zahtevano https://)",
+    "webmailUrlCopied": "Naslov kopiran ✓",
+    "webmailGuideIntro": "Deluje z Gmail, OVH, Yahoo, iCloud in večino spletnih poštnih predalov v Chrome ali Edge. Trije preprosti koraki, samo enkrat.",
+    "outlookGuideTitle": "Namestite Inboria v Outlook",
+    "webmailStep3": "Kliknite »Naloži nepakirano razširitev« in izberite razpakirano mapo »inboria-extension«. Nato odprite svoj spletni poštni predal: pojavi se gumb »Zahtevaj pri Inboria«. Prijavite se enkrat, pripravljeno je.",
+    "outlookAddinInstall": "Namestite v Outlook",
+    "webmailStep1": "Prenesite razširitev Inboria in razpakirajte datoteko (desni klik › »Izvleči vse«). Dobite mapo »inboria-extension«.",
+    "reconnect": "Ponovno povežite",
+    "outlookDownloadManifest": "Prenesite datoteko",
+    "outlookStep1": "Prenesite povezovalno datoteko Inboria.",
+    "webmailGuideTitle": "Namestite Inboria v vaš spletni poštni predal",
+    "outlookStep3": "Odprite e-pošto: gumb »Vprašajte Inboria« se prikaže v traku. Prijavite se enkrat s svojim računom Inboria, pripravljeno je.",
+    "outlookStep2": "V Outlooku odprite »Pridobi dodatke« › »Moji dodatki« › »Dodaj prilagojen dodatek« › »Iz datoteke«, nato izberite preneseno datoteko.",
+    "outlookGuideIntro": "Tri preprosti koraki. Ni potrebe po iskanju po menijih: vse je vodeno.",
+    "personalVideoUrlLabel": "Osebna povezava za video",
+    "webmailExtInstall": "Namestite v moj brskalnik",
+    "webmailExtSection": "Inboria v vašem spletnem poštnem predalu",
+    "outlookOpenAddinsPage": "Odprite dodatke Outlook",
+    "webmailExtTitle": "Gumb »Vprašajte Inboria« v vašem spletnem poštnem predalu",
+    "outlookAddinDesc": "Dodajte pomočnika Inboria neposredno v vaš Outlook, brez zapuščanja e-pošte.",
+    "webmailStep2": "V Chromu ali Edgeu odprite stran z razširitvami: vnesite chrome://extensions v naslovno vrstico, nato omogočite »Način razvijalca« (stikalo zgoraj desno)."
   },
   "subscription": {
     "title": "Upravljajte svojo naročnino",
@@ -1426,7 +1619,10 @@
     "start": "Začnite",
     "numberOfCollaborators": "Število sodelavcev",
     "total": "Skupaj",
-    "seatsExample": "Primer: 3 sodelavci = 50,97€/mesec — spremenljivo kadarkoli iz Vašega prostora."
+    "seatsExample": "Primer: 3 sodelavci = 50,97€/mesec — spremenljivo kadarkoli iz Vašega prostora.",
+    "billingMonthly": "Mesečno",
+    "perMonthBilledYearly": "/mesec (zaračunano letno)",
+    "billingYearly": "Letno"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Napaka pri pošiljanju",
     "changeRole": "Spremenite vlogo",
     "adminDesc": "Lahko upravlja ekipo, naročnino in vse e-pošte",
-    "memberDesc": "Dostop do svojih e-pošt in skupnih nalog"
+    "memberDesc": "Dostop do svojih e-pošt in skupnih nalog",
+    "trialTeamHint": "Preizkus ekipe: povabite do 3 sodelavce. Vsak prejme svoj preizkus s 4.500 krediti, vi pa odklenete deljene mape, dodeljevanje in notranje komentarje.",
+    "trialTeamLabel": "Poskusna ekipa"
   },
   "sharedMailboxes": {
     "title": "Skupne poštne predale",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} je dodelil(a) to e-pošto uporabniku {{target}}",
     "systemSelfAssigned": "{{actor}} je prevzel(a) to e-pošto",
     "systemReassigned": "{{actor}} je prerazporedil(a) z {{previous}} na {{target}}",
-    "systemUnassigned": "{{actor}} je odstranil(a) dodelitev za {{previous}}"
+    "systemUnassigned": "{{actor}} je odstranil(a) dodelitev za {{previous}}",
+    "recipientsFilter": "Poiščite člana…",
+    "typingMany": "Več oseb tipka…",
+    "recipientsEmpty": "Ni članov",
+    "internalNote": "Opomba",
+    "viewing": "Trenutno gledate",
+    "placeholderSimple": "Vnesite svoje sporočilo…",
+    "recipientsClear": "Počisti",
+    "emailMessage": "E-pošta",
+    "recipientsSelected": "{{count}} izbranih",
+    "typingOne": "{{name}} piše…",
+    "recipientsPick": "Prejemniki opombe",
+    "recipients": "Prejemniki"
   },
   "attachments": {
     "title": "Priponke",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "V čakanju",
     "statusPendingShort": "V čakanju",
     "syncFailed": "Sinhronizacija ni uspela",
-    "viewDetails": "Poglejte podrobnosti"
+    "viewDetails": "Poglejte podrobnosti",
+    "internalAppointment": "Notranji sestanek",
+    "duplicateError": "Napaka pri podvajanju",
+    "duplicatedDesc": "Kopija ustvarjena 7 dni kasneje.",
+    "noteSelectedCount": "{{count}} prejemnik(i)",
+    "forwardWhere": "Lokacija",
+    "askInboriaNewSlotPrefill": "Protipredlog {{contact}}{{slot}} mi ne ustreza. Predlagajte mu druge termine, ki so združljivi z mojim urnikom.",
+    "duplicated": "Podvojen sestanek",
+    "ctxNoProject": "Ni projekta",
+    "noteError": "Napaka pri dodajanju opombe",
+    "filterExternal": "Stranka",
+    "autoConfirmed": {
+      "desc": "{{count}} sestankov je bilo samodejno potrjenih iz prejetih sporočil.",
+      "title": "Zaznane potrditve"
+    },
+    "ctxDup7": "Čez 7 dni",
+    "forwardIntro": "Pozdravljeni,",
+    "statusPendingHint": "Inboria bo samodejno poslala predlog stranki.",
+    "markConfirmed": "Označi kot potrjeno",
+    "newInternalAppointment": "Notranji sestanek",
+    "ctxEdit": "Uredi",
+    "theContact": "kontakt",
+    "statusLabel": "Status",
+    "notesEmpty": "Ni opomb. Opombe ostanejo interne — nikoli poslane stranki.",
+    "expandSuggestions": "Prikaži predloge",
+    "forwardTitle": "Naslov",
+    "noteAllTeam": "Vsa ekipa",
+    "internalMembers": "Povabljeni člani ekipe",
+    "noteRecipientsLabel": "Za",
+    "internalMembersEmpty": "Ni povabljenih članov. Kliknite »+ Dodaj«, da izberete svoje sodelavce.",
+    "confirmWithInboria": "Potrdite z Inboria",
+    "ctxDup14": "Čez 14 dni",
+    "counterDeclined": "Zavrnitev poslana kontaktu",
+    "forwardWhen": "Datum",
+    "forwardOutro": "Lep pozdrav,",
+    "collapseSuggestions": "Skrij predloge",
+    "confirmError": "Napaka pri potrditvi",
+    "ctxDuplicate": "Podvoji",
+    "ctxDupCustom": "Podvoji čez koliko dni?",
+    "formInternalNoteLabel": "Notranja opomba (neobvezno)",
+    "notePlaceholder": "Notranja opomba (vidna samo ekipi, nikoli poslana stranki)…",
+    "ctxDup30": "Čez 1 mesec",
+    "ctxDupCustomMenu": "Prilagojeno…",
+    "ctxMarkAs": "Označi kot",
+    "ctxOpen": "Odpri",
+    "internalNotes": "Notranje opombe",
+    "coorgAdd": "+ Dodaj",
+    "pickDate": "Izberite datum",
+    "formInternalNotePlaceholder": "Npr.: VIP stranka, pazite na ton. Nikoli poslano stranki.",
+    "forwardVideo": "Povezava za video",
+    "filterInternal": "Notranje",
+    "singleDay": "Vrni se na enodnevno trajanje",
+    "confirmDelete": "Izbrisati ta sestanek?",
+    "ctxDelete": "Izbriši",
+    "duration": "Trajanje",
+    "ctxDup90": "Čez 3 mesece",
+    "forwardSubject": "PD: Sestanek",
+    "coorgNoCandidate": "Ni razpoložljivih članov.",
+    "forwardBody": "Pošiljam vam podrobnosti tega sestanka:",
+    "ctxProject": "Projekt",
+    "ctxDupNextDay": "Naslednji dan",
+    "ctxForward": "Posredujte po e-pošti",
+    "askInboriaNewSlot": "Prosite Inboria za nov termin",
+    "filterAll": "Vsi",
+    "multiDay": "Več dni…"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Postavite mi katerokoli vprašanje o Inboria: funkcionalnosti, nastavitve, naročnina in še več.",
     "placeholder": "Vpišite svoje vprašanje...",
     "poweredBy": "Poganja Inboria",
-    "errorMessage": "Opravičujemo se, prišlo je do napake. Prosim, poskusite znova ali kontaktirajte support@inboria.com."
+    "errorMessage": "Opravičujemo se, prišlo je do napake. Prosim, poskusite znova ali kontaktirajte support@inboria.com.",
+    "send": "Pošlji",
+    "clear": "Počisti pogovor"
   },
   "inboriaChat": {
     "openLabel": "Odprite klepet Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Na čakanju",
       "relance": "V teku",
       "termine": "Zaključeno"
-    }
+    },
+    "bulkMarkedRepliedToast": "{{count}} označenih kot odgovorjeno",
+    "bulkDismissedToast": "{{count}} prezrto"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Odprto",
     "openedBadgeCount": "Odprto {{count}} krat",
     "openedAtLabel": "Prva odprtja: {{date}}",
-    "notOpenedYet": "Še ni odprto"
+    "notOpenedYet": "Še ni odprto",
+    "scheduledCancelError": "Preklic ni uspel",
+    "scheduledCancelPartial": "{{failed}} preklicev od {{total}} ni uspelo",
+    "scheduledNoRecipient": "Brez prejemnika"
   },
   "templates": {
     "title": "Predloge",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-pošta postala vidna",
     "privateOnDesc": "Ta e-pošta je zdaj nevidna za vaše skrbnike (pogled mape ekipe + Inboria).",
     "privateOffDesc": "Ta e-pošta postane spet vidna za vaše skrbnike (pogled mape ekipe + Inboria).",
-    "privateError": "Posodobitve zasebnosti ni mogoče."
+    "privateError": "Posodobitve zasebnosti ni mogoče.",
+    "details": "Podrobnosti",
+    "actionsMenu": "Dejanja"
   },
   "privacy": {
     "title": "Zasebnost in dostop ekipe",
@@ -3456,7 +3739,10 @@
       "followup": "Ponovno obvestilo",
       "appointment": "Koledar",
       "team": "Aktivnost ekipe"
-    }
+    },
+    "deleteDescription": "Zgodovina e-poštnih sporočil, povezanih s tem naslovom, ni izbrisana. Izbriše se le ročno ustvarjen zapis.",
+    "openContact": "Oglejte si kontaktni zapis",
+    "addDescription": "Ustvarite kartico za sledenje nekomu, ki še ni v vašem predalu."
   },
   "folders": {
     "title": "Moje mape",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "Sistem"
+  },
+  "signature": {
+    "imageTooLarge": "Slika prevelika (maks. 200 KB)",
+    "linkUrlPrompt": "URL povezave (https://...)",
+    "size": "Velikost",
+    "italic": "Ležeče",
+    "clear": "Počisti oblikovanje",
+    "imageInvalid": "Neveljavna slikovna datoteka",
+    "highlight": "Označevanje",
+    "bold": "Krepko",
+    "link": "Povezava",
+    "underline": "Podčrtano",
+    "font": "Pisava",
+    "image": "Slika / logotip",
+    "orderedList": "Oštevilčen seznam",
+    "imageHint": "Nasvet: vstavite PNG/JPG logotip (max 200 KB). Slika je neposredno vključena v podpis.",
+    "color": "Barva besedila",
+    "moreColors": "Več barv…",
+    "bulletList": "Označen seznam"
+  },
+  "palette": {
+    "compose": "Novo e-poštno sporočilo",
+    "shortcuts": "Bližnjice na tipkovnici",
+    "navigate": "Navigiraj",
+    "empty": "Ni rezultatov.",
+    "placeholder": "Vnesite ukaz ali iščite…",
+    "actions": "Dejanja"
+  },
+  "outlookBanner": {
+    "back": "Nazaj na Outlook",
+    "openedFrom": "Odprto iz Outlooka. Kliknite za vrnitev ali preprosto preklopite na zavihek Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Odprto iz Gmaila. Kliknite za vrnitev, ali preprosto preklopite na zavihek Gmail.",
+    "back": "Nazaj na Gmail"
+  },
+  "webmailBanner": {
+    "openedFrom": "Odprto iz vašega spletnega poštnega predala. Kliknite za vrnitev ali preprosto preklopite na zavihek vašega spletnega poštnega predala.",
+    "back": "Vrnitev na moj spletni poštni predal",
+    "backNamed": "Vrnitev na {{name}}",
+    "openedFromNamed": "Odprto iz {{name}}. Kliknite za vrnitev ali preprosto preklopite na zavihek {{name}}."
   }
 }

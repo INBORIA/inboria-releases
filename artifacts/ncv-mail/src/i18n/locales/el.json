@@ -23,7 +23,16 @@
     "add": "Προσθήκη",
     "edit": "Επεξεργασία",
     "reset": "Επαναφορά",
-    "more": "Περισσότερα"
+    "more": "Περισσότερα",
+    "notAuthenticated": "Μη αυθεντικοποιημένο",
+    "collapse": "Απόκρυψη κατηγοριών",
+    "send": "Αποστολή",
+    "dismiss": "Κλείσιμο",
+    "create": "Δημιουργία",
+    "remove": "Αφαίρεση",
+    "select": "Επιλογή",
+    "copyFailed": "Αδυναμία αντιγραφής",
+    "expand": "Εμφάνιση κατηγοριών"
   },
   "nav": {
     "extensions": "Επεκτάσεις",
@@ -37,7 +46,18 @@
     "login": "Συνδεθείτε",
     "signup": "Εγγραφείτε",
     "logout": "Αποσύνδεση",
-    "openMenu": "Ανοίξτε το μενού"
+    "openMenu": "Ανοίξτε το μενού",
+    "categories": "Κατηγορίες",
+    "archives": "Αρχεία",
+    "dailyBrief": "Καθημερινή αναφορά",
+    "folders": "Οι φάκελοί μου",
+    "tasks": "Εργασίες",
+    "followups": "Ακολουθίες",
+    "inbox": "Εισερχόμενα",
+    "sent": "Απεσταλμένα",
+    "scheduled": "Προγραμματισμένα",
+    "snoozed": "Αναβληθέντα",
+    "contacts": "Επαφές"
   },
   "sidebar": {
     "inbox": "Posta in arrivo",
@@ -66,7 +86,10 @@
     "followups": "Υπενθυμίσεις",
     "contacts": "Επαφές",
     "assigned": "Ανατεθειμένα",
-    "myTasks": "Οι εργασίες μου"
+    "myTasks": "Οι εργασίες μου",
+    "expand": "Επέκταση μενού",
+    "collapse": "Σύμπτυξη μενού",
+    "resize": "Αλλαγή μεγέθους μενού"
   },
   "dashboard": {
     "expiredSubscription": "Η συνδρομή σας έχει λήξει",
@@ -529,10 +552,17 @@
       "important": "Σημαντικά"
     },
     "date": {
-      "all": "Όλες οι ημερομηνίες"
+      "all": "Όλες οι ημερομηνίες",
+      "yesterday": "Χθες",
+      "thisMonth": "Αυτόν τον μήνα",
+      "today": "Σήμερα",
+      "last7": "Τελευταίες 7 ημέρες",
+      "last30": "Τελευταίες 30 ημέρες"
     },
     "read": {
-      "all": "Όλα"
+      "all": "Όλα",
+      "read": "Αναγνωσμένα",
+      "unread": "Μη αναγνωσμένα"
     },
     "sharedDraft": "Κοινό σχέδιο",
     "sharedDraftOn": "Κοινό σχέδιο ενεργό",
@@ -564,7 +594,113 @@
       "label": "Προβολή πλαισίων",
       "overlay": "Επικάλυψη",
       "split": "Δίπλα δίπλα"
-    }
+    },
+    "unknownSender": "Άγνωστος",
+    "scSearch": "Αναζήτηση",
+    "scNext": "Επόμενο email",
+    "snoozedFor24h": "Αναβλήθηκε για αύριο",
+    "collisionViewingOne": "Ο/Η {{name}} βλέπει επίσης αυτό το email",
+    "markedAsUnread": "Σημειώθηκε ως μη αναγνωσμένο",
+    "theme": {
+      "switchLight": "Φωτεινή λειτουργία",
+      "switchDark": "Σκοτεινή λειτουργία"
+    },
+    "archived": "Αρχειοθετημένο",
+    "loadingEmail": "Φόρτωση email...",
+    "searchOpAttachment": "emails με συνημμένο",
+    "moreActions": "Περισσότερες ενέργειες",
+    "searchOpSubject": "φιλτράρισμα κατά θέμα",
+    "markAsRead": "Σημείωση ως αναγνωσμένο",
+    "collisionViewingMany": "{{count}} άλλα άτομα βλέπουν αυτό το email",
+    "scGotoInbox": "Μετάβαση στη Λήψη",
+    "scGotoSnoozed": "Μετάβαση στα Αναβληθέντα",
+    "scSnooze": "Αναβολή (24 ώρες)",
+    "close": "Κλείσιμο",
+    "composeRestore": "Επαναφορά πρόχειρου",
+    "scDelete": "Διαγραφή",
+    "density": {
+      "normal": "Κανονικό",
+      "label": "Πυκνότητα εμφάνισης",
+      "compact": "Συμπαγές",
+      "comfortable": "Άνετο"
+    },
+    "headerCollapse": "Απόκρυψη καρτελών και φίλτρων",
+    "composeUntitled": "Πρόχειρο χωρίς θέμα",
+    "backHint": "Επιστροφή (Esc) — J/K για πλοήγηση, R απάντηση, E αρχειοθέτηση",
+    "loadingTitle": "Φόρτωση…",
+    "draftYou": "Εσείς",
+    "copySender": "Αντιγραφή διεύθυνσης",
+    "slaOverdue": "SLA εκπρόθεσμο",
+    "assigneeFilterMember": "αυτό το μέλος",
+    "draftRelease": "Απελευθέρωση",
+    "scArchive": "Αρχειοθέτηση",
+    "markAsReadUnread": "Σήμανση ως αναγνωσμένο / μη αναγνωσμένο",
+    "scForward": "Προώθηση",
+    "draftSomeoneSends": "{{name}} θα το στείλει",
+    "searchOpSender": "φιλτράρισμα κατά αποστολέα",
+    "readingPanePos": {
+      "off": "Κρυφό",
+      "right": "Δεξιά",
+      "label": "Παράθυρο ανάγνωσης",
+      "bottom": "Κάτω"
+    },
+    "scGotoContacts": "Μετάβαση στις Επαφές",
+    "markAsUnread": "Σήμανση ως μη αναγνωσμένο",
+    "composeDiscard": "Απόρριψη",
+    "snooze3h": "Σε 3 ώρες",
+    "importanceLabel": "Εμφάνιση",
+    "copiedSenderEmail": "Διεύθυνση αντιγράφηκε",
+    "scPalette": "Παλέτα εντολών",
+    "copiedSubject": "Θέμα αντιγράφηκε",
+    "myFoldersLabel": "Οι φάκελοί μου",
+    "copySenderEmail": "Αντιγραφή διεύθυνσης αποστολέα",
+    "viewOptions": "Επιλογές εμφάνισης",
+    "shortcutsTitle": "Συντομεύσεις πληκτρολογίου",
+    "assignedNoTeam": "Αυτή η προβολή απαιτεί ομάδα (2 μέλη ή περισσότερα).",
+    "collisionReplyingMany": "{{count}} άτομα απαντούν ήδη σε αυτό το email",
+    "assignToProject": "Ανάθεση σε φάκελο ομάδας",
+    "searchGroupOperators": "Λεπτομερής αναζήτηση",
+    "composeAria": "Σύνταξη email",
+    "downloadEml": "Λήψη σε .eml",
+    "headerExpand": "Εμφάνιση καρτελών και φίλτρων",
+    "scClose": "Κλείσιμο email",
+    "composeDiscardConfirm": "Απόρριψη αυτού του προσχεδίου;",
+    "readingPaneOff": "Απενεργοποίηση παραθύρου ανάγνωσης",
+    "searchGroupSenders": "Αποστολείς",
+    "scGotoTasks": "Μετάβαση στις Εργασίες",
+    "printPopupBlocked": "Αδύνατο το άνοιγμα του παραθύρου εκτύπωσης",
+    "copied": "Αντιγράφηκε",
+    "snooze": "Αναβολή",
+    "exportEml": "Λήψη .eml",
+    "categorized": "Κατηγοριοποιημένο",
+    "markedAsRead": "Σημειώθηκε ως αναγνωσμένο",
+    "teamBadge": "Ομάδα",
+    "priorityLabel": "Προτεραιότητα",
+    "backToGmailHint": "Άνοιγμα αυτού του email ακριβώς στο Gmail",
+    "snoozeTomorrow": "Αύριο το πρωί",
+    "composeMinimize": "Ελαχιστοποίηση πρόχειρου",
+    "scGotoSent": "Μετάβαση στα Απεσταλμένα",
+    "readingPaneOn": "Ενεργοποίηση παραθύρου ανάγνωσης (3 στήλες)",
+    "collisionReplyingOne": "Ο/Η {{name}} ήδη απαντά σε αυτό το email",
+    "createAndAssignTask": "Δημιουργία και ανάθεση…",
+    "copyAddress": "Αντιγραφή διεύθυνσης",
+    "copySubject": "Αντιγραφή θέματος",
+    "loadEmailError": "Αδυναμία φόρτωσης του email.",
+    "draftYouSend": "Εσείς το στέλνετε",
+    "scGotoArchives": "Μετάβαση στα Αρχεία",
+    "scReply": "Απάντηση",
+    "backToGmail": "Επιστροφή στο Gmail",
+    "moveToFolder": "Μετακίνηση σε",
+    "print": "Εκτύπωση",
+    "scPrev": "Προηγούμενο email",
+    "draftClaimSend": "Εγώ το στέλνω",
+    "draftLiveCoedit": "Συνεργατική επεξεργασία σε πραγματικό χρόνο",
+    "draftTakeOverHint": "Αναλάβετε την αποστολή αν αυτός ο συνάδελφος δεν είναι διαθέσιμος",
+    "scHelp": "Εμφάνιση αυτής της βοήθειας",
+    "filtersReset": "Επαναφορά φίλτρων",
+    "draftTakeOver": "Ανάληψη",
+    "searchGroupEmails": "Emails",
+    "filterByCategory": "Φιλτράρισμα"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",
@@ -649,7 +785,16 @@
     "blockFailed": "Αδύνατη η απόκλειση",
     "blockNoEmail": "Διεύθυνση αποστολέα μη διαθέσιμη",
     "blockNoConnection": "Κανένας λογαριασμός email δεν είναι συνδεδεμένος",
-    "emptied": "Φάκελος κενός"
+    "emptied": "Φάκελος κενός",
+    "noBlocked": "Κανένας αποκλεισμένος αποστολέας",
+    "openRestored": "Άνοιγμα",
+    "fetchingFromProvider": "Ανάκτηση περιεχομένου από τον πάροχό σας…",
+    "retryFetch": "Επανάληψη προσπάθειας",
+    "unblocked": "Αποστολέας ξεμπλοκαρίστηκε",
+    "blockedList": "Αποστολείς μπλοκαρισμένοι",
+    "unblock": "Ξεμπλοκάρισμα",
+    "fetchFailed": "Αδυναμία ανάκτησης περιεχομένου αυτού του email.",
+    "blockSenderSuccess": "Αποστολέας αποκλείστηκε"
   },
   "trash": {
     "title": "Κάδος απορριμμάτων",
@@ -794,7 +939,18 @@
     "movedToDone": "Ατζέντα ολοκληρωμένη",
     "movedToTodo": "Ατζέντα επαναφερθείσα σε προς εκτέλεση",
     "statusUpdated": "Κατάσταση ενημερωμένη",
-    "taskCreated": "Ατζέντα δημιουργημένη"
+    "taskCreated": "Ατζέντα δημιουργημένη",
+    "titleCopied": "Ο τίτλος αντιγράφηκε",
+    "reassign": "Επανατοποθέτηση",
+    "openInInbox": "Άνοιγμα στη Λήψη",
+    "copyTitle": "Αντιγραφή τίτλου",
+    "noLinkedEmail": "Αυτή η εργασία δεν συνδέεται με κανένα email.",
+    "unassign": "Αποδέσμευση",
+    "linkedEmailActions": "Στο συνδεδεμένο email",
+    "reassigned": "Εργασία επαναανατέθηκε",
+    "markAsDone": "Σημειώστε ως ολοκληρωμένη",
+    "loadingTitle": "Φόρτωση εργασιών…",
+    "markAsTodo": "Σημειώστε ως εκκρεμής"
   },
   "projects": {
     "title": "Φάκελοι ομάδας",
@@ -851,7 +1007,14 @@
     "exportError": "Σφάλμα κατά την εξαγωγή",
     "searchProjects": "Αναζητήστε ένα έργο...",
     "noProjectsAlt": "Δημιουργήστε το πρώτο σας έργο για να ομαδοποιήσετε emails και εργασίες.",
-    "viewDetail": "Δείτε τις λεπτομέρειες"
+    "viewDetail": "Δείτε τις λεπτομέρειες",
+    "taskAssigned": "Η εργασία ανατέθηκε",
+    "taskUnassigned": "Η εργασία αποανατέθηκε",
+    "detachEmail": "Αφαίρεση από το έργο",
+    "assignTo": "Ανάθεση σε…",
+    "openEmail": "Άνοιγμα email",
+    "emailDetached": "Το email αφαιρέθηκε από το έργο",
+    "unassigned": "Μη ανατεθειμένο"
   },
   "classification": {
     "title": "Κατηγορίες",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Αυτή η κατηγορία συστήματος δεν μπορεί να μετονομαστεί.",
       "cannotMerge": "Η κατηγορία « Μη καταχωρημένο » δεν μπορεί να συγχωνευθεί.",
       "goToInbox": "Ταξινόμηση αυτών των email"
-    }
+    },
+    "adminOnlyNotice": "Η διαχείριση κατηγοριών (δημιουργία, τροποποίηση, διαγραφή, επαγγελματικά πακέτα) είναι αποκλειστική για τον Διαχειριστή Ομάδας για να εξασφαλιστεί συνεπής ταξινόμηση. Μπορείτε να δείτε τις κατηγορίες και τα emails τους."
   },
   "settings": {
     "title": "Ρυθμίσεις",
@@ -1268,7 +1432,9 @@
       "privacy": "Απόρρητο και πρόσβαση ομάδας",
       "privacyDesc": "Τα ιδιωτικά σας emails και το ημερολόγιο των διαχειριστικών επισκέψεων",
       "calendars": "Ημερολόγια",
-      "calendarsDesc": "Σύνδεση με Google Calendar και Outlook Calendar"
+      "calendarsDesc": "Σύνδεση με Google Calendar και Outlook Calendar",
+      "administration": "Διαχείριση",
+      "administrationDesc": "Ρυθμίσεις για διαχειριστές της οργάνωσης"
     },
     "b2bSection": "B2B Αξιοπιστία",
     "slaCard": "SLA κοινών θυρίδων",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Προεπιλεγμένη βιντεοδιάσκεψη",
     "preferredVideoDesc": "Επιλέξτε τον προεπιλεγμένο πάροχο βιντεοδιάσκεψης για τα νέα σας ραντεβού. Το Meet απαιτεί συνδεδεμένο ημερολόγιο Google· το Teams απαιτεί Outlook. Το Jitsi λειτουργεί χωρίς λογαριασμό.",
     "meetingRemindersDesc": "Το Inboria στέλνει μια ευγενική υπενθύμιση στην επαφή 48 ώρες μετά από μια πρόταση ραντεβού που δεν έχει απαντηθεί.",
-    "meetingRemindersTitle": "Αυτόματες υπενθυμίσεις RDV"
+    "meetingRemindersTitle": "Αυτόματες υπενθυμίσεις RDV",
+    "outlookAddinSection": "Inboria στο Outlook",
+    "personalVideoUrlDesc": "Επικολλήστε τον σύνδεσμο της μόνιμης αίθουσας Teams ή Meet (https://...). Το Inboria θα τον χρησιμοποιήσει σε όλες τις προτάσεις ραντεβού.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud και οι περισσότερες webmail υπηρεσίες. Προσθέστε τον βοηθό Inboria απευθείας στο email σας, χωρίς να το αφήσετε.",
+    "outlookAddinTitle": "Κουμπί «Ζητήστε από το Inboria» στο Outlook",
+    "webmailDownload": "Λήψη επέκτασης",
+    "webmailCopyUrl": "Αντιγραφή chrome://extensions",
+    "personalVideoUrlInvalid": "Μη έγκυρος σύνδεσμος (απαιτείται https://)",
+    "webmailUrlCopied": "Η διεύθυνση αντιγράφηκε ✓",
+    "outlookOpenAddinsPage": "Άνοιγμα προσθέτων Outlook",
+    "outlookDownloadManifest": "Λήψη αρχείου",
+    "outlookStep2": "Στο Outlook, ανοίξτε «Λήψη προσθέτων» › «Τα πρόσθετά μου» › «Προσθήκη προσαρμοσμένου προσθέτου» › «Από αρχείο», και επιλέξτε το ληφθέν αρχείο.",
+    "outlookGuideIntro": "Τρία απλά βήματα. Δεν χρειάζεται να ψάξετε στα μενού: όλα είναι καθοδηγούμενα.",
+    "webmailExtInstall": "Εγκατάσταση στον περιηγητή μου",
+    "webmailGuideIntro": "Λειτουργεί με Gmail, OVH, Yahoo, iCloud και τους περισσότερους webmails, σε Chrome ή Edge. Τρία απλά βήματα, μόνο μία φορά.",
+    "webmailStep2": "Στο Chrome ή Edge, ανοίξτε τη σελίδα επεκτάσεων: πληκτρολογήστε chrome://extensions στη γραμμή διευθύνσεων, και ενεργοποιήστε τη «Λειτουργία προγραμματιστή» (διακόπτης πάνω δεξιά).",
+    "webmailGuideTitle": "Εγκατάσταση Inboria στο webmail σας",
+    "webmailExtTitle": "Κουμπί «Ρωτήστε το Inboria» στο webmail σας",
+    "webmailStep3": "Κάντε κλικ στο «Φόρτωση μη συσκευασμένης επέκτασης» και επιλέξτε τον αποσυμπιεσμένο φάκελο «inboria-extension». Στη συνέχεια, ανοίξτε το webmail σας: το κουμπί «Ρωτήστε το Inboria» εμφανίζεται. Συνδεθείτε μία φορά, και είστε έτοιμοι.",
+    "outlookStep1": "Κατεβάστε το αρχείο σύνδεσης Inboria.",
+    "reconnect": "Επανασύνδεση",
+    "outlookAddinDesc": "Προσθέστε τον βοηθό Inboria απευθείας στο Outlook σας, χωρίς να φύγετε από τα email σας.",
+    "personalVideoUrlLabel": "Προσωπικός σύνδεσμος βίντεο",
+    "outlookStep3": "Ανοίξτε ένα email: το κουμπί «Ρωτήστε το Inboria» εμφανίζεται στην κορδέλα. Συνδεθείτε μία φορά με τον λογαριασμό σας Inboria, και είστε έτοιμοι.",
+    "outlookGuideTitle": "Εγκατάσταση του Inboria στο Outlook",
+    "webmailExtSection": "Inboria στο webmail σας",
+    "outlookAddinInstall": "Εγκατάσταση στο Outlook",
+    "webmailStep1": "Κατεβάστε την επέκταση Inboria, και αποσυμπιέστε το αρχείο (δεξί κλικ › «Εξαγωγή όλων»). Θα λάβετε έναν φάκελο «inboria-extension»."
   },
   "subscription": {
     "title": "Διαχειριστείτε την συνδρομή σας",
@@ -1426,7 +1619,10 @@
     "start": "Ξεκινήστε",
     "numberOfCollaborators": "Αριθμός συνεργατών",
     "total": "Σύνολο",
-    "seatsExample": "Παράδειγμα: 3 συνεργάτες = 50,97€/μήνα — τροποποιήσιμο οποιαδήποτε στιγμή από τον χώρο σας."
+    "seatsExample": "Παράδειγμα: 3 συνεργάτες = 50,97€/μήνα — τροποποιήσιμο οποιαδήποτε στιγμή από τον χώρο σας.",
+    "billingMonthly": "Μηνιαία",
+    "perMonthBilledYearly": "/μήνα (χρεώνεται ετησίως)",
+    "billingYearly": "Ετήσιο"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Σφάλμα κατά την αποστολή",
     "changeRole": "Αλλαγή ρόλου",
     "adminDesc": "Μπορεί να διαχειριστεί την ομάδα, τη συνδρομή και όλα τα emails",
-    "memberDesc": "Πρόσβαση στα emails του και στις κοινές εργασίες"
+    "memberDesc": "Πρόσβαση στα emails του και στις κοινές εργασίες",
+    "trialTeamHint": "Δοκιμή ομάδας: προσκαλέστε έως 3 συναδέλφους. Ο καθένας λαμβάνει τη δική του δοκιμή με 4.500 μονάδες, και ξεκλειδώνετε κοινά γραμματοκιβώτια, ανάθεση και εσωτερικά σχόλια.",
+    "trialTeamLabel": "Δοκιμή ομάδας"
   },
   "sharedMailboxes": {
     "title": "Κοινές θυρίδες",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "Ο/Η {{actor}} ανέθεσε αυτό το email στον/στην {{target}}",
     "systemSelfAssigned": "Ο/Η {{actor}} ανέλαβε αυτό το email",
     "systemReassigned": "Ο/Η {{actor}} επανέθεσε από {{previous}} σε {{target}}",
-    "systemUnassigned": "Ο/Η {{actor}} κατάργησε την ανάθεση του/της {{previous}}"
+    "systemUnassigned": "Ο/Η {{actor}} κατάργησε την ανάθεση του/της {{previous}}",
+    "recipientsFilter": "Αναζήτηση μέλους…",
+    "typingMany": "Πολλοί πληκτρολογούν…",
+    "recipientsClear": "Άδειασμα",
+    "placeholderSimple": "Εισάγετε το μήνυμά σας…",
+    "viewing": "Προβολή τώρα",
+    "internalNote": "Σημείωση",
+    "recipients": "Παραλήπτες",
+    "recipientsPick": "Παραλήπτες σημείωσης",
+    "typingOne": "{{name}} πληκτρολογεί…",
+    "recipientsEmpty": "Κανένα μέλος",
+    "recipientsSelected": "{{count}} επιλεγμένο(α)",
+    "emailMessage": "Email"
   },
   "attachments": {
     "title": "Συνημμένα",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Εκκρεμεί",
     "statusPendingShort": "Εκκρεμεί",
     "syncFailed": "Αποτυχία συγχρονισμού",
-    "viewDetails": "Προβολή λεπτομερειών"
+    "viewDetails": "Προβολή λεπτομερειών",
+    "internalAppointment": "Εσωτερικό ραντεβού",
+    "duplicateError": "Σφάλμα αντιγραφής",
+    "duplicatedDesc": "Αντίγραφο δημιουργήθηκε 7 ημέρες αργότερα.",
+    "noteSelectedCount": "{{count}} παραλήπτης(-ες)",
+    "forwardWhere": "Τοποθεσία",
+    "askInboriaNewSlotPrefill": "Η αντιπρόταση του {{contact}}{{slot}} δεν με εξυπηρετεί. Προτείνετε άλλες διαθέσιμες ώρες που ταιριάζουν με το ημερολόγιό μου.",
+    "duplicated": "Διπλό ραντεβού",
+    "ctxNoProject": "Κανένα έργο",
+    "noteError": "Σφάλμα προσθήκης σημείωσης",
+    "filterExternal": "Πελάτης",
+    "autoConfirmed": {
+      "desc": "{{count}} ραντεβού επιβεβαιώθηκαν αυτόματα από τα ληφθέντα emails.",
+      "title": "Επιβεβαιώσεις ανιχνεύθηκαν"
+    },
+    "ctxDup7": "Σε 7 ημέρες",
+    "forwardIntro": "Καλημέρα,",
+    "statusPendingHint": "Το Inboria θα στείλει αυτόματα το email πρότασης στον πελάτη.",
+    "markConfirmed": "Σημείωση ως επιβεβαιωμένο",
+    "newInternalAppointment": "Εσωτερικό ραντεβού",
+    "ctxEdit": "Επεξεργασία",
+    "theContact": "η επαφή",
+    "statusLabel": "Κατάσταση",
+    "notesEmpty": "Καμία σημείωση. Οι σημειώσεις παραμένουν εσωτερικές — ποτέ δεν αποστέλλονται στον πελάτη.",
+    "expandSuggestions": "Εμφάνιση προτάσεων",
+    "forwardTitle": "Τίτλος",
+    "noteAllTeam": "Όλη η ομάδα",
+    "internalMembers": "Προσκεκλημένα μέλη της ομάδας",
+    "noteRecipientsLabel": "Προς",
+    "ctxMarkAs": "Σήμανση ως",
+    "singleDay": "Επιστροφή σε απλή διάρκεια",
+    "ctxDupNextDay": "Την επόμενη μέρα",
+    "counterDeclined": "Άρνηση στάλθηκε στον επαφή",
+    "ctxDup14": "Σε 14 ημέρες",
+    "collapseSuggestions": "Απόκρυψη προτάσεων",
+    "formInternalNoteLabel": "Εσωτερική σημείωση (προαιρετικό)",
+    "forwardBody": "Σας προωθώ τις λεπτομέρειες αυτού του ραντεβού:",
+    "multiDay": "Πολλές ημέρες…",
+    "ctxForward": "Προώθηση μέσω email",
+    "forwardVideo": "Σύνδεσμος βίντεο",
+    "internalMembersEmpty": "Κανένα μέλος προσκεκλημένο. Κάντε κλικ στο «+ Προσθήκη» για να επιλέξετε τους συναδέλφους σας.",
+    "forwardWhen": "Ημερομηνία",
+    "pickDate": "Επιλέξτε ημερομηνία",
+    "ctxDuplicate": "Αντιγραφή",
+    "coorgNoCandidate": "Κανένα διαθέσιμο μέλος.",
+    "ctxDupCustomMenu": "Προσαρμοσμένο…",
+    "ctxDupCustom": "Αντιγραφή σε πόσες ημέρες;",
+    "ctxOpen": "Άνοιγμα",
+    "notePlaceholder": "Εσωτερική σημείωση (ορατή μόνο από την ομάδα, ποτέ δεν αποστέλλεται στον πελάτη)…",
+    "confirmError": "Σφάλμα κατά την επιβεβαίωση",
+    "ctxDelete": "Διαγραφή",
+    "duration": "Διάρκεια",
+    "internalNotes": "Εσωτερικές σημειώσεις",
+    "ctxDup30": "Σε 1 μήνα",
+    "formInternalNotePlaceholder": "Π.χ.: VIP πελάτης, προσοχή στον τόνο. Ποτέ δεν αποστέλλεται στον πελάτη.",
+    "askInboriaNewSlot": "Ρωτήστε το Inboria για νέο ραντεβού",
+    "filterAll": "Όλα",
+    "confirmWithInboria": "Επιβεβαίωση με το Inboria",
+    "ctxProject": "Έργο",
+    "coorgAdd": "+ Προσθήκη",
+    "ctxDup90": "Σε 3 μήνες",
+    "confirmDelete": "Διαγραφή αυτού του ραντεβού;",
+    "forwardOutro": "Με εκτίμηση,",
+    "forwardSubject": "ΠΡ: Ραντεβού",
+    "filterInternal": "Εσωτερικό"
   },
   "supportChat": {
     "title": "Βοηθός Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Ρωτήστε μου οποιαδήποτε ερώτηση σχετικά με την Inboria: δυνατότητες, ρυθμίσεις, συνδρομή και πολλά άλλα.",
     "placeholder": "Πληκτρολογήστε την ερώτησή σας...",
     "poweredBy": "Powered by Inboria",
-    "errorMessage": "Λυπάμαι, προέκυψε σφάλμα. Παρακαλώ δοκιμάστε ξανά ή επικοινωνήστε με το support@inboria.com."
+    "errorMessage": "Λυπάμαι, προέκυψε σφάλμα. Παρακαλώ δοκιμάστε ξανά ή επικοινωνήστε με το support@inboria.com.",
+    "send": "Αποστολή",
+    "clear": "Διαγραφή συνομιλίας"
   },
   "inboriaChat": {
     "openLabel": "Άνοιγμα συνομιλίας Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Σε αναμονή",
       "relance": "Σε εξέλιξη",
       "termine": "Ολοκληρώθηκε"
-    }
+    },
+    "bulkDismissedToast": "{{count}} αγνοήθηκαν",
+    "bulkMarkedRepliedToast": "{{count}} σημειώθηκαν ως απαντημένα"
   },
   "contacts": {
     "title": "Επαφή 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Ανοιχτό",
     "openedBadgeCount": "Ανοιχτό {{count}} φορές",
     "openedAtLabel": "Πρώτη άνοιξη: {{date}}",
-    "notOpenedYet": "Δεν έχει ανοιχτεί ακόμα"
+    "notOpenedYet": "Δεν έχει ανοιχτεί ακόμα",
+    "scheduledCancelError": "Αποτυχία ακύρωσης",
+    "scheduledCancelPartial": "{{failed}} ακυρώσεις από {{total}} απέτυχαν",
+    "scheduledNoRecipient": "Χωρίς παραλήπτη"
   },
   "templates": {
     "title": "Πρότυπα",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Email έγινε ορατό",
     "privateOnDesc": "Αυτό το email είναι πλέον αόρατο για τους διαχειριστές σας (θέα φακέλου ομάδας + Inboria).",
     "privateOffDesc": "Αυτό το email ξαναγίνεται ορατό για τους διαχειριστές σας (θέα φακέλου ομάδας + Inboria).",
-    "privateError": "Αδύνατη η ενημέρωση της εμπιστευτικότητας."
+    "privateError": "Αδύνατη η ενημέρωση της εμπιστευτικότητας.",
+    "details": "Λεπτομέρειες",
+    "actionsMenu": "Ενέργειες"
   },
   "privacy": {
     "title": "Ιδιωτικότητα και πρόσβαση ομάδας",
@@ -3456,7 +3739,10 @@
       "followup": "Υπενθύμιση",
       "appointment": "Ημερολόγιο",
       "team": "Δραστηριότητα ομάδας"
-    }
+    },
+    "addDescription": "Δημιουργήστε μια καρτέλα για να παρακολουθείτε κάποιον που δεν εμφανίζεται ακόμα στο γραμματοκιβώτιό σας.",
+    "openContact": "Δείτε την καρτέλα επαφής",
+    "deleteDescription": "Το ιστορικό email που σχετίζεται με αυτή τη διεύθυνση δεν διαγράφεται. Μόνο η χειροκίνητη καρτέλα εξαφανίζεται."
   },
   "folders": {
     "title": "Οι φάκελοί μου",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Ημερολόγιο",
     "system": "Σύστημα"
+  },
+  "signature": {
+    "imageTooLarge": "Η εικόνα είναι πολύ μεγάλη (μέγιστο 200 Ko)",
+    "linkUrlPrompt": "URL συνδέσμου (https://...)",
+    "size": "Μέγεθος",
+    "italic": "Πλάγια",
+    "clear": "Καθαρισμός μορφοποίησης",
+    "imageInvalid": "Μη έγκυρο αρχείο εικόνας",
+    "highlight": "Επισήμανση",
+    "bold": "Έντονα",
+    "underline": "Υπογραμμισμένα",
+    "image": "Εικόνα / λογότυπο",
+    "color": "Χρώμα κειμένου",
+    "imageHint": "Συμβουλή: εισάγετε ένα λογότυπο PNG/JPG (μέγιστο 200 KB). Η εικόνα ενσωματώνεται απευθείας στην υπογραφή.",
+    "font": "Γραμματοσειρά",
+    "link": "Σύνδεσμος",
+    "orderedList": "Αριθμημένη λίστα",
+    "moreColors": "Περισσότερα χρώματα…",
+    "bulletList": "Λίστα με κουκκίδες"
+  },
+  "palette": {
+    "compose": "Νέο email",
+    "shortcuts": "Συντομεύσεις πληκτρολογίου",
+    "navigate": "Πλοήγηση",
+    "empty": "Κανένα αποτέλεσμα.",
+    "actions": "Ενέργειες",
+    "placeholder": "Πληκτρολογήστε μια εντολή ή αναζητήστε…"
+  },
+  "outlookBanner": {
+    "back": "Επιστροφή στο Outlook",
+    "openedFrom": "Άνοιξε από το Outlook. Κάντε κλικ για επιστροφή, ή απλά αλλάξτε καρτέλα στο Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Άνοιξε από το Gmail. Κάντε κλικ για επιστροφή, ή απλά αλλάξτε καρτέλα στο Gmail.",
+    "back": "Επιστροφή στο Gmail"
+  },
+  "webmailBanner": {
+    "back": "Επιστροφή στο webmail μου",
+    "openedFromNamed": "Ανοιχτό από {{name}}. Κάντε κλικ για επιστροφή ή απλώς επιστρέψτε στην καρτέλα {{name}}.",
+    "openedFrom": "Ανοιχτό από το webmail σας. Κάντε κλικ για επιστροφή ή απλώς επιστρέψτε στην καρτέλα του webmail σας.",
+    "backNamed": "Επιστροφή στο {{name}}"
   }
 }

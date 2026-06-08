@@ -23,7 +23,16 @@
     "add": "追加する",
     "edit": "編集する",
     "reset": "リセットする",
-    "more": "その他"
+    "more": "その他",
+    "notAuthenticated": "認証されていません",
+    "collapse": "カテゴリを隠す",
+    "send": "送信",
+    "dismiss": "閉じる",
+    "create": "作成",
+    "remove": "削除",
+    "select": "選択",
+    "copyFailed": "コピーできませんでした",
+    "expand": "カテゴリを表示"
   },
   "nav": {
     "extensions": "拡張機能",
@@ -37,7 +46,18 @@
     "login": "ログインする",
     "signup": "登録する",
     "logout": "ログアウトする",
-    "openMenu": "メニューを開く"
+    "openMenu": "メニューを開く",
+    "categories": "カテゴリ",
+    "archives": "アーカイブ",
+    "dailyBrief": "日次概要",
+    "folders": "私のフォルダー",
+    "tasks": "タスク",
+    "followups": "フォローアップ",
+    "inbox": "受信トレイ",
+    "sent": "送信済み",
+    "scheduled": "予定済み",
+    "snoozed": "スヌーズ済み",
+    "contacts": "連絡先"
   },
   "sidebar": {
     "inbox": "受信トレイ",
@@ -66,7 +86,10 @@
     "followups": "リマインダー",
     "contacts": "連絡先",
     "assigned": "割り当てられた",
-    "myTasks": "私のタスク"
+    "myTasks": "私のタスク",
+    "expand": "メニューを拡大",
+    "collapse": "メニューを縮小",
+    "resize": "メニューをリサイズ"
   },
   "dashboard": {
     "expiredSubscription": "ご利用のサブスクリプションは期限切れです",
@@ -529,10 +552,17 @@
       "important": "重要"
     },
     "date": {
-      "all": "すべての日付"
+      "all": "すべての日付",
+      "yesterday": "昨日",
+      "thisMonth": "今月",
+      "today": "今日",
+      "last7": "過去7日間",
+      "last30": "過去30日間"
     },
     "read": {
-      "all": "すべて"
+      "all": "すべて",
+      "read": "既読",
+      "unread": "未読"
     },
     "sharedDraft": "共有ドラフト",
     "sharedDraftOn": "共有ドラフトがオン",
@@ -564,7 +594,113 @@
       "label": "表示ペイン",
       "overlay": "オーバーレイ",
       "split": "並列表示"
-    }
+    },
+    "unknownSender": "不明",
+    "scSearch": "検索",
+    "scNext": "次のメール",
+    "snoozedFor24h": "明日に延期されました",
+    "collisionViewingOne": "{{name}}様もこのメールを閲覧しています",
+    "markedAsUnread": "未読としてマークされました",
+    "theme": {
+      "switchLight": "ライトモード",
+      "switchDark": "ダークモード"
+    },
+    "archived": "アーカイブ済み",
+    "loadingEmail": "メールを読み込み中…",
+    "searchOpAttachment": "添付ファイル付きメール",
+    "moreActions": "その他のアクション",
+    "searchOpSubject": "件名でフィルタ",
+    "markAsRead": "既読としてマーク",
+    "collisionViewingMany": "{{count}}名の他の方がこのメールを閲覧しています",
+    "scGotoInbox": "受信トレイに移動",
+    "scGotoSnoozed": "延期されたメールに移動",
+    "scSnooze": "24時間延期",
+    "close": "閉じる",
+    "composeRestore": "下書きを再開",
+    "scDelete": "削除",
+    "density": {
+      "normal": "通常",
+      "label": "表示密度",
+      "compact": "コンパクト",
+      "comfortable": "快適"
+    },
+    "headerCollapse": "タブとフィルターを隠す",
+    "composeUntitled": "件名なしの下書き",
+    "backHint": "戻る（Esc）— J/Kでナビゲート、Rで返信、Eでアーカイブ",
+    "loadingTitle": "読み込み中…",
+    "draftYou": "あなた",
+    "copySender": "アドレスをコピー",
+    "slaOverdue": "SLA期限切れ",
+    "assigneeFilterMember": "このメンバー",
+    "draftRelease": "解放",
+    "scArchive": "アーカイブする",
+    "markAsReadUnread": "既読/未読にする",
+    "scForward": "転送",
+    "draftSomeoneSends": "{{name}}が送信します",
+    "searchOpSender": "送信者でフィルタ",
+    "readingPanePos": {
+      "off": "非表示",
+      "right": "右側",
+      "label": "閲覧ペイン",
+      "bottom": "下部"
+    },
+    "scGotoContacts": "連絡先に移動",
+    "markAsUnread": "未読としてマーク",
+    "composeDiscard": "破棄",
+    "snooze3h": "3時間後",
+    "importanceLabel": "表示",
+    "copiedSenderEmail": "アドレスをコピーしました",
+    "scPalette": "コマンドパレット",
+    "copiedSubject": "件名をコピーしました",
+    "myFoldersLabel": "私のフォルダ",
+    "copySenderEmail": "送信者のアドレスをコピー",
+    "viewOptions": "表示オプション",
+    "shortcutsTitle": "キーボードショートカット",
+    "assignedNoTeam": "このビューにはチーム（2人以上）が必要です。",
+    "collisionReplyingMany": "{{count}}人がすでにこのメールに返信しています",
+    "assignToProject": "チームフォルダに割り当てる",
+    "searchGroupOperators": "絞り込み",
+    "composeAria": "メールを作成",
+    "downloadEml": ".emlでダウンロード",
+    "headerExpand": "タブとフィルタを表示",
+    "scClose": "メールを閉じる",
+    "composeDiscardConfirm": "この下書きを破棄しますか？",
+    "readingPaneOff": "読み取りペインを無効にする",
+    "searchGroupSenders": "送信者",
+    "scGotoTasks": "タスクに移動",
+    "printPopupBlocked": "印刷ウィンドウを開けません",
+    "copied": "コピーしました",
+    "snooze": "スヌーズ",
+    "exportEml": ".emlをダウンロード",
+    "categorized": "分類済み",
+    "markedAsRead": "既読にしました",
+    "teamBadge": "チーム",
+    "priorityLabel": "優先度",
+    "backToGmailHint": "このメールをGmailで開く",
+    "snoozeTomorrow": "明日の朝",
+    "composeMinimize": "下書きを最小化",
+    "scGotoSent": "送信済みに移動",
+    "readingPaneOn": "閲覧ペインを有効にする（3列）",
+    "collisionReplyingOne": "{{name}}がこのメールに返信中です",
+    "createAndAssignTask": "作成して割り当て…",
+    "copyAddress": "アドレスをコピー",
+    "copySubject": "件名をコピー",
+    "loadEmailError": "メールを読み込めませんでした。",
+    "draftYouSend": "あなたが送信します",
+    "scGotoArchives": "アーカイブに移動",
+    "scReply": "返信",
+    "backToGmail": "Gmailに戻る",
+    "moveToFolder": "フォルダに移動",
+    "print": "印刷",
+    "scPrev": "前のメール",
+    "draftClaimSend": "私が送信します",
+    "draftLiveCoedit": "ライブ共同編集",
+    "draftTakeOverHint": "この同僚が利用できない場合、送信を引き継ぎます",
+    "scHelp": "このヘルプを表示",
+    "filtersReset": "フィルターをリセット",
+    "draftTakeOver": "引き継ぐ",
+    "searchGroupEmails": "メール",
+    "filterByCategory": "フィルター"
   },
   "sent": {
     "title": "送信済みのメール",
@@ -649,7 +785,16 @@
     "blockFailed": "ブロックできませんでした",
     "blockNoEmail": "送信者のアドレスが見つかりません",
     "blockNoConnection": "接続されたメールアカウントはありません",
-    "emptied": "フォルダが空になりました"
+    "emptied": "フォルダが空になりました",
+    "noBlocked": "ブロックされた送信者はありません",
+    "openRestored": "開く",
+    "fetchingFromProvider": "プロバイダーからコンテンツを取得中…",
+    "retryFetch": "再試行",
+    "unblocked": "送信者のブロックを解除しました",
+    "blockedList": "ブロックされた送信者",
+    "unblock": "ブロック解除",
+    "fetchFailed": "このメールの内容を取得できませんでした。",
+    "blockSenderSuccess": "送信者をブロックしました"
   },
   "trash": {
     "title": "ゴミ箱",
@@ -794,7 +939,18 @@
     "movedToDone": "タスクが完了しました",
     "movedToTodo": "タスクがやることに戻されました",
     "statusUpdated": "ステータスが更新されました",
-    "taskCreated": "タスクが作成されました"
+    "taskCreated": "タスクが作成されました",
+    "titleCopied": "タイトルがコピーされました",
+    "reassign": "再割り当て",
+    "openInInbox": "受信トレイで開く",
+    "copyTitle": "タイトルをコピー",
+    "noLinkedEmail": "このタスクはメールにリンクされていません。",
+    "unassign": "割り当てを解除",
+    "linkedEmailActions": "リンクされたメールで",
+    "reassigned": "タスクが再割り当てされました",
+    "markAsDone": "完了としてマーク",
+    "loadingTitle": "タスクを読み込み中…",
+    "markAsTodo": "やることとしてマーク"
   },
   "projects": {
     "title": "チームフォルダ",
@@ -851,7 +1007,14 @@
     "exportError": "エクスポート中にエラーが発生しました",
     "searchProjects": "プロジェクトを検索...",
     "noProjectsAlt": "メールとタスクをまとめるために最初のプロジェクトを作成してください。",
-    "viewDetail": "詳細を見る"
+    "viewDetail": "詳細を見る",
+    "taskAssigned": "タスクが割り当てられました",
+    "taskUnassigned": "タスクが未割り当てになりました",
+    "detachEmail": "プロジェクトから削除",
+    "assignTo": "に割り当てる…",
+    "openEmail": "メールを開く",
+    "emailDetached": "プロジェクトからメールを削除しました",
+    "unassigned": "未割り当て"
   },
   "classification": {
     "title": "カテゴリー",
@@ -1135,7 +1298,8 @@
       "cannotRename": "このシステムカテゴリは名前を変更できません。",
       "cannotMerge": "「未分類」カテゴリは統合できません。",
       "goToInbox": "これらのメールを整理する"
-    }
+    },
+    "adminOnlyNotice": "カテゴリの管理（作成、変更、削除、業務パック）はチーム管理者に限定されており、一貫した分類を保証します。カテゴリとそのメールを確認できます。"
   },
   "settings": {
     "title": "設定",
@@ -1268,7 +1432,9 @@
       "privacy": "プライバシーとチームアクセス",
       "privacyDesc": "あなたのプライベートメールと管理者の閲覧履歴",
       "calendars": "カレンダー",
-      "calendarsDesc": "GoogleカレンダーとOutlookカレンダーを接続する"
+      "calendarsDesc": "GoogleカレンダーとOutlookカレンダーを接続する",
+      "administration": "管理",
+      "administrationDesc": "組織の管理者専用設定"
     },
     "b2bSection": "B2Bの信頼性",
     "slaCard": "共有ボックスのSLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "既定のビデオ会議",
     "preferredVideoDesc": "新しい予定の既定のビデオ会議プロバイダーを選択してください。Meet には接続済みの Google カレンダーが必要です。Teams には Outlook が必要です。Jitsi はアカウントなしで利用できます。",
     "meetingRemindersDesc": "Inboriaは、返答がないまま48時間経過した提案された予定に対して、丁寧なリマインダーを送信します。",
-    "meetingRemindersTitle": "自動予定リマインダー"
+    "meetingRemindersTitle": "自動予定リマインダー",
+    "outlookAddinSection": "OutlookのInboria",
+    "personalVideoUrlDesc": "TeamsまたはMeetの常設ルームのリンクを貼り付けてください（https://...）。Inboriaはすべての予定提案でこれを使用します。",
+    "webmailExtDesc": "Gmail、OVH、Yahoo、iCloud、ほとんどのWebメール。Inboriaアシスタントをメールから離れずに直接追加します。",
+    "outlookAddinTitle": "Outlookの「Inboriaに依頼」ボタン",
+    "webmailDownload": "拡張機能をダウンロード",
+    "webmailCopyUrl": "chrome://extensionsをコピー",
+    "personalVideoUrlInvalid": "無効なリンク（https://が必要）",
+    "webmailUrlCopied": "アドレスがコピーされました ✓",
+    "outlookOpenAddinsPage": "Outlookのアドインを開く",
+    "outlookDownloadManifest": "ファイルをダウンロード",
+    "outlookStep2": "Outlookで「アドインを取得」›「マイアドイン」›「カスタムアドインを追加」›「ファイルから」を開き、ダウンロードしたファイルを選択します。",
+    "outlookGuideIntro": "簡単な3ステップ。メニューを探す必要はありません：すべてガイドされています。",
+    "webmailExtInstall": "ブラウザにインストール",
+    "webmailGuideIntro": "Gmail、OVH、Yahoo、iCloud、およびほとんどのウェブメールで動作します。ChromeまたはEdgeで、簡単な3ステップ、1回のみ。",
+    "webmailStep2": "ChromeまたはEdgeで、拡張機能のページを開きます：アドレスバーにchrome://extensionsと入力し、「デベロッパーモード」をオンにします（右上のスイッチ）。",
+    "webmailGuideTitle": "Inboriaをウェブメールにインストール",
+    "webmailExtTitle": "ウェブメールの「Inboriaに依頼」ボタン",
+    "webmailStep3": "「パッケージ化されていない拡張機能を読み込む」をクリックし、解凍した「inboria-extension」フォルダを選択します。その後、ウェブメールを開くと「Inboriaに依頼」ボタンが表示されます。一度ログインすれば準備完了です。",
+    "outlookStep1": "Inboria接続ファイルをダウンロードします。",
+    "reconnect": "再接続",
+    "outlookAddinDesc": "OutlookにInboriaアシスタントを直接追加し、メールから離れることなく利用できます。",
+    "personalVideoUrlLabel": "個人ビデオリンク",
+    "outlookStep3": "メールを開くと、リボンに「Inboriaに依頼」ボタンが表示されます。Inboriaアカウントで一度ログインすれば準備完了です。",
+    "outlookGuideTitle": "OutlookにInboriaをインストール",
+    "webmailExtSection": "ウェブメールでのInboria",
+    "outlookAddinInstall": "Outlookにインストール",
+    "webmailStep1": "Inboria拡張機能をダウンロードし、ファイルを解凍します（右クリック › 「すべて展開」）。「inboria-extension」フォルダが得られます。"
   },
   "subscription": {
     "title": "サブスクリプションを管理する",
@@ -1426,7 +1619,10 @@
     "start": "開始する",
     "numberOfCollaborators": "従業員数",
     "total": "合計",
-    "seatsExample": "例：3人の従業員 = 50.97€/月 — あなたのスペースからいつでも変更可能です。"
+    "seatsExample": "例：3人の従業員 = 50.97€/月 — あなたのスペースからいつでも変更可能です。",
+    "billingMonthly": "月次",
+    "perMonthBilledYearly": "/月（年間請求）",
+    "billingYearly": "年間"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "送信中にエラーが発生しました",
     "changeRole": "役割を変更する",
     "adminDesc": "チーム、サブスクリプション、すべてのメールを管理できます",
-    "memberDesc": "メールと共有タスクへのアクセス"
+    "memberDesc": "メールと共有タスクへのアクセス",
+    "trialTeamHint": "チームトライアル：最大3人の同僚を招待できます。各自が4,500クレジットのトライアルを受け取り、共有ボックス、割り当て、内部コメントを解除します。",
+    "trialTeamLabel": "チーム試用"
   },
   "sharedMailboxes": {
     "title": "共有ボックス",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}}さんがこのメールを{{target}}さんに割り当てました",
     "systemSelfAssigned": "{{actor}}さんがこのメールを引き受けました",
     "systemReassigned": "{{actor}}さんが{{previous}}さんから{{target}}さんへ再割り当てしました",
-    "systemUnassigned": "{{actor}}さんが{{previous}}さんの割り当てを解除しました"
+    "systemUnassigned": "{{actor}}さんが{{previous}}さんの割り当てを解除しました",
+    "recipientsFilter": "メンバーを検索…",
+    "typingMany": "複数の方が入力中…",
+    "recipientsClear": "クリア",
+    "placeholderSimple": "メッセージを入力してください…",
+    "viewing": "現在表示中",
+    "internalNote": "メモ",
+    "recipients": "受取人",
+    "recipientsPick": "メモの受取人",
+    "typingOne": "{{name}}が入力中…",
+    "recipientsEmpty": "メンバーなし",
+    "recipientsSelected": "{{count}}件選択済み",
+    "emailMessage": "メール"
   },
   "attachments": {
     "title": "添付ファイル",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "保留中",
     "statusPendingShort": "保留中",
     "syncFailed": "同期に失敗しました",
-    "viewDetails": "詳細を見る"
+    "viewDetails": "詳細を見る",
+    "internalAppointment": "内部の予定",
+    "duplicateError": "重複エラー",
+    "duplicatedDesc": "7日後にコピーが作成されました。",
+    "noteSelectedCount": "{{count}}名の受取人",
+    "forwardWhere": "場所",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}}様の提案は合いません。私のスケジュールに合う他の時間帯を提案してください。",
+    "duplicated": "予定が重複しました",
+    "ctxNoProject": "プロジェクトなし",
+    "noteError": "メモ追加エラー",
+    "filterExternal": "クライアント",
+    "autoConfirmed": {
+      "desc": "{{count}}件の予定が受信メールから自動的に確認されました。",
+      "title": "確認が検出されました"
+    },
+    "ctxDup7": "7日後",
+    "forwardIntro": "こんにちは、",
+    "statusPendingHint": "Inboriaは自動的に提案メールをクライアントに送信します。",
+    "markConfirmed": "確認済みとしてマーク",
+    "newInternalAppointment": "内部の予定",
+    "ctxEdit": "編集",
+    "theContact": "連絡先",
+    "statusLabel": "ステータス",
+    "notesEmpty": "メモはありません。メモは内部用で、クライアントには送信されません。",
+    "expandSuggestions": "提案を表示",
+    "forwardTitle": "タイトル",
+    "noteAllTeam": "全チーム",
+    "internalMembers": "招待されたチームメンバー",
+    "noteRecipientsLabel": "宛先",
+    "ctxMarkAs": "としてマーク",
+    "singleDay": "単一の期間に戻る",
+    "ctxDupNextDay": "翌日",
+    "counterDeclined": "連絡先に拒否を送信しました",
+    "ctxDup14": "14日後",
+    "collapseSuggestions": "提案を非表示",
+    "formInternalNoteLabel": "内部メモ（オプション）",
+    "forwardBody": "この予定の詳細を転送します：",
+    "multiDay": "複数日…",
+    "ctxForward": "メールで転送",
+    "forwardVideo": "ビデオリンク",
+    "internalMembersEmpty": "招待されたメンバーはいません。「+追加」をクリックして同僚を選択してください。",
+    "forwardWhen": "日付",
+    "pickDate": "日付を選択",
+    "ctxDuplicate": "複製",
+    "coorgNoCandidate": "利用可能なメンバーはいません。",
+    "ctxDupCustomMenu": "カスタム…",
+    "ctxDupCustom": "何日後に複製しますか？",
+    "ctxOpen": "開く",
+    "notePlaceholder": "内部メモ（チームのみが表示可能、クライアントには送信されません）…",
+    "confirmError": "確認中にエラーが発生しました",
+    "ctxDelete": "削除",
+    "duration": "期間",
+    "internalNotes": "内部メモ",
+    "ctxDup30": "1か月後",
+    "formInternalNotePlaceholder": "例: VIP顧客、トーンに注意。顧客には送信されません。",
+    "askInboriaNewSlot": "Inboriaに新しい予定を依頼",
+    "filterAll": "すべて",
+    "confirmWithInboria": "Inboriaで確認",
+    "ctxProject": "プロジェクト",
+    "coorgAdd": "+ 追加",
+    "ctxDup90": "3か月後",
+    "confirmDelete": "この予定を削除しますか？",
+    "forwardOutro": "よろしくお願いいたします。",
+    "forwardSubject": "TR: 予定",
+    "filterInternal": "内部"
   },
   "supportChat": {
     "title": "Inboriaアシスタント",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Inboriaに関する質問を何でもお聞きください: 機能、設定、サブスクリプションなど。",
     "placeholder": "質問を入力してください...",
     "poweredBy": "Inboriaによって提供されています",
-    "errorMessage": "申し訳ございません、エラーが発生しました。再試行するか、support@inboria.comにお問い合わせください。"
+    "errorMessage": "申し訳ございません、エラーが発生しました。再試行するか、support@inboria.comにお問い合わせください。",
+    "send": "送信",
+    "clear": "会話をクリア"
   },
   "inboriaChat": {
     "openLabel": "Inboriaチャットを開く",
@@ -2911,7 +3187,9 @@
       "en_attente": "保留中",
       "relance": "進行中",
       "termine": "完了"
-    }
+    },
+    "bulkDismissedToast": "{{count}}件が無視されました",
+    "bulkMarkedRepliedToast": "{{count}}件を返信済みとしてマークしました"
   },
   "contacts": {
     "title": "360°の連絡先",
@@ -3016,7 +3294,10 @@
     "openedBadge": "開封済み",
     "openedBadgeCount": "開封済み {{count}} 回",
     "openedAtLabel": "最初の開封：{{date}}",
-    "notOpenedYet": "まだ開封されていません"
+    "notOpenedYet": "まだ開封されていません",
+    "scheduledCancelError": "キャンセルに失敗しました",
+    "scheduledCancelPartial": "{{total}}のうち{{failed}}件のキャンセルが失敗しました",
+    "scheduledNoRecipient": "受信者なし"
   },
   "templates": {
     "title": "テンプレート",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "表示されたメール",
     "privateOnDesc": "このメールは現在、管理者には見えません（チームフォルダビュー + Inboria）。",
     "privateOffDesc": "このメールは再び管理者に見えるようになります（チームフォルダビュー + Inboria）。",
-    "privateError": "プライバシーを更新できません。"
+    "privateError": "プライバシーを更新できません。",
+    "details": "詳細",
+    "actionsMenu": "アクション"
   },
   "privacy": {
     "title": "プライバシーとチームアクセス",
@@ -3456,7 +3739,10 @@
       "followup": "フォローアップ",
       "appointment": "アジェンダ",
       "team": "チーム活動"
-    }
+    },
+    "addDescription": "まだボックスに表示されていない人を追跡するためのカードを作成します。",
+    "openContact": "連絡先カードを表示",
+    "deleteDescription": "このアドレスに関連するメール履歴は削除されません。手動のカードのみが消えます。"
   },
   "folders": {
     "title": "マイフォルダ",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "アジェンダ",
     "system": "システム"
+  },
+  "signature": {
+    "imageTooLarge": "画像が大きすぎます（最大200KB）",
+    "linkUrlPrompt": "リンクのURL（https://...）",
+    "size": "サイズ",
+    "italic": "イタリック",
+    "clear": "書式をクリア",
+    "imageInvalid": "無効な画像ファイル",
+    "highlight": "ハイライト",
+    "bold": "太字",
+    "underline": "下線",
+    "image": "画像/ロゴ",
+    "color": "テキストの色",
+    "imageHint": "ヒント：PNG/JPGロゴを挿入（最大200KB）。画像は署名に直接埋め込まれます。",
+    "font": "フォント",
+    "link": "リンク",
+    "orderedList": "番号付きリスト",
+    "moreColors": "さらに多くの色…",
+    "bulletList": "箇条書きリスト"
+  },
+  "palette": {
+    "compose": "新しいメール",
+    "shortcuts": "キーボードショートカット",
+    "navigate": "ナビゲート",
+    "empty": "結果がありません。",
+    "actions": "アクション",
+    "placeholder": "コマンドを入力するか検索…"
+  },
+  "outlookBanner": {
+    "back": "Outlookに戻る",
+    "openedFrom": "Outlookから開きました。クリックして戻るか、Outlookタブに切り替えてください。"
+  },
+  "gmailBanner": {
+    "openedFrom": "Gmailから開かれました。戻るにはクリックするか、Gmailタブに切り替えてください。",
+    "back": "Gmailに戻る"
+  },
+  "webmailBanner": {
+    "back": "私のウェブメールに戻る",
+    "openedFromNamed": "{{name}}から開きました。戻るにはクリックするか、{{name}}のタブに切り替えてください。",
+    "openedFrom": "ウェブメールから開きました。戻るにはクリックするか、ウェブメールのタブに切り替えてください。",
+    "backNamed": "{{name}}に戻る"
   }
 }

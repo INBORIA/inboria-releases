@@ -37,6 +37,22 @@ keys (agenda.multi.*, calendars.*, classification.cleanupDuplicates.*, notificat
 templates.picker*, apiKeys.*, inbox.shortcuts/help, wave1.snoozed*) — 36 missing even in en.
 **How to apply:** any time after adding fr UI copy, run the flatten+set-diff vs fr and fill gaps.
 
+## Two silent failure modes of LLM batch translation — must validate both
+1. **Placeholder drift**: model drops/renames `{{count}}` etc. Check: per key, `set(re.findall("{{..}}", fr))==set(... lang)`.
+2. **Value-shuffle inside a chunk**: model returns the right dotted keys but VALUES shifted across them
+   (e.g. `inbox.bulkUnread` got "Archive", `handledByOn` got "You"). Placeholder check only catches it
+   when the swapped keys differ in placeholder-set, so it MISSES same-signature swaps (all-empty, all-{{count}}).
+   Detect with a **cross-key collision scan on the keys you just added**: flatten the locale, group added keys
+   by translated value; flag any value shared by ≥2 keys whose FR sources differ. Many hits are legit synonyms
+   ("Revenir à Gmail"/"Retour à Gmail", "Supprimer"/"Retirer", or langs where one word = two FR words — hu/sl
+   "cím"/"naslov" = title AND address) so don't auto-revert; **re-translate each flagged key one-per-call**
+   (single-key calls can't shuffle) with a placeholder-verify + FR-fallback. That fixes real swaps and leaves
+   true synonyms correct.
+**Why:** a `while missing` loop that writes `tr.get(k)` will spin forever (0 added each pass) if the model
+returns non-matching/nested keys — flatten the model's reply AND break/skip a chunk that adds 0.
+**How to apply:** after any bulk gpt translation of newly-added keys, run placeholder check + collision scan,
+not just a key-parity (missing) check. Parity only proves the key EXISTS, never that the value is right.
+
 ## Ops note: parallel threads fill all 42 langs in ONE bash run
 A Python script using `urllib` + `os.environ["OPENAI_API_KEY"]` + `gpt-4o`
 (`response_format=json_object`) with `ThreadPoolExecutor(max_workers=10)`, one call per

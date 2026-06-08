@@ -23,7 +23,16 @@
     "add": "Adăugați",
     "edit": "Modificați",
     "reset": "Resetați",
-    "more": "Mai multe"
+    "more": "Mai multe",
+    "notAuthenticated": "Neautentificat",
+    "collapse": "Ascundeți categoriile",
+    "send": "Trimiteți",
+    "dismiss": "Închideți",
+    "create": "Creați",
+    "remove": "Eliminați",
+    "select": "Selectați",
+    "copyFailed": "Copiere imposibilă",
+    "expand": "Afișați categoriile"
   },
   "nav": {
     "extensions": "Extensii",
@@ -37,7 +46,18 @@
     "login": "Conectați-vă",
     "signup": "Înscrieți-vă",
     "logout": "Deconectați-vă",
-    "openMenu": "Deschideți meniul"
+    "openMenu": "Deschideți meniul",
+    "categories": "Categorii",
+    "archives": "Arhive",
+    "dailyBrief": "Raport zilnic",
+    "folders": "Dosarele mele",
+    "tasks": "Sarcini",
+    "followups": "Urmăriri",
+    "inbox": "Recepție",
+    "contacts": "Contacte",
+    "scheduled": "Programate",
+    "snoozed": "Amânate",
+    "sent": "Trimise"
   },
   "sidebar": {
     "inbox": "Posta in arrivo",
@@ -66,7 +86,10 @@
     "followups": "Reamintiri",
     "contacts": "Contacte",
     "assigned": "Atribuite",
-    "myTasks": "Sarcinile mele"
+    "myTasks": "Sarcinile mele",
+    "expand": "Extindeți meniul",
+    "collapse": "Restrângeți meniul",
+    "resize": "Redimensionați meniul"
   },
   "dashboard": {
     "expiredSubscription": "Abonamentul dumneavoastră a expirat",
@@ -529,10 +552,17 @@
       "important": "Importante"
     },
     "date": {
-      "all": "Toate datele"
+      "all": "Toate datele",
+      "yesterday": "Ieri",
+      "thisMonth": "Luna aceasta",
+      "today": "Astăzi",
+      "last30": "Ultimele 30 de zile",
+      "last7": "Ultimele 7 zile"
     },
     "read": {
-      "all": "Toate"
+      "all": "Toate",
+      "read": "Citite",
+      "unread": "Necitite"
     },
     "sharedDraft": "Schimb de schițe",
     "sharedDraftOn": "Schimb de schițe activat",
@@ -564,7 +594,113 @@
       "label": "Panouri de afișare",
       "overlay": "Suprapus",
       "split": "Alăturat"
-    }
+    },
+    "unknownSender": "Necunoscut",
+    "scSearch": "Căutare",
+    "scNext": "Email următor",
+    "snoozedFor24h": "Amânat pentru mâine",
+    "collisionViewingOne": "{{name}} vizualizează și acest email",
+    "markedAsUnread": "Marcat ca necitit",
+    "theme": {
+      "switchLight": "Mod luminos",
+      "switchDark": "Mod întunecat"
+    },
+    "archived": "Arhivat",
+    "loadingEmail": "Se încarcă emailul...",
+    "searchOpAttachment": "emailuri cu atașament",
+    "moreActions": "Mai multe acțiuni",
+    "searchOpSubject": "filtrați după subiect",
+    "markAsRead": "Marcați ca citit",
+    "collisionViewingMany": "{{count}} alte persoane vizualizează acest email",
+    "scGotoInbox": "Mergi la Recepție",
+    "scGotoSnoozed": "Mergi la Amânate",
+    "scSnooze": "Amânați (24 h)",
+    "close": "Închideți",
+    "composeRestore": "Reluați schița",
+    "scDelete": "Ștergeți",
+    "density": {
+      "normal": "Normal",
+      "label": "Densitate afișare",
+      "compact": "Compact",
+      "comfortable": "Confortabil"
+    },
+    "headerCollapse": "Ascundeți filele și filtrele",
+    "composeUntitled": "Schiță fără subiect",
+    "backHint": "Înapoi (Esc) — J/K pentru navigare, R pentru răspuns, E pentru arhivare",
+    "loadingTitle": "Se încarcă…",
+    "draftYou": "Dvs.",
+    "copySender": "Copiați adresa",
+    "slaOverdue": "SLA întârziat",
+    "assigneeFilterMember": "acest membru",
+    "draftRelease": "Eliberați",
+    "scArchive": "Arhivați",
+    "markAsReadUnread": "Marcați ca citit / necitit",
+    "scForward": "Redirecționați",
+    "draftSomeoneSends": "{{name}} îl va trimite",
+    "searchOpSender": "filtrați după expeditor",
+    "readingPanePos": {
+      "off": "Ascuns",
+      "right": "La dreapta",
+      "label": "Panou de citire",
+      "bottom": "Jos"
+    },
+    "scGotoContacts": "Mergeți la Contacte",
+    "markAsUnread": "Marcați ca necitit",
+    "composeDiscard": "Renunțați",
+    "snooze3h": "În 3h",
+    "importanceLabel": "Afișare",
+    "copiedSenderEmail": "Adresă copiată",
+    "scPalette": "Paletă de comenzi",
+    "copiedSubject": "Subiect copiat",
+    "myFoldersLabel": "Dosarele mele",
+    "copySenderEmail": "Copiați adresa expeditorului",
+    "viewOptions": "Opțiuni de afișare",
+    "shortcutsTitle": "Scurtături tastatură",
+    "assignedNoTeam": "Această vizualizare necesită o echipă (2 membri sau mai mulți).",
+    "collisionReplyingMany": "{{count}} persoane răspund deja la acest email",
+    "assignToProject": "Atribuiți unui dosar echipă",
+    "searchGroupOperators": "Rafinați",
+    "composeAria": "Compuneți un email",
+    "downloadEml": "Descărcați în .eml",
+    "headerExpand": "Afișați filele și filtrele",
+    "scClose": "Închideți email-ul",
+    "composeDiscardConfirm": "Renunțați la acest draft?",
+    "readingPaneOff": "Dezactivați panoul de citire",
+    "searchGroupSenders": "Expeditori",
+    "scGotoTasks": "Mergeți la Sarcini",
+    "printPopupBlocked": "Nu se poate deschide fereastra de imprimare",
+    "copied": "Copiat",
+    "snooze": "Amânați",
+    "teamBadge": "Echipă",
+    "backToGmail": "Înapoi la Gmail",
+    "print": "Imprimați",
+    "snoozeTomorrow": "Mâine dimineață",
+    "scHelp": "Afișați acest ajutor",
+    "moveToFolder": "Mutare în",
+    "draftTakeOver": "Preluați",
+    "composeMinimize": "Minimizați schița",
+    "searchGroupEmails": "Emailuri",
+    "backToGmailHint": "Deschideți acest email exact în Gmail",
+    "draftLiveCoedit": "Co-editare în direct",
+    "categorized": "Categorisit",
+    "scGotoSent": "Mergeți la Trimise",
+    "collisionReplyingOne": "{{name}} răspunde deja la acest email",
+    "exportEml": "Descărcați .eml",
+    "filterByCategory": "Filtrați",
+    "scReply": "Răspundeți",
+    "draftTakeOverHint": "Preluați trimiterea dacă acest coleg nu mai este disponibil",
+    "markedAsRead": "Marcat ca citit",
+    "draftYouSend": "Dumneavoastră trimiteți",
+    "createAndAssignTask": "Creați și atribuiți…",
+    "scPrev": "Email anterior",
+    "copySubject": "Copiați subiectul",
+    "readingPaneOn": "Activați panoul de citire (3 coloane)",
+    "filtersReset": "Resetați filtrele",
+    "loadEmailError": "Imposibil de încărcat emailul.",
+    "priorityLabel": "Prioritate",
+    "copyAddress": "Copiați adresa",
+    "scGotoArchives": "Mergeți la Arhive",
+    "draftClaimSend": "Eu trimit"
   },
   "sent": {
     "title": "Email-uri trimise",
@@ -649,7 +785,16 @@
     "blockFailed": "Imposibil de blocat",
     "blockNoEmail": "Adresă de expeditor negăsită",
     "blockNoConnection": "Niciun cont de email conectat",
-    "emptied": "Dosar golit"
+    "emptied": "Dosar golit",
+    "noBlocked": "Niciun expeditor blocat",
+    "openRestored": "Deschideți",
+    "fetchingFromProvider": "Se recuperează conținutul de la furnizorul dvs.…",
+    "retryFetch": "Reîncercați",
+    "unblocked": "Expeditor deblocat",
+    "blockedList": "Expeditori blocați",
+    "fetchFailed": "Imposibil de preluat conținutul acestui email.",
+    "unblock": "Deblocați",
+    "blockSenderSuccess": "Expeditor blocat"
   },
   "trash": {
     "title": "Coș de gunoi",
@@ -794,7 +939,18 @@
     "movedToDone": "Activitate finalizată",
     "movedToTodo": "Activitate reîntoarsă la de făcut",
     "statusUpdated": "Stare actualizată",
-    "taskCreated": "Activitate creată"
+    "taskCreated": "Activitate creată",
+    "titleCopied": "Titlu copiat",
+    "reassign": "Reasignați",
+    "openInInbox": "Deschideți în Recepție",
+    "copyTitle": "Copiați titlul",
+    "noLinkedEmail": "Această sarcină nu este legată de niciun email.",
+    "unassign": "Dezatribuiți",
+    "linkedEmailActions": "Pe email-ul legat",
+    "reassigned": "Sarcină realocată",
+    "markAsTodo": "Marcați ca de făcut",
+    "loadingTitle": "Încărcare sarcini…",
+    "markAsDone": "Marcați ca finalizată"
   },
   "projects": {
     "title": "Foldere echipă",
@@ -851,7 +1007,14 @@
     "exportError": "Eroare la export",
     "searchProjects": "Căutați un proiect...",
     "noProjectsAlt": "Creează primul tău proiect pentru a grupa emailuri și sarcini.",
-    "viewDetail": "Vezi detaliile"
+    "viewDetail": "Vezi detaliile",
+    "taskAssigned": "Sarcină atribuită",
+    "taskUnassigned": "Sarcină neatribuită",
+    "detachEmail": "Eliminați din proiect",
+    "assignTo": "Atribuiți la…",
+    "openEmail": "Deschideți email-ul",
+    "emailDetached": "Email eliminat din proiect",
+    "unassigned": "Neasignată"
   },
   "classification": {
     "title": "Categorii",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Această categorie de sistem nu poate fi redenumită.",
       "cannotMerge": "Categoria « Nesortat » nu poate fi fuzionată.",
       "goToInbox": "Sortează aceste emailuri"
-    }
+    },
+    "adminOnlyNotice": "Gestionarea categoriilor (creare, modificare, ștergere, pachete de afaceri) este rezervată Adminului Echipei pentru a asigura o clasificare coerentă. Puteți consulta categoriile și emailurile acestora."
   },
   "settings": {
     "title": "Impostazioni",
@@ -1268,7 +1432,9 @@
       "privacy": "Confidențialitate și acces echipă",
       "privacyDesc": "Emailurile dumneavoastră private și jurnalul consultărilor admin",
       "calendars": "Calendare",
-      "calendarsDesc": "Conectați Google Calendar și Outlook Calendar"
+      "calendarsDesc": "Conectați Google Calendar și Outlook Calendar",
+      "administrationDesc": "Setări rezervate administratorilor organizației",
+      "administration": "Administrare"
     },
     "b2bSection": "Credibilitate B2B",
     "slaCard": "SLA căsuțe partajate",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Videoconferință implicită",
     "preferredVideoDesc": "Alegeți furnizorul implicit de videoconferință pentru noile întâlniri. Meet necesită un calendar Google conectat; Teams necesită Outlook. Jitsi funcționează fără cont.",
     "meetingRemindersDesc": "Inboria trimite un memento politicos contactului la 48 de ore după o propunere de întâlnire rămasă fără răspuns.",
-    "meetingRemindersTitle": "Reamintiri automate de RDV"
+    "meetingRemindersTitle": "Reamintiri automate de RDV",
+    "outlookAddinSection": "Inboria în Outlook",
+    "personalVideoUrlDesc": "Lipiți linkul sălii dvs. permanente Teams sau Meet (https://...). Inboria îl va folosi în toate propunerile de întâlniri.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud și majoritatea webmail-urilor. Adăugați asistentul Inboria direct în mesageria dvs., fără a părăsi emailurile.",
+    "outlookAddinTitle": "Butonul „Întreabă Inboria” în Outlook",
+    "webmailDownload": "Descărcați extensia",
+    "webmailCopyUrl": "Copiați chrome://extensions",
+    "personalVideoUrlInvalid": "Link invalid (https:// necesar)",
+    "webmailUrlCopied": "Adresă copiată ✓",
+    "outlookOpenAddinsPage": "Deschideți suplimentele Outlook",
+    "outlookDownloadManifest": "Descărcați fișierul",
+    "outlookStep2": "În Outlook, deschideți « Obțineți suplimente » › « Suplimentele mele » › « Adăugați un supliment personalizat » › « Dintr-un fișier », apoi selectați fișierul descărcat.",
+    "outlookGuideIntro": "Trei pași simpli. Nu este nevoie să căutați în meniuri: totul este ghidat.",
+    "webmailExtInstall": "Instalați în browserul meu",
+    "webmailGuideIntro": "Funcționează cu Gmail, OVH, Yahoo, iCloud și majoritatea webmail-urilor, în Chrome sau Edge. Trei pași simpli, o singură dată.",
+    "webmailStep2": "În Chrome sau Edge, deschideți pagina extensiilor: tastați chrome://extensions în bara de adrese, apoi activați « Modul dezvoltator » (comutatorul din dreapta sus).",
+    "webmailGuideTitle": "Instalați Inboria în webmail-ul dumneavoastră",
+    "outlookStep3": "Deschideți un email: butonul « Cereți la Inboria » apare în panglică. Conectați-vă o dată cu contul dumneavoastră Inboria, este gata.",
+    "personalVideoUrlLabel": "Link video personal",
+    "webmailExtSection": "Inboria în webmail-ul dumneavoastră",
+    "webmailExtTitle": "Butonul « Cereți la Inboria » în webmail-ul dumneavoastră",
+    "webmailStep3": "Faceți clic pe « Încarcă extensia neambalată » și selectați dosarul « inboria-extension » dezarhivat. Apoi deschideți webmail-ul dumneavoastră: butonul « Cereți la Inboria » apare. Conectați-vă o dată, este gata.",
+    "outlookAddinDesc": "Adăugați asistentul Inboria direct în Outlook-ul dumneavoastră, fără a părăsi emailurile.",
+    "outlookAddinInstall": "Instalați în Outlook",
+    "outlookStep1": "Descărcați fișierul de conectare Inboria.",
+    "reconnect": "Reconectați",
+    "webmailStep1": "Descărcați extensia Inboria, apoi dezarhivați fișierul (clic dreapta › « Extrageți tot »). Veți obține un dosar « inboria-extension ».",
+    "outlookGuideTitle": "Instalați Inboria în Outlook"
   },
   "subscription": {
     "title": "Gestionați abonamentul dumneavoastră",
@@ -1426,7 +1619,10 @@
     "start": "Începeți",
     "numberOfCollaborators": "Număr de colaboratori",
     "total": "Total",
-    "seatsExample": "Exemplu: 3 colaboratori = 50,97€/lună — modificabil în orice moment din spațiul dumneavoastră."
+    "seatsExample": "Exemplu: 3 colaboratori = 50,97€/lună — modificabil în orice moment din spațiul dumneavoastră.",
+    "billingMonthly": "Lunar",
+    "perMonthBilledYearly": "/lună (facturat anual)",
+    "billingYearly": "Anual"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Eroare la trimitere",
     "changeRole": "Schimbați rolul",
     "adminDesc": "Poate gestiona echipa, abonamentul și toate emailurile",
-    "memberDesc": "Acces la emailurile sale și la sarcinile partajate"
+    "memberDesc": "Acces la emailurile sale și la sarcinile partajate",
+    "trialTeamHint": "Încercare echipă: invitați până la 3 colegi. Fiecare primește propria încercare de 4.500 de credite și deblocați cutiile partajate, atribuirea și comentariile interne.",
+    "trialTeamLabel": "Echipă de probă"
   },
   "sharedMailboxes": {
     "title": "Cutii partajate",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} a atribuit acest e-mail lui {{target}}",
     "systemSelfAssigned": "{{actor}} a preluat acest e-mail",
     "systemReassigned": "{{actor}} a reatribuit de la {{previous}} la {{target}}",
-    "systemUnassigned": "{{actor}} a retras atribuirea lui {{previous}}"
+    "systemUnassigned": "{{actor}} a retras atribuirea lui {{previous}}",
+    "recipientsFilter": "Căutați un membru…",
+    "typingMany": "Mai multe persoane tastează…",
+    "recipientsClear": "Goliți",
+    "placeholderSimple": "Introduceți mesajul dumneavoastră…",
+    "viewing": "Vizualizează acum",
+    "internalNote": "Notă",
+    "recipients": "Destinatari",
+    "recipientsPick": "Destinatarii notei",
+    "typingOne": "{{name}} tastează…",
+    "recipientsEmpty": "Niciun membru",
+    "emailMessage": "Email",
+    "recipientsSelected": "{{count}} selectat(e)"
   },
   "attachments": {
     "title": "Atașamente",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "În aștept.",
     "statusPendingShort": "În așteptare",
     "syncFailed": "Sincronizare eșuată",
-    "viewDetails": "Vizualizați detaliile"
+    "viewDetails": "Vizualizați detaliile",
+    "internalAppointment": "Întâlnire internă",
+    "duplicateError": "Eroare duplicare",
+    "duplicatedDesc": "Copie creată 7 zile mai târziu.",
+    "noteSelectedCount": "{{count}} destinatar(i)",
+    "forwardWhere": "Locație",
+    "askInboriaNewSlotPrefill": "Contra-propunerea de {{contact}}{{slot}} nu îmi convine. Propuneți-i alte intervale compatibile cu agenda mea.",
+    "duplicated": "Întâlnire duplicată",
+    "ctxNoProject": "Niciun proiect",
+    "noteError": "Eroare adăugare notă",
+    "filterExternal": "Client",
+    "autoConfirmed": {
+      "desc": "{{count}} întâlniri au fost confirmate automat din emailurile primite.",
+      "title": "Confirmări detectate"
+    },
+    "ctxDup7": "În 7 zile",
+    "forwardIntro": "Bună ziua,",
+    "statusPendingHint": "Inboria va trimite automat emailul de propunere clientului.",
+    "markConfirmed": "Marcați confirmat",
+    "newInternalAppointment": "Întâlnire internă",
+    "ctxEdit": "Editați",
+    "theContact": "contactul",
+    "statusLabel": "Stare",
+    "notesEmpty": "Nicio notă. Notițele rămân interne — niciodată trimise clientului.",
+    "expandSuggestions": "Afișați sugestiile",
+    "forwardTitle": "Titlu",
+    "noteAllTeam": "Întreaga echipă",
+    "internalMembers": "Membrii echipei invitați",
+    "noteRecipientsLabel": "Pentru",
+    "ctxMarkAs": "Marcați ca",
+    "singleDay": "Reveniți la durată simplă",
+    "ctxDupNextDay": "Ziua următoare",
+    "counterDeclined": "Refuz trimis contactului",
+    "ctxDup14": "În 14 zile",
+    "collapseSuggestions": "Ascundeți sugestiile",
+    "formInternalNoteLabel": "Notă internă (opțional)",
+    "forwardBody": "Vă trimit detaliile acestei întâlniri:",
+    "multiDay": "Mai multe zile…",
+    "ctxForward": "Redirecționați prin email",
+    "forwardVideo": "Link video",
+    "internalMembersEmpty": "Niciun membru invitat. Faceți clic pe « + Adăugați » pentru a alege colegii dumneavoastră.",
+    "forwardWhen": "Data",
+    "pickDate": "Alegeți o dată",
+    "ctxDuplicate": "Duplicați",
+    "coorgNoCandidate": "Niciun membru disponibil.",
+    "ctxDupCustomMenu": "Personalizat…",
+    "ctxDupCustom": "Duplicați în câte zile?",
+    "ctxOpen": "Deschideți",
+    "notePlaceholder": "Notă internă (vizibilă doar de echipă, niciodată trimisă clientului)…",
+    "confirmError": "Eroare la confirmare",
+    "ctxDelete": "Ștergeți",
+    "duration": "Durată",
+    "internalNotes": "Note interne",
+    "confirmDelete": "Ștergeți această întâlnire?",
+    "ctxDup30": "În 1 lună",
+    "forwardSubject": "TR: Întâlnire",
+    "ctxProject": "Proiect",
+    "filterInternal": "Intern",
+    "ctxDup90": "În 3 luni",
+    "formInternalNotePlaceholder": "Ex: Client VIP, atenție la ton. Niciodată trimis clientului.",
+    "filterAll": "Toate",
+    "askInboriaNewSlot": "Solicitați Inboria un nou program",
+    "coorgAdd": "+ Adăugați",
+    "confirmWithInboria": "Confirmați cu Inboria",
+    "forwardOutro": "Cu stimă,"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Puneți-mi orice întrebare despre Inboria: funcționalități, setări, abonament și multe altele.",
     "placeholder": "Tastați întrebarea dumneavoastră...",
     "poweredBy": "Propulsat de Inboria",
-    "errorMessage": "Ne pare rău, a apărut o eroare. Vă rugăm să încercați din nou sau contactați support@inboria.com."
+    "errorMessage": "Ne pare rău, a apărut o eroare. Vă rugăm să încercați din nou sau contactați support@inboria.com.",
+    "send": "Trimiteți",
+    "clear": "Ștergeți conversația"
   },
   "inboriaChat": {
     "openLabel": "Deschideți chatul Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "În așteptare",
       "relance": "În curs",
       "termine": "Finalizată"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorate",
+    "bulkMarkedRepliedToast": "{{count}} marcate ca răspuns"
   },
   "contacts": {
     "title": "Contact 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Deschis",
     "openedBadgeCount": "Deschis {{count}} ori",
     "openedAtLabel": "Prima deschidere: {{date}}",
-    "notOpenedYet": "Încă nu a fost deschis"
+    "notOpenedYet": "Încă nu a fost deschis",
+    "scheduledCancelError": "Anularea a eșuat",
+    "scheduledNoRecipient": "Fără destinatar",
+    "scheduledCancelPartial": "{{failed}} anulare(e) din {{total}} au eșuat"
   },
   "templates": {
     "title": "Șabloane",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Email făcut vizibil",
     "privateOnDesc": "Acest email este acum invizibil pentru administratorii dumneavoastră (vizualizare dosar echipă + Inboria).",
     "privateOffDesc": "Acest email devine din nou vizibil pentru administratorii dumneavoastră (vizualizare dosar echipă + Inboria).",
-    "privateError": "Imposibil de a actualiza confidențialitatea."
+    "privateError": "Imposibil de a actualiza confidențialitatea.",
+    "details": "Detalii",
+    "actionsMenu": "Acțiuni"
   },
   "privacy": {
     "title": "Confidențialitate și acces echipă",
@@ -3456,7 +3739,10 @@
       "followup": "Reamintire",
       "appointment": "Agendă",
       "team": "Activitate echipă"
-    }
+    },
+    "addDescription": "Creați o fișă pentru a urmări pe cineva care nu apare încă în căsuța dumneavoastră.",
+    "openContact": "Vizualizați fișa contactului",
+    "deleteDescription": "Istoricul email-urilor legate de această adresă nu este șters. Doar fișa manuală dispare."
   },
   "folders": {
     "title": "Folderele mele",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agendă",
     "system": "Sistem"
+  },
+  "signature": {
+    "imageTooLarge": "Imagine prea mare (max 200 Ko)",
+    "linkUrlPrompt": "URL-ul linkului (https://...)",
+    "size": "Dimensiune",
+    "italic": "Italic",
+    "clear": "Ștergeți formatarea",
+    "imageInvalid": "Fișier imagine invalid",
+    "highlight": "Subliniere",
+    "bold": "Bold",
+    "underline": "Subliniat",
+    "image": "Imagine / logo",
+    "color": "Culoare text",
+    "imageHint": "Sfat: inserați un logo PNG/JPG (max 200 Ko). Imaginea este integrată direct în semnătură.",
+    "font": "Font",
+    "bulletList": "Listă cu puncte",
+    "moreColors": "Mai multe culori…",
+    "orderedList": "Listă numerotată",
+    "link": "Link"
+  },
+  "palette": {
+    "compose": "Email nou",
+    "shortcuts": "Scurtături tastatură",
+    "navigate": "Navigați",
+    "empty": "Niciun rezultat.",
+    "actions": "Acțiuni",
+    "placeholder": "Tastați o comandă sau căutați…"
+  },
+  "outlookBanner": {
+    "back": "Înapoi la Outlook",
+    "openedFrom": "Deschis din Outlook. Faceți clic pentru a reveni sau comutați pur și simplu la fila Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Deschis din Gmail. Faceți clic pentru a reveni sau comutați pur și simplu la fila Gmail.",
+    "back": "Reveniți la Gmail"
+  },
+  "webmailBanner": {
+    "back": "Reveniți la webmail-ul meu",
+    "openedFromNamed": "Deschis din {{name}}. Faceți clic pentru a reveni sau comutați pur și simplu pe fila {{name}}.",
+    "openedFrom": "Deschis din webmail-ul dumneavoastră. Faceți clic pentru a reveni sau comutați pur și simplu pe fila webmail-ului dumneavoastră.",
+    "backNamed": "Înapoi la {{name}}"
   }
 }

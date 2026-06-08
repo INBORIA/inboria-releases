@@ -23,7 +23,16 @@
     "add": "Lägg till",
     "edit": "Ändra",
     "reset": "Återställ",
-    "more": "Mer"
+    "more": "Mer",
+    "notAuthenticated": "Ej autentiserad",
+    "collapse": "Dölj kategorier",
+    "send": "Skicka",
+    "remove": "Ta bort",
+    "select": "Välj",
+    "create": "Skapa",
+    "expand": "Visa kategorier",
+    "copyFailed": "Kopiering misslyckades",
+    "dismiss": "Stäng"
   },
   "nav": {
     "extensions": "Tillägg",
@@ -37,7 +46,18 @@
     "login": "Logga in",
     "signup": "Registrera",
     "logout": "Logga ut",
-    "openMenu": "Öppna menyn"
+    "openMenu": "Öppna menyn",
+    "categories": "Kategorier",
+    "archives": "Arkiv",
+    "dailyBrief": "Daglig översikt",
+    "folders": "Mina mappar",
+    "tasks": "Uppgifter",
+    "snoozed": "Skjutna upp",
+    "followups": "Uppföljningar",
+    "scheduled": "Schemalagda",
+    "contacts": "Kontakter",
+    "sent": "Skickade",
+    "inbox": "Inkorg"
   },
   "sidebar": {
     "inbox": "Inkorg",
@@ -66,7 +86,10 @@
     "followups": "Påminnelser",
     "contacts": "Kontakter",
     "assigned": "Tilldelade",
-    "myTasks": "Mina uppgifter"
+    "myTasks": "Mina uppgifter",
+    "expand": "Expandera menyn",
+    "collapse": "Minska menyn",
+    "resize": "Ändra storlek på menyn"
   },
   "dashboard": {
     "expiredSubscription": "Ditt abonnemang har löpt ut",
@@ -529,10 +552,17 @@
       "important": "Viktigt"
     },
     "date": {
-      "all": "Alla datum"
+      "all": "Alla datum",
+      "yesterday": "Igår",
+      "thisMonth": "Denna månad",
+      "today": "Idag",
+      "last30": "Senaste 30 dagarna",
+      "last7": "Senaste 7 dagarna"
     },
     "read": {
-      "all": "Alla"
+      "all": "Alla",
+      "read": "Lästa",
+      "unread": "Olästa"
     },
     "sharedDraft": "Delad utkast",
     "sharedDraftOn": "Delad utkast aktiverad",
@@ -564,7 +594,113 @@
       "label": "Visa paneler",
       "overlay": "Överlagring",
       "split": "Sida vid sida"
-    }
+    },
+    "unknownSender": "Okänd",
+    "scSearch": "Sök",
+    "scNext": "Nästa mejl",
+    "snoozedFor24h": "Skjuten upp till imorgon",
+    "collisionViewingOne": "{{name}} tittar också på detta mejl",
+    "markedAsUnread": "Markerad som oläst",
+    "theme": {
+      "switchLight": "Ljust läge",
+      "switchDark": "Mörkt läge"
+    },
+    "archived": "Arkiverad",
+    "loadingEmail": "Laddar mejl...",
+    "searchOpAttachment": "mejl med bilaga",
+    "moreActions": "Fler åtgärder",
+    "searchOpSubject": "filtrera efter ämne",
+    "markAsRead": "Markera som läst",
+    "collisionViewingMany": "{{count}} andra personer tittar på detta mejl",
+    "scGotoInbox": "Gå till Inkorgen",
+    "scGotoSnoozed": "Gå till Uppskjutna",
+    "scSnooze": "Skjut upp (24 h)",
+    "close": "Stäng",
+    "composeRestore": "Återuppta utkast",
+    "scDelete": "Radera",
+    "density": {
+      "normal": "Normal",
+      "comfortable": "Bekväm",
+      "label": "Visningstäthet",
+      "compact": "Kompakt"
+    },
+    "headerCollapse": "Dölj flikar och filter",
+    "composeUntitled": "Utkast utan ämne",
+    "backHint": "Tillbaka (Esc) — J/K för att navigera, R för att svara, E för att arkivera",
+    "loadingTitle": "Laddar...",
+    "draftYou": "Du",
+    "copySender": "Kopiera adress",
+    "slaOverdue": "SLA försenad",
+    "assigneeFilterMember": "denna medlem",
+    "draftRelease": "Frigör",
+    "scArchive": "Arkivera",
+    "downloadEml": "Ladda ner som .eml",
+    "backToGmail": "Tillbaka till Gmail",
+    "copyAddress": "Kopiera adress",
+    "composeMinimize": "Minimera utkast",
+    "assignedNoTeam": "Denna vy kräver ett team (2 medlemmar eller fler).",
+    "readingPanePos": {
+      "bottom": "Nere",
+      "off": "Dold",
+      "right": "Till höger",
+      "label": "Läsfönster"
+    },
+    "copied": "Kopierad",
+    "printPopupBlocked": "Kunde inte öppna utskriftsfönstret",
+    "moveToFolder": "Flytta till",
+    "createAndAssignTask": "Skapa och tilldela…",
+    "copiedSubject": "Ämne kopierat",
+    "draftLiveCoedit": "Samarbeta i realtid",
+    "copySubject": "Kopiera ämne",
+    "headerExpand": "Visa flikar och filter",
+    "print": "Skriv ut",
+    "myFoldersLabel": "Mina mappar",
+    "collisionReplyingOne": "{{name}} svarar redan på detta mail",
+    "draftYouSend": "Det är du som skickar",
+    "shortcutsTitle": "Tangentbordsgenvägar",
+    "snooze": "Skjut upp",
+    "searchGroupOperators": "Förfina",
+    "searchOpSender": "filtrera efter avsändare",
+    "copiedSenderEmail": "Adress kopierad",
+    "composeDiscard": "Avbryt",
+    "searchGroupEmails": "Mail",
+    "scGotoTasks": "Gå till Uppgifter",
+    "draftTakeOver": "Återuppta",
+    "composeAria": "Skriv ett email",
+    "filtersReset": "Återställ filter",
+    "collisionReplyingMany": "{{count}} personer svarar redan på detta mail",
+    "exportEml": "Ladda ner .eml",
+    "backToGmailHint": "Öppna detta exakta mail i Gmail",
+    "snoozeTomorrow": "Imorgon bitti",
+    "scGotoContacts": "Gå till Kontakter",
+    "composeDiscardConfirm": "Överge detta utkast?",
+    "copySenderEmail": "Kopiera avsändarens adress",
+    "snooze3h": "Om 3h",
+    "viewOptions": "Visningsalternativ",
+    "scHelp": "Visa denna hjälp",
+    "draftClaimSend": "Jag skickar det",
+    "readingPaneOff": "Inaktivera läsfönstret",
+    "priorityLabel": "Prioritet",
+    "filterByCategory": "Filtrera",
+    "categorized": "Kategoriserad",
+    "markAsReadUnread": "Markera som läst/oläst",
+    "scReply": "Svara",
+    "scPrev": "Föregående mail",
+    "scPalette": "Kommandopanel",
+    "markedAsRead": "Markerad som läst",
+    "searchGroupSenders": "Avsändare",
+    "scClose": "Stäng mailet",
+    "draftSomeoneSends": "{{name}} kommer att skicka det",
+    "scGotoSent": "Gå till Skickade",
+    "loadEmailError": "Det gick inte att ladda e-posten.",
+    "readingPaneOn": "Aktivera läsfönstret (3 kolumner)",
+    "assignToProject": "Tilldela till ett teamprojekt",
+    "importanceLabel": "Visning",
+    "draftTakeOverHint": "Återuppta sändning om denna kollega inte är tillgänglig",
+    "scForward": "Vidarebefordra",
+    "teamBadge": "Team",
+    "markAsUnread": "Markera som oläst",
+    "scGotoArchives": "Gå till Arkiv"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",
@@ -649,7 +785,16 @@
     "blockFailed": "Det går inte att blockera",
     "blockNoEmail": "Avsändaradressen hittades inte",
     "blockNoConnection": "Inga anslutna e-postkonton",
-    "emptied": "Mapp tömd"
+    "emptied": "Mapp tömd",
+    "noBlocked": "Inga blockerade avsändare",
+    "openRestored": "Öppna",
+    "fetchingFromProvider": "Hämtar innehåll från din leverantör...",
+    "retryFetch": "Försök igen",
+    "unblock": "Avblockera",
+    "blockedList": "Blockerade avsändare",
+    "unblocked": "Avsändare upplåst",
+    "fetchFailed": "Det gick inte att hämta innehållet i detta mail.",
+    "blockSenderSuccess": "Avsändare blockerad"
   },
   "trash": {
     "title": "Papperskorg",
@@ -794,7 +939,18 @@
     "movedToDone": "Uppgift avslutad",
     "movedToTodo": "Uppgift återställd till att göra",
     "statusUpdated": "Status uppdaterad",
-    "taskCreated": "Uppgift skapad"
+    "taskCreated": "Uppgift skapad",
+    "titleCopied": "Titel kopierad",
+    "reassign": "Omtilldela",
+    "openInInbox": "Öppna i Inkorgen",
+    "copyTitle": "Kopiera titel",
+    "noLinkedEmail": "Denna uppgift är inte kopplad till något mejl.",
+    "reassigned": "Uppgift omfördelad",
+    "markAsDone": "Markera som klar",
+    "unassign": "Avlägsna tilldelning",
+    "loadingTitle": "Laddar uppgifter…",
+    "linkedEmailActions": "På det länkade mailet",
+    "markAsTodo": "Markera som att göra"
   },
   "projects": {
     "title": "Teammappar",
@@ -851,7 +1007,14 @@
     "exportError": "Fel vid exporten",
     "searchProjects": "Sök efter ett projekt...",
     "noProjectsAlt": "Skapa ditt första projekt för att gruppera e-postmeddelanden och uppgifter.",
-    "viewDetail": "Se detaljer"
+    "viewDetail": "Se detaljer",
+    "taskAssigned": "Uppgift tilldelad",
+    "taskUnassigned": "Uppgift otilldelad",
+    "detachEmail": "Ta bort från projekt",
+    "openEmail": "Öppna e-post",
+    "unassigned": "Ej tilldelad",
+    "emailDetached": "E-post borttagen från projektet",
+    "assignTo": "Tilldela till…"
   },
   "classification": {
     "title": "Kategorier",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Denna systemkategori kan inte döpas om.",
       "cannotMerge": "Kategorin « Osorterat » kan inte slås ihop.",
       "goToInbox": "Sortera dessa e-postmeddelanden"
-    }
+    },
+    "adminOnlyNotice": "Hantera kategorier (skapa, ändra, ta bort, branschpaket) är reserverat för Team Admin för att säkerställa en konsekvent klassificering. Du kan se kategorier och deras mejl."
   },
   "settings": {
     "title": "Inställningar",
@@ -1268,7 +1432,9 @@
       "privacy": "Integritet och teamåtkomst",
       "privacyDesc": "Dina privata e-postmeddelanden och loggen över administratörsvisningar",
       "calendars": "Kalendrar",
-      "calendarsDesc": "Anslut Google Kalender och Outlook Kalender"
+      "calendarsDesc": "Anslut Google Kalender och Outlook Kalender",
+      "administration": "Administration",
+      "administrationDesc": "Inställningar för organisationens administratörer"
     },
     "b2bSection": "B2B-trovärdighet",
     "slaCard": "SLA för delade lådor",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Standardvideomöte",
     "preferredVideoDesc": "Välj standardleverantör av videomöten för nya möten. Meet kräver en ansluten Google-kalender; Teams kräver Outlook. Jitsi fungerar utan konto.",
     "meetingRemindersDesc": "Inboria skickar en artig påminnelse till kontakten 48 timmar efter ett mötesförslag som inte har besvarats.",
-    "meetingRemindersTitle": "Automatiska mötespåminnelser"
+    "meetingRemindersTitle": "Automatiska mötespåminnelser",
+    "outlookAddinSection": "Inboria i Outlook",
+    "personalVideoUrlDesc": "Klistra in länken till ditt permanenta Teams- eller Meet-rum (https://...). Inboria kommer att använda den i alla mötesförslag.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud och de flesta webmail. Lägg till Inboria-assistenten direkt i din e-post, utan att lämna dina mejl.",
+    "outlookAddinTitle": "Knapp \"Fråga Inboria\" i Outlook",
+    "webmailDownload": "Ladda ner tillägget",
+    "webmailCopyUrl": "Kopiera chrome://extensions",
+    "personalVideoUrlInvalid": "Ogiltig länk (https:// krävs)",
+    "webmailUrlCopied": "Adress kopierad ✓",
+    "outlookOpenAddinsPage": "Öppna Outlook-tillägg",
+    "personalVideoUrlLabel": "Personlig videolänk",
+    "webmailExtInstall": "Installera i min webbläsare",
+    "webmailStep2": "I Chrome eller Edge, öppna tilläggssidan: skriv chrome://extensions i adressfältet och aktivera \"Utvecklarläge\" (knapp uppe till höger).",
+    "outlookAddinInstall": "Installera i Outlook",
+    "outlookStep3": "Öppna ett mail: knappen \"Fråga Inboria\" visas i menyfliksområdet. Logga in en gång med ditt Inboria-konto, så är det klart.",
+    "webmailExtSection": "Inboria i ditt webbmail",
+    "outlookGuideTitle": "Installera Inboria i Outlook",
+    "webmailStep1": "Ladda ner Inboria-tillägget och extrahera filen (högerklicka › 'Extrahera alla'). Du får en mapp 'inboria-extension'.",
+    "webmailGuideTitle": "Installera Inboria i ditt webbmail",
+    "webmailStep3": "Klicka på 'Ladda okomprimerat tillägg' och välj den extraherade mappen 'inboria-extension'. Öppna sedan ditt webbmail: knappen 'Fråga Inboria' visas. Logga in en gång, så är det klart.",
+    "outlookStep2": "I Outlook, öppna 'Hämta tillägg' › 'Mina tillägg' › 'Lägg till anpassat tillägg' › 'Från en fil', och välj sedan den nedladdade filen.",
+    "outlookGuideIntro": "Tre enkla steg. Inget behov av att leta i menyer: allt är guidat.",
+    "outlookAddinDesc": "Lägg till Inboria-assistenten direkt i ditt Outlook, utan att lämna dina mail.",
+    "outlookStep1": "Ladda ner Inboria-anslutningsfilen.",
+    "webmailExtTitle": "Knappen \"Fråga Inboria\" i ditt webmail",
+    "outlookDownloadManifest": "Ladda ner filen",
+    "reconnect": "Återanslut",
+    "webmailGuideIntro": "Fungerar med Gmail, OVH, Yahoo, iCloud och de flesta webmail, i Chrome eller Edge. Tre enkla steg, en gång."
   },
   "subscription": {
     "title": "Hantera ditt abonnemang",
@@ -1426,7 +1619,10 @@
     "start": "Börja",
     "numberOfCollaborators": "Antal medarbetare",
     "total": "Totalt",
-    "seatsExample": "Exempel: 3 medarbetare = 50,97€/månad — kan ändras när som helst från ditt konto."
+    "seatsExample": "Exempel: 3 medarbetare = 50,97€/månad — kan ändras när som helst från ditt konto.",
+    "billingMonthly": "Månadsvis",
+    "billingYearly": "Årlig",
+    "perMonthBilledYearly": "/månad (faktureras årligen)"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Fel vid skickande",
     "changeRole": "Ändra roll",
     "adminDesc": "Kan hantera teamet, prenumerationen och alla e-postmeddelanden",
-    "memberDesc": "Åtkomst till sina e-postmeddelanden och delade uppgifter"
+    "memberDesc": "Åtkomst till sina e-postmeddelanden och delade uppgifter",
+    "trialTeamHint": "Teamtest: bjud in upp till 3 kollegor. Var och en får sin egen testperiod med 4 500 krediter, och du låser upp delade inkorgar, tilldelning och interna kommentarer.",
+    "trialTeamLabel": "Teamtest"
   },
   "sharedMailboxes": {
     "title": "Delade lådor",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} tilldelade detta e-postmeddelande till {{target}}",
     "systemSelfAssigned": "{{actor}} tog över detta e-postmeddelande",
     "systemReassigned": "{{actor}} omtilldelade från {{previous}} till {{target}}",
-    "systemUnassigned": "{{actor}} tog bort tilldelningen av {{previous}}"
+    "systemUnassigned": "{{actor}} tog bort tilldelningen av {{previous}}",
+    "recipientsFilter": "Sök medlem...",
+    "typingMany": "Flera personer skriver...",
+    "viewing": "Visar nu",
+    "recipientsSelected": "{{count}} valda",
+    "emailMessage": "E-post",
+    "recipients": "Mottagare",
+    "placeholderSimple": "Ange ditt meddelande…",
+    "internalNote": "Anteckning",
+    "recipientsClear": "Rensa",
+    "recipientsEmpty": "Inga medlemmar",
+    "recipientsPick": "Anteckningens mottagare",
+    "typingOne": "{{name}} skriver…"
   },
   "attachments": {
     "title": "Bifogade filer",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Väntande",
     "statusPendingShort": "Väntande",
     "syncFailed": "Synkronisering misslyckades",
-    "viewDetails": "Visa detaljer"
+    "viewDetails": "Visa detaljer",
+    "internalAppointment": "Internt möte",
+    "duplicateError": "Dupliceringsfel",
+    "duplicatedDesc": "Kopia skapad 7 dagar senare.",
+    "noteSelectedCount": "{{count}} mottagare",
+    "forwardWhere": "Plats",
+    "askInboriaNewSlotPrefill": "Motförslaget från {{contact}}{{slot}} passar inte. Föreslå andra tider som passar min kalender.",
+    "duplicated": "Duplicerat möte",
+    "ctxNoProject": "Inget projekt",
+    "noteError": "Fel vid tillägg av anteckning",
+    "filterExternal": "Kund",
+    "autoConfirmed": {
+      "desc": "{{count}} möten har automatiskt bekräftats från mottagna mejl.",
+      "title": "Upptäckta bekräftelser"
+    },
+    "ctxDup7": "Om 7 dagar",
+    "forwardIntro": "Hej,",
+    "statusPendingHint": "Inboria skickar automatiskt förslagsmejlet till kunden.",
+    "markConfirmed": "Markera som bekräftad",
+    "newInternalAppointment": "Internt möte",
+    "ctxEdit": "Redigera",
+    "theContact": "kontakten",
+    "statusLabel": "Status",
+    "notesEmpty": "Inga anteckningar. Anteckningar förblir interna — aldrig skickade till kunden.",
+    "expandSuggestions": "Visa förslag",
+    "forwardTitle": "Titel",
+    "noteAllTeam": "Hela teamet",
+    "internalMembers": "Inbjudna teammedlemmar",
+    "noteRecipientsLabel": "Till",
+    "formInternalNotePlaceholder": "Ex: VIP-kund, var uppmärksam på tonen. Aldrig skickad till kunden.",
+    "ctxForward": "Vidarebefordra via e-post",
+    "duration": "Varaktighet",
+    "ctxDup14": "Om 14 dagar",
+    "notePlaceholder": "Intern anteckning (endast synlig för teamet, aldrig skickad till kunden)…",
+    "forwardVideo": "Videolänk",
+    "ctxMarkAs": "Markera som",
+    "askInboriaNewSlot": "Be Inboria om ny tid",
+    "pickDate": "Välj ett datum",
+    "ctxDupCustom": "Duplicera om hur många dagar?",
+    "collapseSuggestions": "Dölj förslag",
+    "confirmError": "Fel vid bekräftelse",
+    "internalMembersEmpty": "Inga medlemmar inbjudna. Klicka på '+ Lägg till' för att välja dina kollegor.",
+    "forwardWhen": "Datum",
+    "forwardBody": "Jag vidarebefordrar detaljerna för detta möte:",
+    "ctxDelete": "Radera",
+    "forwardSubject": "VB: Möte",
+    "ctxDupCustomMenu": "Anpassad…",
+    "forwardOutro": "Med vänliga hälsningar,",
+    "ctxProject": "Projekt",
+    "filterAll": "Alla",
+    "ctxDup30": "Om 1 månad",
+    "ctxOpen": "Öppna",
+    "formInternalNoteLabel": "Intern anteckning (valfritt)",
+    "coorgNoCandidate": "Inga medlemmar tillgängliga.",
+    "multiDay": "Flera dagar…",
+    "ctxDup90": "Om 3 månader",
+    "singleDay": "Återgå till enkel varaktighet",
+    "internalNotes": "Interna anteckningar",
+    "ctxDupNextDay": "Nästa dag",
+    "counterDeclined": "Avslag skickat till kontakten",
+    "ctxDuplicate": "Duplicera",
+    "coorgAdd": "+ Lägg till",
+    "confirmDelete": "Ta bort denna möte?",
+    "filterInternal": "Intern",
+    "confirmWithInboria": "Bekräfta med Inboria"
   },
   "supportChat": {
     "title": "Inboria-assistent",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Ställ mig vilken fråga som helst om Inboria: funktioner, inställningar, prenumeration och mer.",
     "placeholder": "Skriv din fråga...",
     "poweredBy": "Drivs av Inboria",
-    "errorMessage": "Tyvärr, ett fel har inträffat. Försök igen eller kontakta support@inboria.com."
+    "errorMessage": "Tyvärr, ett fel har inträffat. Försök igen eller kontakta support@inboria.com.",
+    "send": "Skicka",
+    "clear": "Rensa konversationen"
   },
   "inboriaChat": {
     "openLabel": "Öppna Inboria-chatt",
@@ -2911,7 +3187,9 @@
       "en_attente": "Väntar",
       "relance": "Pågående",
       "termine": "Avslutad"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorerade",
+    "bulkMarkedRepliedToast": "{{count}} markerade som besvarade"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Öppnat",
     "openedBadgeCount": "Öppnat {{count}} gånger",
     "openedAtLabel": "Första öppning: {{date}}",
-    "notOpenedYet": "Inte öppnad än"
+    "notOpenedYet": "Inte öppnad än",
+    "scheduledCancelError": "Avbokning misslyckades",
+    "scheduledNoRecipient": "Ingen mottagare",
+    "scheduledCancelPartial": "{{failed}} avbokning(ar) av {{total}} misslyckades"
   },
   "templates": {
     "title": "Mallar",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-postmeddelande gjort synligt",
     "privateOnDesc": "Detta e-postmeddelande är nu osynligt för dina administratörer (teamvy + Inboria).",
     "privateOffDesc": "Detta e-postmeddelande blir synligt för dina administratörer igen (teamvy + Inboria).",
-    "privateError": "Det går inte att uppdatera sekretessen."
+    "privateError": "Det går inte att uppdatera sekretessen.",
+    "details": "Detaljer",
+    "actionsMenu": "Åtgärder"
   },
   "privacy": {
     "title": "Sekretess och teamåtkomst",
@@ -3456,7 +3739,10 @@
       "followup": "Påminnelse",
       "appointment": "Agenda",
       "team": "Teamaktivitet"
-    }
+    },
+    "addDescription": "Skapa en post för att följa någon som ännu inte finns i din inkorg.",
+    "deleteDescription": "Historiken för email kopplade till denna adress tas inte bort. Endast den manuella posten försvinner.",
+    "openContact": "Visa kontaktkortet"
   },
   "folders": {
     "title": "Mina mappar",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "System"
+  },
+  "signature": {
+    "imageTooLarge": "Bild för stor (max 200 KB)",
+    "linkUrlPrompt": "Länk-URL (https://...)",
+    "size": "Storlek",
+    "italic": "Kursiv",
+    "clear": "Rensa formatering",
+    "imageInvalid": "Ogiltig bildfil",
+    "highlight": "Markering",
+    "underline": "Understruken",
+    "link": "Länk",
+    "font": "Typsnitt",
+    "moreColors": "Fler färger…",
+    "imageHint": "Tips: infoga en PNG/JPG-logotyp (max 200 KB). Bilden integreras direkt i signaturen.",
+    "image": "Bild / logotyp",
+    "color": "Textfärg",
+    "orderedList": "Numrerad lista",
+    "bold": "Fetstil",
+    "bulletList": "Punktlista"
+  },
+  "palette": {
+    "compose": "Nytt mejl",
+    "shortcuts": "Kortkommandon",
+    "navigate": "Navigera",
+    "empty": "Inga resultat.",
+    "placeholder": "Skriv ett kommando eller sök…",
+    "actions": "Åtgärder"
+  },
+  "outlookBanner": {
+    "back": "Återgå till Outlook",
+    "openedFrom": "Öppnad från Outlook. Klicka för att återgå, eller växla bara tillbaka till Outlook-fliken."
+  },
+  "gmailBanner": {
+    "openedFrom": "Öppnat från Gmail. Klicka för att återgå, eller växla helt enkelt tillbaka till Gmail-fliken.",
+    "back": "Återgå till Gmail"
+  },
+  "webmailBanner": {
+    "backNamed": "Återgå till {{name}}",
+    "back": "Återgå till min webbmail",
+    "openedFrom": "Öppnad från ditt webbmail. Klicka för att återgå, eller växla bara tillbaka till din webbmailflik.",
+    "openedFromNamed": "Öppnad från {{name}}. Klicka för att återgå, eller växla helt enkelt till fliken {{name}}."
   }
 }

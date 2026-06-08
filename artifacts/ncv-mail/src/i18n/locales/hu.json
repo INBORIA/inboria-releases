@@ -23,7 +23,16 @@
     "add": "Hozzáadás",
     "edit": "Szerkesztés",
     "reset": "Visszaállítás",
-    "more": "Több"
+    "more": "Több",
+    "notAuthenticated": "Nincs hitelesítve",
+    "collapse": "Kategóriák elrejtése",
+    "send": "Küldés",
+    "dismiss": "Bezárás",
+    "create": "Létrehozás",
+    "remove": "Eltávolítás",
+    "select": "Kiválasztás",
+    "copyFailed": "Másolás sikertelen",
+    "expand": "Kategóriák megjelenítése"
   },
   "nav": {
     "extensions": "Bővítmények",
@@ -37,7 +46,18 @@
     "login": "Bejelentkezés",
     "signup": "Regisztráció",
     "logout": "Kijelentkezés",
-    "openMenu": "Menü megnyitása"
+    "openMenu": "Menü megnyitása",
+    "categories": "Kategóriák",
+    "archives": "Archívumok",
+    "dailyBrief": "Napi összefoglaló",
+    "folders": "Mappáim",
+    "tasks": "Feladatok",
+    "followups": "Követések",
+    "inbox": "Beérkezett",
+    "sent": "Elküldött",
+    "scheduled": "Ütemezett",
+    "snoozed": "Elhalasztott",
+    "contacts": "Kapcsolatok"
   },
   "sidebar": {
     "inbox": "Bejövő üzenetek",
@@ -66,7 +86,10 @@
     "followups": "Emlékeztetők",
     "contacts": "Kapcsolatok",
     "assigned": "Hozzárendelve",
-    "myTasks": "Saját feladatok"
+    "myTasks": "Saját feladatok",
+    "expand": "Menü kibontása",
+    "collapse": "Menü összecsukása",
+    "resize": "Menü átméretezése"
   },
   "dashboard": {
     "expiredSubscription": "Az előfizetése lejárt",
@@ -529,10 +552,17 @@
       "important": "Fontosak"
     },
     "date": {
-      "all": "Összes dátum"
+      "all": "Összes dátum",
+      "yesterday": "Tegnap",
+      "thisMonth": "Ebben a hónapban",
+      "today": "Ma",
+      "last7": "Utolsó 7 nap",
+      "last30": "Utolsó 30 nap"
     },
     "read": {
-      "all": "Összes"
+      "all": "Összes",
+      "read": "Olvasott",
+      "unread": "Olvasatlan"
     },
     "sharedDraft": "Megosztott vázlat",
     "sharedDraftOn": "Megosztott vázlat be",
@@ -564,7 +594,113 @@
       "label": "Ablakok megjelenítése",
       "overlay": "Átfedés",
       "split": "Egymás mellett"
-    }
+    },
+    "unknownSender": "Ismeretlen",
+    "scSearch": "Keresés",
+    "scNext": "Következő email",
+    "snoozedFor24h": "Elhalasztva holnapra",
+    "collisionViewingOne": "{{name}} is megtekinti ezt az emailt",
+    "markedAsUnread": "Megjelölve olvasatlanként",
+    "theme": {
+      "switchLight": "Világos mód",
+      "switchDark": "Sötét mód"
+    },
+    "archived": "Archiválva",
+    "loadingEmail": "Email betöltése...",
+    "searchOpAttachment": "emailek melléklettel",
+    "moreActions": "További műveletek",
+    "searchOpSubject": "szűrés tárgy szerint",
+    "markAsRead": "Megjelölés olvasottként",
+    "collisionViewingMany": "{{count}} másik személy is megtekinti ezt az emailt",
+    "scGotoInbox": "Ugrás a Beérkezett üzenetekhez",
+    "scGotoSnoozed": "Ugrás az Elhalasztottakhoz",
+    "scSnooze": "Elhalasztás (24 óra)",
+    "close": "Bezárás",
+    "composeRestore": "Piszkozat folytatása",
+    "scDelete": "Törlés",
+    "density": {
+      "normal": "Normál",
+      "label": "Megjelenítési sűrűség",
+      "compact": "Kompakt",
+      "comfortable": "Kényelmes"
+    },
+    "headerCollapse": "Fülek és szűrők elrejtése",
+    "composeUntitled": "Cím nélküli piszkozat",
+    "backHint": "Vissza (Esc) — J/K navigálás, R válasz, E archiválás",
+    "loadingTitle": "Betöltés…",
+    "draftYou": "Ön",
+    "copySender": "Cím másolása",
+    "slaOverdue": "SLA lejárt",
+    "assigneeFilterMember": "ez a tag",
+    "draftRelease": "Felszabadítás",
+    "scArchive": "Archiválás",
+    "markAsReadUnread": "Megjelölés olvasottként / olvasatlanként",
+    "scForward": "Továbbítás",
+    "draftSomeoneSends": "{{name}} küldeni fogja",
+    "searchOpSender": "szűrés feladó szerint",
+    "readingPanePos": {
+      "off": "Rejtett",
+      "right": "Jobbra",
+      "label": "Olvasópanel",
+      "bottom": "Alul"
+    },
+    "scGotoContacts": "Ugrás a Kapcsolatokhoz",
+    "markAsUnread": "Megjelölés olvasatlanként",
+    "composeDiscard": "Elvetés",
+    "snooze3h": "3 óra múlva",
+    "importanceLabel": "Megjelenítés",
+    "copiedSenderEmail": "Cím másolva",
+    "scPalette": "Parancspaletta",
+    "copiedSubject": "Tárgy másolva",
+    "myFoldersLabel": "Saját mappák",
+    "copySenderEmail": "Másolja a feladó címét",
+    "viewOptions": "Megjelenítési beállítások",
+    "shortcutsTitle": "Billentyűparancsok",
+    "assignedNoTeam": "Ez a nézet csapatot igényel (legalább 2 tag).",
+    "collisionReplyingMany": "{{count}} személy már válaszol erre az emailre",
+    "assignToProject": "Hozzárendelés egy csapat mappához",
+    "searchGroupOperators": "Finomítás",
+    "composeAria": "Email írása",
+    "downloadEml": "Letöltés .eml formátumban",
+    "headerExpand": "Fülek és szűrők megjelenítése",
+    "scClose": "Email bezárása",
+    "composeDiscardConfirm": "Elveti ezt a piszkozatot?",
+    "readingPaneOff": "Olvasópanel kikapcsolása",
+    "searchGroupSenders": "Feladók",
+    "scGotoTasks": "Ugrás a Feladatokhoz",
+    "printPopupBlocked": "Nem lehet megnyitni a nyomtatási ablakot",
+    "copied": "Másolva",
+    "snooze": "Emlékeztető",
+    "exportEml": ".eml letöltése",
+    "categorized": "Kategorizált",
+    "markedAsRead": "Megjelölve olvasottként",
+    "teamBadge": "Csapat",
+    "priorityLabel": "Prioritás",
+    "backToGmailHint": "Nyissa meg ezt az e-mailt pontosan a Gmailben",
+    "snoozeTomorrow": "Holnap reggel",
+    "composeMinimize": "Piszkozat minimalizálása",
+    "scGotoSent": "Ugrás az Elküldöttekhez",
+    "readingPaneOn": "Olvasópanel bekapcsolása (3 oszlop)",
+    "collisionReplyingOne": "{{name}} már válaszol erre az e-mailre",
+    "createAndAssignTask": "Feladat létrehozása és hozzárendelése…",
+    "copyAddress": "Cím másolása",
+    "copySubject": "Tárgy másolása",
+    "loadEmailError": "Nem sikerült betölteni az e-mailt.",
+    "draftYouSend": "Ön küldi",
+    "scGotoArchives": "Ugrás az Archívumhoz",
+    "scReply": "Válasz",
+    "backToGmail": "Vissza a Gmailhez",
+    "moveToFolder": "Áthelyezés mappába",
+    "print": "Nyomtatás",
+    "scPrev": "Előző e-mail",
+    "draftClaimSend": "Én küldöm",
+    "draftLiveCoedit": "Élő közös szerkesztés",
+    "draftTakeOverHint": "Vegye át a küldést, ha ez a kolléga már nem elérhető",
+    "scHelp": "Segítség megjelenítése",
+    "filtersReset": "Szűrők visszaállítása",
+    "draftTakeOver": "Átvétel",
+    "searchGroupEmails": "E-mailek",
+    "filterByCategory": "Szűrés"
   },
   "sent": {
     "title": "Küldött emailek",
@@ -649,7 +785,16 @@
     "blockFailed": "Nem lehet blokkolni",
     "blockNoEmail": "A feladó címe nem található",
     "blockNoConnection": "Nincs csatlakoztatott email fiók",
-    "emptied": "Mappa kiürítve"
+    "emptied": "Mappa kiürítve",
+    "noBlocked": "Nincs blokkolt feladó",
+    "openRestored": "Megnyitás",
+    "fetchingFromProvider": "Tartalom lekérése a szolgáltatótól…",
+    "retryFetch": "Újrapróbálkozás",
+    "unblocked": "Feladó feloldva",
+    "blockedList": "Letiltott feladók",
+    "unblock": "Feloldás",
+    "fetchFailed": "Nem sikerült lekérni az e-mail tartalmát.",
+    "blockSenderSuccess": "Feladó blokkolva"
   },
   "trash": {
     "title": "Lomtár",
@@ -794,7 +939,18 @@
     "movedToDone": "Feladat befejezve",
     "movedToTodo": "Feladat teendőre visszahelyezve",
     "statusUpdated": "Állapot frissítve",
-    "taskCreated": "Feladat létrehozva"
+    "taskCreated": "Feladat létrehozva",
+    "titleCopied": "Cím másolva",
+    "reassign": "Újra hozzárendelés",
+    "openInInbox": "Megnyitás a Beérkezett üzenetekben",
+    "copyTitle": "Cím másolása",
+    "noLinkedEmail": "Ez a feladat nincs emailhez kapcsolva.",
+    "unassign": "Kijelölés megszüntetése",
+    "linkedEmailActions": "A kapcsolódó emailen",
+    "reassigned": "Feladat újra hozzárendelve",
+    "markAsDone": "Megjelölés befejezettként",
+    "loadingTitle": "Feladatok betöltése…",
+    "markAsTodo": "Megjelölés teendőként"
   },
   "projects": {
     "title": "Csapat mappák",
@@ -851,7 +1007,14 @@
     "exportError": "Hiba az exportálás során",
     "searchProjects": "Projekt keresése...",
     "noProjectsAlt": "Hozza létre első projektjét az email-ek és feladatok csoportosításához.",
-    "viewDetail": "Részletek megtekintése"
+    "viewDetail": "Részletek megtekintése",
+    "taskAssigned": "Feladat hozzárendelve",
+    "taskUnassigned": "Feladat hozzárendelés megszüntetve",
+    "detachEmail": "Eltávolítás a projektről",
+    "assignTo": "Hozzárendelés…",
+    "openEmail": "Email megnyitása",
+    "emailDetached": "E-mail eltávolítva a projektről",
+    "unassigned": "Nincs hozzárendelve"
   },
   "classification": {
     "title": "Kategóriák",
@@ -1081,7 +1244,7 @@
       "mergeArrow": "Megőrzi a « {{target}} »-t",
       "keepBoth": "Megőrzi mindkettőt",
       "confirmTitle": "Egyesíti a « {{source}} »-t a « {{target}} »-be?",
-      "confirmDesc": "A « {{source }} » e-mailei a « {{target}} »-be lesznek áthelyezve, majd a « {{source}} » törlésre kerül. Ez a művelet visszafordíthatatlan.",
+      "confirmDesc": "A(z) „{{source}}” e-mailek átkerülnek a(z) „{{target}}” mappába, majd a(z) „{{source}}” törlésre kerül. Ez a művelet visszafordíthatatlan.",
       "merging": "Egyesítés folyamatban...",
       "mergedToast": "{{count}} e-mail(ek) áthelyezve a « {{target}} »-be",
       "close": "Bezárás",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Ez a rendszerkategória nem nevezhető át.",
       "cannotMerge": "A « Nem osztályozott » kategória nem egyesíthető.",
       "goToInbox": "Rendez ces e-maileket"
-    }
+    },
+    "adminOnlyNotice": "A kategóriák kezelése (létrehozás, módosítás, törlés, szakmai csomagok) kizárólag a Csapat Adminisztrátor számára elérhető a következetes osztályozás biztosítása érdekében. Megtekintheti a kategóriákat és azok emailjeit."
   },
   "settings": {
     "title": "Beállítások",
@@ -1268,7 +1432,9 @@
       "privacy": "Adatvédelem és csapat hozzáférés",
       "privacyDesc": "Saját privát emailjei és az adminisztrátori konzultációk naplója",
       "calendars": "Naptárak",
-      "calendarsDesc": "Google Naptár és Outlook Naptár csatlakoztatása"
+      "calendarsDesc": "Google Naptár és Outlook Naptár csatlakoztatása",
+      "administration": "Adminisztráció",
+      "administrationDesc": "Beállítások az intézmény adminisztrátorai számára"
     },
     "b2bSection": "B2B hitelesség",
     "slaCard": "Megosztott fiókok SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Alapértelmezett videohívás",
     "preferredVideoDesc": "Válassza ki az új találkozók alapértelmezett videoszolgáltatóját. A Meet csatlakoztatott Google-naptárat igényel; a Teams Outlookot igényel. A Jitsi fiók nélkül is működik.",
     "meetingRemindersDesc": "Az Inboria udvarias emlékeztetőt küld a kapcsolatnak 48 órával a válasz nélkül maradt találkozó javaslat után.",
-    "meetingRemindersTitle": "Automatikus találkozó emlékeztetők"
+    "meetingRemindersTitle": "Automatikus találkozó emlékeztetők",
+    "outlookAddinSection": "Inboria az Outlookban",
+    "personalVideoUrlDesc": "Illessze be állandó Teams vagy Meet szobájának linkjét (https://...). Az Inboria ezt fogja használni minden találkozó javaslatban.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud és a legtöbb webmail. Adja hozzá az Inboria asszisztenst közvetlenül a levelezéséhez, anélkül hogy elhagyná az emaileket.",
+    "outlookAddinTitle": "„Kérdezze az Inboria-t” gomb az Outlookban",
+    "webmailDownload": "Bővítmény letöltése",
+    "webmailCopyUrl": "chrome://extensions másolása",
+    "personalVideoUrlInvalid": "Érvénytelen link (https:// szükséges)",
+    "webmailUrlCopied": "Cím másolva ✓",
+    "outlookOpenAddinsPage": "Outlook bővítmények megnyitása",
+    "outlookDownloadManifest": "Fájl letöltése",
+    "outlookStep2": "Az Outlookban nyissa meg a „Bővítmények beszerzése” › „Saját bővítmények” › „Egyéni bővítmény hozzáadása” › „Fájlból” lehetőséget, majd válassza ki a letöltött fájlt.",
+    "outlookGuideIntro": "Három egyszerű lépés. Nem kell keresgélni a menükben: minden útmutatott.",
+    "webmailExtInstall": "Telepítés a böngészőmbe",
+    "webmailGuideIntro": "Működik a Gmail, OVH, Yahoo, iCloud és a legtöbb webmail szolgáltatással, Chrome vagy Edge böngészőben. Három egyszerű lépés, csak egyszer.",
+    "webmailStep2": "A Chrome vagy Edge böngészőben nyissa meg a bővítmények oldalát: írja be a chrome://extensions címet a címsorba, majd kapcsolja be a „Fejlesztői módot” (kapcsoló a jobb felső sarokban).",
+    "webmailGuideTitle": "Inboria telepítése a webmailbe",
+    "webmailExtTitle": "„Kérdezze Inboria-t” gomb az Ön webmailjében",
+    "webmailStep3": "Kattintson a „Becsomagolatlan kiterjesztés betöltése” gombra, és válassza ki a kicsomagolt „inboria-extension” mappát. Ezután nyissa meg webmailjét: megjelenik a „Kérdezze Inboria-t” gomb. Egyszer jelentkezzen be, és kész.",
+    "outlookStep1": "Töltse le az Inboria csatlakozási fájlt.",
+    "reconnect": "Újracsatlakozás",
+    "outlookAddinDesc": "Adja hozzá az Inboria asszisztenst közvetlenül az Outlookjához, anélkül, hogy elhagyná az e-mailjeit.",
+    "personalVideoUrlLabel": "Személyes videó link",
+    "outlookStep3": "Nyisson meg egy e-mailt: megjelenik a „Kérdezze Inboria-t” gomb a szalagon. Jelentkezzen be egyszer az Inboria fiókjával, és kész.",
+    "outlookGuideTitle": "Inboria telepítése az Outlookban",
+    "webmailExtSection": "Inboria az Ön webmailjében",
+    "outlookAddinInstall": "Telepítés az Outlookban",
+    "webmailStep1": "Töltse le az Inboria kiterjesztést, majd csomagolja ki a fájlt (jobb klikk › „Összes kibontása”). Ekkor kap egy „inboria-extension” mappát."
   },
   "subscription": {
     "title": "Kezelje az előfizetését",
@@ -1426,7 +1619,10 @@
     "start": "Kezdés",
     "numberOfCollaborators": "Munkatársak száma",
     "total": "Összesen",
-    "seatsExample": "Példa: 3 munkatárs = 50,97€/hónap — bármikor módosítható az Ön felületén."
+    "seatsExample": "Példa: 3 munkatárs = 50,97€/hónap — bármikor módosítható az Ön felületén.",
+    "billingMonthly": "Havi",
+    "perMonthBilledYearly": "/hónap (évente számlázva)",
+    "billingYearly": "Éves"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Hiba a küldés során",
     "changeRole": "Szerep megváltoztatása",
     "adminDesc": "Képes kezelni a csapatot, az előfizetést és minden e-mailt",
-    "memberDesc": "Hozzáférés az e-mailekhez és a megosztott feladatokhoz"
+    "memberDesc": "Hozzáférés az e-mailekhez és a megosztott feladatokhoz",
+    "trialTeamHint": "Csapat próbaverzió: hívjon meg legfeljebb 3 kollégát. Mindegyikük saját 4 500 kredit próbaverziót kap, és Ön megnyitja a megosztott postafiókokat, a hozzárendelést és a belső megjegyzéseket.",
+    "trialTeamLabel": "Csapat próba"
   },
   "sharedMailboxes": {
     "title": "Megosztott postaládák",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} hozzárendelte ezt az e-mailt Önhöz: {{target}}",
     "systemSelfAssigned": "{{actor}} átvette ezt az e-mailt",
     "systemReassigned": "{{actor}} áthelyezte a hozzárendelést {{previous}} helyett {{target}} részére",
-    "systemUnassigned": "{{actor}} visszavonta {{previous}} hozzárendelését"
+    "systemUnassigned": "{{actor}} visszavonta {{previous}} hozzárendelését",
+    "recipientsFilter": "Tag keresése…",
+    "typingMany": "Többen gépelnek…",
+    "recipientsClear": "Törlés",
+    "placeholderSimple": "Írja be az üzenetét…",
+    "viewing": "Most megtekintés alatt",
+    "internalNote": "Megjegyzés",
+    "recipients": "Címzettek",
+    "recipientsPick": "Megjegyzés címzettjei",
+    "typingOne": "{{name}} éppen ír…",
+    "recipientsEmpty": "Nincs tag",
+    "recipientsSelected": "{{count}} kiválasztva",
+    "emailMessage": "E-mail"
   },
   "attachments": {
     "title": "Csatolmányok",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Függőben",
     "statusPendingShort": "Függőben",
     "syncFailed": "Szinkronizálás sikertelen",
-    "viewDetails": "Részletek megtekintése"
+    "viewDetails": "Részletek megtekintése",
+    "internalAppointment": "Belső találkozó",
+    "duplicateError": "Másolási hiba",
+    "duplicatedDesc": "Másolat létrehozva 7 nappal később.",
+    "noteSelectedCount": "{{count}} címzett(ek)",
+    "forwardWhere": "Helyszín",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} ellenjavaslata nem megfelelő. Javasoljon neki más időpontokat, amelyek kompatibilisek a naptárammal.",
+    "duplicated": "Találkozó másolva",
+    "ctxNoProject": "Nincs projekt",
+    "noteError": "Hiba a jegyzet hozzáadásakor",
+    "filterExternal": "Ügyfél",
+    "autoConfirmed": {
+      "desc": "{{count}} találkozó automatikusan megerősítve a beérkezett emailek alapján.",
+      "title": "Észlelt megerősítések"
+    },
+    "ctxDup7": "7 nap múlva",
+    "forwardIntro": "Üdvözlöm,",
+    "statusPendingHint": "Az Inboria automatikusan elküldi a javaslat emailt az ügyfélnek.",
+    "markConfirmed": "Megjelölés megerősítettként",
+    "newInternalAppointment": "Belső találkozó",
+    "ctxEdit": "Szerkesztés",
+    "theContact": "a kapcsolat",
+    "statusLabel": "Állapot",
+    "notesEmpty": "Nincs jegyzet. A jegyzetek belsőek — soha nem küldjük el az ügyfélnek.",
+    "expandSuggestions": "Javaslatok megjelenítése",
+    "forwardTitle": "Cím",
+    "noteAllTeam": "Az egész csapat",
+    "internalMembers": "Meghívott csapattagok",
+    "noteRecipientsLabel": "Címzett",
+    "ctxMarkAs": "Megjelölés mint",
+    "singleDay": "Vissza az egy napos időtartamhoz",
+    "ctxDupNextDay": "Következő nap",
+    "counterDeclined": "Elutasítás elküldve a kapcsolatnak",
+    "ctxDup14": "14 nap múlva",
+    "collapseSuggestions": "Javaslatok elrejtése",
+    "formInternalNoteLabel": "Belső megjegyzés (opcionális)",
+    "forwardBody": "Továbbítom a találkozó részleteit:",
+    "multiDay": "Több nap…",
+    "ctxForward": "Továbbítás emailben",
+    "forwardVideo": "Videó link",
+    "internalMembersEmpty": "Nincs meghívott tag. Kattintson a „+ Hozzáadás” gombra kollégái kiválasztásához.",
+    "forwardWhen": "Dátum",
+    "pickDate": "Dátum kiválasztása",
+    "ctxDuplicate": "Másolás",
+    "coorgNoCandidate": "Nincs elérhető tag.",
+    "ctxDupCustomMenu": "Egyéni…",
+    "ctxDupCustom": "Másolás hány nap múlva?",
+    "ctxOpen": "Megnyitás",
+    "notePlaceholder": "Belső megjegyzés (csak a csapat számára látható, soha nem küldött az ügyfélnek)…",
+    "confirmError": "Hiba a megerősítés során",
+    "ctxDelete": "Töröl",
+    "duration": "Időtartam",
+    "internalNotes": "Belső megjegyzések",
+    "ctxDup30": "1 hónap múlva",
+    "formInternalNotePlaceholder": "Pl.: VIP ügyfél, figyeljen a hangnemre. Soha nem küldendő az ügyfélnek.",
+    "askInboriaNewSlot": "Új időpontot kér Inboria-tól",
+    "filterAll": "Összes",
+    "confirmWithInboria": "Megerősítés Inboria-val",
+    "ctxProject": "Projekt",
+    "coorgAdd": "+ Hozzáadás",
+    "ctxDup90": "3 hónap múlva",
+    "confirmDelete": "Törli ezt a találkozót?",
+    "forwardOutro": "Tisztelettel,",
+    "forwardSubject": "Továbbítva: Találkozó",
+    "filterInternal": "Belső"
   },
   "supportChat": {
     "title": "Inboria asszisztens",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Tegyen fel bármilyen kérdést az Inboria-val kapcsolatban: funkciók, beállítások, előfizetés és még sok más.",
     "placeholder": "Kérjük, írja be a kérdését...",
     "poweredBy": "Az Inboria által működtetve",
-    "errorMessage": "Sajnálom, hiba történt. Kérjük, próbálja újra, vagy lépjen kapcsolatba a support@inboria.com címmel."
+    "errorMessage": "Sajnálom, hiba történt. Kérjük, próbálja újra, vagy lépjen kapcsolatba a support@inboria.com címmel.",
+    "send": "Küldés",
+    "clear": "Beszélgetés törlése"
   },
   "inboriaChat": {
     "openLabel": "Inboria chat megnyitása",
@@ -2911,7 +3187,9 @@
       "en_attente": "Függőben",
       "relance": "Folyamatban",
       "termine": "Befejezve"
-    }
+    },
+    "bulkDismissedToast": "{{count}} figyelmen kívül hagyva",
+    "bulkMarkedRepliedToast": "{{count}} megjelölve válaszként"
   },
   "contacts": {
     "title": "360° kapcsolat",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Megnyitva",
     "openedBadgeCount": "Megnyitva {{count}} alkalommal",
     "openedAtLabel": "Első megnyitás: {{date}}",
-    "notOpenedYet": "Még nem nyitották meg"
+    "notOpenedYet": "Még nem nyitották meg",
+    "scheduledCancelError": "A lemondás sikertelen",
+    "scheduledCancelPartial": "{{failed}} lemondás a(z) {{total}} közül nem sikerült",
+    "scheduledNoRecipient": "Nincs címzett"
   },
   "templates": {
     "title": "Sablonok",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-mail láthatóvá téve",
     "privateOnDesc": "Ez az e-mail mostantól láthatatlan az adminisztrátorai számára (csapat mappa nézet + Inboria).",
     "privateOffDesc": "Ez az e-mail újra láthatóvá válik az adminisztrátorai számára (csapat mappa nézet + Inboria).",
-    "privateError": "Nem lehetséges a titkosítást frissíteni."
+    "privateError": "Nem lehetséges a titkosítást frissíteni.",
+    "details": "Részletek",
+    "actionsMenu": "Műveletek"
   },
   "privacy": {
     "title": "Magánélet és csapat hozzáférés",
@@ -3456,7 +3739,10 @@
       "followup": "Emlékeztető",
       "appointment": "Naptár",
       "team": "Csapat aktivitás"
-    }
+    },
+    "addDescription": "Hozzon létre egy adatlapot valakiről, aki még nem szerepel a postaládájában.",
+    "openContact": "Kapcsolat adatlap megtekintése",
+    "deleteDescription": "Az ehhez a címhez kapcsolódó email előzmények nem törlődnek. Csak a kézi adatlap tűnik el."
   },
   "folders": {
     "title": "Saját mappák",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Naptár",
     "system": "Rendszer"
+  },
+  "signature": {
+    "imageTooLarge": "Túl nagy kép (max 200 KB)",
+    "linkUrlPrompt": "Link URL (https://...)",
+    "size": "Méret",
+    "italic": "Dőlt",
+    "clear": "Formázás törlése",
+    "imageInvalid": "Érvénytelen kép fájl",
+    "highlight": "Kiemelés",
+    "bold": "Félkövér",
+    "underline": "Aláhúzott",
+    "image": "Kép / logó",
+    "color": "Szöveg színe",
+    "imageHint": "Tipp: illesszen be egy PNG/JPG logót (max 200 KB). A kép közvetlenül a szignóba ágyazódik.",
+    "font": "Betűtípus",
+    "link": "Hivatkozás",
+    "orderedList": "Számozott lista",
+    "moreColors": "Több szín…",
+    "bulletList": "Felsorolás"
+  },
+  "palette": {
+    "compose": "Új email",
+    "shortcuts": "Billentyűparancsok",
+    "navigate": "Navigálás",
+    "empty": "Nincs találat.",
+    "actions": "Műveletek",
+    "placeholder": "Írjon be egy parancsot vagy keressen…"
+  },
+  "outlookBanner": {
+    "back": "Vissza az Outlookhoz",
+    "openedFrom": "Megnyitva az Outlookból. Kattintson a visszatéréshez, vagy egyszerűen váltson vissza az Outlook fülre."
+  },
+  "gmailBanner": {
+    "openedFrom": "Megnyitva a Gmailből. Kattintson a visszatéréshez, vagy egyszerűen váltson vissza a Gmail fülre.",
+    "back": "Vissza a Gmailhez"
+  },
+  "webmailBanner": {
+    "back": "Vissza a webmailhez",
+    "openedFromNamed": "{{name}}-ből megnyitva. Kattintson a visszatéréshez, vagy egyszerűen váltson vissza a(z) {{name}} fülre.",
+    "openedFrom": "Megnyitva a webmailből. Kattintson a visszatéréshez, vagy egyszerűen váltson vissza a webmail fülre.",
+    "backNamed": "Vissza a(z) {{name}}-hez"
   }
 }

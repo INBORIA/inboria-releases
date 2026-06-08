@@ -23,7 +23,16 @@
     "add": "추가합니다",
     "edit": "수정합니다",
     "reset": "재설정합니다",
-    "more": "더보기"
+    "more": "더보기",
+    "notAuthenticated": "인증되지 않음",
+    "collapse": "카테고리 숨기기",
+    "send": "보내기",
+    "dismiss": "닫기",
+    "create": "생성",
+    "remove": "제거",
+    "select": "선택",
+    "copyFailed": "복사 실패",
+    "expand": "카테고리 표시"
   },
   "nav": {
     "extensions": "확장 프로그램",
@@ -37,7 +46,18 @@
     "login": "로그인합니다",
     "signup": "가입합니다",
     "logout": "로그아웃합니다",
-    "openMenu": "메뉴를 엽니다"
+    "openMenu": "메뉴를 엽니다",
+    "categories": "카테고리",
+    "archives": "아카이브",
+    "dailyBrief": "일일 요약",
+    "folders": "내 폴더",
+    "tasks": "작업",
+    "followups": "후속 조치",
+    "inbox": "수신함",
+    "sent": "보낸 편지함",
+    "scheduled": "예약됨",
+    "snoozed": "연기됨",
+    "contacts": "연락처"
   },
   "sidebar": {
     "inbox": "받은 편지함",
@@ -66,7 +86,10 @@
     "followups": "리마인더",
     "contacts": "연락처",
     "assigned": "배정됨",
-    "myTasks": "내 작업"
+    "myTasks": "내 작업",
+    "expand": "메뉴 확장",
+    "collapse": "메뉴 축소",
+    "resize": "메뉴 크기 조정"
   },
   "dashboard": {
     "expiredSubscription": "귀하의 구독이 만료되었습니다.",
@@ -529,10 +552,17 @@
       "important": "중요"
     },
     "date": {
-      "all": "모든 날짜"
+      "all": "모든 날짜",
+      "yesterday": "어제",
+      "thisMonth": "이번 달",
+      "today": "오늘",
+      "last7": "지난 7일",
+      "last30": "지난 30일"
     },
     "read": {
-      "all": "전체"
+      "all": "전체",
+      "read": "읽음",
+      "unread": "읽지 않음"
     },
     "sharedDraft": "공유 초안",
     "sharedDraftOn": "공유 초안 활성화",
@@ -564,7 +594,113 @@
       "label": "창 표시",
       "overlay": "오버레이",
       "split": "나란히"
-    }
+    },
+    "unknownSender": "알 수 없음",
+    "scSearch": "검색",
+    "scNext": "다음 메일",
+    "snoozedFor24h": "내일로 연기됨",
+    "collisionViewingOne": "{{name}} 님도 이 메일을 보고 있습니다",
+    "markedAsUnread": "읽지 않음으로 표시됨",
+    "theme": {
+      "switchLight": "라이트 모드",
+      "switchDark": "다크 모드"
+    },
+    "archived": "보관됨",
+    "loadingEmail": "이메일 로딩 중...",
+    "searchOpAttachment": "첨부 파일 있는 메일",
+    "moreActions": "추가 작업",
+    "searchOpSubject": "주제로 필터링",
+    "markAsRead": "읽음으로 표시",
+    "collisionViewingMany": "{{count}} 명이 이 메일을 보고 있습니다",
+    "scGotoInbox": "받은 편지함으로 이동",
+    "scGotoSnoozed": "연기된 메일로 이동",
+    "scSnooze": "연기 (24시간)",
+    "close": "닫기",
+    "composeRestore": "초안 복원",
+    "scDelete": "삭제",
+    "density": {
+      "normal": "보통",
+      "label": "표시 밀도",
+      "compact": "압축",
+      "comfortable": "편안함"
+    },
+    "headerCollapse": "탭 및 필터 숨기기",
+    "composeUntitled": "제목 없는 초안",
+    "backHint": "뒤로 (Esc) — J/K로 탐색, R로 답장, E로 보관",
+    "loadingTitle": "로딩 중…",
+    "draftYou": "당신",
+    "copySender": "주소 복사",
+    "slaOverdue": "SLA 연체",
+    "assigneeFilterMember": "이 멤버",
+    "draftRelease": "해제",
+    "scArchive": "보관",
+    "markAsReadUnread": "읽음 / 읽지 않음으로 표시",
+    "scForward": "전달",
+    "draftSomeoneSends": "{{name}}이(가) 보낼 것입니다",
+    "searchOpSender": "발신자로 필터링",
+    "readingPanePos": {
+      "off": "숨김",
+      "right": "오른쪽",
+      "label": "읽기 창",
+      "bottom": "하단"
+    },
+    "scGotoContacts": "연락처로 이동",
+    "markAsUnread": "읽지 않음으로 표시",
+    "composeDiscard": "포기",
+    "snooze3h": "3시간 후",
+    "importanceLabel": "표시",
+    "copiedSenderEmail": "주소 복사됨",
+    "scPalette": "명령 팔레트",
+    "copiedSubject": "제목 복사됨",
+    "myFoldersLabel": "내 폴더",
+    "copySenderEmail": "발신자 주소 복사",
+    "viewOptions": "보기 옵션",
+    "shortcutsTitle": "키보드 단축키",
+    "assignedNoTeam": "이 보기에는 팀(2명 이상)이 필요합니다.",
+    "collisionReplyingMany": "{{count}}명이 이미 이 메일에 답장하고 있습니다",
+    "assignToProject": "팀 폴더에 할당",
+    "searchGroupOperators": "세분화",
+    "composeAria": "이메일 작성",
+    "downloadEml": ".eml로 다운로드",
+    "headerExpand": "탭 및 필터 표시",
+    "scClose": "메일 닫기",
+    "composeDiscardConfirm": "이 초안을 포기하시겠습니까?",
+    "readingPaneOff": "읽기 창 비활성화",
+    "searchGroupSenders": "발신자",
+    "scGotoTasks": "작업으로 이동",
+    "printPopupBlocked": "인쇄 창을 열 수 없습니다",
+    "copied": "복사됨",
+    "snooze": "연기",
+    "exportEml": ".eml 다운로드",
+    "categorized": "분류됨",
+    "markedAsRead": "읽음으로 표시됨",
+    "teamBadge": "팀",
+    "priorityLabel": "우선순위",
+    "backToGmailHint": "Gmail에서 이 메일 열기",
+    "snoozeTomorrow": "내일 아침",
+    "composeMinimize": "초안 최소화",
+    "scGotoSent": "보낸 편지함으로 이동",
+    "readingPaneOn": "읽기 창 활성화 (3열)",
+    "collisionReplyingOne": "{{name}}님이 이미 이 메일에 답장 중입니다",
+    "createAndAssignTask": "생성 및 할당…",
+    "copyAddress": "주소 복사",
+    "copySubject": "제목 복사",
+    "loadEmailError": "이메일을 로드할 수 없습니다.",
+    "draftYouSend": "귀하가 보냅니다",
+    "scGotoArchives": "보관함으로 이동",
+    "scReply": "답장",
+    "backToGmail": "Gmail로 돌아가기",
+    "moveToFolder": "폴더로 이동",
+    "print": "인쇄",
+    "scPrev": "이전 메일",
+    "draftClaimSend": "내가 보냅니다",
+    "draftLiveCoedit": "실시간 공동 편집",
+    "draftTakeOverHint": "이 동료가 더 이상 사용 가능하지 않으면 발송을 인수하십시오",
+    "scHelp": "도움말 표시",
+    "filtersReset": "필터 재설정",
+    "draftTakeOver": "인수",
+    "searchGroupEmails": "메일",
+    "filterByCategory": "필터"
   },
   "sent": {
     "title": "보낸 이메일",
@@ -649,7 +785,16 @@
     "blockFailed": "차단할 수 없습니다.",
     "blockNoEmail": "발신자 주소를 찾을 수 없습니다.",
     "blockNoConnection": "연결된 이메일 계정이 없습니다.",
-    "emptied": "폴더가 비어 있습니다."
+    "emptied": "폴더가 비어 있습니다.",
+    "noBlocked": "차단된 발신자 없음",
+    "openRestored": "열기",
+    "fetchingFromProvider": "공급자로부터 콘텐츠 가져오는 중…",
+    "retryFetch": "다시 시도",
+    "unblocked": "발신자 차단 해제됨",
+    "blockedList": "차단된 발신자",
+    "unblock": "차단 해제",
+    "fetchFailed": "이 메일의 내용을 가져올 수 없습니다.",
+    "blockSenderSuccess": "발신자 차단됨"
   },
   "trash": {
     "title": "휴지통",
@@ -794,7 +939,18 @@
     "movedToDone": "완료된 업무",
     "movedToTodo": "해야 할 일로 다시 설정된 업무",
     "statusUpdated": "상태가 업데이트되었습니다.",
-    "taskCreated": "업무가 생성되었습니다."
+    "taskCreated": "업무가 생성되었습니다.",
+    "titleCopied": "제목이 복사되었습니다",
+    "reassign": "재할당",
+    "openInInbox": "받은 편지함에서 열기",
+    "copyTitle": "제목 복사",
+    "noLinkedEmail": "이 작업은 이메일에 연결되어 있지 않습니다.",
+    "unassign": "할당 해제",
+    "linkedEmailActions": "연결된 메일에서",
+    "reassigned": "작업 재할당됨",
+    "markAsDone": "완료로 표시",
+    "loadingTitle": "작업 로드 중…",
+    "markAsTodo": "할 일로 표시"
   },
   "projects": {
     "title": "팀 폴더",
@@ -851,7 +1007,14 @@
     "exportError": "내보내기 중 오류가 발생했습니다.",
     "searchProjects": "프로젝트 검색...",
     "noProjectsAlt": "이메일과 작업을 그룹화하기 위해 첫 번째 프로젝트를 생성하십시오.",
-    "viewDetail": "세부정보 보기"
+    "viewDetail": "세부정보 보기",
+    "taskAssigned": "작업 할당됨",
+    "taskUnassigned": "작업 할당 취소됨",
+    "detachEmail": "프로젝트에서 제거",
+    "assignTo": "할당…",
+    "openEmail": "이메일 열기",
+    "emailDetached": "프로젝트에서 이메일 제거됨",
+    "unassigned": "할당되지 않음"
   },
   "classification": {
     "title": "카테고리",
@@ -1135,7 +1298,8 @@
       "cannotRename": "이 시스템 카테고리는 이름을 변경할 수 없습니다.",
       "cannotMerge": "« 미분류 » 카테고리는 병합할 수 없습니다.",
       "goToInbox": "이메일 정렬"
-    }
+    },
+    "adminOnlyNotice": "카테고리 관리 (생성, 수정, 삭제, 비즈니스 팩)는 팀 관리자에게만 허용되어 일관된 분류를 보장합니다. 카테고리와 해당 이메일을 볼 수 있습니다."
   },
   "settings": {
     "title": "설정",
@@ -1268,7 +1432,9 @@
       "privacy": "개인정보 및 팀 접근",
       "privacyDesc": "귀하의 개인 이메일 및 관리자 조회 기록",
       "calendars": "캘린더",
-      "calendarsDesc": "Google Calendar 및 Outlook Calendar 연결"
+      "calendarsDesc": "Google Calendar 및 Outlook Calendar 연결",
+      "administration": "관리",
+      "administrationDesc": "조직 관리자 전용 설정"
     },
     "b2bSection": "B2B 신뢰성",
     "slaCard": "공유된 사서함 SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "기본 화상 회의",
     "preferredVideoDesc": "새 약속의 기본 화상 회의 제공자를 선택하십시오. Meet은 연결된 Google 캘린더가 필요하며, Teams는 Outlook이 필요합니다. Jitsi는 계정 없이 사용할 수 있습니다.",
     "meetingRemindersDesc": "Inboria는 응답이 없는 약속 제안 후 48시간 후에 연락처에 정중한 알림을 보냅니다.",
-    "meetingRemindersTitle": "자동 약속 알림"
+    "meetingRemindersTitle": "자동 약속 알림",
+    "outlookAddinSection": "Outlook의 Inboria",
+    "personalVideoUrlDesc": "Teams 또는 Meet의 영구 회의실 링크를 붙여넣으세요 (https://...). Inboria는 모든 약속 제안에 이를 사용할 것입니다.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud 및 대부분의 웹메일. Inboria 도우미를 메일에서 나가지 않고 직접 메일함에 추가하세요.",
+    "outlookAddinTitle": "Outlook의 'Inboria에 요청' 버튼",
+    "webmailDownload": "확장 다운로드",
+    "webmailCopyUrl": "chrome://extensions 복사",
+    "personalVideoUrlInvalid": "잘못된 링크 (https:// 필요)",
+    "webmailUrlCopied": "주소 복사됨 ✓",
+    "outlookOpenAddinsPage": "Outlook 추가 기능 열기",
+    "outlookDownloadManifest": "파일 다운로드",
+    "outlookStep2": "Outlook에서 '추가 기능 받기' › '내 추가 기능' › '사용자 지정 추가 기능 추가' › '파일에서'를 열고 다운로드한 파일을 선택하십시오.",
+    "outlookGuideIntro": "세 가지 간단한 단계. 메뉴를 찾을 필요 없이 안내됩니다.",
+    "webmailExtInstall": "브라우저에 설치",
+    "webmailGuideIntro": "Gmail, OVH, Yahoo, iCloud 및 대부분의 웹메일과 함께 작동하며, Chrome 또는 Edge에서 사용할 수 있습니다. 세 가지 간단한 단계, 한 번만.",
+    "webmailStep2": "Chrome 또는 Edge에서 확장 프로그램 페이지를 엽니다: 주소창에 chrome://extensions를 입력한 후 '개발자 모드'를 활성화하십시오 (오른쪽 상단 스위치).",
+    "webmailGuideTitle": "웹메일에 Inboria 설치",
+    "webmailExtTitle": "웹메일의 'Inboria에 요청' 버튼",
+    "webmailStep3": "'압축되지 않은 확장 프로그램 로드'를 클릭하고 압축 해제된 'inboria-extension' 폴더를 선택하십시오. 그런 다음 웹메일을 열면 'Inboria에 요청' 버튼이 나타납니다. 한 번 로그인하면 준비 완료입니다.",
+    "outlookStep1": "Inboria 연결 파일을 다운로드하십시오.",
+    "reconnect": "다시 연결",
+    "outlookAddinDesc": "Outlook에서 Inboria 도우미를 직접 추가하여 메일을 떠나지 않고 사용하세요.",
+    "personalVideoUrlLabel": "개인 비디오 링크",
+    "outlookStep3": "메일을 열면 리본에 'Inboria에 요청' 버튼이 나타납니다. Inboria 계정으로 한 번 로그인하면 준비 완료입니다.",
+    "outlookGuideTitle": "Outlook에 Inboria 설치",
+    "webmailExtSection": "웹메일의 Inboria",
+    "outlookAddinInstall": "Outlook에 설치",
+    "webmailStep1": "Inboria 확장 프로그램을 다운로드한 후 파일을 압축 해제하십시오 (오른쪽 클릭 › '모두 추출'). 'inboria-extension' 폴더가 생성됩니다."
   },
   "subscription": {
     "title": "구독 관리",
@@ -1426,7 +1619,10 @@
     "start": "시작하기",
     "numberOfCollaborators": "협력자 수",
     "total": "총계",
-    "seatsExample": "예: 3명의 협력자 = 50.97€/월 — 귀하의 공간에서 언제든지 수정 가능합니다."
+    "seatsExample": "예: 3명의 협력자 = 50.97€/월 — 귀하의 공간에서 언제든지 수정 가능합니다.",
+    "billingMonthly": "월간",
+    "perMonthBilledYearly": "/월 (연간 청구)",
+    "billingYearly": "연간"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "전송 중 오류 발생",
     "changeRole": "역할 변경하기",
     "adminDesc": "팀, 구독 및 모든 이메일을 관리할 수 있습니다",
-    "memberDesc": "자신의 이메일 및 공유된 작업에 접근할 수 있습니다"
+    "memberDesc": "자신의 이메일 및 공유된 작업에 접근할 수 있습니다",
+    "trialTeamHint": "팀 체험: 최대 3명의 동료를 초대하십시오. 각자는 4,500 크레딧의 자체 체험을 받고, 공유된 메일함, 할당 및 내부 메모를 잠금 해제합니다.",
+    "trialTeamLabel": "팀 체험"
   },
   "sharedMailboxes": {
     "title": "공유된 메일함",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}}님이 이 메일을 {{target}}님께 배정하였습니다",
     "systemSelfAssigned": "{{actor}}님이 이 메일을 맡았습니다",
     "systemReassigned": "{{actor}}님이 {{previous}}님에서 {{target}}님으로 재배정하였습니다",
-    "systemUnassigned": "{{actor}}님이 {{previous}}님의 배정을 해제하였습니다"
+    "systemUnassigned": "{{actor}}님이 {{previous}}님의 배정을 해제하였습니다",
+    "recipientsFilter": "멤버 검색…",
+    "typingMany": "여러 사람이 입력 중…",
+    "recipientsClear": "비우기",
+    "placeholderSimple": "메시지를 입력하십시오…",
+    "viewing": "현재 보고 있음",
+    "internalNote": "메모",
+    "recipients": "수신자",
+    "recipientsPick": "메모 수신자",
+    "typingOne": "{{name}}이(가) 입력 중…",
+    "recipientsEmpty": "멤버 없음",
+    "recipientsSelected": "{{count}} 선택됨",
+    "emailMessage": "이메일"
   },
   "attachments": {
     "title": "첨부파일",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "대기 중",
     "statusPendingShort": "대기 중",
     "syncFailed": "동기화 실패",
-    "viewDetails": "세부 정보 보기"
+    "viewDetails": "세부 정보 보기",
+    "internalAppointment": "내부 약속",
+    "duplicateError": "중복 오류",
+    "duplicatedDesc": "7일 후에 복사본 생성됨.",
+    "noteSelectedCount": "{{count}} 수신자",
+    "forwardWhere": "장소",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}}의 제안이 적합하지 않습니다. 내 일정과 호환되는 다른 시간대를 제안하세요.",
+    "duplicated": "약속 복제됨",
+    "ctxNoProject": "프로젝트 없음",
+    "noteError": "노트 추가 오류",
+    "filterExternal": "고객",
+    "autoConfirmed": {
+      "desc": "{{count}} 개의 약속이 수신된 메일에서 자동으로 확인되었습니다.",
+      "title": "확인 감지됨"
+    },
+    "ctxDup7": "7일 후",
+    "forwardIntro": "안녕하세요,",
+    "statusPendingHint": "Inboria가 고객에게 제안 메일을 자동으로 보낼 것입니다.",
+    "markConfirmed": "확인됨으로 표시",
+    "newInternalAppointment": "내부 약속",
+    "ctxEdit": "수정",
+    "theContact": "연락처",
+    "statusLabel": "상태",
+    "notesEmpty": "노트 없음. 노트는 내부에만 남아 있으며 고객에게 전송되지 않습니다.",
+    "expandSuggestions": "제안 보기",
+    "forwardTitle": "제목",
+    "noteAllTeam": "전체 팀",
+    "internalMembers": "초대된 팀 멤버",
+    "noteRecipientsLabel": "받는 사람",
+    "ctxMarkAs": "다음으로 표시",
+    "singleDay": "단일 기간으로 돌아가기",
+    "ctxDupNextDay": "다음 날",
+    "counterDeclined": "연락처에 거절됨 전송",
+    "ctxDup14": "14일 후",
+    "collapseSuggestions": "제안 숨기기",
+    "formInternalNoteLabel": "내부 메모 (선택 사항)",
+    "forwardBody": "이 약속의 세부 정보를 전달합니다:",
+    "multiDay": "여러 날…",
+    "ctxForward": "이메일로 전달",
+    "forwardVideo": "비디오 링크",
+    "internalMembersEmpty": "초대된 멤버가 없습니다. '추가'를 클릭하여 동료를 선택하십시오.",
+    "forwardWhen": "날짜",
+    "pickDate": "날짜 선택",
+    "ctxDuplicate": "복제",
+    "coorgNoCandidate": "사용 가능한 멤버가 없습니다.",
+    "ctxDupCustomMenu": "사용자 지정…",
+    "ctxDupCustom": "며칠 후에 복제하시겠습니까?",
+    "ctxOpen": "열기",
+    "notePlaceholder": "내부 메모 (팀만 볼 수 있으며, 클라이언트에게는 전송되지 않음)…",
+    "confirmError": "확인 중 오류 발생",
+    "ctxDelete": "삭제",
+    "duration": "기간",
+    "internalNotes": "내부 메모",
+    "ctxDup30": "1개월 후",
+    "formInternalNotePlaceholder": "예: VIP 고객, 어조 주의. 고객에게 절대 발송되지 않음.",
+    "askInboriaNewSlot": "Inboria에 새 일정 요청",
+    "filterAll": "모두",
+    "confirmWithInboria": "Inboria로 확인",
+    "ctxProject": "프로젝트",
+    "coorgAdd": "+ 추가",
+    "ctxDup90": "3개월 후",
+    "confirmDelete": "이 약속을 삭제하시겠습니까?",
+    "forwardOutro": "안녕히 계십시오,",
+    "forwardSubject": "전달: 약속",
+    "filterInternal": "내부"
   },
   "supportChat": {
     "title": "Inboria 어시스턴트",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Inboria에 대한 질문을 하십시오: 기능, 설정, 구독 등.",
     "placeholder": "질문을 입력하십시오...",
     "poweredBy": "Inboria에 의해 구동됩니다",
-    "errorMessage": "죄송합니다, 오류가 발생했습니다. 다시 시도하시거나 support@inboria.com에 문의하십시오."
+    "errorMessage": "죄송합니다, 오류가 발생했습니다. 다시 시도하시거나 support@inboria.com에 문의하십시오.",
+    "send": "보내기",
+    "clear": "대화 지우기"
   },
   "inboriaChat": {
     "openLabel": "Inboria 채팅 열기",
@@ -2911,7 +3187,9 @@
       "en_attente": "대기 중",
       "relance": "진행 중",
       "termine": "완료됨"
-    }
+    },
+    "bulkDismissedToast": "{{count}} 무시됨",
+    "bulkMarkedRepliedToast": "{{count}} 답장으로 표시됨"
   },
   "contacts": {
     "title": "360° 연락처",
@@ -3016,7 +3294,10 @@
     "openedBadge": "열림",
     "openedBadgeCount": "{{count}}회 열림",
     "openedAtLabel": "첫 번째 열기: {{date}}",
-    "notOpenedYet": "아직 열리지 않음"
+    "notOpenedYet": "아직 열리지 않음",
+    "scheduledCancelError": "취소 실패",
+    "scheduledCancelPartial": "{{total}} 중 {{failed}} 취소 실패",
+    "scheduledNoRecipient": "수신자 없음"
   },
   "templates": {
     "title": "템플릿",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "보이게 된 이메일",
     "privateOnDesc": "이 이메일은 이제 귀하의 관리자에게 보이지 않습니다 (팀 폴더 + Inboria 보기).",
     "privateOffDesc": "이 이메일은 귀하의 관리자에게 다시 보이게 됩니다 (팀 폴더 + Inboria 보기).",
-    "privateError": "개인정보를 업데이트할 수 없습니다."
+    "privateError": "개인정보를 업데이트할 수 없습니다.",
+    "details": "세부 정보",
+    "actionsMenu": "작업"
   },
   "privacy": {
     "title": "개인정보 및 팀 접근",
@@ -3456,7 +3739,10 @@
       "followup": "재촉",
       "appointment": "일정",
       "team": "팀 활동"
-    }
+    },
+    "addDescription": "아직 받은 편지함에 없는 사람을 추적하기 위해 연락처를 만드십시오.",
+    "openContact": "연락처 보기",
+    "deleteDescription": "이 주소와 연결된 이메일 기록은 삭제되지 않습니다. 수동 연락처만 사라집니다."
   },
   "folders": {
     "title": "내 폴더",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "일정",
     "system": "시스템"
+  },
+  "signature": {
+    "imageTooLarge": "이미지가 너무 큼 (최대 200 Ko)",
+    "linkUrlPrompt": "링크 URL (https://...)",
+    "size": "크기",
+    "italic": "기울임꼴",
+    "clear": "서식 지우기",
+    "imageInvalid": "잘못된 이미지 파일",
+    "highlight": "강조",
+    "bold": "굵게",
+    "underline": "밑줄",
+    "image": "이미지 / 로고",
+    "color": "텍스트 색상",
+    "imageHint": "팁: PNG/JPG 로고를 삽입하십시오 (최대 200KB). 이미지는 서명에 직접 포함됩니다.",
+    "font": "글꼴",
+    "link": "링크",
+    "orderedList": "번호 목록",
+    "moreColors": "더 많은 색상…",
+    "bulletList": "글머리 기호 목록"
+  },
+  "palette": {
+    "compose": "새 이메일",
+    "shortcuts": "키보드 단축키",
+    "navigate": "탐색",
+    "empty": "결과 없음.",
+    "actions": "작업",
+    "placeholder": "명령 입력 또는 검색…"
+  },
+  "outlookBanner": {
+    "back": "Outlook으로 돌아가기",
+    "openedFrom": "Outlook에서 열림. 클릭하여 돌아가거나 Outlook 탭으로 전환하십시오."
+  },
+  "gmailBanner": {
+    "openedFrom": "Gmail에서 열림. 돌아가려면 클릭하거나 Gmail 탭으로 전환하세요.",
+    "back": "Gmail로 돌아가기"
+  },
+  "webmailBanner": {
+    "back": "내 웹메일로 돌아가기",
+    "openedFromNamed": "{{name}}에서 열었습니다. 돌아가려면 클릭하거나 {{name}} 탭으로 전환하십시오.",
+    "openedFrom": "웹메일에서 열었습니다. 돌아가려면 클릭하거나 웹메일 탭으로 전환하십시오.",
+    "backNamed": "{{name}}로 돌아가기"
   }
 }

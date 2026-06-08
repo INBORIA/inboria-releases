@@ -23,7 +23,16 @@
     "add": "הוסף",
     "edit": "ערוך",
     "reset": "אפס",
-    "more": "עוד"
+    "more": "עוד",
+    "notAuthenticated": "לא מאומת",
+    "collapse": "הסתר קטגוריות",
+    "send": "שלח",
+    "dismiss": "סגור",
+    "create": "צור",
+    "remove": "הסר",
+    "select": "בחר",
+    "copyFailed": "העתקה נכשלה",
+    "expand": "הצג קטגוריות"
   },
   "nav": {
     "extensions": "הרחבות",
@@ -37,7 +46,18 @@
     "login": "התחבר",
     "signup": "הרשם",
     "logout": "התנתק",
-    "openMenu": "פתח תפריט"
+    "openMenu": "פתח תפריט",
+    "categories": "קטגוריות",
+    "archives": "ארכיון",
+    "dailyBrief": "סיכום יומי",
+    "folders": "התיקיות שלי",
+    "tasks": "משימות",
+    "followups": "מעקבים",
+    "inbox": "תיבת דואר נכנס",
+    "sent": "נשלחו",
+    "scheduled": "מתוזמנים",
+    "snoozed": "נדחו",
+    "contacts": "אנשי קשר"
   },
   "sidebar": {
     "inbox": "תיבת דואר נכנס",
@@ -66,7 +86,10 @@
     "followups": "תזכורות",
     "contacts": "אנשי קשר",
     "assigned": "מוקצים",
-    "myTasks": "המשימות שלי"
+    "myTasks": "המשימות שלי",
+    "expand": "הרחב את התפריט",
+    "collapse": "כווץ את התפריט",
+    "resize": "שנה גודל תפריט"
   },
   "dashboard": {
     "expiredSubscription": "המנוי שלך פג",
@@ -529,10 +552,17 @@
       "important": "חשובים"
     },
     "date": {
-      "all": "כל התאריכים"
+      "all": "כל התאריכים",
+      "yesterday": "אתמול",
+      "thisMonth": "החודש",
+      "today": "היום",
+      "last7": "7 הימים האחרונים",
+      "last30": "30 הימים האחרונים"
     },
     "read": {
-      "all": "הכול"
+      "all": "הכול",
+      "read": "נקראים",
+      "unread": "לא נקראים"
     },
     "sharedDraft": "טיוטה משותפת",
     "sharedDraftOn": "טיוטה משותפת פעילה",
@@ -564,7 +594,113 @@
       "label": "תצוגת חלוניות",
       "overlay": "חופף",
       "split": "זה לצד זה"
-    }
+    },
+    "unknownSender": "לא ידוע",
+    "scSearch": "חיפוש",
+    "scNext": "מייל הבא",
+    "snoozedFor24h": "נדחה למחר",
+    "collisionViewingOne": "{{name}} גם צופה במייל הזה",
+    "markedAsUnread": "סומן כלא נקרא",
+    "theme": {
+      "switchLight": "מצב בהיר",
+      "switchDark": "מצב כהה"
+    },
+    "archived": "הועבר לארכיון",
+    "loadingEmail": "טוען את המייל...",
+    "searchOpAttachment": "מיילים עם קובץ מצורף",
+    "moreActions": "עוד פעולות",
+    "searchOpSubject": "סנן לפי נושא",
+    "markAsRead": "סמן כנקרא",
+    "collisionViewingMany": "{{count}} אנשים נוספים צופים במייל הזה",
+    "scGotoInbox": "עבור לתיבת דואר נכנס",
+    "scGotoSnoozed": "עבור לדחויים",
+    "scSnooze": "דחה (24 שעות)",
+    "close": "סגור",
+    "composeRestore": "שחזר טיוטה",
+    "scDelete": "מחק",
+    "density": {
+      "normal": "רגיל",
+      "label": "צפיפות תצוגה",
+      "compact": "קומפקטי",
+      "comfortable": "נוח"
+    },
+    "headerCollapse": "הסתר כרטיסיות ומסננים",
+    "composeUntitled": "טיוטה ללא נושא",
+    "backHint": "חזור (Esc) — J/K לניווט, R להשיב, E לארכיון",
+    "loadingTitle": "טוען...",
+    "draftYou": "אתה",
+    "copySender": "העתק כתובת",
+    "slaOverdue": "SLA פג תוקף",
+    "assigneeFilterMember": "חבר זה",
+    "draftRelease": "שחרר",
+    "scArchive": "העבר לארכיון",
+    "markAsReadUnread": "סמן כנקרא / לא נקרא",
+    "scForward": "העבר",
+    "draftSomeoneSends": "{{name}} ישלח את זה",
+    "searchOpSender": "סנן לפי שולח",
+    "readingPanePos": {
+      "off": "מוסתר",
+      "right": "מימין",
+      "label": "חלון קריאה",
+      "bottom": "למטה"
+    },
+    "scGotoContacts": "עבור לאנשי קשר",
+    "markAsUnread": "סמן כלא נקרא",
+    "composeDiscard": "בטל",
+    "snooze3h": "בעוד 3 שעות",
+    "importanceLabel": "תצוגה",
+    "copiedSenderEmail": "כתובת הועתקה",
+    "scPalette": "לוח פקודות",
+    "copiedSubject": "נושא הועתק",
+    "myFoldersLabel": "התיקיות שלי",
+    "copySenderEmail": "העתק כתובת שולח",
+    "viewOptions": "אפשרויות תצוגה",
+    "shortcutsTitle": "קיצורי מקלדת",
+    "assignedNoTeam": "תצוגה זו דורשת צוות (2 חברים או יותר).",
+    "collisionReplyingMany": "{{count}} אנשים כבר משיבים למייל זה",
+    "assignToProject": "שייך לתיקיית צוות",
+    "searchGroupOperators": "חדד",
+    "composeAria": "כתוב מייל",
+    "downloadEml": "הורד כ-.eml",
+    "headerExpand": "הצג כרטיסיות ומסננים",
+    "scClose": "סגור את המייל",
+    "composeDiscardConfirm": "לבטל את הטיוטה הזו?",
+    "readingPaneOff": "השבת את חלונית הקריאה",
+    "searchGroupSenders": "שולחים",
+    "scGotoTasks": "עבור למשימות",
+    "printPopupBlocked": "לא ניתן לפתוח את חלון ההדפסה",
+    "copied": "הועתק",
+    "snooze": "דחה",
+    "exportEml": "הורד .eml",
+    "categorized": "ממוין",
+    "markedAsRead": "סומן כנקרא",
+    "teamBadge": "צוות",
+    "priorityLabel": "עדיפות",
+    "backToGmailHint": "פתח את המייל המדויק הזה ב-Gmail",
+    "snoozeTomorrow": "מחר בבוקר",
+    "composeMinimize": "מזער טיוטה",
+    "scGotoSent": "עבור לנשלחו",
+    "readingPaneOn": "הפעל חלון קריאה (3 עמודות)",
+    "collisionReplyingOne": "{{name}} כבר עונה למייל הזה",
+    "createAndAssignTask": "צור והקצה...",
+    "copyAddress": "העתק כתובת",
+    "copySubject": "העתק נושא",
+    "loadEmailError": "לא ניתן לטעון את האימייל.",
+    "draftYouSend": "אתה שולח",
+    "scGotoArchives": "עבור לארכיון",
+    "scReply": "השב",
+    "backToGmail": "חזרה ל-Gmail",
+    "moveToFolder": "העבר לתיקייה",
+    "print": "הדפס",
+    "scPrev": "מייל קודם",
+    "draftClaimSend": "אני שולח",
+    "draftLiveCoedit": "עריכה משותפת בזמן אמת",
+    "draftTakeOverHint": "קח את השליחה אם הקולגה לא זמין",
+    "scHelp": "הצג עזרה זו",
+    "filtersReset": "אפס מסננים",
+    "draftTakeOver": "קח",
+    "searchGroupEmails": "מיילים",
+    "filterByCategory": "סנן"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",
@@ -649,7 +785,16 @@
     "blockFailed": "לא ניתן לחסום",
     "blockNoEmail": "כתובת השולח לא נמצאה",
     "blockNoConnection": "אין חשבון דוא״ל מחובר",
-    "emptied": "תיק ריק"
+    "emptied": "תיק ריק",
+    "noBlocked": "אין שולחים חסומים",
+    "openRestored": "פתח",
+    "fetchingFromProvider": "מאחזר תוכן מהספק שלך...",
+    "retryFetch": "נסה שוב",
+    "unblocked": "שולח לא חסום",
+    "blockedList": "שולחים חסומים",
+    "unblock": "בטל חסימה",
+    "fetchFailed": "לא ניתן לאחזר את תוכן המייל הזה.",
+    "blockSenderSuccess": "השולח נחסם"
   },
   "trash": {
     "title": "פח זבל",
@@ -794,7 +939,18 @@
     "movedToDone": "משימה הושלמה",
     "movedToTodo": "משימה הוחזרה לעשייה",
     "statusUpdated": "סטטוס עודכן",
-    "taskCreated": "משימה נוצרה"
+    "taskCreated": "משימה נוצרה",
+    "titleCopied": "הכותרת הועתקה",
+    "reassign": "הקצה מחדש",
+    "openInInbox": "פתח בתיבת דואר נכנס",
+    "copyTitle": "העתק כותרת",
+    "noLinkedEmail": "משימה זו אינה מקושרת למייל.",
+    "unassign": "בטל שיוך",
+    "linkedEmailActions": "במייל המקושר",
+    "reassigned": "משימה שויכה מחדש",
+    "markAsDone": "סמן כהושלם",
+    "loadingTitle": "טוען משימות...",
+    "markAsTodo": "סמן לביצוע"
   },
   "projects": {
     "title": "תיקיות צוות",
@@ -851,7 +1007,14 @@
     "exportError": "שגיאה בעת הייצוא",
     "searchProjects": "חפש פרויקט...",
     "noProjectsAlt": "צור את הפרויקט הראשון שלך כדי לקבץ דוא״לים ומשימות.",
-    "viewDetail": "ראה פרטים"
+    "viewDetail": "ראה פרטים",
+    "taskAssigned": "משימה הוקצתה",
+    "taskUnassigned": "משימה בוטלה",
+    "detachEmail": "הסר מהפרויקט",
+    "assignTo": "שייך ל…",
+    "openEmail": "פתח את המייל",
+    "emailDetached": "האימייל הוסר מהפרויקט",
+    "unassigned": "לא מוקצה"
   },
   "classification": {
     "title": "קטגוריות",
@@ -1135,7 +1298,8 @@
       "cannotRename": "קטגוריה מערכת זו לא יכולה להיות משונה.",
       "cannotMerge": "הקטגוריה « לא מסווג » לא יכולה להיות ממוזגת.",
       "goToInbox": "מיין את הדוא״לים הללו"
-    }
+    },
+    "adminOnlyNotice": "ניהול קטגוריות (יצירה, שינוי, מחיקה, חבילות מקצועיות) שמור למנהל הצוות כדי להבטיח סיווג עקבי. ניתן לצפות בקטגוריות ובמיילים שלהן."
   },
   "settings": {
     "title": "הגדרות",
@@ -1268,7 +1432,9 @@
       "privacy": "פרטיות וגישה לצוות",
       "privacyDesc": "המיילים הפרטיים שלך ורשומת הביקורים של המנהל",
       "calendars": "לוחות שנה",
-      "calendarsDesc": "חבר את Google Calendar ו-Outlook Calendar"
+      "calendarsDesc": "חבר את Google Calendar ו-Outlook Calendar",
+      "administration": "ניהול",
+      "administrationDesc": "הגדרות שמורות למנהלי הארגון"
     },
     "b2bSection": "אמינות B2B",
     "slaCard": "SLA תיבות משותפות",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "שיחת וידאו ברירת מחדל",
     "preferredVideoDesc": "אנא בחרו את ספק שיחת הווידאו ברירת המחדל לפגישות חדשות. Meet דורש יומן Google מחובר; Teams דורש Outlook. Jitsi עובד ללא חשבון.",
     "meetingRemindersDesc": "Inboria שולחת תזכורת מנומסת לאיש הקשר 48 שעות לאחר הצעת פגישה שנותרה ללא מענה.",
-    "meetingRemindersTitle": "תזכורות אוטומטיות לפגישות"
+    "meetingRemindersTitle": "תזכורות אוטומטיות לפגישות",
+    "outlookAddinSection": "Inboria ב-Outlook",
+    "personalVideoUrlDesc": "הדבק את הקישור לחדר הקבוע שלך ב-Teams או Meet (https://...). Inboria ישתמש בו בכל ההצעות לפגישות.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud ורוב שירותי הדואר האלקטרוני. הוסף את העוזר של Inboria ישירות לתיבת הדואר שלך, מבלי לעזוב את המיילים.",
+    "outlookAddinTitle": "כפתור \"בקש מ-Inboria\" ב-Outlook",
+    "webmailDownload": "הורד את התוסף",
+    "webmailCopyUrl": "העתק chrome://extensions",
+    "personalVideoUrlInvalid": "קישור לא תקין (נדרש https://)",
+    "webmailUrlCopied": "כתובת הועתקה ✓",
+    "outlookOpenAddinsPage": "פתח תוספות Outlook",
+    "outlookDownloadManifest": "הורד קובץ",
+    "outlookStep2": "ב-Outlook, פתח 'קבל תוספות' › 'התוספות שלי' › 'הוסף תוסף מותאם אישית' › 'מתוך קובץ', ואז בחר את הקובץ שהורדת.",
+    "outlookGuideIntro": "שלושה שלבים פשוטים. אין צורך לחפש בתפריטים: הכל מודרך.",
+    "webmailExtInstall": "התקן בדפדפן שלי",
+    "webmailGuideIntro": "עובד עם Gmail, OVH, Yahoo, iCloud ורוב דוארי האינטרנט, ב-Chrome או Edge. שלושה שלבים פשוטים, פעם אחת בלבד.",
+    "webmailStep2": "ב-Chrome או Edge, פתח את דף התוספות: הקלד chrome://extensions בשורת הכתובת, ואז הפעל את 'מצב מפתח' (מתג למעלה מימין).",
+    "webmailGuideTitle": "התקן את Inboria בדואר האינטרנט שלך",
+    "webmailExtTitle": "כפתור 'בקש מ-Inboria' בדוא\"ל שלך",
+    "webmailStep3": "לחץ על 'טען הרחבה לא ארוזה' ובחר את התיקייה 'inboria-extension' שפרקת. פתח את הדוא\"ל שלך: הכפתור 'בקש מ-Inboria' יופיע. התחבר פעם אחת וזה מוכן.",
+    "outlookStep1": "הורד את קובץ ההתחברות של Inboria.",
+    "reconnect": "התחבר מחדש",
+    "outlookAddinDesc": "הוסף את העוזר של Inboria ישירות ל-Outlook שלך, מבלי לעזוב את הדוא\"ל.",
+    "personalVideoUrlLabel": "קישור וידאו אישי",
+    "outlookStep3": "פתח מייל: הכפתור 'בקש מ-Inboria' יופיע ברצועה. התחבר פעם אחת עם חשבון Inboria שלך וזה מוכן.",
+    "outlookGuideTitle": "התקן Inboria ב-Outlook",
+    "webmailExtSection": "Inboria בדוא\"ל שלך",
+    "outlookAddinInstall": "התקן ב-Outlook",
+    "webmailStep1": "הורד את הרחבת Inboria, ואז פרק את הקובץ (לחץ ימני › 'חלץ הכל'). תקבל תיקייה 'inboria-extension'."
   },
   "subscription": {
     "title": "נהל את המנוי שלך",
@@ -1426,7 +1619,10 @@
     "start": "התחל",
     "numberOfCollaborators": "מספר משתפי פעולה",
     "total": "סך הכל",
-    "seatsExample": "דוגמה: 3 משתפי פעולה = 50,97€/חודש — ניתן לשנות בכל עת מהמרחב שלכם."
+    "seatsExample": "דוגמה: 3 משתפי פעולה = 50,97€/חודש — ניתן לשנות בכל עת מהמרחב שלכם.",
+    "billingMonthly": "חודשי",
+    "perMonthBilledYearly": "/חודש (מחויב שנתי)",
+    "billingYearly": "שנתי"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "שגיאה בעת שליחה",
     "changeRole": "שנה את התפקיד",
     "adminDesc": "יכול לנהל את הצוות, המנוי ואת כל הדוא״לים",
-    "memberDesc": "גישה לדוא״לים שלו ולמשימות המשותפות"
+    "memberDesc": "גישה לדוא״לים שלו ולמשימות המשותפות",
+    "trialTeamHint": "ניסיון צוות: הזמן עד 3 עמיתים. כל אחד מקבל ניסיון של 4,500 קרדיטים, ואתה פותח תיבות משותפות, שיוך והערות פנימיות.",
+    "trialTeamLabel": "ניסיון צוות"
   },
   "sharedMailboxes": {
     "title": "תיבות משותפות",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} הקצה דוא״ל זה אל {{target}}",
     "systemSelfAssigned": "{{actor}} לקח אחריות על דוא״ל זה",
     "systemReassigned": "{{actor}} העביר את ההקצאה מ-{{previous}} אל {{target}}",
-    "systemUnassigned": "{{actor}} ביטל את ההקצאה של {{previous}}"
+    "systemUnassigned": "{{actor}} ביטל את ההקצאה של {{previous}}",
+    "recipientsFilter": "חפש חבר...",
+    "typingMany": "כמה אנשים מקלידים...",
+    "recipientsClear": "נקה",
+    "placeholderSimple": "הזן את ההודעה שלך…",
+    "viewing": "צופה כעת",
+    "internalNote": "הערה",
+    "recipients": "נמענים",
+    "recipientsPick": "נמעני ההערה",
+    "typingOne": "{{name}} מקליד…",
+    "recipientsEmpty": "אין חברים",
+    "recipientsSelected": "{{count}} נבחרו",
+    "emailMessage": "אימייל"
   },
   "attachments": {
     "title": "קבצים מצורפים",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "ממתין",
     "statusPendingShort": "ממתין",
     "syncFailed": "סנכרון נכשל",
-    "viewDetails": "הצג פרטים"
+    "viewDetails": "הצג פרטים",
+    "internalAppointment": "פגישה פנימית",
+    "duplicateError": "שגיאת שכפול",
+    "duplicatedDesc": "עותק נוצר 7 ימים מאוחר יותר.",
+    "noteSelectedCount": "{{count}} נמענים",
+    "forwardWhere": "מיקום",
+    "askInboriaNewSlotPrefill": "ההצעה הנגדית של {{contact}}{{slot}} לא מתאימה לי. הצע לו זמנים נוספים שמתאימים ליומן שלי.",
+    "duplicated": "פגישה שוכפלה",
+    "ctxNoProject": "אין פרויקט",
+    "noteError": "שגיאה בהוספת הערה",
+    "filterExternal": "לקוח",
+    "autoConfirmed": {
+      "desc": "{{count}} פגישות אושרו אוטומטית מהמיילים שהתקבלו.",
+      "title": "אישורים זוהו"
+    },
+    "ctxDup7": "בעוד 7 ימים",
+    "forwardIntro": "שלום,",
+    "statusPendingHint": "Inboria ישלח אוטומטית את המייל עם ההצעה ללקוח.",
+    "markConfirmed": "סמן כמאושר",
+    "newInternalAppointment": "פגישה פנימית",
+    "ctxEdit": "ערוך",
+    "theContact": "איש הקשר",
+    "statusLabel": "סטטוס",
+    "notesEmpty": "אין הערות. ההערות נשארות פנימיות — לעולם לא נשלחות ללקוח.",
+    "expandSuggestions": "הצג הצעות",
+    "forwardTitle": "כותרת",
+    "noteAllTeam": "כל הצוות",
+    "internalMembers": "חברי צוות מוזמנים",
+    "noteRecipientsLabel": "ל",
+    "ctxMarkAs": "סמן כ",
+    "singleDay": "חזרה ליום אחד",
+    "ctxDupNextDay": "למחרת",
+    "counterDeclined": "סירוב נשלח לאיש קשר",
+    "ctxDup14": "בעוד 14 ימים",
+    "collapseSuggestions": "הסתר הצעות",
+    "formInternalNoteLabel": "הערה פנימית (אופציונלי)",
+    "forwardBody": "אני מעביר לך את פרטי הפגישה הזו:",
+    "multiDay": "מספר ימים…",
+    "ctxForward": "העבר במייל",
+    "forwardVideo": "קישור וידאו",
+    "internalMembersEmpty": "אין חברים מוזמנים. לחץ על « + הוסף » כדי לבחור את העמיתים שלך.",
+    "forwardWhen": "תאריך",
+    "pickDate": "בחר תאריך",
+    "ctxDuplicate": "שכפל",
+    "coorgNoCandidate": "אין חבר זמין.",
+    "ctxDupCustomMenu": "מותאם אישית…",
+    "ctxDupCustom": "שכפל בעוד כמה ימים?",
+    "ctxOpen": "פתח",
+    "notePlaceholder": "הערה פנימית (נראית רק לצוות, לעולם לא נשלחת ללקוח)…",
+    "confirmError": "שגיאה בעת האישור",
+    "ctxDelete": "מחק",
+    "duration": "משך",
+    "internalNotes": "הערות פנימיות",
+    "ctxDup30": "בעוד חודש",
+    "formInternalNotePlaceholder": "לדוגמה: לקוח VIP, שים לב לטון. לעולם לא נשלח ללקוח.",
+    "askInboriaNewSlot": "בקש מ-Inboria פגישה חדשה",
+    "filterAll": "הכל",
+    "confirmWithInboria": "אשר עם Inboria",
+    "ctxProject": "פרויקט",
+    "coorgAdd": "+ הוסף",
+    "ctxDup90": "בעוד 3 חודשים",
+    "confirmDelete": "למחוק את הפגישה הזו?",
+    "forwardOutro": "בברכה,",
+    "forwardSubject": "העברה: פגישה",
+    "filterInternal": "פנימי"
   },
   "supportChat": {
     "title": "עוזר Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "שאל אותי כל שאלה על Inboria: תכונות, הגדרות, מנוי ועוד.",
     "placeholder": "הקלד את שאלתך...",
     "poweredBy": "מנוהל על ידי Inboria",
-    "errorMessage": "סליחה, אירעה שגיאה. אנא נסה שוב או צור קשר בכתובת support@inboria.com."
+    "errorMessage": "סליחה, אירעה שגיאה. אנא נסה שוב או צור קשר בכתובת support@inboria.com.",
+    "send": "שלח",
+    "clear": "נקה שיחה"
   },
   "inboriaChat": {
     "openLabel": "פתח את הצ'אט של Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "ממתין",
       "relance": "בתהליך",
       "termine": "הושלם"
-    }
+    },
+    "bulkDismissedToast": "{{count}} התעלמו",
+    "bulkMarkedRepliedToast": "{{count}} סומנו כענו"
   },
   "contacts": {
     "title": "קשר 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "נפתח",
     "openedBadgeCount": "נפתח {{count}} פעמים",
     "openedAtLabel": "פתיחה ראשונה: {{date}}",
-    "notOpenedYet": "עדיין לא נפתח"
+    "notOpenedYet": "עדיין לא נפתח",
+    "scheduledCancelError": "ביטול נכשל",
+    "scheduledCancelPartial": "{{failed}} ביטולים מתוך {{total}} נכשלו",
+    "scheduledNoRecipient": "ללא נמענים"
   },
   "templates": {
     "title": "תבניות",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "דוא״ל הפך לגלוי",
     "privateOnDesc": "דוא״ל זה אינו גלוי יותר עבור המנהלים שלכם (תצוגת תיק צוות + Inboria).",
     "privateOffDesc": "דוא״ל זה חוזר להיות גלוי עבור המנהלים שלכם (תצוגת תיק צוות + Inboria).",
-    "privateError": "לא ניתן לעדכן את הפרטיות."
+    "privateError": "לא ניתן לעדכן את הפרטיות.",
+    "details": "פרטים",
+    "actionsMenu": "פעולות"
   },
   "privacy": {
     "title": "פרטיות וגישה לצוות",
@@ -3456,7 +3739,10 @@
       "followup": "מעקב",
       "appointment": "יומן",
       "team": "פעילות צוות"
-    }
+    },
+    "addDescription": "צור כרטיס למעקב אחר מישהו שעדיין לא מופיע בתיבה שלך.",
+    "openContact": "צפה בכרטיס איש קשר",
+    "deleteDescription": "היסטוריית המיילים הקשורים לכתובת זו לא נמחקת. רק הכרטיס הידני נעלם."
   },
   "folders": {
     "title": "התיקיות שלי",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "יומן",
     "system": "מערכת"
+  },
+  "signature": {
+    "imageTooLarge": "תמונה גדולה מדי (מקסימום 200 ק\"ב)",
+    "linkUrlPrompt": "כתובת URL של הקישור (https://...)",
+    "size": "גודל",
+    "italic": "נטוי",
+    "clear": "נקה עיצוב",
+    "imageInvalid": "קובץ תמונה לא תקין",
+    "highlight": "הדגשה",
+    "bold": "מודגש",
+    "underline": "קו תחתון",
+    "image": "תמונה / לוגו",
+    "color": "צבע טקסט",
+    "imageHint": "טיפ: הכנס לוגו PNG/JPG (מקסימום 200 ק\"ב). התמונה משולבת ישירות בחתימה.",
+    "font": "גופן",
+    "link": "קישור",
+    "orderedList": "רשימה ממוספרת",
+    "moreColors": "עוד צבעים...",
+    "bulletList": "רשימה עם תבליטים"
+  },
+  "palette": {
+    "compose": "מייל חדש",
+    "shortcuts": "קיצורי מקלדת",
+    "navigate": "נווט",
+    "empty": "אין תוצאות.",
+    "actions": "פעולות",
+    "placeholder": "הקלד פקודה או חפש..."
+  },
+  "outlookBanner": {
+    "back": "חזור ל-Outlook",
+    "openedFrom": "נפתח מ-Outlook. לחץ כדי לחזור, או פשוט חזור ללשונית Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "נפתח מ-Gmail. לחץ כדי לחזור, או פשוט חזור ללשונית Gmail.",
+    "back": "חזרה ל-Gmail"
+  },
+  "webmailBanner": {
+    "back": "חזרה לדואר האינטרנט שלי",
+    "openedFromNamed": "נפתח מ-{{name}}. לחץ לחזרה, או פשוט חזור ללשונית {{name}}.",
+    "openedFrom": "נפתח מדואר האינטרנט שלך. לחץ לחזרה, או פשוט חזור ללשונית דואר האינטרנט שלך.",
+    "backNamed": "חזור ל-{{name}}"
   }
 }

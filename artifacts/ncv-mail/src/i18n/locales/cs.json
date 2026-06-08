@@ -23,7 +23,16 @@
     "add": "Přidat",
     "edit": "Upravit",
     "reset": "Obnovit",
-    "more": "Více"
+    "more": "Více",
+    "notAuthenticated": "Nepřihlášen",
+    "collapse": "Skrýt kategorie",
+    "send": "Odeslat",
+    "dismiss": "Zavřít",
+    "create": "Vytvořit",
+    "remove": "Odebrat",
+    "select": "Vybrat",
+    "copyFailed": "Kopírování selhalo",
+    "expand": "Zobrazit kategorie"
   },
   "nav": {
     "extensions": "Rozšíření",
@@ -37,7 +46,18 @@
     "login": "Přihlásit se",
     "signup": "Registrovat se",
     "logout": "Odhlásit se",
-    "openMenu": "Otevřít menu"
+    "openMenu": "Otevřít menu",
+    "categories": "Kategorie",
+    "archives": "Archivy",
+    "dailyBrief": "Denní přehled",
+    "folders": "Moje složky",
+    "tasks": "Úkoly",
+    "followups": "Následné akce",
+    "inbox": "Příchozí",
+    "sent": "Odeslané",
+    "scheduled": "Naplánované",
+    "snoozed": "Odloženo",
+    "contacts": "Kontakty"
   },
   "sidebar": {
     "inbox": "Skrzynka odbiorcza",
@@ -66,7 +86,10 @@
     "followups": "Připomenutí",
     "contacts": "Kontakty",
     "assigned": "Přiřazeno",
-    "myTasks": "Moje úkoly"
+    "myTasks": "Moje úkoly",
+    "expand": "Rozšířit nabídku",
+    "collapse": "Sbalit nabídku",
+    "resize": "Změnit velikost menu"
   },
   "dashboard": {
     "expiredSubscription": "Váš předplatný plán vypršel",
@@ -529,10 +552,17 @@
       "important": "Důležité"
     },
     "date": {
-      "all": "Všechna data"
+      "all": "Všechna data",
+      "yesterday": "Včera",
+      "thisMonth": "Tento měsíc",
+      "today": "Dnes",
+      "last7": "Posledních 7 dní",
+      "last30": "Posledních 30 dní"
     },
     "read": {
-      "all": "Vše"
+      "all": "Vše",
+      "read": "Přečtené",
+      "unread": "Nepřečtené"
     },
     "sharedDraft": "Sdílený návrh",
     "sharedDraftOn": "Sdílený návrh zapnutý",
@@ -564,7 +594,113 @@
       "label": "Zobrazení panelů",
       "overlay": "Překrytí",
       "split": "Vedle sebe"
-    }
+    },
+    "unknownSender": "Neznámý",
+    "scSearch": "Hledat",
+    "scNext": "Další e-mail",
+    "snoozedFor24h": "Odloženo na zítra",
+    "collisionViewingOne": "{{name}} také prohlíží tento e-mail",
+    "markedAsUnread": "Označeno jako nepřečtené",
+    "theme": {
+      "switchLight": "Světlý režim",
+      "switchDark": "Tmavý režim"
+    },
+    "archived": "Archivováno",
+    "loadingEmail": "Načítání e-mailu...",
+    "searchOpAttachment": "e-maily s přílohou",
+    "moreActions": "Více akcí",
+    "searchOpSubject": "filtrovat podle předmětu",
+    "markAsRead": "Označit jako přečtené",
+    "collisionViewingMany": "{{count}} dalších osob prohlíží tento e-mail",
+    "scGotoInbox": "Přejít do Příchozí",
+    "scGotoSnoozed": "Přejít na Odložené",
+    "scSnooze": "Odložit (24 h)",
+    "close": "Zavřít",
+    "composeRestore": "Obnovit koncept",
+    "scDelete": "Smazat",
+    "density": {
+      "normal": "Normální",
+      "label": "Hustota zobrazení",
+      "compact": "Kompaktní",
+      "comfortable": "Pohodlné"
+    },
+    "headerCollapse": "Skrýt záložky a filtry",
+    "composeUntitled": "Koncept bez předmětu",
+    "backHint": "Zpět (Esc) — J/K pro navigaci, R odpovědět, E archivovat",
+    "loadingTitle": "Načítání…",
+    "draftYou": "Vy",
+    "copySender": "Kopírovat adresu",
+    "slaOverdue": "SLA po termínu",
+    "assigneeFilterMember": "tento člen",
+    "draftRelease": "Uvolnit",
+    "scArchive": "Archivovat",
+    "markAsReadUnread": "Označit jako přečtené / nepřečtené",
+    "scForward": "Přeposlat",
+    "draftSomeoneSends": "{{name}} to pošle",
+    "searchOpSender": "filtrovat podle odesílatele",
+    "readingPanePos": {
+      "off": "Skryté",
+      "right": "Vpravo",
+      "label": "Čtecí panel",
+      "bottom": "Dole"
+    },
+    "scGotoContacts": "Přejít na Kontakty",
+    "markAsUnread": "Označit jako nepřečtené",
+    "composeDiscard": "Zahodit",
+    "snooze3h": "Za 3h",
+    "importanceLabel": "Zobrazení",
+    "copiedSenderEmail": "Adresa zkopírována",
+    "scPalette": "Paleta příkazů",
+    "copiedSubject": "Předmět zkopírován",
+    "myFoldersLabel": "Moje složky",
+    "copySenderEmail": "Kopírovat adresu odesílatele",
+    "viewOptions": "Možnosti zobrazení",
+    "shortcutsTitle": "Klávesové zkratky",
+    "assignedNoTeam": "Tento pohled vyžaduje tým (2 členové nebo více).",
+    "collisionReplyingMany": "{{count}} osob již odpovídá na tento email",
+    "assignToProject": "Přiřadit k týmové složce",
+    "searchGroupOperators": "Upřesnit",
+    "composeAria": "Napsat email",
+    "downloadEml": "Stáhnout jako .eml",
+    "headerExpand": "Zobrazit karty a filtry",
+    "scClose": "Zavřít email",
+    "composeDiscardConfirm": "Zahodit tento koncept?",
+    "readingPaneOff": "Deaktivovat čtecí panel",
+    "searchGroupSenders": "Odesílatelé",
+    "scGotoTasks": "Přejít na Úkoly",
+    "printPopupBlocked": "Nelze otevřít okno tisku",
+    "copied": "Zkopírováno",
+    "snooze": "Odložit",
+    "exportEml": "Stáhnout .eml",
+    "categorized": "Kategorizováno",
+    "markedAsRead": "Označeno jako přečtené",
+    "teamBadge": "Tým",
+    "priorityLabel": "Priorita",
+    "backToGmailHint": "Otevřít tento přesný email v Gmailu",
+    "snoozeTomorrow": "Zítra ráno",
+    "composeMinimize": "Minimalizovat koncept",
+    "scGotoSent": "Přejít na Odeslané",
+    "readingPaneOn": "Zapnout čtecí panel (3 sloupce)",
+    "collisionReplyingOne": "{{name}} již odpovídá na tento email",
+    "createAndAssignTask": "Vytvořit a přiřadit…",
+    "copyAddress": "Kopírovat adresu",
+    "copySubject": "Kopírovat předmět",
+    "loadEmailError": "Nelze načíst email.",
+    "draftYouSend": "Vy odesíláte",
+    "scGotoArchives": "Přejít do Archivu",
+    "scReply": "Odpovědět",
+    "backToGmail": "Zpět na Gmail",
+    "moveToFolder": "Přesunout do",
+    "print": "Tisknout",
+    "scPrev": "Předchozí email",
+    "draftClaimSend": "Já odesílám",
+    "draftLiveCoedit": "Spolupráce v reálném čase",
+    "draftTakeOverHint": "Převzít odeslání, pokud tento kolega není k dispozici",
+    "scHelp": "Zobrazit tuto nápovědu",
+    "filtersReset": "Resetovat filtry",
+    "draftTakeOver": "Převzít",
+    "searchGroupEmails": "Emaily",
+    "filterByCategory": "Filtrovat"
   },
   "sent": {
     "title": "Odeslané emaily",
@@ -649,7 +785,16 @@
     "blockFailed": "Nelze zablokovat",
     "blockNoEmail": "Adresa odesílatele nebyla nalezena",
     "blockNoConnection": "Žádný připojený emailový účet",
-    "emptied": "Složka vyprázdněna"
+    "emptied": "Složka vyprázdněna",
+    "noBlocked": "Žádný blokovaný odesílatel",
+    "openRestored": "Otevřít",
+    "fetchingFromProvider": "Načítání obsahu od vašeho poskytovatele…",
+    "retryFetch": "Zkusit znovu",
+    "unblocked": "Odesílatel odblokován",
+    "blockedList": "Blokovaní odesílatelé",
+    "unblock": "Odblokovat",
+    "fetchFailed": "Nelze načíst obsah tohoto emailu.",
+    "blockSenderSuccess": "Odesílatel zablokován"
   },
   "trash": {
     "title": "Koš",
@@ -794,7 +939,18 @@
     "movedToDone": "Úkol dokončen",
     "movedToTodo": "Úkol vrácen k vykonání",
     "statusUpdated": "Stav aktualizován",
-    "taskCreated": "Úkol vytvořen"
+    "taskCreated": "Úkol vytvořen",
+    "titleCopied": "Název zkopírován",
+    "reassign": "Přiřadit znovu",
+    "openInInbox": "Otevřít v Příchozí",
+    "copyTitle": "Kopírovat název",
+    "noLinkedEmail": "Tento úkol není spojen s žádným e-mailem.",
+    "unassign": "Odebrat přiřazení",
+    "linkedEmailActions": "Na propojeném emailu",
+    "reassigned": "Úkol přeřazen",
+    "markAsDone": "Označit jako dokončené",
+    "loadingTitle": "Načítání úkolů…",
+    "markAsTodo": "Označit jako úkol"
   },
   "projects": {
     "title": "Týmové složky",
@@ -851,7 +1007,14 @@
     "exportError": "Chyba při exportu",
     "searchProjects": "Hledat projekt...",
     "noProjectsAlt": "Vytvořte svůj první projekt pro seskupení e-mailů a úkolů.",
-    "viewDetail": "Zobrazit detail"
+    "viewDetail": "Zobrazit detail",
+    "taskAssigned": "Úkol přiřazen",
+    "taskUnassigned": "Úkol odebrán",
+    "detachEmail": "Odebrat z projektu",
+    "assignTo": "Přiřadit k…",
+    "openEmail": "Otevřít email",
+    "emailDetached": "Email odstraněn z projektu",
+    "unassigned": "Nepřiřazeno"
   },
   "classification": {
     "title": "Kategorie",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Tuto systémovou kategorii nelze přejmenovat.",
       "cannotMerge": "Kategorie „Nezařazené“ nemůže být sloučena.",
       "goToInbox": "Třídit tyto e-maily"
-    }
+    },
+    "adminOnlyNotice": "Správa kategorií (vytváření, úpravy, mazání, balíčky) je vyhrazena pouze pro Týmového Admina, aby byla zajištěna konzistentní klasifikace. Můžete si prohlédnout kategorie a jejich e-maily."
   },
   "settings": {
     "title": "Nastavení",
@@ -1268,7 +1432,9 @@
       "privacy": "Ochrana soukromí a přístup k týmu",
       "privacyDesc": "Vaše soukromé emaily a protokol administrátorských konzultací",
       "calendars": "Kalendáře",
-      "calendarsDesc": "Připojit Google Calendar a Outlook Calendar"
+      "calendarsDesc": "Připojit Google Calendar a Outlook Calendar",
+      "administration": "Administrace",
+      "administrationDesc": "Nastavení pro administrátory organizace"
     },
     "b2bSection": "B2B důvěryhodnost",
     "slaCard": "SLA sdílené schránky",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Výchozí videokonference",
     "preferredVideoDesc": "Zvolte výchozího poskytovatele videokonferencí pro nové schůzky. Meet vyžaduje připojený kalendář Google; Teams vyžaduje Outlook. Jitsi funguje bez účtu.",
     "meetingRemindersDesc": "Inboria posílá zdvořilé připomenutí kontaktu 48 hodin po návrhu schůzky bez odpovědi.",
-    "meetingRemindersTitle": "Automatická připomenutí schůzek"
+    "meetingRemindersTitle": "Automatická připomenutí schůzek",
+    "outlookAddinSection": "Inboria v Outlooku",
+    "personalVideoUrlDesc": "Vložte odkaz na svou stálou místnost Teams nebo Meet (https://...). Inboria jej použije ve všech návrzích schůzek.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud a většina webmailů. Přidejte asistenta Inboria přímo do své pošty, aniž byste ji opustili.",
+    "outlookAddinTitle": "Tlačítko „Požádat Inboria“ v Outlooku",
+    "webmailDownload": "Stáhnout rozšíření",
+    "webmailCopyUrl": "Kopírovat chrome://extensions",
+    "personalVideoUrlInvalid": "Neplatný odkaz (vyžadováno https://)",
+    "webmailUrlCopied": "Adresa zkopírována ✓",
+    "outlookOpenAddinsPage": "Otevřít doplňky Outlook",
+    "outlookDownloadManifest": "Stáhnout soubor",
+    "outlookStep2": "V Outlooku otevřete „Získat doplňky“ › „Moje doplňky“ › „Přidat vlastní doplněk“ › „Ze souboru“, poté vyberte stažený soubor.",
+    "outlookGuideIntro": "Tři jednoduché kroky. Není třeba hledat v menu: vše je vedené.",
+    "webmailExtInstall": "Nainstalovat do mého prohlížeče",
+    "webmailGuideIntro": "Funguje s Gmail, OVH, Yahoo, iCloud a většinou webmailů, v Chrome nebo Edge. Tři jednoduché kroky, pouze jednou.",
+    "webmailStep2": "V Chrome nebo Edge otevřete stránku s rozšířeními: zadejte chrome://extensions do adresního řádku, poté aktivujte „Režim vývojáře“ (přepínač vpravo nahoře).",
+    "webmailGuideTitle": "Nainstalovat Inboria do Vašeho webmailu",
+    "webmailExtTitle": "Tlačítko „Zeptejte se Inboria“ ve Vašem webmailu",
+    "webmailStep3": "Klikněte na „Načíst nebalenou rozšíření“ a vyberte rozbalenou složku „inboria-extension“. Poté otevřete svůj webmail: objeví se tlačítko „Zeptejte se Inboria“. Přihlaste se jednou, a je to připraveno.",
+    "outlookStep1": "Stáhněte si přihlašovací soubor Inboria.",
+    "reconnect": "Znovu připojit",
+    "outlookAddinDesc": "Přidejte asistenta Inboria přímo do svého Outlooku, aniž byste opustili emaily.",
+    "personalVideoUrlLabel": "Osobní odkaz na video",
+    "outlookStep3": "Otevřete email: tlačítko „Zeptejte se Inboria“ se objeví na pásu karet. Přihlaste se jednou se svým účtem Inboria, a je to připraveno.",
+    "outlookGuideTitle": "Instalace Inboria v Outlooku",
+    "webmailExtSection": "Inboria ve Vašem webmailu",
+    "outlookAddinInstall": "Instalovat v Outlooku",
+    "webmailStep1": "Stáhněte si rozšíření Inboria a rozbalte soubor (pravým tlačítkem › „Extrahovat vše“). Získáte složku „inboria-extension“."
   },
   "subscription": {
     "title": "Spravujte své předplatné",
@@ -1426,7 +1619,10 @@
     "start": "Začít",
     "numberOfCollaborators": "Počet spolupracovníků",
     "total": "Celkem",
-    "seatsExample": "Příklad: 3 spolupracovníci = 50,97€/měsíc — lze měnit kdykoli z Vašeho prostoru."
+    "seatsExample": "Příklad: 3 spolupracovníci = 50,97€/měsíc — lze měnit kdykoli z Vašeho prostoru.",
+    "billingMonthly": "Měsíčně",
+    "perMonthBilledYearly": "/měsíc (účtováno ročně)",
+    "billingYearly": "Roční"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Chyba při odesílání",
     "changeRole": "Změnit roli",
     "adminDesc": "Může spravovat tým, předplatné a všechny e-maily",
-    "memberDesc": "Přístup k jeho e-mailům a sdíleným úkolům"
+    "memberDesc": "Přístup k jeho e-mailům a sdíleným úkolům",
+    "trialTeamHint": "Zkušební tým: pozvěte až 3 kolegy. Každý obdrží vlastní zkušební verzi s 4 500 kredity a odemknete sdílené schránky, přiřazení a interní komentáře.",
+    "trialTeamLabel": "Týmová zkouška"
   },
   "sharedMailboxes": {
     "title": "Sdílené schránky",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} přidělil(a) tento e-mail uživateli {{target}}",
     "systemSelfAssigned": "{{actor}} si převzal(a) tento e-mail",
     "systemReassigned": "{{actor}} přepřidělil(a) z {{previous}} na {{target}}",
-    "systemUnassigned": "{{actor}} zrušil(a) přidělení {{previous}}"
+    "systemUnassigned": "{{actor}} zrušil(a) přidělení {{previous}}",
+    "recipientsFilter": "Hledat člena…",
+    "typingMany": "Několik lidí píše…",
+    "recipientsClear": "Vyprázdnit",
+    "placeholderSimple": "Zadejte svou zprávu…",
+    "viewing": "Právě prohlíží",
+    "internalNote": "Poznámka",
+    "recipients": "Příjemci",
+    "recipientsPick": "Příjemci poznámky",
+    "typingOne": "{{name}} píše…",
+    "recipientsEmpty": "Žádný člen",
+    "recipientsSelected": "{{count}} vybráno",
+    "emailMessage": "Email"
   },
   "attachments": {
     "title": "Přílohy",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Čeká",
     "statusPendingShort": "Čeká",
     "syncFailed": "Synchronizace selhala",
-    "viewDetails": "Zobrazit podrobnosti"
+    "viewDetails": "Zobrazit podrobnosti",
+    "internalAppointment": "Interní schůzka",
+    "duplicateError": "Chyba duplikace",
+    "duplicatedDesc": "Kopie vytvořena o 7 dní později.",
+    "noteSelectedCount": "{{count}} příjemce/příjemců",
+    "forwardWhere": "Místo",
+    "askInboriaNewSlotPrefill": "Protinávrh od {{contact}}{{slot}} mi nevyhovuje. Navrhněte mu další termíny, které se shodují s mým kalendářem.",
+    "duplicated": "Schůzka duplikována",
+    "ctxNoProject": "Žádný projekt",
+    "noteError": "Chyba při přidání poznámky",
+    "filterExternal": "Klient",
+    "autoConfirmed": {
+      "desc": "{{count}} schůzek bylo automaticky potvrzeno z přijatých e-mailů.",
+      "title": "Detekované potvrzení"
+    },
+    "ctxDup7": "Za 7 dní",
+    "forwardIntro": "Dobrý den,",
+    "statusPendingHint": "Inboria automaticky odešle návrh e-mailu klientovi.",
+    "markConfirmed": "Označit jako potvrzené",
+    "newInternalAppointment": "Interní schůzka",
+    "ctxEdit": "Upravit",
+    "theContact": "kontakt",
+    "statusLabel": "Stav",
+    "notesEmpty": "Žádné poznámky. Poznámky zůstávají interní — nikdy nejsou odeslány klientovi.",
+    "expandSuggestions": "Zobrazit návrhy",
+    "forwardTitle": "Název",
+    "noteAllTeam": "Celý tým",
+    "internalMembers": "Pozvaní členové týmu",
+    "noteRecipientsLabel": "Pro",
+    "ctxMarkAs": "Označit jako",
+    "singleDay": "Zpět na jeden den",
+    "ctxDupNextDay": "Následující den",
+    "counterDeclined": "Odmítnutí odesláno kontaktu",
+    "ctxDup14": "Za 14 dní",
+    "collapseSuggestions": "Skrýt návrhy",
+    "formInternalNoteLabel": "Interní poznámka (volitelné)",
+    "forwardBody": "Přeposílám Vám podrobnosti této schůzky:",
+    "multiDay": "Více dní…",
+    "ctxForward": "Přeposlat emailem",
+    "forwardVideo": "Odkaz na video",
+    "internalMembersEmpty": "Žádný člen pozván. Klikněte na „+ Přidat“ pro výběr kolegů.",
+    "forwardWhen": "Datum",
+    "pickDate": "Vybrat datum",
+    "ctxDuplicate": "Duplikovat",
+    "coorgNoCandidate": "Žádný člen není k dispozici.",
+    "ctxDupCustomMenu": "Vlastní…",
+    "ctxDupCustom": "Duplikovat za kolik dní?",
+    "ctxOpen": "Otevřít",
+    "notePlaceholder": "Interní poznámka (viditelná pouze pro tým, nikdy neodeslána klientovi)…",
+    "confirmError": "Chyba při potvrzení",
+    "ctxDelete": "Smazat",
+    "duration": "Doba trvání",
+    "internalNotes": "Interní poznámky",
+    "ctxDup30": "Za 1 měsíc",
+    "formInternalNotePlaceholder": "Např.: VIP klient, pozor na tón. Nikdy neposílat klientovi.",
+    "askInboriaNewSlot": "Zeptejte se Inboria na nový termín",
+    "filterAll": "Vše",
+    "confirmWithInboria": "Potvrdit s Inboria",
+    "ctxProject": "Projekt",
+    "coorgAdd": "+ Přidat",
+    "ctxDup90": "Za 3 měsíce",
+    "confirmDelete": "Smazat tuto schůzku?",
+    "forwardOutro": "S pozdravem,",
+    "forwardSubject": "PŘ: Schůzka",
+    "filterInternal": "Interní"
   },
   "supportChat": {
     "title": "Asistent Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Položte mi jakoukoli otázku ohledně Inboria: funkce, nastavení, předplatné a další.",
     "placeholder": "Napište svou otázku...",
     "poweredBy": "Poháněno Inboria",
-    "errorMessage": "Omlouváme se, došlo k chybě. Zkuste to prosím znovu nebo kontaktujte support@inboria.com."
+    "errorMessage": "Omlouváme se, došlo k chybě. Zkuste to prosím znovu nebo kontaktujte support@inboria.com.",
+    "send": "Odeslat",
+    "clear": "Vymazat konverzaci"
   },
   "inboriaChat": {
     "openLabel": "Otevřít chat Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Čeká se",
       "relance": "Probíhá",
       "termine": "Dokončeno"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorováno",
+    "bulkMarkedRepliedToast": "{{count}} označeno jako odpovězeno"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Otevřeno",
     "openedBadgeCount": "Otevřeno {{count}} krát",
     "openedAtLabel": "První otevření: {{date}}",
-    "notOpenedYet": "Ještě nebylo otevřeno"
+    "notOpenedYet": "Ještě nebylo otevřeno",
+    "scheduledCancelError": "Zrušení selhalo",
+    "scheduledCancelPartial": "{{failed}} zrušení z {{total}} selhalo",
+    "scheduledNoRecipient": "Bez příjemce"
   },
   "templates": {
     "title": "Šablony",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-mail zpřístupněn",
     "privateOnDesc": "Tento e-mail je nyní neviditelný pro vaše administrátory (pohled složky týmu + Inboria).",
     "privateOffDesc": "Tento e-mail se opět stává viditelným pro vaše administrátory (pohled složky týmu + Inboria).",
-    "privateError": "Nelze aktualizovat soukromí."
+    "privateError": "Nelze aktualizovat soukromí.",
+    "details": "Detaily",
+    "actionsMenu": "Akce"
   },
   "privacy": {
     "title": "Soukromí a přístup týmu",
@@ -3456,7 +3739,10 @@
       "followup": "Připomenutí",
       "appointment": "Kalendář",
       "team": "Aktivita týmu"
-    }
+    },
+    "addDescription": "Vytvořte kartu pro sledování někoho, kdo se ještě neobjevuje ve Vaší schránce.",
+    "openContact": "Zobrazit kontaktní kartu",
+    "deleteDescription": "Historie emailů spojená s touto adresou není smazána. Pouze manuální karta zmizí."
   },
   "folders": {
     "title": "Moje složky",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "Systém"
+  },
+  "signature": {
+    "imageTooLarge": "Obrázek je příliš velký (max 200 KB)",
+    "linkUrlPrompt": "URL odkazu (https://...)",
+    "size": "Velikost",
+    "italic": "Kurzíva",
+    "clear": "Vymazat formátování",
+    "imageInvalid": "Neplatný soubor obrázku",
+    "highlight": "Zvýraznění",
+    "bold": "Tučné",
+    "underline": "Podtržené",
+    "image": "Obrázek / logo",
+    "color": "Barva textu",
+    "imageHint": "Tip: vložte logo PNG/JPG (max 200 KB). Obrázek je přímo vložen do podpisu.",
+    "font": "Písmo",
+    "link": "Odkaz",
+    "orderedList": "Číslovaný seznam",
+    "moreColors": "Více barev…",
+    "bulletList": "Odrážkový seznam"
+  },
+  "palette": {
+    "compose": "Nový e-mail",
+    "shortcuts": "Klávesové zkratky",
+    "navigate": "Navigovat",
+    "empty": "Žádné výsledky.",
+    "actions": "Akce",
+    "placeholder": "Zadejte příkaz nebo hledejte…"
+  },
+  "outlookBanner": {
+    "back": "Vrátit se do Outlooku",
+    "openedFrom": "Otevřeno z Outlooku. Klikněte pro návrat, nebo jednoduše přepněte na kartu Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Otevřeno z Gmailu. Klikněte pro návrat, nebo se jednoduše přepněte na kartu Gmail.",
+    "back": "Vrátit se na Gmail"
+  },
+  "webmailBanner": {
+    "back": "Zpět na můj webmail",
+    "openedFromNamed": "Otevřeno z {{name}}. Klikněte pro návrat, nebo se jednoduše přepněte na kartu {{name}}.",
+    "openedFrom": "Otevřeno z Vašeho webmailu. Klikněte pro návrat, nebo se jednoduše přepněte na kartu Vašeho webmailu.",
+    "backNamed": "Zpět na {{name}}"
   }
 }

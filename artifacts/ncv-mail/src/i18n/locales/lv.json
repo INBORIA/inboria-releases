@@ -23,7 +23,16 @@
     "add": "Pievienot",
     "edit": "Mainīt",
     "reset": "Atjaunot",
-    "more": "Vairāk"
+    "more": "Vairāk",
+    "notAuthenticated": "Nav autentificēts",
+    "collapse": "Paslēpt kategorijas",
+    "send": "Nosūtīt",
+    "dismiss": "Aizvērt",
+    "create": "Izveidot",
+    "remove": "Noņemt",
+    "select": "Izvēlēties",
+    "copyFailed": "Nevar kopēt",
+    "expand": "Rādīt kategorijas"
   },
   "nav": {
     "extensions": "Paplašinājumi",
@@ -37,7 +46,18 @@
     "login": "Pieteikties",
     "signup": "Reģistrēties",
     "logout": "Iziet",
-    "openMenu": "Atvērt izvēlni"
+    "openMenu": "Atvērt izvēlni",
+    "categories": "Kategorijas",
+    "archives": "Arhīvi",
+    "dailyBrief": "Dienas pārskats",
+    "folders": "Mani mapes",
+    "tasks": "Uzdevumi",
+    "followups": "Sekojumi",
+    "inbox": "Ienākošie",
+    "sent": "Nosūtītie",
+    "scheduled": "Ieplānotie",
+    "snoozed": "Atliktie",
+    "contacts": "Kontakti"
   },
   "sidebar": {
     "inbox": "Saņemšana",
@@ -66,7 +86,10 @@
     "followups": "Atgādinājumi",
     "contacts": "Kontakti",
     "assigned": "Piešķirti",
-    "myTasks": "Mani uzdevumi"
+    "myTasks": "Mani uzdevumi",
+    "expand": "Izvērst izvēlni",
+    "collapse": "Sakļaut izvēlni",
+    "resize": "Mainīt izvēlnes izmēru"
   },
   "dashboard": {
     "expiredSubscription": "Jūsu abonements ir beidzies",
@@ -284,8 +307,8 @@
     "markHandled": "Atcelt",
     "unmarkHandled": "Atzīmēt šo e-pastu kā apstrādātu (izteikta cilvēka darbība, baro pārskatu)",
     "markHandledHint": "Noklikšķiniet, lai atceltu atzīmēšanu",
-    "handledOnHint": "Apstrādāts {{name}} {{date}}",
-    "handledByOn": "Jūs",
+    "handledOnHint": "Noklikšķiniet, lai atceltu atzīmi",
+    "handledByOn": "Apstrādājis {{name}} {{date}}",
     "handledByMe": "E-pasts atzīmēts kā apstrādāts",
     "markedHandled": "Atzīmēšana noņemta",
     "unmarkedHandled": "Atvērt",
@@ -317,8 +340,8 @@
     "to": "Pielikumi",
     "attachments": "E-pasts veiksmīgi nosūtīts",
     "emailSent": "Sinhronizācija pabeigta",
-    "syncComplete": "{{count}} jauns(e) e-pasts(i)",
-    "syncNewEmails": "Nav jaunu e-pastu",
+    "syncComplete": "Sinhronizācija pabeigta",
+    "syncNewEmails": "{{count}} jauna(s) e-pasta(s)",
     "syncNoNew": "Priekšmets",
     "subjectLabel": "Koplietotās pastkastes",
     "sharedMailbox": "Visi konti",
@@ -529,10 +552,17 @@
       "important": "Svarīgi"
     },
     "date": {
-      "all": "Visi datumi"
+      "all": "Visi datumi",
+      "yesterday": "Vakar",
+      "thisMonth": "Šomēnes",
+      "today": "Šodien",
+      "last7": "Pēdējās 7 dienas",
+      "last30": "Pēdējās 30 dienas"
     },
     "read": {
-      "all": "Visi"
+      "all": "Visi",
+      "read": "Lasīti",
+      "unread": "Nelasīti"
     },
     "sharedDraft": "Kopīgais melnraksts",
     "sharedDraftOn": "Kopīgais melnraksts ieslēgts",
@@ -564,7 +594,113 @@
       "label": "Displeja rūtiņas",
       "overlay": "Pārklājums",
       "split": "Blakus"
-    }
+    },
+    "unknownSender": "Nezināms",
+    "scSearch": "Meklēt",
+    "scNext": "Nākamais e-pasts",
+    "snoozedFor24h": "Atlikts uz rītdienu",
+    "collisionViewingOne": "{{name}} arī skatās šo e-pastu",
+    "markedAsUnread": "Atzīmēts kā nelasīts",
+    "theme": {
+      "switchLight": "Gaišais režīms",
+      "switchDark": "Tumšais režīms"
+    },
+    "archived": "Arhivēts",
+    "loadingEmail": "Notiek e-pasta ielāde...",
+    "searchOpAttachment": "e-pasti ar pielikumu",
+    "moreActions": "Vēl darbības",
+    "searchOpSubject": "filtrēt pēc tēmas",
+    "markAsRead": "Atzīmēt kā lasītu",
+    "collisionViewingMany": "{{count}} citas personas skatās šo e-pastu",
+    "scGotoInbox": "Doties uz Iesūtni",
+    "scGotoSnoozed": "Doties uz Atliktajiem",
+    "scSnooze": "Atlikt (24 h)",
+    "close": "Aizvērt",
+    "composeRestore": "Atsākt melnrakstu",
+    "scDelete": "Dzēst",
+    "density": {
+      "normal": "Parasts",
+      "label": "Attēlojuma blīvums",
+      "compact": "Kompakts",
+      "comfortable": "Ērts"
+    },
+    "headerCollapse": "Paslēpt cilnes un filtrus",
+    "composeUntitled": "Melnraksts bez tēmas",
+    "backHint": "Atpakaļ (Esc) — J/K navigācijai, R atbildēt, E arhivēt",
+    "loadingTitle": "Ielādē…",
+    "draftYou": "Jūs",
+    "copySender": "Kopēt adresi",
+    "slaOverdue": "SLA kavējums",
+    "assigneeFilterMember": "šis dalībnieks",
+    "draftRelease": "Atbrīvot",
+    "scArchive": "Arhivēt",
+    "markAsReadUnread": "Atzīmēt kā lasītu / nelasītu",
+    "scForward": "Pārsūtīt",
+    "draftSomeoneSends": "{{name}} to nosūtīs",
+    "searchOpSender": "filtrēt pēc sūtītāja",
+    "readingPanePos": {
+      "off": "Paslēpts",
+      "right": "Pa labi",
+      "label": "Lasīšanas panelis",
+      "bottom": "Apakšā"
+    },
+    "scGotoContacts": "Doties uz Kontaktiem",
+    "markAsUnread": "Atzīmēt kā nelasītu",
+    "composeDiscard": "Atmest",
+    "snooze3h": "Pēc 3h",
+    "importanceLabel": "Parādīšana",
+    "copiedSenderEmail": "Adrese nokopēta",
+    "scPalette": "Komandu palete",
+    "copiedSubject": "Tēma nokopēta",
+    "myFoldersLabel": "Mani mapes",
+    "copySenderEmail": "Kopēt sūtītāja adresi",
+    "viewOptions": "Skata opcijas",
+    "shortcutsTitle": "Tastatūras īsceļi",
+    "assignedNoTeam": "Šim skatam nepieciešama komanda (2 vai vairāk dalībnieki).",
+    "collisionReplyingMany": "{{count}} personas jau atbild uz šo e-pastu",
+    "assignToProject": "Piešķirt komandas mapei",
+    "searchGroupOperators": "Precizēt",
+    "composeAria": "Sastādīt e-pastu",
+    "downloadEml": "Lejupielādēt kā .eml",
+    "headerExpand": "Rādīt cilnes un filtrus",
+    "scClose": "Aizvērt e-pastu",
+    "composeDiscardConfirm": "Atcelt šo melnrakstu?",
+    "readingPaneOff": "Atspējot lasīšanas rūti",
+    "searchGroupSenders": "Sūtītāji",
+    "scGotoTasks": "Doties uz Uzdevumiem",
+    "printPopupBlocked": "Nevar atvērt drukāšanas logu",
+    "copied": "Nokopēts",
+    "snooze": "Atlikt",
+    "exportEml": "Lejupielādēt .eml",
+    "categorized": "Kategorizēts",
+    "markedAsRead": "Atzīmēts kā lasīts",
+    "teamBadge": "Komanda",
+    "priorityLabel": "Prioritāte",
+    "backToGmailHint": "Atvērt šo precīzo e-pastu Gmail",
+    "snoozeTomorrow": "Rīt no rīta",
+    "composeMinimize": "Samazināt melnrakstu",
+    "scGotoSent": "Doties uz Nosūtītajiem",
+    "readingPaneOn": "Ieslēgt lasīšanas rūti (3 kolonnas)",
+    "collisionReplyingOne": "{{name}} jau atbild uz šo e-pastu",
+    "createAndAssignTask": "Izveidot un piešķirt…",
+    "copyAddress": "Kopēt adresi",
+    "copySubject": "Kopēt tēmu",
+    "loadEmailError": "Nevar ielādēt e-pastu.",
+    "draftYouSend": "Jūs sūtāt",
+    "scGotoArchives": "Doties uz Arhīviem",
+    "scReply": "Atbildēt",
+    "backToGmail": "Atpakaļ uz Gmail",
+    "moveToFolder": "Pārvietot uz",
+    "print": "Drukāt",
+    "scPrev": "Iepriekšējā vēstule",
+    "draftClaimSend": "Es sūtu",
+    "draftLiveCoedit": "Tiešraides līdzredaktēšana",
+    "draftTakeOverHint": "Pārņemt sūtīšanu, ja šis kolēģis vairs nav pieejams",
+    "scHelp": "Parādīt šo palīdzību",
+    "filtersReset": "Atiestatīt filtrus",
+    "draftTakeOver": "Pārņemt",
+    "searchGroupEmails": "Vēstules",
+    "filterByCategory": "Filtrēt"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",
@@ -649,7 +785,16 @@
     "blockFailed": "Nav iespējams bloķēt",
     "blockNoEmail": "Sūtītāja adrese nav atrasta",
     "blockNoConnection": "Nav pieslēgta neviena e-pasta konta",
-    "emptied": "Mape ir tukša"
+    "emptied": "Mape ir tukša",
+    "noBlocked": "Nav bloķētu sūtītāju",
+    "openRestored": "Atvērt",
+    "fetchingFromProvider": "Saturs tiek iegūts no Jūsu pakalpojumu sniedzēja…",
+    "retryFetch": "Mēģināt vēlreiz",
+    "unblocked": "Sūtītājs atbloķēts",
+    "blockedList": "Bloķētie sūtītāji",
+    "unblock": "Atbloķēt",
+    "fetchFailed": "Nevar iegūt šīs vēstules saturu.",
+    "blockSenderSuccess": "Sūtītājs bloķēts"
   },
   "trash": {
     "title": "Atkritumu kaste",
@@ -794,7 +939,18 @@
     "movedToDone": "Uzdevums pabeigts",
     "movedToTodo": "Uzdevums atgriezts pie darāmajiem",
     "statusUpdated": "Statuss atjaunināts",
-    "taskCreated": "Uzdevums izveidots"
+    "taskCreated": "Uzdevums izveidots",
+    "titleCopied": "Virsraksts nokopēts",
+    "reassign": "Pārdalīt",
+    "openInInbox": "Atvērt Iesūtnē",
+    "copyTitle": "Kopēt virsrakstu",
+    "noLinkedEmail": "Šis uzdevums nav saistīts ar nevienu e-pastu.",
+    "unassign": "Noņemt piešķīrumu",
+    "linkedEmailActions": "Saistītā e-pasta darbības",
+    "reassigned": "Uzdevums pārdalīts",
+    "markAsDone": "Atzīmēt kā pabeigtu",
+    "loadingTitle": "Notiek uzdevumu ielāde…",
+    "markAsTodo": "Atzīmēt kā darāmu"
   },
   "projects": {
     "title": "Komandas mapes",
@@ -851,7 +1007,14 @@
     "exportError": "Kļūda eksportējot",
     "searchProjects": "Meklēt projektu...",
     "noProjectsAlt": "Izveidojiet savu pirmo projektu, lai apvienotu e-pastus un uzdevumus.",
-    "viewDetail": "Skatīt detaļas"
+    "viewDetail": "Skatīt detaļas",
+    "taskAssigned": "Uzdevums piešķirts",
+    "taskUnassigned": "Uzdevums noņemts",
+    "detachEmail": "Noņemt no projekta",
+    "assignTo": "Piešķirt…",
+    "openEmail": "Atvērt e-pastu",
+    "emailDetached": "E-pasts noņemts no projekta",
+    "unassigned": "Nav piešķirts"
   },
   "classification": {
     "title": "Kategorijas",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Šo sistēmas kategoriju nevar pārdēvēt.",
       "cannotMerge": "Kategoriju „Neizkārtots” nevar apvienot.",
       "goToInbox": "Kārtot šos e-pastus"
-    }
+    },
+    "adminOnlyNotice": "Kategoriju pārvaldība (izveide, rediģēšana, dzēšana, nozares paketes) ir rezervēta Komandas Administratoram, lai nodrošinātu saskaņotu klasifikāciju. Jūs varat apskatīt kategorijas un to e-pastus."
   },
   "settings": {
     "title": "Iestatījumi",
@@ -1268,7 +1432,9 @@
       "privacy": "Privātums un piekļuve komandai",
       "privacyDesc": "Jūsu privātie e-pasti un administratora skatījumu žurnāls",
       "calendars": "Kalendāri",
-      "calendarsDesc": "Savienot Google Calendar un Outlook Calendar"
+      "calendarsDesc": "Savienot Google Calendar un Outlook Calendar",
+      "administration": "Administrēšana",
+      "administrationDesc": "Iestatījumi, kas rezervēti organizācijas administratoriem"
     },
     "b2bSection": "B2B uzticamība",
     "slaCard": "SLA koplietotajām kastēm",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Noklusētā videokonference",
     "preferredVideoDesc": "Lūdzu, izvēlieties noklusēto videokonferenču pakalpojumu sniedzēju jaunām tikšanās reizēm. Meet ir nepieciešams pievienots Google kalendārs; Teams ir nepieciešams Outlook. Jitsi darbojas bez konta.",
     "meetingRemindersDesc": "Inboria nosūta pieklājīgu atgādinājumu kontaktam 48 stundas pēc tikšanās priekšlikuma, kas palicis bez atbildes.",
-    "meetingRemindersTitle": "Automātiskie tikšanās atgādinājumi"
+    "meetingRemindersTitle": "Automātiskie tikšanās atgādinājumi",
+    "outlookAddinSection": "Inboria programmā Outlook",
+    "personalVideoUrlDesc": "Ielīmējiet Jūsu pastāvīgās Teams vai Meet telpas saiti (https://...). Inboria to izmantos visos tikšanās priekšlikumos.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud un lielākā daļa tīmekļa pastu. Pievienojiet Inboria palīgu tieši Jūsu e-pastā, neatstājot pastu.",
+    "outlookAddinTitle": "Poga « Lūgt Inboria » programmā Outlook",
+    "webmailDownload": "Lejupielādēt paplašinājumu",
+    "webmailCopyUrl": "Kopēt chrome://extensions",
+    "personalVideoUrlInvalid": "Nederīga saite (nepieciešams https://)",
+    "webmailUrlCopied": "Adrese nokopēta ✓",
+    "outlookOpenAddinsPage": "Atvērt Outlook papildinājumus",
+    "outlookDownloadManifest": "Lejupielādēt failu",
+    "outlookStep2": "Programmā Outlook atveriet « Iegūt papildinājumus » › « Mani papildinājumi » › « Pievienot pielāgotu papildinājumu » › « No faila », tad izvēlieties lejupielādēto failu.",
+    "outlookGuideIntro": "Trīs vienkārši soļi. Nav nepieciešams meklēt izvēlnēs: viss ir vadīts.",
+    "webmailExtInstall": "Instalēt manā pārlūkā",
+    "webmailGuideIntro": "Darbojas ar Gmail, OVH, Yahoo, iCloud un lielāko daļu tīmekļa pastu, Chrome vai Edge. Trīs vienkārši soļi, tikai vienreiz.",
+    "webmailStep2": "Chrome vai Edge atveriet paplašinājumu lapu: ierakstiet chrome://extensions adreses joslā, tad aktivizējiet « Izstrādātāja režīmu » (slēdzis augšējā labajā stūrī).",
+    "webmailGuideTitle": "Instalēt Inboria Jūsu tīmekļa pastā",
+    "webmailExtTitle": "Poga « Lūgt Inboria » Jūsu tīmekļa pastā",
+    "webmailStep3": "Noklikšķiniet uz « Ielādēt neiepakojumu paplašinājumu » un izvēlieties dekompresēto mapi « inboria-extension ». Tad atveriet savu tīmekļa pastu: parādās poga « Lūgt Inboria ». Pieslēdzieties vienreiz, un tas ir gatavs.",
+    "outlookStep1": "Lejupielādējiet Inboria pieslēguma failu.",
+    "reconnect": "Pieslēgties no jauna",
+    "outlookAddinDesc": "Pievienojiet Inboria asistentu tieši savā Outlook, neatstājot e-pastus.",
+    "personalVideoUrlLabel": "Personīgās videokonferences saite",
+    "outlookStep3": "Atveriet e-pastu: poga « Pieprasīt Inboria » parādās lentē. Pieslēdzieties vienreiz ar savu Inboria kontu, un tas ir gatavs.",
+    "outlookGuideTitle": "Instalēt Inboria programmā Outlook",
+    "webmailExtSection": "Inboria jūsu tīmekļa pastā",
+    "outlookAddinInstall": "Instalēt programmā Outlook",
+    "webmailStep1": "Lejupielādējiet Inboria paplašinājumu, pēc tam atarhivējiet failu (ar peles labo pogu › « Izvilkt visu »). Jūs iegūsiet mapi « inboria-extension »."
   },
   "subscription": {
     "title": "Pārvaldiet savu abonementu",
@@ -1426,7 +1619,10 @@
     "start": "Sākt",
     "numberOfCollaborators": "Darbinieku skaits",
     "total": "Kopā",
-    "seatsExample": "Piemērs: 3 darbinieki = 50,97€/mēnesī — maināms jebkurā laikā Jūsu telpā."
+    "seatsExample": "Piemērs: 3 darbinieki = 50,97€/mēnesī — maināms jebkurā laikā Jūsu telpā.",
+    "billingMonthly": "Mēneša",
+    "perMonthBilledYearly": "/mēnesī (rēķins izrakstīts gadā)",
+    "billingYearly": "Gada"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Kļūda nosūtīšanas laikā",
     "changeRole": "Mainīt lomu",
     "adminDesc": "Var pārvaldīt komandu, abonementu un visus e-pastus",
-    "memberDesc": "Piekļuve saviem e-pastiem un kopīgajiem uzdevumiem"
+    "memberDesc": "Piekļuve saviem e-pastiem un kopīgajiem uzdevumiem",
+    "trialTeamHint": "Komandas izmēģinājums: uzaiciniet līdz 3 kolēģiem. Katrs saņem savu izmēģinājumu ar 4 500 kredītiem, un jūs atbloķējat koplietojamās pastkastes, uzdevumu piešķiršanu un iekšējos komentārus.",
+    "trialTeamLabel": "Komandas izmēģinājums"
   },
   "sharedMailboxes": {
     "title": "Kopīgotās pastkastes",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} piešķīra šo e-pastu lietotājam {{target}}",
     "systemSelfAssigned": "{{actor}} pārņēma šo e-pastu",
     "systemReassigned": "{{actor}} pārpiešķīra no {{previous}} uz {{target}}",
-    "systemUnassigned": "{{actor}} atcēla {{previous}} piešķiršanu"
+    "systemUnassigned": "{{actor}} atcēla {{previous}} piešķiršanu",
+    "recipientsFilter": "Meklēt dalībnieku…",
+    "typingMany": "Vairāki cilvēki raksta…",
+    "recipientsClear": "Notīrīt",
+    "placeholderSimple": "Ievadiet savu ziņu…",
+    "viewing": "Skatās tagad",
+    "internalNote": "Piezīme",
+    "recipients": "Saņēmēji",
+    "recipientsPick": "Piezīmes saņēmēji",
+    "typingOne": "{{name}} raksta…",
+    "recipientsEmpty": "Neviens dalībnieks",
+    "recipientsSelected": "{{count}} izvēlēts(-i)",
+    "emailMessage": "E-pasts"
   },
   "attachments": {
     "title": "Pielikumi",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Gaida",
     "statusPendingShort": "Gaida",
     "syncFailed": "Sinhronizācija neizdevās",
-    "viewDetails": "Skatīt detaļas"
+    "viewDetails": "Skatīt detaļas",
+    "internalAppointment": "Iekšējā tikšanās",
+    "duplicateError": "Dublēšanas kļūda",
+    "duplicatedDesc": "Kopija izveidota 7 dienas vēlāk.",
+    "noteSelectedCount": "{{count}} saņēmējs(-i)",
+    "forwardWhere": "Vieta",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} pretpiedāvājums man neder. Ludzu, piedāvājiet citus laikus, kas sader ar manu kalendāru.",
+    "duplicated": "Tikšanās dublēta",
+    "ctxNoProject": "Nav projekta",
+    "noteError": "Piezīmes pievienošanas kļūda",
+    "filterExternal": "Klients",
+    "autoConfirmed": {
+      "desc": "{{count}} tikšanās tikko automātiski apstiprinātas no saņemtajiem e-pastiem.",
+      "title": "Apstiprinājumi konstatēti"
+    },
+    "ctxDup7": "Pēc 7 dienām",
+    "forwardIntro": "Labdien,",
+    "statusPendingHint": "Inboria automātiski nosūtīs piedāvājuma e-pastu klientam.",
+    "markConfirmed": "Atzīmēt kā apstiprinātu",
+    "newInternalAppointment": "Iekšējā tikšanās",
+    "ctxEdit": "Rediģēt",
+    "theContact": "kontakts",
+    "statusLabel": "Statuss",
+    "notesEmpty": "Nav piezīmju. Piezīmes paliek iekšējas — nekad netiek sūtītas klientam.",
+    "expandSuggestions": "Rādīt ieteikumus",
+    "forwardTitle": "Virsraksts",
+    "noteAllTeam": "Visa komanda",
+    "internalMembers": "Uzaicinātie komandas locekļi",
+    "noteRecipientsLabel": "Kam",
+    "ctxMarkAs": "Atzīmēt kā",
+    "singleDay": "Atgriezties pie vienkārša ilguma",
+    "ctxDupNextDay": "Nākamajā dienā",
+    "counterDeclined": "Noraidījums nosūtīts kontaktam",
+    "ctxDup14": "Pēc 14 dienām",
+    "collapseSuggestions": "Paslēpt ieteikumus",
+    "formInternalNoteLabel": "Iekšējā piezīme (pēc izvēles)",
+    "forwardBody": "Es Jums pārsūtu šīs tikšanās detaļas:",
+    "multiDay": "Vairākas dienas…",
+    "ctxForward": "Pārsūtīt pa e-pastu",
+    "forwardVideo": "Saite uz video",
+    "internalMembersEmpty": "Nav uzaicinātu dalībnieku. Klikšķiniet « + Pievienot », lai izvēlētos savus kolēģus.",
+    "forwardWhen": "Datums",
+    "pickDate": "Izvēlēties datumu",
+    "ctxDuplicate": "Dublēt",
+    "coorgNoCandidate": "Nav pieejamu dalībnieku.",
+    "ctxDupCustomMenu": "Pielāgots…",
+    "ctxDupCustom": "Dublēt pēc cik dienām?",
+    "ctxOpen": "Atvērt",
+    "notePlaceholder": "Iekšējā piezīme (redzama tikai komandai, nekad netiek nosūtīta klientam)…",
+    "confirmError": "Kļūda apstiprināšanas laikā",
+    "ctxDelete": "Dzēst",
+    "duration": "Ilgums",
+    "internalNotes": "Iekšējās piezīmes",
+    "ctxDup30": "Pēc 1 mēneša",
+    "formInternalNotePlaceholder": "Piemēram: VIP klients, uzmanieties ar toni. Nekad netiek nosūtīta klientam.",
+    "askInboriaNewSlot": "Lūgt Inboria jaunu tikšanos",
+    "filterAll": "Visi",
+    "confirmWithInboria": "Apstiprināt ar Inboria",
+    "ctxProject": "Projekts",
+    "coorgAdd": "+ Pievienot",
+    "ctxDup90": "Pēc 3 mēnešiem",
+    "confirmDelete": "Dzēst šo tikšanos?",
+    "forwardOutro": "Ar cieņu,",
+    "forwardSubject": "TR: Tikšanās",
+    "filterInternal": "Iekšējais"
   },
   "supportChat": {
     "title": "Inboria asistents",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Uzdodiet man jebkuru jautājumu par Inboria: funkcionalitāti, iestatījumiem, abonementu un vēl vairāk.",
     "placeholder": "Ierakstiet savu jautājumu...",
     "poweredBy": "Dzinējs Inboria",
-    "errorMessage": "Atvainojiet, notika kļūda. Lūdzu, mēģiniet vēlreiz vai sazinieties ar support@inboria.com."
+    "errorMessage": "Atvainojiet, notika kļūda. Lūdzu, mēģiniet vēlreiz vai sazinieties ar support@inboria.com.",
+    "send": "Nosūtīt",
+    "clear": "Notīrīt sarunu"
   },
   "inboriaChat": {
     "openLabel": "Atvērt Inboria čatu",
@@ -2911,7 +3187,9 @@
       "en_attente": "Gaidīšanā",
       "relance": "Notiek",
       "termine": "Pabeigts"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignorētas",
+    "bulkMarkedRepliedToast": "{{count}} atzīmētas kā atbildētas"
   },
   "contacts": {
     "title": "Kontakts 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Atvērts",
     "openedBadgeCount": "Atvērts {{count}} reizes",
     "openedAtLabel": "Pirmais atvērums: {{date}}",
-    "notOpenedYet": "Vēl nav atvērts"
+    "notOpenedYet": "Vēl nav atvērts",
+    "scheduledCancelError": "Atcelšana neizdevās",
+    "scheduledCancelPartial": "{{failed}} atcelšana(s) no {{total}} neizdevās",
+    "scheduledNoRecipient": "Bez saņēmēja"
   },
   "templates": {
     "title": "Veidnes",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-pasts padarīts redzams",
     "privateOnDesc": "Šis e-pasts tagad ir neredzams Jūsu administratoriem (komandas mape + Inboria).",
     "privateOffDesc": "Šis e-pasts atkal kļūst redzams Jūsu administratoriem (komandas mape + Inboria).",
-    "privateError": "Nevar atjaunināt konfidencialitāti."
+    "privateError": "Nevar atjaunināt konfidencialitāti.",
+    "details": "Detaļas",
+    "actionsMenu": "Darbības"
   },
   "privacy": {
     "title": "Privātums un piekļuve komandai",
@@ -3456,7 +3739,10 @@
       "followup": "Atgādinājums",
       "appointment": "Kalendārs",
       "team": "Komandas aktivitāte"
-    }
+    },
+    "addDescription": "Izveidojiet kartīti, lai sekotu kādam, kurš vēl neparādās Jūsu pastkastē.",
+    "openContact": "Skatīt kontaktkartīti",
+    "deleteDescription": "Ar šo adresi saistītā e-pasta vēsture netiek dzēsta. Tikai manuālā kartīte pazūd."
   },
   "folders": {
     "title": "Manas mapes",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Darba kārtība",
     "system": "Sistēma"
+  },
+  "signature": {
+    "imageTooLarge": "Attēls pārāk liels (maks. 200 KB)",
+    "linkUrlPrompt": "Saites URL (https://...)",
+    "size": "Izmērs",
+    "italic": "Kursīvs",
+    "clear": "Notīrīt formatējumu",
+    "imageInvalid": "Nederīgs attēla fails",
+    "highlight": "Izcelt",
+    "bold": "Treknraksts",
+    "underline": "Pasvītrots",
+    "image": "Attēls / logotips",
+    "color": "Teksta krāsa",
+    "imageHint": "Padoms: ievietojiet PNG/JPG logotipu (maks. 200 KB). Attēls tiek tieši integrēts parakstā.",
+    "font": "Fonts",
+    "link": "Saite",
+    "orderedList": "Numurēts saraksts",
+    "moreColors": "Vairāk krāsu…",
+    "bulletList": "Aizzīmju saraksts"
+  },
+  "palette": {
+    "compose": "Jauns e-pasts",
+    "shortcuts": "Tastatūras īsceļi",
+    "navigate": "Navigēt",
+    "empty": "Nav rezultātu.",
+    "actions": "Darbības",
+    "placeholder": "Ierakstiet komandu vai meklējiet…"
+  },
+  "outlookBanner": {
+    "back": "Atgriezties pie Outlook",
+    "openedFrom": "Atvērts no Outlook. Klikšķiniet, lai atgrieztos, vai vienkārši pārslēdzieties atpakaļ uz Outlook cilni."
+  },
+  "gmailBanner": {
+    "openedFrom": "Atvērts no Gmail. Klikšķiniet, lai atgrieztos, vai vienkārši pārslēdzieties atpakaļ uz Gmail cilni.",
+    "back": "Atgriezties pie Gmail"
+  },
+  "webmailBanner": {
+    "back": "Atgriezties pie mana webmail",
+    "openedFromNamed": "Atvērts no {{name}}. Klikšķiniet, lai atgrieztos, vai vienkārši pārslēdzieties atpakaļ uz {{name}} cilni.",
+    "openedFrom": "Atvērts no Jūsu webmail. Klikšķiniet, lai atgrieztos, vai vienkārši pārslēdzieties atpakaļ uz Jūsu webmail cilni.",
+    "backNamed": "Atgriezties pie {{name}}"
   }
 }

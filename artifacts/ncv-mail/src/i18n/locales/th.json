@@ -23,7 +23,16 @@
     "add": "เพิ่ม",
     "edit": "แก้ไข",
     "reset": "รีเซ็ต",
-    "more": "เพิ่มเติม"
+    "more": "เพิ่มเติม",
+    "remove": "ลบออก",
+    "select": "เลือก",
+    "create": "สร้าง",
+    "notAuthenticated": "ไม่ได้รับการยืนยันตัวตน",
+    "send": "ส่ง",
+    "dismiss": "ปิด",
+    "copyFailed": "ไม่สามารถคัดลอกได้",
+    "collapse": "ซ่อนหมวดหมู่",
+    "expand": "แสดงหมวดหมู่"
   },
   "nav": {
     "extensions": "ส่วนขยาย",
@@ -37,7 +46,18 @@
     "login": "เข้าสู่ระบบ",
     "signup": "ลงทะเบียน",
     "logout": "ออกจากระบบ",
-    "openMenu": "เปิดเมนู"
+    "openMenu": "เปิดเมนู",
+    "archives": "คลังข้อมูล",
+    "categories": "หมวดหมู่",
+    "tasks": "งาน",
+    "sent": "ส่งแล้ว",
+    "dailyBrief": "สรุปรายวัน",
+    "snoozed": "เลื่อนแล้ว",
+    "followups": "ติดตามผล",
+    "folders": "โฟลเดอร์ของฉัน",
+    "inbox": "กล่องขาเข้า",
+    "contacts": "รายชื่อผู้ติดต่อ",
+    "scheduled": "กำหนดการ"
   },
   "sidebar": {
     "inbox": "กล่องจดหมาย",
@@ -66,7 +86,10 @@
     "followups": "การติดตาม",
     "contacts": "ผู้ติดต่อ",
     "assigned": "ที่กำหนด",
-    "myTasks": "งานของฉัน"
+    "myTasks": "งานของฉัน",
+    "resize": "ปรับขนาดเมนู",
+    "collapse": "ย่อเมนู",
+    "expand": "ขยายเมนู"
   },
   "dashboard": {
     "expiredSubscription": "การสมัครสมาชิกของท่านหมดอายุแล้ว",
@@ -529,10 +552,17 @@
       "important": "สำคัญ"
     },
     "date": {
-      "all": "วันที่ทั้งหมด"
+      "all": "วันที่ทั้งหมด",
+      "yesterday": "เมื่อวาน",
+      "last30": "30 วันที่ผ่านมา",
+      "last7": "7 วันที่ผ่านมา",
+      "thisMonth": "เดือนนี้",
+      "today": "วันนี้"
     },
     "read": {
-      "all": "ทั้งหมด"
+      "all": "ทั้งหมด",
+      "read": "อ่านแล้ว",
+      "unread": "ยังไม่ได้อ่าน"
     },
     "sharedDraft": "ร่างที่แชร์",
     "sharedDraftOn": "ร่างที่แชร์เปิดใช้งาน",
@@ -564,7 +594,113 @@
       "label": "แสดงบานหน้าต่าง",
       "overlay": "ซ้อนทับ",
       "split": "เคียงข้างกัน"
-    }
+    },
+    "downloadEml": "ดาวน์โหลดเป็น .eml",
+    "backToGmail": "กลับไปที่ Gmail",
+    "collisionViewingOne": "{{name}} กำลังดูอีเมลนี้ด้วย",
+    "assigneeFilterMember": "สมาชิกนี้",
+    "copyAddress": "คัดลอกที่อยู่",
+    "composeMinimize": "ย่อร่าง",
+    "loadingEmail": "กำลังโหลดอีเมล...",
+    "scSearch": "ค้นหา",
+    "assignedNoTeam": "มุมมองนี้ต้องการทีม (2 สมาชิกหรือมากกว่า)",
+    "readingPanePos": {
+      "bottom": "ด้านล่าง",
+      "off": "ซ่อน",
+      "right": "ด้านขวา",
+      "label": "บานหน้าต่างการอ่าน"
+    },
+    "backHint": "กลับ (Esc) — J/K เพื่อเลื่อน, R เพื่อตอบ, E เพื่อเก็บ",
+    "moreActions": "การกระทำเพิ่มเติม",
+    "theme": {
+      "switchDark": "โหมดมืด",
+      "switchLight": "โหมดสว่าง"
+    },
+    "copied": "คัดลอกแล้ว",
+    "density": {
+      "normal": "ปกติ",
+      "comfortable": "สะดวกสบาย",
+      "compact": "กะทัดรัด",
+      "label": "ความหนาแน่นของการแสดงผล"
+    },
+    "printPopupBlocked": "ไม่สามารถเปิดหน้าต่างพิมพ์",
+    "searchOpSubject": "กรองตามหัวเรื่อง",
+    "scGotoInbox": "ไปที่กล่องจดหมาย",
+    "moveToFolder": "ย้ายไปที่",
+    "createAndAssignTask": "สร้างและมอบหมาย…",
+    "close": "ปิด",
+    "copiedSubject": "คัดลอกหัวเรื่องแล้ว",
+    "loadingTitle": "กำลังโหลด…",
+    "draftLiveCoedit": "การแก้ไขร่วมแบบสด",
+    "copySubject": "คัดลอกหัวเรื่อง",
+    "slaOverdue": "SLA เกินกำหนด",
+    "headerExpand": "แสดงแท็บและตัวกรอง",
+    "print": "พิมพ์",
+    "myFoldersLabel": "โฟลเดอร์ของฉัน",
+    "searchOpAttachment": "อีเมลที่มีไฟล์แนบ",
+    "collisionReplyingOne": "{{name}} กำลังตอบอีเมลนี้อยู่",
+    "draftYouSend": "คุณเป็นผู้ส่ง",
+    "shortcutsTitle": "คีย์ลัด",
+    "scGotoSnoozed": "ไปที่เลื่อนเวลา",
+    "snooze": "เลื่อนเวลา",
+    "searchGroupOperators": "ปรับแต่ง",
+    "searchOpSender": "กรองตามผู้ส่ง",
+    "copiedSenderEmail": "คัดลอกที่อยู่อีเมลแล้ว",
+    "composeDiscard": "ละทิ้ง",
+    "headerCollapse": "ซ่อนแท็บและตัวกรอง",
+    "searchGroupEmails": "อีเมล",
+    "composeRestore": "ดำเนินการต่อร่าง",
+    "scGotoTasks": "ไปที่งาน",
+    "collisionViewingMany": "{{count}} คนอื่นกำลังดูอีเมลนี้",
+    "unknownSender": "ไม่ทราบผู้ส่ง",
+    "draftTakeOver": "ดำเนินการต่อ",
+    "composeAria": "เขียนอีเมล",
+    "filtersReset": "รีเซ็ตตัวกรอง",
+    "markedAsUnread": "ทำเครื่องหมายว่าไม่ได้อ่าน",
+    "collisionReplyingMany": "{{count}} คนกำลังตอบอีเมลนี้อยู่แล้ว",
+    "exportEml": "ดาวน์โหลด .eml",
+    "backToGmailHint": "เปิดอีเมลนี้ใน Gmail",
+    "snoozeTomorrow": "พรุ่งนี้เช้า",
+    "scSnooze": "เลื่อน (24 ชม.)",
+    "markAsUnread": "ทำเครื่องหมายว่าไม่ได้อ่าน",
+    "scHelp": "แสดงความช่วยเหลือนี้",
+    "teamBadge": "ทีม",
+    "assignToProject": "มอบหมายให้กับโฟลเดอร์ทีม",
+    "scForward": "ส่งต่อ",
+    "composeDiscardConfirm": "ละทิ้งร่างนี้?",
+    "filterByCategory": "กรอง",
+    "scPalette": "พาเลตคำสั่ง",
+    "importanceLabel": "การแสดงผล",
+    "draftRelease": "ปล่อย",
+    "draftSomeoneSends": "{{name}} จะส่ง",
+    "snooze3h": "ใน 3 ชม.",
+    "scReply": "ตอบกลับ",
+    "searchGroupSenders": "ผู้ส่ง",
+    "draftTakeOverHint": "ดำเนินการส่งต่อหากเพื่อนร่วมงานนี้ไม่พร้อมใช้งาน",
+    "scClose": "ปิดอีเมล",
+    "markAsRead": "ทำเครื่องหมายว่าอ่านแล้ว",
+    "scDelete": "ลบ",
+    "archived": "ที่เก็บถาวร",
+    "readingPaneOn": "เปิดบานหน้าต่างการอ่าน (3 คอลัมน์)",
+    "copySenderEmail": "คัดลอกที่อยู่อีเมลผู้ส่ง",
+    "markedAsRead": "ทำเครื่องหมายว่าอ่านแล้ว",
+    "draftClaimSend": "ฉันจะส่งเอง",
+    "scGotoSent": "ไปยังส่งแล้ว",
+    "draftYou": "คุณ",
+    "scGotoContacts": "ไปยังรายชื่อผู้ติดต่อ",
+    "scGotoArchives": "ไปยังที่เก็บถาวร",
+    "categorized": "จัดหมวดหมู่แล้ว",
+    "viewOptions": "ตัวเลือกการแสดงผล",
+    "composeUntitled": "ร่างไม่มีหัวเรื่อง",
+    "copySender": "คัดลอกที่อยู่",
+    "priorityLabel": "ความสำคัญ",
+    "scPrev": "อีเมลก่อนหน้า",
+    "scNext": "อีเมลถัดไป",
+    "readingPaneOff": "ปิดบานหน้าต่างการอ่าน",
+    "snoozedFor24h": "เลื่อนออกไปถึงพรุ่งนี้",
+    "markAsReadUnread": "ทำเครื่องหมายว่าอ่าน / ยังไม่ได้อ่าน",
+    "loadEmailError": "ไม่สามารถโหลดอีเมลได้",
+    "scArchive": "เก็บถาวร"
   },
   "sent": {
     "title": "อีเมลที่ส่ง",
@@ -649,7 +785,16 @@
     "blockFailed": "ไม่สามารถบล็อกได้",
     "blockNoEmail": "ไม่พบที่อยู่ของผู้ส่ง",
     "blockNoConnection": "ไม่มีบัญชีอีเมลที่เชื่อมต่อ",
-    "emptied": "โฟลเดอร์ว่างเปล่า"
+    "emptied": "โฟลเดอร์ว่างเปล่า",
+    "unblock": "ปลดบล็อก",
+    "blockedList": "ผู้ส่งที่ถูกบล็อก",
+    "openRestored": "เปิด",
+    "unblocked": "ปลดบล็อกผู้ส่ง",
+    "blockSenderSuccess": "บล็อกผู้ส่งแล้ว",
+    "retryFetch": "ลองใหม่",
+    "fetchingFromProvider": "กำลังดึงข้อมูลจากผู้ให้บริการของคุณ…",
+    "noBlocked": "ไม่มีผู้ส่งที่ถูกบล็อก",
+    "fetchFailed": "ไม่สามารถดึงเนื้อหาของอีเมลนี้ได้"
   },
   "trash": {
     "title": "ถังขยะ",
@@ -794,7 +939,18 @@
     "movedToDone": "งานเสร็จสิ้น",
     "movedToTodo": "งานที่นำกลับไปทำ",
     "statusUpdated": "สถานะถูกอัปเดต",
-    "taskCreated": "งานถูกสร้าง"
+    "taskCreated": "งานถูกสร้าง",
+    "openInInbox": "เปิดในกล่องจดหมาย",
+    "reassigned": "งานที่ได้รับมอบหมายใหม่",
+    "markAsDone": "ทำเครื่องหมายว่าเสร็จสิ้น",
+    "unassign": "ยกเลิกการมอบหมาย",
+    "loadingTitle": "กำลังโหลดงาน…",
+    "noLinkedEmail": "งานนี้ไม่มีอีเมลที่เชื่อมโยง",
+    "linkedEmailActions": "ในอีเมลที่เชื่อมโยง",
+    "titleCopied": "คัดลอกชื่อแล้ว",
+    "copyTitle": "คัดลอกชื่อเรื่อง",
+    "markAsTodo": "ทำเครื่องหมายว่าต้องทำ",
+    "reassign": "กำหนดใหม่"
   },
   "projects": {
     "title": "โฟลเดอร์ทีม",
@@ -851,7 +1007,14 @@
     "exportError": "เกิดข้อผิดพลาดระหว่างการส่งออก",
     "searchProjects": "ค้นหาโครงการ...",
     "noProjectsAlt": "โปรดสร้างโครงการแรกของท่านเพื่อรวมอีเมลและงาน",
-    "viewDetail": "ดูรายละเอียด"
+    "viewDetail": "ดูรายละเอียด",
+    "detachEmail": "ลบออกจากโครงการ",
+    "openEmail": "เปิดอีเมล",
+    "unassigned": "ยังไม่ได้มอบหมาย",
+    "taskAssigned": "มอบหมายงานแล้ว",
+    "emailDetached": "อีเมลถูกนำออกจากโครงการ",
+    "assignTo": "กำหนดให้…",
+    "taskUnassigned": "งานไม่ได้รับมอบหมาย"
   },
   "classification": {
     "title": "หมวดหมู่",
@@ -1135,7 +1298,8 @@
       "cannotRename": "หมวดหมู่นี้ไม่สามารถเปลี่ยนชื่อได้.",
       "cannotMerge": "หมวดหมู่ « ยังไม่ได้จัดประเภท » ไม่สามารถรวมเข้าด้วยกันได้.",
       "goToInbox": "จัดเรียงอีเมลเหล่านี้"
-    }
+    },
+    "adminOnlyNotice": "การจัดการหมวดหมู่ (สร้าง แก้ไข ลบ แพ็คธุรกิจ) สงวนไว้สำหรับผู้ดูแลระบบทีมเพื่อให้การจัดหมวดหมู่สอดคล้องกัน คุณสามารถดูหมวดหมู่และอีเมลของพวกเขาได้"
   },
   "settings": {
     "title": "การตั้งค่า",
@@ -1268,7 +1432,9 @@
       "privacy": "ความเป็นส่วนตัวและการเข้าถึงทีม",
       "privacyDesc": "อีเมลส่วนตัวของท่านและบันทึกการเข้าชมของผู้ดูแล",
       "calendars": "ปฏิทิน",
-      "calendarsDesc": "เชื่อมต่อ Google Calendar และ Outlook Calendar"
+      "calendarsDesc": "เชื่อมต่อ Google Calendar และ Outlook Calendar",
+      "administration": "การจัดการ",
+      "administrationDesc": "การตั้งค่าสำหรับผู้ดูแลระบบขององค์กรเท่านั้น"
     },
     "b2bSection": "ความน่าเชื่อถือ B2B",
     "slaCard": "SLA สำหรับกล่องที่แชร์",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "การประชุมทางวิดีโอเริ่มต้น",
     "preferredVideoDesc": "โปรดเลือกผู้ให้บริการการประชุมทางวิดีโอเริ่มต้นสำหรับการนัดหมายใหม่ Meet ต้องเชื่อมต่อกับปฏิทิน Google และ Teams ต้องใช้ Outlook ส่วน Jitsi ใช้งานได้โดยไม่ต้องมีบัญชี",
     "meetingRemindersDesc": "Inboria ส่งการเตือนที่สุภาพไปยังผู้ติดต่อ 48 ชั่วโมงหลังจากข้อเสนอการนัดหมายที่ยังไม่ได้รับการตอบกลับ",
-    "meetingRemindersTitle": "การเตือนการนัดหมายอัตโนมัติ"
+    "meetingRemindersTitle": "การเตือนการนัดหมายอัตโนมัติ",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud และเว็บเมลส่วนใหญ่ เพิ่มผู้ช่วย Inboria โดยตรงในกล่องจดหมายของคุณโดยไม่ต้องออกจากอีเมล",
+    "outlookOpenAddinsPage": "เปิดหน้าเสริม Outlook",
+    "personalVideoUrlLabel": "ลิงก์วิดีโอส่วนตัว",
+    "webmailExtInstall": "ติดตั้งในเบราว์เซอร์ของฉัน",
+    "webmailStep2": "ใน Chrome หรือ Edge เปิดหน้าส่วนขยาย: พิมพ์ chrome://extensions ในแถบที่อยู่ แล้วเปิด \"โหมดนักพัฒนา\" (สวิตช์ด้านขวาบน)",
+    "outlookAddinInstall": "ติดตั้งใน Outlook",
+    "outlookStep3": "เปิดอีเมล: ปุ่ม \"ขอให้ Inboria\" จะปรากฏในริบบอน ลงชื่อเข้าใช้ด้วยบัญชี Inboria ของคุณครั้งเดียวก็พร้อมใช้งาน",
+    "webmailExtSection": "Inboria ในเว็บเมลของคุณ",
+    "webmailCopyUrl": "คัดลอก chrome://extensions",
+    "outlookGuideTitle": "ติดตั้ง Inboria ใน Outlook",
+    "webmailDownload": "ดาวน์โหลดส่วนขยาย",
+    "webmailStep1": "ดาวน์โหลดส่วนขยาย Inboria แล้วแตกไฟล์ (คลิกขวา › « แตกไฟล์ทั้งหมด ») คุณจะได้โฟลเดอร์ « inboria-extension »",
+    "webmailGuideTitle": "ติดตั้ง Inboria ในเว็บเมลของคุณ",
+    "webmailStep3": "คลิกที่ « โหลดส่วนขยายที่ไม่ได้บรรจุ » และเลือกโฟลเดอร์ « inboria-extension » ที่แตกไฟล์แล้ว จากนั้นเปิดเว็บเมลของคุณ: ปุ่ม « ขอจาก Inboria » จะปรากฏขึ้น เข้าสู่ระบบครั้งเดียวก็พร้อมใช้งาน",
+    "personalVideoUrlInvalid": "ลิงก์ไม่ถูกต้อง (ต้องใช้ https://)",
+    "outlookStep2": "ใน Outlook เปิด « รับโปรแกรมเสริม » › « โปรแกรมเสริมของฉัน » › « เพิ่มโปรแกรมเสริมที่กำหนดเอง » › « จากไฟล์ » แล้วเลือกไฟล์ที่ดาวน์โหลด",
+    "webmailUrlCopied": "คัดลอกที่อยู่ ✓",
+    "webmailGuideIntro": "ใช้งานกับ Gmail, OVH, Yahoo, iCloud และเว็บเมลส่วนใหญ่ใน Chrome หรือ Edge สามขั้นตอนง่ายๆ เพียงครั้งเดียว",
+    "outlookAddinTitle": "ปุ่ม “ขอให้ Inboria” ใน Outlook",
+    "outlookStep1": "ดาวน์โหลดไฟล์เชื่อมต่อ Inboria",
+    "reconnect": "เชื่อมต่อใหม่",
+    "outlookDownloadManifest": "ดาวน์โหลดไฟล์",
+    "outlookAddinDesc": "เพิ่มผู้ช่วย Inboria ใน Outlook ของคุณโดยตรง โดยไม่ต้องออกจากอีเมลของคุณ",
+    "personalVideoUrlDesc": "วางลิงก์ห้องถาวร Teams หรือ Meet ของท่าน (https://...) Inboria จะใช้ในข้อเสนอการนัดหมายทั้งหมด",
+    "outlookGuideIntro": "สามขั้นตอนง่าย ๆ ไม่ต้องค้นหาในเมนู: ทุกอย่างมีคำแนะนำ",
+    "outlookAddinSection": "Inboria ใน Outlook",
+    "webmailExtTitle": "ปุ่ม “ขอจาก Inboria” ในเว็บเมลของคุณ"
   },
   "subscription": {
     "title": "จัดการการสมัครสมาชิกของท่าน",
@@ -1426,7 +1619,10 @@
     "start": "เริ่มต้น",
     "numberOfCollaborators": "จำนวนผู้ร่วมงาน",
     "total": "รวม",
-    "seatsExample": "ตัวอย่าง: 3 ผู้ร่วมงาน = 50,97€/เดือน — สามารถแก้ไขได้ตลอดเวลาจากพื้นที่ของท่าน."
+    "seatsExample": "ตัวอย่าง: 3 ผู้ร่วมงาน = 50,97€/เดือน — สามารถแก้ไขได้ตลอดเวลาจากพื้นที่ของท่าน.",
+    "billingMonthly": "รายเดือน",
+    "billingYearly": "รายปี",
+    "perMonthBilledYearly": "/เดือน (เรียกเก็บเงินรายปี)"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "เกิดข้อผิดพลาดในการส่ง",
     "changeRole": "เปลี่ยนบทบาท",
     "adminDesc": "สามารถจัดการทีม, การสมัครสมาชิก และอีเมลทั้งหมด",
-    "memberDesc": "เข้าถึงอีเมลและงานที่แชร์"
+    "memberDesc": "เข้าถึงอีเมลและงานที่แชร์",
+    "trialTeamHint": "ทดลองทีม: เชิญเพื่อนร่วมงานได้สูงสุด 3 คน แต่ละคนจะได้รับการทดลองใช้ 4,500 เครดิต และคุณจะปลดล็อกกล่องจดหมายที่แชร์ การมอบหมาย และความคิดเห็นภายใน",
+    "trialTeamLabel": "ทดลองทีม"
   },
   "sharedMailboxes": {
     "title": "กล่องที่แชร์",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} ได้มอบหมายอีเมลนี้ให้ {{target}}",
     "systemSelfAssigned": "{{actor}} ได้รับอีเมลนี้ไปดูแล",
     "systemReassigned": "{{actor}} ได้เปลี่ยนการมอบหมายจาก {{previous}} เป็น {{target}}",
-    "systemUnassigned": "{{actor}} ได้ยกเลิกการมอบหมาย {{previous}}"
+    "systemUnassigned": "{{actor}} ได้ยกเลิกการมอบหมาย {{previous}}",
+    "viewing": "กำลังดูอยู่",
+    "typingMany": "หลายคนกำลังพิมพ์...",
+    "recipientsSelected": "เลือก {{count}} รายการ",
+    "emailMessage": "อีเมล",
+    "recipientsFilter": "ค้นหาสมาชิก…",
+    "recipients": "ผู้รับ",
+    "placeholderSimple": "กรอกข้อความของคุณ…",
+    "internalNote": "บันทึก",
+    "recipientsClear": "ล้าง",
+    "typingOne": "{{name}} กำลังพิมพ์…",
+    "recipientsEmpty": "ไม่มีสมาชิก",
+    "recipientsPick": "ผู้รับบันทึก"
   },
   "attachments": {
     "title": "ไฟล์แนบ",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "รอ",
     "statusPendingShort": "รอ",
     "syncFailed": "การซิงค์ล้มเหลว",
-    "viewDetails": "ดูรายละเอียด"
+    "viewDetails": "ดูรายละเอียด",
+    "formInternalNotePlaceholder": "ตัวอย่าง: ลูกค้า VIP, ระวังน้ำเสียง ไม่เคยส่งถึงลูกค้า",
+    "statusLabel": "สถานะ",
+    "ctxForward": "ส่งต่อทางอีเมล",
+    "duration": "ระยะเวลา",
+    "ctxDup14": "ใน 14 วัน",
+    "notePlaceholder": "บันทึกภายใน (เห็นเฉพาะทีม ไม่เคยส่งถึงลูกค้า)...",
+    "noteError": "เกิดข้อผิดพลาดในการเพิ่มบันทึก",
+    "notesEmpty": "ไม่มีบันทึก บันทึกจะคงอยู่ภายใน — ไม่เคยส่งถึงลูกค้า",
+    "forwardVideo": "ลิงก์วิดีโอ",
+    "ctxMarkAs": "ทำเครื่องหมายเป็น",
+    "askInboriaNewSlot": "ขอช่องใหม่จาก Inboria",
+    "pickDate": "เลือกวันที่",
+    "autoConfirmed": {
+      "desc": "{{count}} การนัดหมายได้รับการยืนยันอัตโนมัติจากอีเมลที่ได้รับ",
+      "title": "การยืนยันที่ตรวจพบ"
+    },
+    "forwardTitle": "หัวเรื่อง",
+    "ctxDupCustom": "ทำซ้ำในกี่วัน?",
+    "expandSuggestions": "แสดงคำแนะนำ",
+    "forwardWhere": "สถานที่",
+    "collapseSuggestions": "ซ่อนคำแนะนำ",
+    "confirmError": "เกิดข้อผิดพลาดในการยืนยัน",
+    "ctxNoProject": "ไม่มีโครงการ",
+    "internalMembersEmpty": "ไม่มีสมาชิกที่ได้รับเชิญ คลิก « + เพิ่ม » เพื่อเลือกเพื่อนร่วมงานของคุณ",
+    "forwardWhen": "วันที่",
+    "forwardBody": "ฉันส่งต่อรายละเอียดการนัดหมายนี้ให้คุณ:",
+    "markConfirmed": "ทำเครื่องหมายว่ายืนยันแล้ว",
+    "noteSelectedCount": "{{count}} ผู้รับ",
+    "duplicateError": "ข้อผิดพลาดในการทำซ้ำ",
+    "ctxEdit": "แก้ไข",
+    "forwardIntro": "สวัสดี,",
+    "ctxDelete": "ลบ",
+    "forwardSubject": "ส่งต่อ: การนัดหมาย",
+    "ctxDupCustomMenu": "กำหนดเอง…",
+    "forwardOutro": "ด้วยความเคารพ,",
+    "newInternalAppointment": "การนัดหมายภายใน",
+    "ctxProject": "โครงการ",
+    "filterAll": "ทั้งหมด",
+    "counterDeclined": "ปฏิเสธส่งถึงผู้ติดต่อ",
+    "duplicated": "นัดหมายซ้ำ",
+    "coorgNoCandidate": "ไม่มีสมาชิกที่พร้อมใช้งาน",
+    "askInboriaNewSlotPrefill": "ข้อเสนอแนะของ {{contact}}{{slot}} ไม่เหมาะสม โปรดเสนอช่วงเวลาอื่นที่เข้ากับตารางของฉัน",
+    "ctxDup90": "ใน 3 เดือน",
+    "statusPendingHint": "Inboria จะส่งอีเมลข้อเสนอไปยังลูกค้าโดยอัตโนมัติ",
+    "internalNotes": "บันทึกภายใน",
+    "ctxDuplicate": "ทำซ้ำ",
+    "confirmDelete": "ลบการนัดหมายนี้หรือไม่?",
+    "singleDay": "กลับไปที่ระยะเวลาเดียว",
+    "internalAppointment": "การนัดหมายภายใน",
+    "noteAllTeam": "ทีมทั้งหมด",
+    "ctxDup7": "ใน 7 วัน",
+    "confirmWithInboria": "ยืนยันกับ Inboria",
+    "ctxDup30": "ใน 1 เดือน",
+    "internalMembers": "สมาชิกทีมที่ได้รับเชิญ",
+    "duplicatedDesc": "สร้างสำเนาใน 7 วันต่อมา",
+    "formInternalNoteLabel": "บันทึกภายใน (ไม่บังคับ)",
+    "noteRecipientsLabel": "ถึง",
+    "ctxDupNextDay": "วันถัดไป",
+    "multiDay": "หลายวัน…",
+    "filterInternal": "ภายใน",
+    "theContact": "ผู้ติดต่อ",
+    "ctxOpen": "เปิด",
+    "filterExternal": "ลูกค้า",
+    "coorgAdd": "+ เพิ่ม"
   },
   "supportChat": {
     "title": "ผู้ช่วย Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "กรุณาถามคำถามใด ๆ เกี่ยวกับ Inboria: ฟีเจอร์, การตั้งค่า, การสมัครสมาชิก, และอื่น ๆ",
     "placeholder": "พิมพ์คำถามของท่าน...",
     "poweredBy": "ขับเคลื่อนโดย Inboria",
-    "errorMessage": "ขออภัย เกิดข้อผิดพลาดขึ้น กรุณาลองอีกครั้งหรือ ติดต่อ support@inboria.com"
+    "errorMessage": "ขออภัย เกิดข้อผิดพลาดขึ้น กรุณาลองอีกครั้งหรือ ติดต่อ support@inboria.com",
+    "send": "ส่ง",
+    "clear": "ล้างการสนทนา"
   },
   "inboriaChat": {
     "openLabel": "เปิดแชท Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "รออยู่",
       "relance": "กำลังดำเนินการ",
       "termine": "เสร็จสิ้น"
-    }
+    },
+    "bulkDismissedToast": "ละเว้น {{count}} รายการ",
+    "bulkMarkedRepliedToast": "{{count}} รายการถูกทำเครื่องหมายว่าตอบแล้ว"
   },
   "contacts": {
     "title": "ข้อมูลติดต่อ 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "เปิดแล้ว",
     "openedBadgeCount": "เปิด {{count}} ครั้ง",
     "openedAtLabel": "เปิดครั้งแรก: {{date}}",
-    "notOpenedYet": "ยังไม่เปิด"
+    "notOpenedYet": "ยังไม่เปิด",
+    "scheduledCancelError": "ยกเลิกไม่สำเร็จ",
+    "scheduledNoRecipient": "ไม่มีผู้รับ",
+    "scheduledCancelPartial": "{{failed}} การยกเลิกจาก {{total}} ล้มเหลว"
   },
   "templates": {
     "title": "แม่แบบ",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "อีเมลทำให้มองเห็นได้",
     "privateOnDesc": "อีเมลนี้ไม่สามารถมองเห็นได้สำหรับผู้ดูแลระบบของท่านอีกต่อไป (มุมมองโฟลเดอร์ทีม + Inboria).",
     "privateOffDesc": "อีเมลนี้กลับมามองเห็นได้สำหรับผู้ดูแลระบบของท่าน (มุมมองโฟลเดอร์ทีม + Inboria).",
-    "privateError": "ไม่สามารถอัปเดตความเป็นส่วนตัวได้."
+    "privateError": "ไม่สามารถอัปเดตความเป็นส่วนตัวได้.",
+    "details": "รายละเอียด",
+    "actionsMenu": "การกระทำ"
   },
   "privacy": {
     "title": "ความเป็นส่วนตัวและการเข้าถึงทีม",
@@ -3456,7 +3739,10 @@
       "followup": "ติดตามผล",
       "appointment": "ปฏิทิน",
       "team": "กิจกรรมทีม"
-    }
+    },
+    "addDescription": "สร้างบันทึกเพื่อติดตามคนที่ยังไม่ปรากฏในกล่องของคุณ",
+    "deleteDescription": "ประวัติอีเมลที่เชื่อมโยงกับที่อยู่นี้จะไม่ถูกลบ มีเพียงบันทึกที่สร้างเองเท่านั้นที่จะหายไป",
+    "openContact": "ดูข้อมูลติดต่อ"
   },
   "folders": {
     "title": "โฟลเดอร์ของฉัน",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "วาระการประชุม",
     "system": "ระบบ"
+  },
+  "signature": {
+    "underline": "ขีดเส้นใต้",
+    "link": "ลิงก์",
+    "font": "แบบอักษร",
+    "moreColors": "สีเพิ่มเติม…",
+    "imageTooLarge": "รูปภาพใหญ่เกินไป (สูงสุด 200 KB)",
+    "imageHint": "คำแนะนำ: แทรกโลโก้ PNG/JPG (สูงสุด 200 Ko) ภาพจะฝังในลายเซ็นโดยตรง",
+    "image": "รูปภาพ / โลโก้",
+    "linkUrlPrompt": "URL ของลิงก์ (https://...)",
+    "color": "สีข้อความ",
+    "orderedList": "รายการลำดับเลข",
+    "bold": "ตัวหนา",
+    "clear": "ล้างการจัดรูปแบบ",
+    "highlight": "เน้นข้อความ",
+    "italic": "ตัวเอียง",
+    "imageInvalid": "ไฟล์ภาพไม่ถูกต้อง",
+    "size": "ขนาด",
+    "bulletList": "รายการหัวข้อย่อย"
+  },
+  "outlookBanner": {
+    "back": "กลับไปที่ Outlook",
+    "openedFrom": "เปิดจาก Outlook คลิกเพื่อกลับ หรือสลับไปที่แท็บ Outlook"
+  },
+  "webmailBanner": {
+    "backNamed": "กลับไปที่ {{name}}",
+    "back": "กลับไปที่เว็บเมลของฉัน",
+    "openedFrom": "เปิดจากเว็บเมลของคุณ คลิกเพื่อกลับไป หรือสลับไปที่แท็บเว็บเมลของคุณ",
+    "openedFromNamed": "เปิดจาก {{name}}. คลิกเพื่อกลับ หรือสลับไปที่แท็บ {{name}}."
+  },
+  "gmailBanner": {
+    "openedFrom": "เปิดจาก Gmail คลิกเพื่อกลับ หรือสลับไปที่แท็บ Gmail",
+    "back": "กลับไปที่ Gmail"
+  },
+  "palette": {
+    "empty": "ไม่มีผลลัพธ์",
+    "navigate": "นำทาง",
+    "placeholder": "พิมพ์คำสั่งหรือค้นหา…",
+    "actions": "การดำเนินการ",
+    "shortcuts": "ทางลัดคีย์บอร์ด",
+    "compose": "อีเมลใหม่"
   }
 }

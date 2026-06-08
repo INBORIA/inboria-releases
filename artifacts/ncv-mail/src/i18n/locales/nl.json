@@ -23,7 +23,16 @@
     "add": "Toevoegen",
     "edit": "Bewerken",
     "reset": "Resetten",
-    "more": "Meer"
+    "more": "Meer",
+    "notAuthenticated": "Niet geauthenticeerd",
+    "collapse": "Categorieën verbergen",
+    "send": "Verzenden",
+    "dismiss": "Sluiten",
+    "create": "Aanmaken",
+    "remove": "Verwijderen",
+    "select": "Selecteren",
+    "copyFailed": "Kopiëren mislukt",
+    "expand": "Categorieën weergeven"
   },
   "nav": {
     "extensions": "Extensies",
@@ -37,7 +46,18 @@
     "login": "Inloggen",
     "signup": "Registreren",
     "logout": "Uitloggen",
-    "openMenu": "Menu openen"
+    "openMenu": "Menu openen",
+    "categories": "Categorieën",
+    "archives": "Archieven",
+    "dailyBrief": "Dagelijks overzicht",
+    "folders": "Mijn mappen",
+    "tasks": "Taken",
+    "followups": "Opvolgingen",
+    "inbox": "Inbox",
+    "contacts": "Contacten",
+    "scheduled": "Gepland",
+    "snoozed": "Uitgesteld",
+    "sent": "Verzonden"
   },
   "sidebar": {
     "inbox": "Postvak IN",
@@ -66,7 +86,10 @@
     "followups": "Herinneringen",
     "contacts": "Contacten",
     "assigned": "Toegewezen",
-    "myTasks": "Mijn taken"
+    "myTasks": "Mijn taken",
+    "expand": "Menu uitbreiden",
+    "collapse": "Menu verkleinen",
+    "resize": "Menu aanpassen"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -529,10 +552,17 @@
       "important": "Belangrijk"
     },
     "date": {
-      "all": "Alle datums"
+      "all": "Alle datums",
+      "yesterday": "Gisteren",
+      "thisMonth": "Deze maand",
+      "today": "Vandaag",
+      "last30": "Laatste 30 dagen",
+      "last7": "Laatste 7 dagen"
     },
     "read": {
-      "all": "Alle"
+      "all": "Alle",
+      "read": "Gelezen",
+      "unread": "Ongelezen"
     },
     "sharedDraft": "Gedeeld concept",
     "sharedDraftOn": "Gedeeld concept ingeschakeld",
@@ -564,7 +594,113 @@
       "label": "Weergavepanelen",
       "overlay": "Overlay",
       "split": "Naast elkaar"
-    }
+    },
+    "unknownSender": "Onbekend",
+    "scSearch": "Zoeken",
+    "scNext": "Volgende e-mail",
+    "snoozedFor24h": "Uitgesteld tot morgen",
+    "collisionViewingOne": "{{name}} bekijkt ook deze e-mail",
+    "markedAsUnread": "Gemarkeerd als ongelezen",
+    "theme": {
+      "switchLight": "Lichte modus",
+      "switchDark": "Donkere modus"
+    },
+    "archived": "Gearchiveerd",
+    "loadingEmail": "E-mail laden...",
+    "searchOpAttachment": "e-mails met bijlage",
+    "moreActions": "Meer acties",
+    "searchOpSubject": "filteren op onderwerp",
+    "markAsRead": "Markeren als gelezen",
+    "collisionViewingMany": "{{count}} andere personen bekijken deze e-mail",
+    "scGotoInbox": "Ga naar Inbox",
+    "scGotoSnoozed": "Ga naar Uitgesteld",
+    "scSnooze": "Uitstellen (24 u)",
+    "close": "Sluiten",
+    "composeRestore": "Concept hervatten",
+    "scDelete": "Verwijderen",
+    "density": {
+      "normal": "Normaal",
+      "label": "Weergavedichtheid",
+      "compact": "Compact",
+      "comfortable": "Comfortabel"
+    },
+    "headerCollapse": "Tabbladen en filters verbergen",
+    "composeUntitled": "Concept zonder onderwerp",
+    "backHint": "Terug (Esc) — J/K om te navigeren, R om te antwoorden, E om te archiveren",
+    "loadingTitle": "Laden...",
+    "draftYou": "U",
+    "copySender": "Adres kopiëren",
+    "slaOverdue": "SLA overschreden",
+    "assigneeFilterMember": "dit lid",
+    "draftRelease": "Vrijgeven",
+    "scArchive": "Archiveren",
+    "markAsReadUnread": "Markeer als gelezen / ongelezen",
+    "scForward": "Doorsturen",
+    "draftSomeoneSends": "{{name}} gaat het verzenden",
+    "searchOpSender": "filteren op afzender",
+    "readingPanePos": {
+      "off": "Verborgen",
+      "right": "Rechts",
+      "label": "Leesvenster",
+      "bottom": "Onder"
+    },
+    "scGotoContacts": "Ga naar Contacten",
+    "markAsUnread": "Markeren als ongelezen",
+    "composeDiscard": "Verwijderen",
+    "snooze3h": "Over 3 uur",
+    "importanceLabel": "Weergave",
+    "copiedSenderEmail": "Adres gekopieerd",
+    "scPalette": "Commandopalet",
+    "copiedSubject": "Onderwerp gekopieerd",
+    "myFoldersLabel": "Mijn mappen",
+    "copySenderEmail": "Kopieer het adres van de afzender",
+    "viewOptions": "Weergaveopties",
+    "shortcutsTitle": "Toetsenbord sneltoetsen",
+    "assignedNoTeam": "Deze weergave vereist een team (2 leden of meer).",
+    "collisionReplyingMany": "{{count}} mensen reageren al op deze mail",
+    "assignToProject": "Toewijzen aan een teammap",
+    "searchGroupOperators": "Verfijnen",
+    "composeAria": "Een email opstellen",
+    "downloadEml": "Downloaden als .eml",
+    "headerExpand": "Toon tabbladen en filters",
+    "scClose": "Sluit de mail",
+    "composeDiscardConfirm": "Dit concept verwijderen?",
+    "readingPaneOff": "Leesvenster uitschakelen",
+    "searchGroupSenders": "Afzenders",
+    "scGotoTasks": "Ga naar Taken",
+    "printPopupBlocked": "Kan het afdrukvenster niet openen",
+    "copied": "Gekopieerd",
+    "snooze": "Uitstellen",
+    "teamBadge": "Team",
+    "backToGmail": "Terug naar Gmail",
+    "print": "Afdrukken",
+    "snoozeTomorrow": "Morgenochtend",
+    "scHelp": "Deze hulp weergeven",
+    "moveToFolder": "Verplaatsen naar",
+    "draftTakeOver": "Overnemen",
+    "composeMinimize": "Concept minimaliseren",
+    "searchGroupEmails": "E-mails",
+    "backToGmailHint": "Open deze exacte e-mail in Gmail",
+    "draftLiveCoedit": "Live co-editie",
+    "categorized": "Gecategoriseerd",
+    "scGotoSent": "Ga naar Verzonden",
+    "collisionReplyingOne": "{{name}} reageert al op deze e-mail",
+    "exportEml": "Download .eml",
+    "filterByCategory": "Filteren",
+    "scReply": "Antwoorden",
+    "draftTakeOverHint": "Neem het verzenden over als deze collega niet meer beschikbaar is",
+    "markedAsRead": "Gemarkeerd als gelezen",
+    "readingPaneOn": "Leesvenster inschakelen (3 kolommen)",
+    "filtersReset": "Filters opnieuw instellen",
+    "createAndAssignTask": "Creëer en wijs toe…",
+    "priorityLabel": "Prioriteit",
+    "scPrev": "Vorige e-mail",
+    "copyAddress": "Adres kopiëren",
+    "draftClaimSend": "Ik stuur het",
+    "copySubject": "Onderwerp kopiëren",
+    "scGotoArchives": "Ga naar Archieven",
+    "draftYouSend": "U stuurt het",
+    "loadEmailError": "E-mail kan niet worden geladen."
   },
   "sent": {
     "title": "Verzonden e-mails",
@@ -649,7 +785,16 @@
     "blockFailed": "Blokkeren mislukt",
     "blockNoEmail": "Afzenderadres niet gevonden",
     "blockNoConnection": "Geen e-mailaccount verbonden",
-    "emptied": "Map geleegd"
+    "emptied": "Map geleegd",
+    "noBlocked": "Geen geblokkeerde afzenders",
+    "openRestored": "Openen",
+    "fetchingFromProvider": "Inhoud ophalen van uw provider...",
+    "retryFetch": "Opnieuw proberen",
+    "unblocked": "Afzender gedeblokkeerd",
+    "blockedList": "Geblokkeerde afzenders",
+    "fetchFailed": "Inhoud van deze e-mail kan niet worden opgehaald.",
+    "blockSenderSuccess": "Afzender geblokkeerd",
+    "unblock": "Deblokkeren"
   },
   "trash": {
     "title": "Prullenbak",
@@ -804,7 +949,18 @@
     "movedToDone": "Taak voltooid",
     "movedToTodo": "Taak terug naar te doen",
     "statusUpdated": "Status bijgewerkt",
-    "taskCreated": "Taak aangemaakt"
+    "taskCreated": "Taak aangemaakt",
+    "titleCopied": "Titel gekopieerd",
+    "reassign": "Herassigneren",
+    "openInInbox": "Openen in Inbox",
+    "copyTitle": "Titel kopiëren",
+    "noLinkedEmail": "Deze taak is niet gekoppeld aan een e-mail.",
+    "unassign": "Toewijzing opheffen",
+    "linkedEmailActions": "Op de gekoppelde mail",
+    "reassigned": "Taak opnieuw toegewezen",
+    "markAsTodo": "Markeren als te doen",
+    "loadingTitle": "Taken laden…",
+    "markAsDone": "Markeren als voltooid"
   },
   "projects": {
     "title": "Teammappen",
@@ -861,7 +1017,14 @@
     "exportError": "Fout bij exporteren",
     "searchProjects": "Projecten zoeken...",
     "noProjectsAlt": "Maak uw eerste project aan om e-mails en taken te groeperen.",
-    "viewDetail": "Detail bekijken"
+    "viewDetail": "Detail bekijken",
+    "taskAssigned": "Taak toegewezen",
+    "taskUnassigned": "Taak niet toegewezen",
+    "detachEmail": "Uit project verwijderen",
+    "assignTo": "Toewijzen aan…",
+    "openEmail": "Open de email",
+    "emailDetached": "E-mail verwijderd uit project",
+    "unassigned": "Niet toegewezen"
   },
   "classification": {
     "title": "Categorieën",
@@ -1145,7 +1308,8 @@
       "cannotRename": "Deze systeemcategorie kan niet worden hernoemd.",
       "cannotMerge": "De categorie \"Niet ingedeeld\" kan niet worden samengevoegd.",
       "goToInbox": "Deze e-mails sorteren"
-    }
+    },
+    "adminOnlyNotice": "Het beheer van categorieën (aanmaken, wijzigen, verwijderen, branchepakketten) is voorbehouden aan de Team Admin om een consistente classificatie te garanderen. U kunt de categorieën en hun e-mails bekijken."
   },
   "settings": {
     "title": "Instellingen",
@@ -1278,7 +1442,9 @@
       "privacy": "Privacy en teamtoegang",
       "privacyDesc": "Je privé-e-mails en het logboek van admintoegang",
       "calendars": "Agenda's",
-      "calendarsDesc": "Google Calendar en Outlook Calendar verbinden"
+      "calendarsDesc": "Google Calendar en Outlook Calendar verbinden",
+      "administrationDesc": "Instellingen gereserveerd voor organisatiebeheerders",
+      "administration": "Administratie"
     },
     "b2bSection": "B2B-geloofwaardigheid",
     "slaCard": "SLA's gedeelde mailboxen",
@@ -1313,7 +1479,34 @@
     "preferredVideoTitle": "Standaard videovergadering",
     "preferredVideoDesc": "Kies de standaard video-aanbieder voor nieuwe afspraken. Meet vereist een verbonden Google-agenda; Teams vereist Outlook. Jitsi werkt zonder account.",
     "meetingRemindersDesc": "Inboria stuurt een beleefde herinnering naar de contactpersoon 48 uur na een onbeantwoorde afspraakvoorstel.",
-    "meetingRemindersTitle": "Automatische afspraakherinneringen"
+    "meetingRemindersTitle": "Automatische afspraakherinneringen",
+    "outlookAddinSection": "Inboria in Outlook",
+    "personalVideoUrlDesc": "Plak de link naar uw permanente Teams- of Meet-ruimte (https://...). Inboria zal deze gebruiken in alle afspraakvoorstellen.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud en de meeste webmails. Voeg de Inboria-assistent direct toe aan uw e-mail, zonder uw inbox te verlaten.",
+    "outlookAddinTitle": "Knop 'Vraag Inboria' in Outlook",
+    "webmailDownload": "Extensie downloaden",
+    "webmailCopyUrl": "Kopieer chrome://extensions",
+    "personalVideoUrlInvalid": "Ongeldige link (https:// vereist)",
+    "webmailUrlCopied": "Adres gekopieerd ✓",
+    "outlookOpenAddinsPage": "Open Outlook-add-ins",
+    "outlookDownloadManifest": "Bestand downloaden",
+    "outlookStep2": "Open in Outlook 'Add-ins ophalen' › 'Mijn add-ins' › 'Aangepast add-in toevoegen' › 'Van bestand', en selecteer het gedownloade bestand.",
+    "outlookGuideIntro": "Drie eenvoudige stappen. Geen menu's doorzoeken: alles is begeleid.",
+    "webmailExtInstall": "Installeren in mijn browser",
+    "webmailGuideIntro": "Werkt met Gmail, OVH, Yahoo, iCloud en de meeste webmails, in Chrome of Edge. Drie eenvoudige stappen, slechts één keer.",
+    "webmailStep2": "Open in Chrome of Edge de extensiepagina: typ chrome://extensions in de adresbalk, en schakel de 'Ontwikkelaarsmodus' in (schakelaar rechtsboven).",
+    "webmailGuideTitle": "Installeer Inboria in uw webmail",
+    "outlookStep3": "Open een e-mail: de knop 'Vraag Inboria' verschijnt in het lint. Log eenmalig in met uw Inboria-account, en het is klaar.",
+    "personalVideoUrlLabel": "Persoonlijke video-link",
+    "webmailExtSection": "Inboria in uw webmail",
+    "webmailExtTitle": "Knop 'Vraag Inboria' in uw webmail",
+    "webmailStep3": "Klik op 'Niet-ingepakte extensie laden' en selecteer de uitgepakte map 'inboria-extension'. Open vervolgens uw webmail: de knop 'Vraag Inboria' verschijnt. Log eenmalig in, en het is klaar.",
+    "outlookAddinDesc": "Voeg de Inboria-assistent direct toe aan uw Outlook, zonder uw e-mails te verlaten.",
+    "outlookAddinInstall": "Installeren in Outlook",
+    "outlookStep1": "Download het Inboria verbindingsbestand.",
+    "reconnect": "Opnieuw verbinden",
+    "webmailStep1": "Download de Inboria-extensie en pak het bestand uit (rechtermuisklik › 'Alles uitpakken'). U krijgt een map 'inboria-extension'.",
+    "outlookGuideTitle": "Inboria installeren in Outlook"
   },
   "subscription": {
     "title": "Beheer uw abonnement",
@@ -1436,7 +1629,10 @@
     "start": "Beginnen",
     "numberOfCollaborators": "Aantal medewerkers",
     "total": "Totaal",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €50,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
+    "seatsExample": "Voorbeeld: 3 medewerkers = €50,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
+    "billingMonthly": "Maandelijks",
+    "perMonthBilledYearly": "/maand (jaarlijks gefactureerd)",
+    "billingYearly": "Jaarlijks"
   },
   "marketing": {
     "extensions": {
@@ -2178,7 +2374,9 @@
     "inviteError": "Fout bij het verzenden van de uitnodiging",
     "changeRole": "Rol wijzigen",
     "adminDesc": "Kan team, abonnement en alle e-mails beheren",
-    "memberDesc": "Toegang tot eigen e-mails en gedeelde taken"
+    "memberDesc": "Toegang tot eigen e-mails en gedeelde taken",
+    "trialTeamHint": "Teamproef: nodig tot 3 collega's uit. Iedereen krijgt zijn eigen proef van 4.500 credits, en u ontgrendelt gedeelde inboxen, toewijzing en interne opmerkingen.",
+    "trialTeamLabel": "Teamproef"
   },
   "sharedMailboxes": {
     "title": "Gedeelde mailboxen",
@@ -2323,7 +2521,19 @@
     "systemAssigned": "{{actor}} heeft deze e-mail toegewezen aan {{target}}",
     "systemSelfAssigned": "{{actor}} heeft deze e-mail opgepakt",
     "systemReassigned": "{{actor}} heeft opnieuw toegewezen van {{previous}} aan {{target}}",
-    "systemUnassigned": "{{actor}} heeft de toewijzing van {{previous}} ingetrokken"
+    "systemUnassigned": "{{actor}} heeft de toewijzing van {{previous}} ingetrokken",
+    "recipientsFilter": "Zoek een lid...",
+    "typingMany": "Meerdere mensen typen...",
+    "recipientsClear": "Leegmaken",
+    "placeholderSimple": "Voer uw bericht in…",
+    "viewing": "Nu aan het bekijken",
+    "internalNote": "Notitie",
+    "recipients": "Ontvangers",
+    "recipientsPick": "Ontvangers van de notitie",
+    "typingOne": "{{name}} is aan het typen…",
+    "recipientsEmpty": "Geen leden",
+    "emailMessage": "E-mail",
+    "recipientsSelected": "{{count}} geselecteerd"
   },
   "attachments": {
     "title": "Bijlagen",
@@ -2760,7 +2970,71 @@
     "statusPendingMonth": "In afw.",
     "statusPendingShort": "In afwachting",
     "syncFailed": "Synchronisatie mislukt",
-    "viewDetails": "Details bekijken"
+    "viewDetails": "Details bekijken",
+    "internalAppointment": "Interne afspraak",
+    "duplicateError": "Duplicatiefout",
+    "duplicatedDesc": "Kopie gemaakt 7 dagen later.",
+    "noteSelectedCount": "{{count}} ontvanger(s)",
+    "forwardWhere": "Locatie",
+    "askInboriaNewSlotPrefill": "Het tegenvoorstel van {{contact}}{{slot}} past niet. Stel andere tijdstippen voor die compatibel zijn met mijn agenda.",
+    "duplicated": "Afspraak gedupliceerd",
+    "ctxNoProject": "Geen project",
+    "noteError": "Fout bij notitie toevoegen",
+    "filterExternal": "Klant",
+    "autoConfirmed": {
+      "desc": "{{count}} afspraken zijn automatisch bevestigd vanuit ontvangen e-mails.",
+      "title": "Bevestigingen gedetecteerd"
+    },
+    "ctxDup7": "Over 7 dagen",
+    "forwardIntro": "Hallo,",
+    "statusPendingHint": "Inboria zal automatisch de voorstelmail naar de klant sturen.",
+    "markConfirmed": "Markeren als bevestigd",
+    "newInternalAppointment": "Interne afspraak",
+    "ctxEdit": "Bewerken",
+    "theContact": "de contactpersoon",
+    "statusLabel": "Status",
+    "notesEmpty": "Geen notities. Notities blijven intern — nooit naar de klant verzonden.",
+    "expandSuggestions": "Suggesties weergeven",
+    "forwardTitle": "Titel",
+    "noteAllTeam": "Het hele team",
+    "internalMembers": "Uitgenodigde teamleden",
+    "noteRecipientsLabel": "Voor",
+    "ctxMarkAs": "Markeren als",
+    "singleDay": "Terug naar enkele dag",
+    "ctxDupNextDay": "De volgende dag",
+    "counterDeclined": "Afwijzing naar contact verzonden",
+    "ctxDup14": "Over 14 dagen",
+    "collapseSuggestions": "Suggesties verbergen",
+    "formInternalNoteLabel": "Interne notitie (optioneel)",
+    "forwardBody": "Ik stuur u de details van deze afspraak door:",
+    "multiDay": "Meerdere dagen…",
+    "ctxForward": "Doorsturen via email",
+    "forwardVideo": "Videolink",
+    "internalMembersEmpty": "Geen leden uitgenodigd. Klik op « + Toevoegen » om uw collega's te kiezen.",
+    "forwardWhen": "Datum",
+    "pickDate": "Kies een datum",
+    "ctxDuplicate": "Dupliceren",
+    "coorgNoCandidate": "Geen leden beschikbaar.",
+    "ctxDupCustomMenu": "Aangepast…",
+    "ctxDupCustom": "Dupliceren over hoeveel dagen?",
+    "ctxOpen": "Openen",
+    "notePlaceholder": "Interne notitie (alleen zichtbaar voor het team, nooit naar de klant gestuurd)…",
+    "confirmError": "Fout bij bevestiging",
+    "ctxDelete": "Verwijderen",
+    "duration": "Duur",
+    "internalNotes": "Interne notities",
+    "confirmDelete": "Deze afspraak verwijderen?",
+    "ctxDup30": "Over 1 maand",
+    "forwardSubject": "FW: Afspraak",
+    "ctxProject": "Project",
+    "filterInternal": "Intern",
+    "ctxDup90": "Over 3 maanden",
+    "formInternalNotePlaceholder": "Bijv.: VIP-klant, let op de toon. Nooit naar de klant verzonden.",
+    "filterAll": "Alle",
+    "confirmWithInboria": "Bevestigen met Inboria",
+    "askInboriaNewSlot": "Vraag Inboria om nieuwe afspraak",
+    "forwardOutro": "Met vriendelijke groet,",
+    "coorgAdd": "+ Toevoegen"
   },
   "supportChat": {
     "title": "Inboria Assistent",
@@ -2769,7 +3043,9 @@
     "welcomeMessage": "Stel mij elke vraag over Inboria: functies, instellingen, abonnement en meer.",
     "placeholder": "Typ uw vraag...",
     "poweredBy": "Aangedreven door Inboria",
-    "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@inboria.com."
+    "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@inboria.com.",
+    "send": "Verzenden",
+    "clear": "Gesprek wissen"
   },
   "inboriaChat": {
     "openLabel": "Inboria-chat openen",
@@ -4555,7 +4831,9 @@
       "en_attente": "In afwachting",
       "relance": "Bezig",
       "termine": "Voltooid"
-    }
+    },
+    "bulkDismissedToast": "{{count}} genegeerd",
+    "bulkMarkedRepliedToast": "{{count}} gemarkeerd als beantwoord"
   },
   "contacts": {
     "title": "Contact 360°",
@@ -4660,7 +4938,10 @@
     "notOpenedYet": "Nog niet geopend",
     "snoozedSectionEmpty": "Geen uitgestelde e-mails",
     "snoozedSectionEmptyHint": "De e-mails die u uitstelt, verschijnen hier totdat ze weer actief worden.",
-    "snoozedSectionTitle": "Uitgestelde e-mails"
+    "snoozedSectionTitle": "Uitgestelde e-mails",
+    "scheduledCancelError": "Annulering mislukt",
+    "scheduledCancelPartial": "{{failed}} annulering(en) van de {{total}} mislukt",
+    "scheduledNoRecipient": "Geen ontvanger"
   },
   "templates": {
     "title": "Sjablonen",
@@ -5041,7 +5322,9 @@
     "privateOffTitle": "E-mail weer zichtbaar gemaakt",
     "privateOnDesc": "Deze e-mail is nu verborgen voor je admins (teamdossierweergave + Inboria).",
     "privateOffDesc": "Deze e-mail is weer zichtbaar voor je admins (teamdossierweergave + Inboria).",
-    "privateError": "Privacy bijwerken is mislukt."
+    "privateError": "Privacy bijwerken is mislukt.",
+    "details": "Details",
+    "actionsMenu": "Acties"
   },
   "privacy": {
     "title": "Privacy en teamtoegang",
@@ -5117,7 +5400,10 @@
       "followup": "Opvolging",
       "appointment": "Agenda",
       "team": "Teamactiviteit"
-    }
+    },
+    "addDescription": "Maak een kaart aan om iemand te volgen die nog niet in uw inbox staat.",
+    "openContact": "Bekijk contactkaart",
+    "deleteDescription": "De emailgeschiedenis gekoppeld aan dit adres wordt niet verwijderd. Alleen de handmatige kaart verdwijnt."
   },
   "folders": {
     "title": "Mijn mappen",
@@ -5198,5 +5484,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "Systeem"
+  },
+  "signature": {
+    "imageTooLarge": "Afbeelding te groot (max 200 KB)",
+    "linkUrlPrompt": "Link-URL (https://...)",
+    "size": "Grootte",
+    "italic": "Cursief",
+    "clear": "Opmaak wissen",
+    "imageInvalid": "Ongeldig afbeeldingsbestand",
+    "highlight": "Markeren",
+    "bold": "Vet",
+    "underline": "Onderstrepen",
+    "image": "Afbeelding / logo",
+    "color": "Tekstkleur",
+    "imageHint": "Tip: voeg een PNG/JPG-logo in (max 200 KB). De afbeelding wordt direct in de handtekening geïntegreerd.",
+    "font": "Lettertype",
+    "bulletList": "Opsommingstekens",
+    "link": "Link",
+    "orderedList": "Genummerde lijst",
+    "moreColors": "Meer kleuren…"
+  },
+  "palette": {
+    "compose": "Nieuwe e-mail",
+    "shortcuts": "Toetsenbord sneltoetsen",
+    "navigate": "Navigeren",
+    "empty": "Geen resultaten.",
+    "actions": "Acties",
+    "placeholder": "Typ een opdracht of zoek…"
+  },
+  "outlookBanner": {
+    "back": "Terug naar Outlook",
+    "openedFrom": "Geopend vanuit Outlook. Klik om terug te keren, of schakel eenvoudig terug naar het Outlook-tabblad."
+  },
+  "gmailBanner": {
+    "openedFrom": "Geopend vanuit Gmail. Klik om terug te keren, of schakel gewoon terug naar het Gmail-tabblad.",
+    "back": "Terug naar Gmail"
+  },
+  "webmailBanner": {
+    "back": "Terug naar mijn webmail",
+    "openedFromNamed": "Geopend vanuit {{name}}. Klik om terug te keren, of schakel eenvoudig terug naar het tabblad {{name}}.",
+    "openedFrom": "Geopend vanuit uw webmail. Klik om terug te keren, of schakel eenvoudig terug naar het tabblad van uw webmail.",
+    "backNamed": "Terug naar {{name}}"
   }
 }

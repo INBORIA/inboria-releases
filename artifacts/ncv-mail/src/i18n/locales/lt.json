@@ -23,7 +23,16 @@
     "add": "Pridėti",
     "edit": "Redaguoti",
     "reset": "Atstatyti",
-    "more": "Daugiau"
+    "more": "Daugiau",
+    "notAuthenticated": "Neautentifikuota",
+    "collapse": "Slėpti kategorijas",
+    "send": "Siųsti",
+    "dismiss": "Uždaryti",
+    "create": "Sukurti",
+    "remove": "Pašalinti",
+    "select": "Pasirinkti",
+    "copyFailed": "Kopijuoti nepavyko",
+    "expand": "Rodyti kategorijas"
   },
   "nav": {
     "extensions": "Plėtiniai",
@@ -37,7 +46,18 @@
     "login": "Prisijungti",
     "signup": "Užsiregistruoti",
     "logout": "Atsijungti",
-    "openMenu": "Atidaryti meniu"
+    "openMenu": "Atidaryti meniu",
+    "categories": "Kategorijos",
+    "archives": "Archyvai",
+    "dailyBrief": "Dienos suvestinė",
+    "folders": "Mano aplankai",
+    "tasks": "Užduotys",
+    "followups": "Sekimas",
+    "inbox": "Gauta",
+    "sent": "Išsiųsti",
+    "scheduled": "Suplanuoti",
+    "snoozed": "Atidėta",
+    "contacts": "Kontaktai"
   },
   "sidebar": {
     "inbox": "Gautieji",
@@ -66,7 +86,10 @@
     "followups": "Priminti",
     "contacts": "Kontaktai",
     "assigned": "Priskirti",
-    "myTasks": "Mano užduotys"
+    "myTasks": "Mano užduotys",
+    "expand": "Išplėsti meniu",
+    "collapse": "Sutraukti meniu",
+    "resize": "Keisti meniu dydį"
   },
   "dashboard": {
     "expiredSubscription": "Jūsų prenumerata pasibaigė",
@@ -529,10 +552,17 @@
       "important": "Svarbūs"
     },
     "date": {
-      "all": "Visos datos"
+      "all": "Visos datos",
+      "yesterday": "Vakar",
+      "thisMonth": "Šį mėnesį",
+      "today": "Šiandien",
+      "last7": "Paskutinės 7 dienos",
+      "last30": "Paskutinės 30 dienų"
     },
     "read": {
-      "all": "Visi"
+      "all": "Visi",
+      "read": "Skaityti",
+      "unread": "Neskaityti"
     },
     "sharedDraft": "Bendras juodraštis",
     "sharedDraftOn": "Bendras juodraštis įjungtas",
@@ -564,7 +594,113 @@
       "label": "Rodymo skydeliai",
       "overlay": "Perdengimas",
       "split": "Šalia vienas kito"
-    }
+    },
+    "unknownSender": "Nežinomas",
+    "scSearch": "Ieškoti",
+    "scNext": "Kitas laiškas",
+    "snoozedFor24h": "Atidėta rytojui",
+    "collisionViewingOne": "{{name}} taip pat peržiūri šį laišką",
+    "markedAsUnread": "Pažymėta kaip neskaityta",
+    "theme": {
+      "switchLight": "Šviesus režimas",
+      "switchDark": "Tamsus režimas"
+    },
+    "archived": "Archyvuota",
+    "loadingEmail": "Įkeliama el. laiškas...",
+    "searchOpAttachment": "laiškai su priedu",
+    "moreActions": "Daugiau veiksmų",
+    "searchOpSubject": "filtruoti pagal temą",
+    "markAsRead": "Pažymėti kaip skaitytą",
+    "collisionViewingMany": "{{count}} kiti asmenys peržiūri šį laišką",
+    "scGotoInbox": "Eiti į Priimamąjį",
+    "scGotoSnoozed": "Eiti į Atidėtus",
+    "scSnooze": "Atidėti (24 val.)",
+    "close": "Uždaryti",
+    "composeRestore": "Tęsti juodraštį",
+    "scDelete": "Ištrinti",
+    "density": {
+      "normal": "Normalus",
+      "label": "Rodymo tankis",
+      "compact": "Kompaktiškas",
+      "comfortable": "Patogus"
+    },
+    "headerCollapse": "Slėpti skirtukus ir filtrus",
+    "composeUntitled": "Juodraštis be temos",
+    "backHint": "Grįžti (Esc) — J/K naršyti, R atsakyti, E archyvuoti",
+    "loadingTitle": "Įkeliama…",
+    "draftYou": "Jus",
+    "copySender": "Kopijuoti adresą",
+    "slaOverdue": "SLA pavėluota",
+    "assigneeFilterMember": "šis narys",
+    "draftRelease": "Atlaisvinti",
+    "scArchive": "Archyvuoti",
+    "markAsReadUnread": "Pažymėti kaip skaitytą / neskaitytą",
+    "scForward": "Persiųsti",
+    "draftSomeoneSends": "{{name}} ketina išsiųsti",
+    "searchOpSender": "filtruoti pagal siuntėją",
+    "readingPanePos": {
+      "off": "Paslėpta",
+      "right": "Dešinėje",
+      "label": "Skaitymo langas",
+      "bottom": "Apačioje"
+    },
+    "scGotoContacts": "Eiti į Kontaktus",
+    "markAsUnread": "Pažymėti kaip neskaitytą",
+    "composeDiscard": "Atsisakyti",
+    "snooze3h": "Po 3 val.",
+    "importanceLabel": "Rodomas",
+    "copiedSenderEmail": "Adresas nukopijuotas",
+    "scPalette": "Komandų paletė",
+    "copiedSubject": "Tema nukopijuota",
+    "myFoldersLabel": "Mano aplankai",
+    "copySenderEmail": "Kopijuoti siuntėjo adresą",
+    "viewOptions": "Rodymo parinktys",
+    "shortcutsTitle": "Klaviatūros nuorodos",
+    "assignedNoTeam": "Šiam vaizdui reikalinga komanda (2 ar daugiau narių).",
+    "collisionReplyingMany": "{{count}} žmonės jau atsako į šį laišką",
+    "assignToProject": "Priskirti komandiniam aplankui",
+    "searchGroupOperators": "Patikslinti",
+    "composeAria": "Rašyti el. laišką",
+    "downloadEml": "Atsisiųsti kaip .eml",
+    "headerExpand": "Rodyti skirtukus ir filtrus",
+    "scClose": "Uždaryti laišką",
+    "composeDiscardConfirm": "Atsisakyti šio juodraščio?",
+    "readingPaneOff": "Išjungti skaitymo langą",
+    "searchGroupSenders": "Siuntėjai",
+    "scGotoTasks": "Eiti į Užduotis",
+    "printPopupBlocked": "Nepavyko atidaryti spausdinimo lango",
+    "copied": "Nukopijuota",
+    "snooze": "Atidėti",
+    "exportEml": "Atsisiųsti .eml",
+    "categorized": "Kategorizuota",
+    "markedAsRead": "Pažymėta kaip skaityta",
+    "teamBadge": "Komanda",
+    "priorityLabel": "Prioritetas",
+    "backToGmailHint": "Atidaryti šį laišką tiksliai Gmail",
+    "snoozeTomorrow": "Rytoj ryte",
+    "composeMinimize": "Sumažinti juodraštį",
+    "scGotoSent": "Eiti į Išsiųstus",
+    "readingPaneOn": "Įjungti skaitymo langą (3 stulpeliai)",
+    "collisionReplyingOne": "{{name}} jau atsako į šį laišką",
+    "createAndAssignTask": "Sukurti ir priskirti…",
+    "copyAddress": "Kopijuoti adresą",
+    "copySubject": "Kopijuoti temą",
+    "loadEmailError": "Nepavyko įkelti el. laiško.",
+    "draftYouSend": "Jus siunčiate",
+    "scGotoArchives": "Eiti į Archyvus",
+    "scReply": "Atsakyti",
+    "backToGmail": "Grįžti į Gmail",
+    "moveToFolder": "Perkelti į",
+    "print": "Spausdinti",
+    "scPrev": "Ankstesnis laiškas",
+    "draftClaimSend": "Aš siunčiu",
+    "draftLiveCoedit": "Tiesioginė bendro redagavimo",
+    "draftTakeOverHint": "Perimti siuntimą, jei šis kolega nebepasiekiamas",
+    "scHelp": "Rodyti šią pagalbą",
+    "filtersReset": "Atstatyti filtrus",
+    "draftTakeOver": "Perimti",
+    "searchGroupEmails": "Laiškai",
+    "filterByCategory": "Filtruoti"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",
@@ -649,7 +785,16 @@
     "blockFailed": "Nepavyko užblokuoti",
     "blockNoEmail": "Siuntėjo adresas nerastas",
     "blockNoConnection": "Nėra prijungtų el. pašto paskyrų",
-    "emptied": "Dėžutė ištuštinta"
+    "emptied": "Dėžutė ištuštinta",
+    "noBlocked": "Nėra užblokuotų siuntėjų",
+    "openRestored": "Atidaryti",
+    "fetchingFromProvider": "Turinys gaunamas iš Jusu tiekėjo…",
+    "retryFetch": "Bandykite dar kartą",
+    "unblocked": "Siuntėjas atblokuotas",
+    "blockedList": "Blokuoti siuntėjai",
+    "unblock": "Atblokuoti",
+    "fetchFailed": "Nepavyko gauti šio laiško turinio.",
+    "blockSenderSuccess": "Siuntėjas užblokuotas"
   },
   "trash": {
     "title": "Šiukšliadėžė",
@@ -794,7 +939,18 @@
     "movedToDone": "Užduotis baigta",
     "movedToTodo": "Užduotis grąžinta į padaryti",
     "statusUpdated": "Statusas atnaujintas",
-    "taskCreated": "Užduotis sukurta"
+    "taskCreated": "Užduotis sukurta",
+    "titleCopied": "Pavadinimas nukopijuotas",
+    "reassign": "Perduoti",
+    "openInInbox": "Atidaryti Priimamajame",
+    "copyTitle": "Kopijuoti pavadinimą",
+    "noLinkedEmail": "Ši užduotis nėra susieta su jokiu el. laišku.",
+    "unassign": "Panaikinti priskyrimą",
+    "linkedEmailActions": "Susijusiame laiške",
+    "reassigned": "Užduotis perpriskirta",
+    "markAsDone": "Pažymėti kaip atliktą",
+    "loadingTitle": "Užduočių įkėlimas…",
+    "markAsTodo": "Pažymėti kaip atliktiną"
   },
   "projects": {
     "title": "Komandos aplankai",
@@ -851,7 +1007,14 @@
     "exportError": "Klaida eksportuojant",
     "searchProjects": "Ieškoti projekto...",
     "noProjectsAlt": "Sukurkite savo pirmąjį projektą, kad sugrupuotumėte el. paštus ir užduotis.",
-    "viewDetail": "Peržiūrėti detales"
+    "viewDetail": "Peržiūrėti detales",
+    "taskAssigned": "Užduotis priskirta",
+    "taskUnassigned": "Užduotis nepriskirta",
+    "detachEmail": "Pašalinti iš projekto",
+    "assignTo": "Priskirti…",
+    "openEmail": "Atidaryti el. laišką",
+    "emailDetached": "El. laiškas pašalintas iš projekto",
+    "unassigned": "Nepriskirta"
   },
   "classification": {
     "title": "Kategorijos",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Šios sistemos kategorijos negalima pervadinti.",
       "cannotMerge": "Kategorijos „Neskirstyta“ negalima sujungti.",
       "goToInbox": "Rūšiuoti šiuos el. laiškus"
-    }
+    },
+    "adminOnlyNotice": "Kategorijų valdymas (kūrimas, keitimas, šalinimas, verslo paketai) yra skirtas komandos administratoriui, kad būtų užtikrinta nuosekli klasifikacija. Jus galite peržiūrėti kategorijas ir jų laiškus."
   },
   "settings": {
     "title": "Nustatymai",
@@ -1268,7 +1432,9 @@
       "privacy": "Privatumas ir komandos prieiga",
       "privacyDesc": "Jūsų privatūs el. laiškai ir administratoriaus konsultacijų žurnalas",
       "calendars": "Kalendoriai",
-      "calendarsDesc": "Prisijungti prie Google Calendar ir Outlook Calendar"
+      "calendarsDesc": "Prisijungti prie Google Calendar ir Outlook Calendar",
+      "administration": "Administracija",
+      "administrationDesc": "Nustatymai skirti organizacijos administratoriams"
     },
     "b2bSection": "B2B patikimumas",
     "slaCard": "Bendrosios paskyros SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Numatytoji vaizdo konferencija",
     "preferredVideoDesc": "Prašome pasirinkti numatytąjį vaizdo konferencijų teikėją naujiems susitikimams. „Meet“ reikalauja prijungto „Google“ kalendoriaus; „Teams“ reikalauja „Outlook“. „Jitsi“ veikia be paskyros.",
     "meetingRemindersDesc": "Inboria siunčia mandagų priminimą kontaktui po 48 valandų, jei pasiūlymas dėl susitikimo lieka be atsakymo.",
-    "meetingRemindersTitle": "Automatiniai susitikimų priminimai"
+    "meetingRemindersTitle": "Automatiniai susitikimų priminimai",
+    "outlookAddinSection": "Inboria Outlook",
+    "personalVideoUrlDesc": "Įklijuokite nuolatinės Teams ar Meet kambario nuorodą (https://...). Inboria naudos ją visiems susitikimų pasiūlymams.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud ir dauguma žiniatinklio pašto. Pridėkite Inboria asistentą tiesiai į savo paštą, neišeidami iš laiškų.",
+    "outlookAddinTitle": "Mygtukas „Klausti Inboria“ Outlook",
+    "webmailDownload": "Atsisiųsti plėtinį",
+    "webmailCopyUrl": "Kopijuoti chrome://extensions",
+    "personalVideoUrlInvalid": "Neteisinga nuoroda (reikalingas https://)",
+    "webmailUrlCopied": "Adresas nukopijuotas ✓",
+    "outlookOpenAddinsPage": "Atidaryti Outlook priedus",
+    "outlookDownloadManifest": "Atsisiųsti failą",
+    "outlookStep2": "Outlook atidarykite „Gauti priedus“ › „Mano priedai“ › „Pridėti pasirinktą priedą“ › „Iš failo“, tada pasirinkite atsisiųstą failą.",
+    "outlookGuideIntro": "Trys paprasti žingsniai. Nereikia ieškoti meniu: viskas yra vadovaujama.",
+    "webmailExtInstall": "Įdiegti mano naršyklėje",
+    "webmailGuideIntro": "Veikia su Gmail, OVH, Yahoo, iCloud ir daugeliu webmail, Chrome ar Edge. Trys paprasti žingsniai, tik vieną kartą.",
+    "webmailStep2": "Chrome ar Edge atidarykite plėtinių puslapį: įveskite chrome://extensions į adreso juostą, tada įjunkite „Kūrėjo režimą“ (jungiklis viršutiniame dešiniajame kampe).",
+    "webmailGuideTitle": "Įdiegti Inboria Jūsų webmail",
+    "webmailExtTitle": "Mygtukas „Klausti Inboria“ Jūsų webmaile",
+    "webmailStep3": "Spustelėkite „Įkelti neišpakuotą plėtinį“ ir pasirinkite išpakuotą „inboria-extension“ aplanką. Tada atidarykite savo webmail: pasirodys mygtukas „Klausti Inboria“. Prisijunkite vieną kartą, ir viskas paruošta.",
+    "outlookStep1": "Atsisiųskite Inboria prisijungimo failą.",
+    "reconnect": "Perjungti iš naujo",
+    "outlookAddinDesc": "Pridėkite Inboria asistentą tiesiai į savo Outlook, neišeidami iš laiškų.",
+    "personalVideoUrlLabel": "Asmeninės vaizdo nuorodos",
+    "outlookStep3": "Atidarykite laišką: mygtukas „Klausti Inboria“ pasirodys juostoje. Prisijunkite vieną kartą su savo Inboria paskyra, ir viskas paruošta.",
+    "outlookGuideTitle": "Įdiegti Inboria į Outlook",
+    "webmailExtSection": "Inboria Jūsų webmaile",
+    "outlookAddinInstall": "Įdiegti į Outlook",
+    "webmailStep1": "Atsisiųskite Inboria plėtinį, tada išpakuokite failą (dešiniuoju pelės mygtuku › „Išskleisti viską“). Jūs gausite „inboria-extension“ aplanką."
   },
   "subscription": {
     "title": "Tvarkykite Jūsų prenumeratą",
@@ -1426,7 +1619,10 @@
     "start": "Pradėti",
     "numberOfCollaborators": "Bendradarbių skaičius",
     "total": "Iš viso",
-    "seatsExample": "Pavyzdys: 3 bendradarbiai = 50,97€/mėn. — keičiamas bet kada Jūsų erdvėje."
+    "seatsExample": "Pavyzdys: 3 bendradarbiai = 50,97€/mėn. — keičiamas bet kada Jūsų erdvėje.",
+    "billingMonthly": "Mėnesinis",
+    "perMonthBilledYearly": "/mėn. (sąskaita pateikiama kasmet)",
+    "billingYearly": "Metinis"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Klaida siunčiant",
     "changeRole": "Keisti rolę",
     "adminDesc": "Gali valdyti komandą, prenumeratą ir visus el. laiškus",
-    "memberDesc": "Prieiga prie savo el. laiškų ir bendrų užduočių"
+    "memberDesc": "Prieiga prie savo el. laiškų ir bendrų užduočių",
+    "trialTeamHint": "Komandos bandymas: pakvieskite iki 3 kolegų. Kiekvienas gauna savo bandymą su 4 500 kreditų, ir Jūs atrakinate bendras dėžutes, priskyrimą ir vidines pastabas.",
+    "trialTeamLabel": "Komandos bandomasis"
   },
   "sharedMailboxes": {
     "title": "Bendri paštai",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} priskyrė šį laišką naudotojui {{target}}",
     "systemSelfAssigned": "{{actor}} perėmė šį laišką",
     "systemReassigned": "{{actor}} perskyrė nuo {{previous}} į {{target}}",
-    "systemUnassigned": "{{actor}} panaikino {{previous}} priskyrimą"
+    "systemUnassigned": "{{actor}} panaikino {{previous}} priskyrimą",
+    "recipientsFilter": "Ieškoti nario…",
+    "typingMany": "Keletas žmonių rašo…",
+    "recipientsClear": "Išvalyti",
+    "placeholderSimple": "Įveskite savo žinutę…",
+    "viewing": "Žiūri dabar",
+    "internalNote": "Pastaba",
+    "recipients": "Gavėjai",
+    "recipientsPick": "Pastabos gavėjai",
+    "typingOne": "{{name}} rašo…",
+    "recipientsEmpty": "Nėra narių",
+    "recipientsSelected": "{{count}} pasirinkta",
+    "emailMessage": "El. laiškas"
   },
   "attachments": {
     "title": "Prisegtukai",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Laukiama",
     "statusPendingShort": "Laukiama",
     "syncFailed": "Sinchronizacija nepavyko",
-    "viewDetails": "Peržiūrėti detales"
+    "viewDetails": "Peržiūrėti detales",
+    "internalAppointment": "Vidinis susitikimas",
+    "duplicateError": "Dublikavimo klaida",
+    "duplicatedDesc": "Kopija sukurta po 7 dienų.",
+    "noteSelectedCount": "{{count}} gavėjas(-ai)",
+    "forwardWhere": "Vieta",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}} pasiūlymas man netinka. Pasiūlykite kitus laikus, suderinamus su mano kalendoriumi.",
+    "duplicated": "Susitikimas dubliuotas",
+    "ctxNoProject": "Nėra projekto",
+    "noteError": "Klaida pridedant pastabą",
+    "filterExternal": "Klientas",
+    "autoConfirmed": {
+      "desc": "{{count}} susitikimai buvo automatiškai patvirtinti iš gautų laiškų.",
+      "title": "Aptiktos patvirtinimai"
+    },
+    "ctxDup7": "Po 7 dienų",
+    "forwardIntro": "Sveiki,",
+    "statusPendingHint": "Inboria automatiškai išsiųs pasiūlymo laišką klientui.",
+    "markConfirmed": "Pažymėti kaip patvirtintą",
+    "newInternalAppointment": "Vidinis susitikimas",
+    "ctxEdit": "Redaguoti",
+    "theContact": "kontaktas",
+    "statusLabel": "Statusas",
+    "notesEmpty": "Nėra pastabų. Pastabos lieka vidinės — niekada nesiunčiamos klientui.",
+    "expandSuggestions": "Rodyti pasiūlymus",
+    "forwardTitle": "Pavadinimas",
+    "noteAllTeam": "Visa komanda",
+    "internalMembers": "Pakviesti komandos nariai",
+    "noteRecipientsLabel": "Kam",
+    "ctxMarkAs": "Pažymėti kaip",
+    "singleDay": "Grįžti į vienos dienos trukmę",
+    "ctxDupNextDay": "Kitą dieną",
+    "counterDeclined": "Atsisakymas išsiųstas kontaktui",
+    "ctxDup14": "Po 14 dienų",
+    "collapseSuggestions": "Paslėpti pasiūlymus",
+    "formInternalNoteLabel": "Vidinė pastaba (neprivaloma)",
+    "forwardBody": "Perduodu Jums šio susitikimo detales:",
+    "multiDay": "Kelių dienų…",
+    "ctxForward": "Persiųsti el. paštu",
+    "forwardVideo": "Vaizdo nuoroda",
+    "internalMembersEmpty": "Nėra pakviestų narių. Spustelėkite „+ Pridėti“, kad pasirinktumėte kolegas.",
+    "forwardWhen": "Data",
+    "pickDate": "Pasirinkti datą",
+    "ctxDuplicate": "Dubliuoti",
+    "coorgNoCandidate": "Nėra laisvų narių.",
+    "ctxDupCustomMenu": "Pasirinktinai…",
+    "ctxDupCustom": "Dubliuoti po kiek dienų?",
+    "ctxOpen": "Atidaryti",
+    "notePlaceholder": "Vidinė pastaba (matoma tik komandai, niekada nesiunčiama klientui)…",
+    "confirmError": "Klaida patvirtinant",
+    "ctxDelete": "Ištrinti",
+    "duration": "Trukmė",
+    "internalNotes": "Vidinės pastabos",
+    "ctxDup30": "Po 1 mėnesio",
+    "formInternalNotePlaceholder": "Pvz.: VIP klientas, atkreipkite dėmesį į toną. Niekada nesiųsti klientui.",
+    "askInboriaNewSlot": "Klausti Inboria naujo susitikimo",
+    "filterAll": "Visi",
+    "confirmWithInboria": "Patvirtinti su Inboria",
+    "ctxProject": "Projektas",
+    "coorgAdd": "+ Pridėti",
+    "ctxDup90": "Po 3 mėnesių",
+    "confirmDelete": "Ištrinti šį susitikimą?",
+    "forwardOutro": "Pagarbiai,",
+    "forwardSubject": "TR: Susitikimas",
+    "filterInternal": "Vidinis"
   },
   "supportChat": {
     "title": "Inboria asistentas",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Užduokite man bet kokį klausimą apie Inboria: funkcijas, nustatymus, prenumeratą ir dar daugiau.",
     "placeholder": "Įrašykite savo klausimą...",
     "poweredBy": "Palaikoma Inboria",
-    "errorMessage": "Atsiprašome, įvyko klaida. Prašome bandyti dar kartą arba susisiekite su support@inboria.com."
+    "errorMessage": "Atsiprašome, įvyko klaida. Prašome bandyti dar kartą arba susisiekite su support@inboria.com.",
+    "send": "Siųsti",
+    "clear": "Išvalyti pokalbį"
   },
   "inboriaChat": {
     "openLabel": "Atidaryti Inboria pokalbį",
@@ -2911,7 +3187,9 @@
       "en_attente": "Laukiama",
       "relance": "Vykdoma",
       "termine": "Baigta"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignoruota",
+    "bulkMarkedRepliedToast": "{{count}} pažymėta kaip atsakyta"
   },
   "contacts": {
     "title": "Kontaktai 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Atidaryta",
     "openedBadgeCount": "Atidaryta {{count}} kartų",
     "openedAtLabel": "Pirmas atidarymas: {{date}}",
-    "notOpenedYet": "Dar nebuvo atidaryta"
+    "notOpenedYet": "Dar nebuvo atidaryta",
+    "scheduledCancelError": "Atšaukimas nepavyko",
+    "scheduledCancelPartial": "{{failed}} atšaukimas(-ai) iš {{total}} nepavyko",
+    "scheduledNoRecipient": "Be gavėjo"
   },
   "templates": {
     "title": "Šablonai",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "El. paštas padarytas matomu",
     "privateOnDesc": "Šis el. paštas dabar yra nematomas Jūsų administratoriams (komandos aplankas + Inboria).",
     "privateOffDesc": "Šis el. paštas vėl tampa matomas Jūsų administratoriams (komandos aplankas + Inboria).",
-    "privateError": "Nepavyko atnaujinti privatumo."
+    "privateError": "Nepavyko atnaujinti privatumo.",
+    "details": "Išsamiau",
+    "actionsMenu": "Veiksmai"
   },
   "privacy": {
     "title": "Privatumas ir komandos prieiga",
@@ -3456,7 +3739,10 @@
       "followup": "Priminti",
       "appointment": "Kalendorius",
       "team": "Komandos veikla"
-    }
+    },
+    "addDescription": "Sukurkite įrašą, kad galėtumėte sekti asmenį, kuris dar nėra Jūsų dėžutėje.",
+    "openContact": "Peržiūrėti kontaktą",
+    "deleteDescription": "Su šiuo adresu susijusių el. laiškų istorija nėra ištrinama. Tik rankinis įrašas išnyksta."
   },
   "folders": {
     "title": "Mano aplankai",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Darbotvarkė",
     "system": "Sistema"
+  },
+  "signature": {
+    "imageTooLarge": "Vaizdas per didelis (maks. 200 KB)",
+    "linkUrlPrompt": "Nuorodos URL (https://...)",
+    "size": "Dydis",
+    "italic": "Kursyvas",
+    "clear": "Išvalyti formatavimą",
+    "imageInvalid": "Neteisingas vaizdo failas",
+    "highlight": "Paryškinimas",
+    "bold": "Paryškintas",
+    "underline": "Pabrauktas",
+    "image": "Vaizdas / logotipas",
+    "color": "Teksto spalva",
+    "imageHint": "Patarimas: įterpkite PNG/JPG logotipą (maks. 200 KB). Vaizdas tiesiogiai įterpiamas į parašą.",
+    "font": "Šriftas",
+    "link": "Nuoroda",
+    "orderedList": "Numeruotas sąrašas",
+    "moreColors": "Daugiau spalvų…",
+    "bulletList": "Sąrašas su ženkleliais"
+  },
+  "palette": {
+    "compose": "Naujas el. laiškas",
+    "shortcuts": "Klaviatūros nuorodos",
+    "navigate": "Naršyti",
+    "empty": "Nėra rezultatų.",
+    "actions": "Veiksmai",
+    "placeholder": "Įveskite komandą arba ieškokite…"
+  },
+  "outlookBanner": {
+    "back": "Grįžti į Outlook",
+    "openedFrom": "Atidaryta iš Outlook. Spustelėkite, kad grįžtumėte, arba tiesiog perjunkite į Outlook skirtuką."
+  },
+  "gmailBanner": {
+    "openedFrom": "Atidaryta iš Gmail. Spustelėkite, kad grįžtumėte, arba tiesiog perjunkite į Gmail skirtuką.",
+    "back": "Grįžti į Gmail"
+  },
+  "webmailBanner": {
+    "back": "Grįžti į mano webmail",
+    "openedFromNamed": "Atidaryta iš {{name}}. Spustelėkite, kad grįžtumėte, arba tiesiog perjunkite į {{name}} skirtuką.",
+    "openedFrom": "Atidaryta iš Jūsų webmail. Spustelėkite, kad grįžtumėte, arba tiesiog perjunkite į savo webmail skirtuką.",
+    "backNamed": "Grįžti į {{name}}"
   }
 }

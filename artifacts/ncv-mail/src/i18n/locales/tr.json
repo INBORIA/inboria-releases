@@ -23,7 +23,16 @@
     "add": "Ekle",
     "edit": "Düzenle",
     "reset": "Sıfırla",
-    "more": "Daha fazla"
+    "more": "Daha fazla",
+    "dismiss": "Kapat",
+    "send": "Gönder",
+    "notAuthenticated": "Kimlik doğrulanmadı",
+    "select": "Seç",
+    "remove": "Kaldır",
+    "create": "Oluştur",
+    "copyFailed": "Kopyalama başarısız",
+    "collapse": "Kategorileri gizle",
+    "expand": "Kategorileri göster"
   },
   "nav": {
     "extensions": "Uzantılar",
@@ -37,7 +46,18 @@
     "login": "Giriş yap",
     "signup": "Kayıt ol",
     "logout": "Çıkış yap",
-    "openMenu": "Menüyü aç"
+    "openMenu": "Menüyü aç",
+    "sent": "Gönderilenler",
+    "dailyBrief": "Günlük özet",
+    "snoozed": "Ertelenenler",
+    "followups": "Takipler",
+    "folders": "Klasörlerim",
+    "archives": "Arşivler",
+    "inbox": "Gelen Kutusu",
+    "categories": "Kategoriler",
+    "tasks": "Görevler",
+    "scheduled": "Planlanmış",
+    "contacts": "Kişiler"
   },
   "sidebar": {
     "inbox": "Posta in arrivo",
@@ -66,7 +86,10 @@
     "followups": "Hatırlatmalar",
     "contacts": "İletişim Bilgileri",
     "assigned": "Atananlar",
-    "myTasks": "Görevlerim"
+    "myTasks": "Görevlerim",
+    "collapse": "Menüyü daralt",
+    "resize": "Menüyü yeniden boyutlandır",
+    "expand": "Menüyü genişlet"
   },
   "dashboard": {
     "expiredSubscription": "Aboneliğiniz sona erdi",
@@ -529,10 +552,17 @@
       "important": "Önemli"
     },
     "date": {
-      "all": "Tüm tarihler"
+      "all": "Tüm tarihler",
+      "last30": "Son 30 gün",
+      "yesterday": "Dün",
+      "last7": "Son 7 gün",
+      "thisMonth": "Bu ay",
+      "today": "Bugün"
     },
     "read": {
-      "all": "Tümü"
+      "all": "Tümü",
+      "unread": "Okunmamış",
+      "read": "Okunanlar"
     },
     "sharedDraft": "Paylaşılan taslak",
     "sharedDraftOn": "Paylaşılan taslak açık",
@@ -564,7 +594,113 @@
       "label": "Okuma bölmelerini göster",
       "overlay": "Üst üste",
       "split": "Yan yana"
-    }
+    },
+    "scSnooze": "Ertele (24 saat)",
+    "readingPanePos": {
+      "right": "Sağda",
+      "off": "Gizli",
+      "bottom": "Altta",
+      "label": "Okuma bölmesi"
+    },
+    "markAsUnread": "Okunmamış olarak işaretle",
+    "headerExpand": "Sekmeleri ve filtreleri göster",
+    "scHelp": "Bu yardımı göster",
+    "exportEml": ".eml indir",
+    "collisionReplyingOne": "{{name}} bu maile zaten yanıt veriyor",
+    "teamBadge": "Ekip",
+    "loadingTitle": "Yükleniyor…",
+    "assignToProject": "Bir ekip dosyasına ata",
+    "scForward": "İlet",
+    "composeDiscardConfirm": "Bu taslağı silmek istiyor musunuz?",
+    "draftYouSend": "Gönderen sizsiniz",
+    "copiedSenderEmail": "Adres kopyalandı",
+    "filterByCategory": "Filtrele",
+    "scPalette": "Komut paleti",
+    "importanceLabel": "Görünüm",
+    "downloadEml": ".eml olarak indir",
+    "density": {
+      "compact": "Kompakt",
+      "normal": "Normal",
+      "comfortable": "Rahat",
+      "label": "Görüntüleme yoğunluğu"
+    },
+    "composeMinimize": "Taslağı küçült",
+    "close": "Kapat",
+    "searchOpAttachment": "ekli mailler",
+    "draftRelease": "Serbest bırak",
+    "moreActions": "Daha fazla eylem",
+    "myFoldersLabel": "Klasörlerim",
+    "collisionViewingOne": "{{name}} bu maili de inceliyor",
+    "draftSomeoneSends": "{{name}} gönderecek",
+    "snoozeTomorrow": "Yarın sabah",
+    "scSearch": "Ara",
+    "snooze3h": "3 saat içinde",
+    "markedAsUnread": "Okunmamış olarak işaretlendi",
+    "theme": {
+      "switchDark": "Koyu mod",
+      "switchLight": "Açık mod"
+    },
+    "scReply": "Yanıtla",
+    "filtersReset": "Filtreleri sıfırla",
+    "searchGroupSenders": "Gönderenler",
+    "snooze": "Ertele",
+    "draftTakeOverHint": "Bu meslektaşınız müsait değilse gönderimi devralın",
+    "draftLiveCoedit": "Canlı ortak düzenleme",
+    "scClose": "E-postayı kapat",
+    "markAsRead": "Okundu olarak işaretle",
+    "searchOpSender": "gönderen olarak filtrele",
+    "backToGmail": "Gmail'e geri dön",
+    "scDelete": "Sil",
+    "archived": "Arşivlendi",
+    "backHint": "Geri (Esc) — Gezinmek için J/K, yanıtlamak için R, arşivlemek için E",
+    "copyAddress": "Adresi kopyala",
+    "backToGmailHint": "Bu e-postayı Gmail'de aç",
+    "loadingEmail": "E-posta yükleniyor...",
+    "composeAria": "E-posta yaz",
+    "readingPaneOn": "Okuma bölmesini etkinleştir (3 sütun)",
+    "composeRestore": "Taslağı geri al",
+    "print": "Yazdır",
+    "searchGroupOperators": "Daralt",
+    "copySenderEmail": "Gönderenin e-posta adresini kopyala",
+    "markedAsRead": "Okundu olarak işaretlendi",
+    "draftClaimSend": "Gönderen benim",
+    "scGotoSent": "Gönderilenlere git",
+    "draftYou": "Siz",
+    "moveToFolder": "Klasöre taşı",
+    "scGotoContacts": "Kişilere git",
+    "scGotoArchives": "Arşivlere git",
+    "shortcutsTitle": "Klavye kısayolları",
+    "categorized": "Kategorize edildi",
+    "scGotoTasks": "Görevlere git",
+    "searchOpSubject": "konuya göre filtrele",
+    "viewOptions": "Görüntüleme seçenekleri",
+    "copySubject": "Konuyu kopyala",
+    "composeUntitled": "Konu yok taslağı",
+    "composeDiscard": "Vazgeç",
+    "copySender": "Adresi kopyala",
+    "searchGroupEmails": "E-postalar",
+    "priorityLabel": "Öncelik",
+    "headerCollapse": "Sekmeleri ve filtreleri gizle",
+    "scPrev": "Önceki e-posta",
+    "scArchive": "Arşivle",
+    "printPopupBlocked": "Yazdırma penceresi açılamıyor",
+    "loadEmailError": "E-posta yüklenemiyor.",
+    "copied": "Kopyalandı",
+    "scGotoInbox": "Gelen Kutusuna Git",
+    "scNext": "Sonraki e-posta",
+    "draftTakeOver": "Devral",
+    "collisionReplyingMany": "{{count}} kişi bu e-postaya zaten yanıt veriyor",
+    "assignedNoTeam": "Bu görünüm bir ekip gerektirir (2 veya daha fazla üye).",
+    "slaOverdue": "SLA gecikti",
+    "createAndAssignTask": "Oluştur ve ata…",
+    "snoozedFor24h": "Yarın için ertelendi",
+    "collisionViewingMany": "{{count}} diğer kişi bu e-postayı görüntülüyor",
+    "copiedSubject": "Konu kopyalandı",
+    "scGotoSnoozed": "Ertelenenlere Git",
+    "markAsReadUnread": "Okundu / Okunmadı olarak işaretle",
+    "readingPaneOff": "Okuma bölmesini devre dışı bırak",
+    "assigneeFilterMember": "bu üye",
+    "unknownSender": "Bilinmeyen"
   },
   "sent": {
     "title": "Gönderilen e-postalar",
@@ -649,7 +785,16 @@
     "blockFailed": "Engellemek mümkün değil",
     "blockNoEmail": "Gönderen adresi bulunamadı",
     "blockNoConnection": "Hiçbir e-posta hesabı bağlı değil",
-    "emptied": "Klasör boşaltıldı"
+    "emptied": "Klasör boşaltıldı",
+    "blockSenderSuccess": "Gönderen engellendi",
+    "retryFetch": "Tekrar dene",
+    "unblock": "Engeli kaldır",
+    "fetchingFromProvider": "Sağlayıcınızdan içerik alınıyor…",
+    "unblocked": "Gönderen engeli kaldırıldı",
+    "noBlocked": "Engellenen gönderen yok",
+    "blockedList": "Engellenen gönderenler",
+    "openRestored": "Aç",
+    "fetchFailed": "Bu e-posta içeriği alınamadı."
   },
   "trash": {
     "title": "Çöp Kutusu",
@@ -794,7 +939,18 @@
     "movedToDone": "Görev tamamlandı",
     "movedToTodo": "Görev yapılacak olarak geri alındı",
     "statusUpdated": "Durum güncellendi",
-    "taskCreated": "Görev oluşturuldu"
+    "taskCreated": "Görev oluşturuldu",
+    "noLinkedEmail": "Bu görev hiçbir e-postayla bağlantılı değil.",
+    "openInInbox": "Gelen Kutusunda Aç",
+    "linkedEmailActions": "Bağlantılı mailde",
+    "titleCopied": "Başlık kopyalandı",
+    "unassign": "Görevi kaldır",
+    "copyTitle": "Başlığı kopyala",
+    "markAsTodo": "Yapılacak olarak işaretle",
+    "reassigned": "Görev yeniden atandı",
+    "reassign": "Yeniden ata",
+    "markAsDone": "Tamamlandı olarak işaretle",
+    "loadingTitle": "Görevler yükleniyor…"
   },
   "projects": {
     "title": "Ekip klasörleri",
@@ -851,7 +1007,14 @@
     "exportError": "Dışa aktarım sırasında hata oluştu",
     "searchProjects": "Bir projeyi arayın...",
     "noProjectsAlt": "E-postaları ve görevleri gruplamak için ilk projenizi oluşturun.",
-    "viewDetail": "Detayı görün"
+    "viewDetail": "Detayı görün",
+    "unassigned": "Atanmamış",
+    "taskAssigned": "Görev atandı",
+    "emailDetached": "E-posta projeden çıkarıldı",
+    "assignTo": "Atanacak kişi…",
+    "taskUnassigned": "Görev atanmadı",
+    "openEmail": "E-postayı aç",
+    "detachEmail": "Projeden çıkar"
   },
   "classification": {
     "title": "Kategoriler",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Bu sistem kategorisi yeniden adlandırılamaz.",
       "cannotMerge": "« Sınıflandırılmamış » kategorisi birleştirilemez.",
       "goToInbox": "Bu e-postaları sırala"
-    }
+    },
+    "adminOnlyNotice": "Kategori yönetimi (oluşturma, düzenleme, silme, iş paketi) tutarlı bir sınıflandırma sağlamak için Yöneticilere özeldir. Kategorileri ve e-postalarını görüntüleyebilirsiniz."
   },
   "settings": {
     "title": "Ayarlar",
@@ -1268,7 +1432,9 @@
       "privacy": "Gizlilik ve ekip erişimi",
       "privacyDesc": "Özel e-postalarınız ve yönetici erişim günlükleri",
       "calendars": "Takvimler",
-      "calendarsDesc": "Google Takvim ve Outlook Takvim'i bağlayın"
+      "calendarsDesc": "Google Takvim ve Outlook Takvim'i bağlayın",
+      "administrationDesc": "Kuruluş yöneticilerine özel ayarlar",
+      "administration": "Yönetim"
     },
     "b2bSection": "B2B Güvenilirliği",
     "slaCard": "Paylaşılan kutular için SLA",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Varsayılan görüntülü toplantı",
     "preferredVideoDesc": "Yeni randevular için varsayılan görüntülü toplantı sağlayıcısını seçin. Meet bağlı bir Google takvimi gerektirir; Teams Outlook gerektirir. Jitsi hesap olmadan çalışır.",
     "meetingRemindersDesc": "Inboria, yanıtlanmamış bir randevu önerisinden 48 saat sonra nazik bir hatırlatma gönderir.",
-    "meetingRemindersTitle": "Otomatik RDV hatırlatmaları"
+    "meetingRemindersTitle": "Otomatik RDV hatırlatmaları",
+    "webmailGuideIntro": "Gmail, OVH, Yahoo, iCloud ve çoğu webmail ile Chrome veya Edge'de çalışır. Üç basit adım, sadece bir kez.",
+    "outlookAddinInstall": "Outlook'a yükle",
+    "personalVideoUrlLabel": "Kişisel video bağlantısı",
+    "webmailStep1": "Inboria uzantısını indirin, ardından dosyayı açın (sağ tıklayın › 'Tümünü Çıkart'). 'inboria-extension' adlı bir klasör elde edersiniz.",
+    "webmailUrlCopied": "Adres kopyalandı ✓",
+    "webmailGuideTitle": "Inboria'yı webmail'inize yükleyin",
+    "outlookAddinTitle": "Outlook'ta 'Inboria'ya Sor' düğmesi",
+    "webmailExtSection": "Webmail'inizde Inboria",
+    "outlookStep1": "Inboria bağlantı dosyasını indirin.",
+    "webmailExtInstall": "Tarayıcıma yükle",
+    "webmailStep2": "Chrome veya Edge'de, uzantılar sayfasını açın: adres çubuğuna chrome://extensions yazın, ardından 'Geliştirici Modu'nu etkinleştirin (sağ üstteki anahtar).",
+    "outlookStep2": "Outlook'ta, 'Eklentiler Al' › 'Eklentilerim' › 'Özel Eklenti Ekle' › 'Dosyadan' açın, ardından indirilen dosyayı seçin.",
+    "reconnect": "Yeniden bağlan",
+    "outlookGuideTitle": "Inboria'yı Outlook'a yükleyin",
+    "webmailStep3": "« Paketlenmemiş uzantıyı yükle »ye tıklayın ve açılmış « inboria-extension » klasörünü seçin. Ardından webmail'inizi açın: « Inboria'ya Sor » düğmesi görünecek. Bir kez giriş yapın, hazır.",
+    "outlookDownloadManifest": "Dosyayı indir",
+    "outlookAddinDesc": "Inboria asistanını doğrudan Outlook'unuza ekleyin, e-postalarınızdan çıkmadan.",
+    "personalVideoUrlDesc": "Kalıcı Teams veya Meet odanızın bağlantısını yapıştırın (https://...). Inboria bunu tüm toplantı tekliflerinde kullanacak.",
+    "outlookGuideIntro": "Üç basit adım. Menülerde arama yapmanıza gerek yok: her şey rehberli.",
+    "outlookStep3": "Bir e-posta açın: « Inboria'ya Sor » düğmesi şeritte görünecek. Inboria hesabınızla bir kez giriş yapın, hazır.",
+    "webmailCopyUrl": "chrome://extensions kopyala",
+    "outlookAddinSection": "Outlook'ta Inboria",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud ve çoğu webmail. Inboria asistanını doğrudan e-postanıza ekleyin, e-postalarınızdan çıkmadan.",
+    "webmailExtTitle": "Webmail'inizde « Inboria'ya Sor » butonu",
+    "personalVideoUrlInvalid": "Geçersiz bağlantı (https:// gerekli)",
+    "webmailDownload": "Eklentiyi indir",
+    "outlookOpenAddinsPage": "Outlook eklentilerini aç"
   },
   "subscription": {
     "title": "Aboneliğinizi yönetin",
@@ -1426,7 +1619,10 @@
     "start": "Başlamak",
     "numberOfCollaborators": "Çalışan sayısı",
     "total": "Toplam",
-    "seatsExample": "Örnek: 3 çalışan = 50,97€/ay — istediğiniz zaman alanınızdan değiştirebilirsiniz."
+    "seatsExample": "Örnek: 3 çalışan = 50,97€/ay — istediğiniz zaman alanınızdan değiştirebilirsiniz.",
+    "billingMonthly": "Aylık",
+    "billingYearly": "Yıllık",
+    "perMonthBilledYearly": "/ay (yıllık faturalandırılır)"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Gönderim sırasında hata",
     "changeRole": "Rolü değiştir",
     "adminDesc": "Ekibi, aboneliği ve tüm e-postaları yönetebilir",
-    "memberDesc": "Kendi e-postalarına ve paylaşılan görevlere erişim"
+    "memberDesc": "Kendi e-postalarına ve paylaşılan görevlere erişim",
+    "trialTeamHint": "Ekip denemesi: 3 meslektaşınızı davet edin. Her biri 4.500 kredi denemesi alır ve paylaşılan kutuları, atamaları ve dahili yorumları açarsınız.",
+    "trialTeamLabel": "Ekip denemesi"
   },
   "sharedMailboxes": {
     "title": "Paylaşılan kutular",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}}, bu e-postayı {{target}} kişisine atadı",
     "systemSelfAssigned": "{{actor}}, bu e-postayı üstlendi",
     "systemReassigned": "{{actor}}, atamayı {{previous}} kişisinden {{target}} kişisine aktardı",
-    "systemUnassigned": "{{actor}}, {{previous}} için atamayı kaldırdı"
+    "systemUnassigned": "{{actor}}, {{previous}} için atamayı kaldırdı",
+    "placeholderSimple": "Mesajınızı girin…",
+    "recipientsFilter": "Bir üye ara…",
+    "internalNote": "Not",
+    "typingOne": "{{name}} yazıyor…",
+    "recipients": "Alıcılar",
+    "recipientsSelected": "{{count}} seçildi",
+    "recipientsEmpty": "Üye yok",
+    "emailMessage": "E-posta",
+    "recipientsClear": "Temizle",
+    "viewing": "Şu anda görüntüleniyor",
+    "recipientsPick": "Notun alıcıları",
+    "typingMany": "Birden fazla kişi yazıyor…"
   },
   "attachments": {
     "title": "Ekler",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Beklemede",
     "statusPendingShort": "Beklemede",
     "syncFailed": "Senkronizasyon başarısız",
-    "viewDetails": "Detayları görüntüle"
+    "viewDetails": "Detayları görüntüle",
+    "counterDeclined": "İletişim kişisine ret gönderildi",
+    "ctxNoProject": "Proje yok",
+    "forwardWhen": "Tarih",
+    "ctxDelete": "Sil",
+    "notesEmpty": "Not yok. Notlar dahili kalır — asla müşteriye gönderilmez.",
+    "duplicated": "Çift randevu",
+    "autoConfirmed": {
+      "desc": "{{count}} randevu, alınan maillerden otomatik olarak onaylandı.",
+      "title": "Onaylar tespit edildi"
+    },
+    "coorgNoCandidate": "Uygun üye yok.",
+    "internalMembersEmpty": "Davet edilen üye yok. Meslektaşlarınızı seçmek için ' + Ekle'ye tıklayın.",
+    "forwardBody": "Bu randevunun detaylarını size iletiyorum:",
+    "noteSelectedCount": "{{count}} alıcı(lar)",
+    "forwardTitle": "Başlık",
+    "notePlaceholder": "İç not (yalnızca ekip tarafından görülebilir, asla müşteriye gönderilmez)…",
+    "ctxDupCustom": "Kaç gün içinde kopyalanacak?",
+    "ctxProject": "Proje",
+    "duplicateError": "Çoğaltma hatası",
+    "ctxDup14": "14 gün içinde",
+    "ctxEdit": "Düzenle",
+    "ctxDupCustomMenu": "Özel…",
+    "statusLabel": "Durum",
+    "askInboriaNewSlotPrefill": "{{contact}}{{slot}}'un karşı teklifi bana uymuyor. Takvimime uygun başka zaman dilimleri öner.",
+    "ctxDup90": "3 ay içinde",
+    "statusPendingHint": "Inboria, teklif e-postasını otomatik olarak müşteriye gönderecek.",
+    "internalNotes": "Dahili notlar",
+    "collapseSuggestions": "Önerileri gizle",
+    "formInternalNotePlaceholder": "Örn: VIP müşteri, tona dikkat edin. Asla müşteriye gönderilmez.",
+    "forwardIntro": "Merhaba,",
+    "ctxDuplicate": "Çoğalt",
+    "duration": "Süre",
+    "markConfirmed": "Onaylandı olarak işaretle",
+    "forwardWhere": "Yer",
+    "confirmError": "Onay sırasında hata",
+    "forwardOutro": "Saygılarımla,",
+    "confirmDelete": "Bu randevuyu silmek istiyor musunuz?",
+    "ctxMarkAs": "Olarak işaretle",
+    "singleDay": "Tek güne dön",
+    "filterAll": "Tümü",
+    "internalAppointment": "Dahili randevu",
+    "forwardVideo": "Görüşme bağlantısı",
+    "forwardSubject": "İLT: Randevu",
+    "noteError": "Not ekleme hatası",
+    "noteAllTeam": "Tüm ekip",
+    "newInternalAppointment": "Dahili randevu",
+    "ctxDup7": "7 gün içinde",
+    "confirmWithInboria": "Inboria ile onayla",
+    "ctxDup30": "1 ay içinde",
+    "internalMembers": "Davetli ekip üyeleri",
+    "expandSuggestions": "Önerileri göster",
+    "filterInternal": "Dahili",
+    "formInternalNoteLabel": "Dahili not (isteğe bağlı)",
+    "ctxOpen": "Aç",
+    "coorgAdd": "+ Ekle",
+    "ctxForward": "E-posta ile ilet",
+    "ctxDupNextDay": "Ertesi gün",
+    "askInboriaNewSlot": "Inboria'dan yeni randevu isteyin",
+    "pickDate": "Tarih seçin",
+    "duplicatedDesc": "7 gün sonra kopya oluşturuldu.",
+    "multiDay": "Birden fazla gün…",
+    "theContact": "iletişim",
+    "filterExternal": "Müşteri",
+    "noteRecipientsLabel": "Alıcılar için"
   },
   "supportChat": {
     "title": "Inboria Asistanı",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Inboria hakkında herhangi bir soruyu bana sorun: özellikler, ayarlar, abonelik ve daha fazlası.",
     "placeholder": "Sorunuzu yazın...",
     "poweredBy": "Inboria tarafından desteklenmektedir",
-    "errorMessage": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin veya support@inboria.com ile iletişime geçin."
+    "errorMessage": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin veya support@inboria.com ile iletişime geçin.",
+    "send": "Gönder",
+    "clear": "Sohbeti temizle"
   },
   "inboriaChat": {
     "openLabel": "Inboria sohbetini aç",
@@ -2911,7 +3187,9 @@
       "en_attente": "Beklemede",
       "relance": "Devam ediyor",
       "termine": "Tamamlandı"
-    }
+    },
+    "bulkMarkedRepliedToast": "{{count}} yanıtlandı olarak işaretlendi",
+    "bulkDismissedToast": "{{count}} göz ardı edildi"
   },
   "contacts": {
     "title": "İletişim 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Açıldı",
     "openedBadgeCount": "{{count}} kez açıldı",
     "openedAtLabel": "İlk açılış: {{date}}",
-    "notOpenedYet": "Henüz açılmadı"
+    "notOpenedYet": "Henüz açılmadı",
+    "scheduledCancelError": "İptal başarısız",
+    "scheduledNoRecipient": "Alıcı yok",
+    "scheduledCancelPartial": "{{failed}} iptalden {{total}} başarısız oldu"
   },
   "templates": {
     "title": "Şablonlar",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-posta görünür hale getirildi",
     "privateOnDesc": "Bu e-posta artık yöneticilerinize görünmez (ekip klasörü görünümü + Inboria).",
     "privateOffDesc": "Bu e-posta yöneticilerinize yeniden görünür hale geldi (ekip klasörü görünümü + Inboria).",
-    "privateError": "Gizliliği güncellemek mümkün değil."
+    "privateError": "Gizliliği güncellemek mümkün değil.",
+    "details": "Detaylar",
+    "actionsMenu": "Eylemler"
   },
   "privacy": {
     "title": "Gizlilik ve ekip erişimi",
@@ -3456,7 +3739,10 @@
       "followup": "Hatırlatma",
       "appointment": "Takvim",
       "team": "Ekip etkinliği"
-    }
+    },
+    "addDescription": "Henüz kutunuzda görünmeyen birini takip etmek için bir kart oluşturun.",
+    "deleteDescription": "Bu adrese bağlı e-posta geçmişi silinmez. Sadece manuel kart kaybolur.",
+    "openContact": "Kişi kartını görüntüle"
   },
   "folders": {
     "title": "Klasörlerim",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Ajanda",
     "system": "Sistem"
+  },
+  "signature": {
+    "highlight": "Vurgulama",
+    "color": "Metin rengi",
+    "italic": "İtalik",
+    "bold": "Kalın",
+    "orderedList": "Numaralı liste",
+    "moreColors": "Daha fazla renk…",
+    "imageInvalid": "Geçersiz resim dosyası",
+    "link": "Bağlantı",
+    "clear": "Biçimlendirmeyi temizle",
+    "linkUrlPrompt": "Bağlantı URL'si (https://...)",
+    "size": "Boyut",
+    "imageHint": "İpucu: PNG/JPG logo ekleyin (maks 200 KB). Görüntü doğrudan imzaya eklenir.",
+    "underline": "Altı çizili",
+    "imageTooLarge": "Görüntü çok büyük (maks 200 KB)",
+    "image": "Görüntü / logo",
+    "bulletList": "Madde işaretli liste",
+    "font": "Yazı tipi"
+  },
+  "webmailBanner": {
+    "openedFromNamed": "{{name}}'den açıldı. Geri dönmek için tıklayın veya sadece {{name}} sekmesine geçin.",
+    "openedFrom": "Webmail'inizden açıldı. Geri dönmek için tıklayın veya webmail sekmenize geçiş yapın.",
+    "backNamed": "{{name}}'e geri dön",
+    "back": "Webmail'ime geri dön"
+  },
+  "palette": {
+    "navigate": "Gezin",
+    "shortcuts": "Klavye kısayolları",
+    "actions": "Eylemler",
+    "compose": "Yeni e-posta",
+    "placeholder": "Bir komut yazın veya arayın…",
+    "empty": "Sonuç yok."
+  },
+  "gmailBanner": {
+    "back": "Gmail'e dön",
+    "openedFrom": "Gmail'den açıldı. Geri dönmek için tıklayın veya Gmail sekmesine geçiş yapın."
+  },
+  "outlookBanner": {
+    "back": "Outlook'a dön",
+    "openedFrom": "Outlook'tan açıldı. Geri dönmek için tıklayın veya Outlook sekmesine geçiş yapın."
   }
 }

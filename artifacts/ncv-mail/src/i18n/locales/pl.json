@@ -23,7 +23,16 @@
     "add": "Dodaj",
     "edit": "Edytuj",
     "reset": "Zresetuj",
-    "more": "Więcej"
+    "more": "Więcej",
+    "notAuthenticated": "Nie uwierzytelniono",
+    "collapse": "Ukryj kategorie",
+    "send": "Wyślij",
+    "dismiss": "Zamknij",
+    "create": "Utwórz",
+    "remove": "Usuń",
+    "select": "Wybierz",
+    "copyFailed": "Nie można skopiować",
+    "expand": "Pokaż kategorie"
   },
   "nav": {
     "extensions": "Rozszerzenia",
@@ -37,7 +46,18 @@
     "login": "Zaloguj się",
     "signup": "Zarejestruj się",
     "logout": "Wyloguj się",
-    "openMenu": "Otwórz menu"
+    "openMenu": "Otwórz menu",
+    "categories": "Kategorie",
+    "archives": "Archiwa",
+    "dailyBrief": "Codzienny raport",
+    "folders": "Moje foldery",
+    "tasks": "Zadania",
+    "followups": "Przypomnienia",
+    "inbox": "Odebrane",
+    "contacts": "Kontakty",
+    "scheduled": "Zaplanowane",
+    "snoozed": "Odroczone",
+    "sent": "Wysłane"
   },
   "sidebar": {
     "inbox": "Skrzynka odbiorcza",
@@ -66,7 +86,10 @@
     "followups": "Przypomnienia",
     "contacts": "Kontakty",
     "assigned": "Przypisani",
-    "myTasks": "Moje zadania"
+    "myTasks": "Moje zadania",
+    "expand": "Rozwiń menu",
+    "collapse": "Zwiń menu",
+    "resize": "Zmień rozmiar menu"
   },
   "dashboard": {
     "expiredSubscription": "Twoja subskrypcja wygasła",
@@ -529,10 +552,17 @@
       "important": "Ważne"
     },
     "date": {
-      "all": "Wszystkie daty"
+      "all": "Wszystkie daty",
+      "yesterday": "Wczoraj",
+      "thisMonth": "W tym miesiącu",
+      "today": "Dzisiaj",
+      "last30": "Ostatnie 30 dni",
+      "last7": "Ostatnie 7 dni"
     },
     "read": {
-      "all": "Wszystkie"
+      "all": "Wszystkie",
+      "read": "Przeczytane",
+      "unread": "Nieprzeczytane"
     },
     "sharedDraft": "Wspólny szkic",
     "sharedDraftOn": "Wspólny szkic włączony",
@@ -564,7 +594,113 @@
       "label": "Wyświetlanie paneli",
       "overlay": "Nakładka",
       "split": "Obok siebie"
-    }
+    },
+    "unknownSender": "Nieznany",
+    "scSearch": "Szukaj",
+    "scNext": "Następny email",
+    "snoozedFor24h": "Odroczono na jutro",
+    "collisionViewingOne": "{{name}} również przegląda ten email",
+    "markedAsUnread": "Oznaczone jako nieprzeczytane",
+    "theme": {
+      "switchLight": "Tryb jasny",
+      "switchDark": "Tryb ciemny"
+    },
+    "archived": "Zarchiwizowane",
+    "loadingEmail": "Ładowanie emaila...",
+    "searchOpAttachment": "emaile z załącznikiem",
+    "moreActions": "Więcej akcji",
+    "searchOpSubject": "filtruj według tematu",
+    "markAsRead": "Oznacz jako przeczytane",
+    "collisionViewingMany": "{{count}} inne osoby przeglądają ten email",
+    "scGotoInbox": "Przejdź do Skrzynki odbiorczej",
+    "scGotoSnoozed": "Przejdź do Odroczonych",
+    "scSnooze": "Odrocz (24 h)",
+    "close": "Zamknij",
+    "composeRestore": "Wznów szkic",
+    "scDelete": "Usuń",
+    "density": {
+      "normal": "Normalny",
+      "label": "Gęstość wyświetlania",
+      "compact": "Kompaktowy",
+      "comfortable": "Wygodne"
+    },
+    "headerCollapse": "Ukryj zakładki i filtry",
+    "composeUntitled": "Szkic bez tematu",
+    "backHint": "Powrót (Esc) — J/K do nawigacji, R odpowiedz, E archiwizuj",
+    "loadingTitle": "Ładowanie…",
+    "draftYou": "Ty",
+    "copySender": "Kopiuj adres",
+    "slaOverdue": "SLA przeterminowane",
+    "assigneeFilterMember": "ten członek",
+    "draftRelease": "Zwolnij",
+    "scArchive": "Archiwizuj",
+    "markAsReadUnread": "Oznacz jako przeczytane / nieprzeczytane",
+    "scForward": "Przekaż dalej",
+    "draftSomeoneSends": "{{name}} wyśle to",
+    "searchOpSender": "filtruj według nadawcy",
+    "readingPanePos": {
+      "off": "Ukryty",
+      "right": "Po prawej",
+      "label": "Panel odczytu",
+      "bottom": "Na dole"
+    },
+    "scGotoContacts": "Przejdź do Kontaktów",
+    "markAsUnread": "Oznacz jako nieprzeczytane",
+    "composeDiscard": "Porzuć",
+    "snooze3h": "Za 3h",
+    "importanceLabel": "Widok",
+    "copiedSenderEmail": "Adres skopiowany",
+    "scPalette": "Paleta poleceń",
+    "copiedSubject": "Temat skopiowany",
+    "myFoldersLabel": "Moje foldery",
+    "copySenderEmail": "Skopiuj adres nadawcy",
+    "viewOptions": "Opcje wyświetlania",
+    "shortcutsTitle": "Skróty klawiaturowe",
+    "assignedNoTeam": "Ten widok wymaga zespołu (2 członków lub więcej).",
+    "collisionReplyingMany": "{{count}} osób już odpowiada na tego maila",
+    "assignToProject": "Przypisz do folderu zespołu",
+    "searchGroupOperators": "Doprecyzuj",
+    "composeAria": "Napisz email",
+    "downloadEml": "Pobierz jako .eml",
+    "headerExpand": "Pokaż zakładki i filtry",
+    "scClose": "Zamknij maila",
+    "composeDiscardConfirm": "Porzucić ten szkic?",
+    "readingPaneOff": "Wyłącz panel czytania",
+    "searchGroupSenders": "Nadawcy",
+    "scGotoTasks": "Przejdź do Zadań",
+    "printPopupBlocked": "Nie można otworzyć okna drukowania",
+    "copied": "Skopiowane",
+    "snooze": "Odłóż",
+    "teamBadge": "Zespół",
+    "backToGmail": "Powrót do Gmail",
+    "print": "Drukuj",
+    "snoozeTomorrow": "Jutro rano",
+    "scHelp": "Pokaż tę pomoc",
+    "moveToFolder": "Przenieś do",
+    "draftTakeOver": "Przejąć",
+    "composeMinimize": "Zminimalizuj szkic",
+    "searchGroupEmails": "E-maile",
+    "backToGmailHint": "Otwórz ten dokładny e-mail w Gmail",
+    "draftLiveCoedit": "Współedycja na żywo",
+    "categorized": "Skategoryzowane",
+    "scGotoSent": "Przejdź do Wysłane",
+    "collisionReplyingOne": "{{name}} już odpowiada na ten e-mail",
+    "exportEml": "Pobierz .eml",
+    "filterByCategory": "Filtruj",
+    "scReply": "Odpowiedz",
+    "draftTakeOverHint": "Przejąć wysyłkę, jeśli ten kolega nie jest już dostępny",
+    "markedAsRead": "Oznaczone jako przeczytane",
+    "readingPaneOn": "Włącz panel odczytu (3 kolumny)",
+    "filtersReset": "Zresetuj filtry",
+    "createAndAssignTask": "Utwórz i przypisz…",
+    "priorityLabel": "Priorytet",
+    "scPrev": "Poprzednia wiadomość",
+    "copyAddress": "Kopiuj adres",
+    "draftClaimSend": "To ja wysyłam",
+    "copySubject": "Kopiuj temat",
+    "scGotoArchives": "Przejdź do Archiwum",
+    "draftYouSend": "To Pan/Pani wysyła",
+    "loadEmailError": "Nie można załadować e-maila."
   },
   "sent": {
     "title": "Wysłane emaile",
@@ -649,7 +785,16 @@
     "blockFailed": "Nie można zablokować",
     "blockNoEmail": "Adres nadawcy nie znaleziony",
     "blockNoConnection": "Brak podłączonego konta email",
-    "emptied": "Folder opróżniony"
+    "emptied": "Folder opróżniony",
+    "noBlocked": "Brak zablokowanych nadawców",
+    "openRestored": "Otwórz",
+    "fetchingFromProvider": "Pobieranie zawartości od dostawcy…",
+    "retryFetch": "Spróbuj ponownie",
+    "unblocked": "Nadawca odblokowany",
+    "blockedList": "Zablokowani nadawcy",
+    "fetchFailed": "Nie można pobrać treści tego e-maila.",
+    "blockSenderSuccess": "Nadawca zablokowany",
+    "unblock": "Odblokuj"
   },
   "trash": {
     "title": "Kosz",
@@ -794,7 +939,18 @@
     "movedToDone": "Zadanie zakończone",
     "movedToTodo": "Zadanie przywrócone do zrobienia",
     "statusUpdated": "Status zaktualizowany",
-    "taskCreated": "Zadanie utworzone"
+    "taskCreated": "Zadanie utworzone",
+    "titleCopied": "Tytuł skopiowany",
+    "reassign": "Przypisz ponownie",
+    "openInInbox": "Otwórz w Skrzynce odbiorczej",
+    "copyTitle": "Kopiuj tytuł",
+    "noLinkedEmail": "To zadanie nie jest powiązane z żadnym emailem.",
+    "unassign": "Odepnij",
+    "linkedEmailActions": "Na powiązanym mailu",
+    "reassigned": "Zadanie przypisane ponownie",
+    "markAsTodo": "Oznaczyć jako do zrobienia",
+    "loadingTitle": "Ładowanie zadań…",
+    "markAsDone": "Oznaczyć jako zakończone"
   },
   "projects": {
     "title": "Foldery zespołu",
@@ -851,7 +1007,14 @@
     "exportError": "Błąd podczas eksportu",
     "searchProjects": "Szukaj projektu...",
     "noProjectsAlt": "Utwórz swój pierwszy projekt, aby zgrupować e-maile i zadania.",
-    "viewDetail": "Zobacz szczegóły"
+    "viewDetail": "Zobacz szczegóły",
+    "taskAssigned": "Zadanie przypisane",
+    "taskUnassigned": "Zadanie nieprzypisane",
+    "detachEmail": "Usuń z projektu",
+    "assignTo": "Przypisz do…",
+    "openEmail": "Otwórz email",
+    "emailDetached": "E-mail usunięty z projektu",
+    "unassigned": "Nieprzypisane"
   },
   "classification": {
     "title": "Kategorie",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Ta kategoria systemowa nie może być zmieniana.",
       "cannotMerge": "Kategoria „Nieprzypisane” nie może być scalona.",
       "goToInbox": "Sortuj te e-maile"
-    }
+    },
+    "adminOnlyNotice": "Zarządzanie kategoriami (tworzenie, modyfikacja, usuwanie, pakiety branżowe) jest zarezerwowane dla Administratora Zespołu, aby zapewnić spójną klasyfikację. Możesz przeglądać kategorie i ich emaile."
   },
   "settings": {
     "title": "Ustawienia",
@@ -1268,7 +1432,9 @@
       "privacy": "Prywatność i dostęp zespołu",
       "privacyDesc": "Twoje prywatne e-maile i dziennik konsultacji admin",
       "calendars": "Kalendarze",
-      "calendarsDesc": "Połącz Google Calendar i Outlook Calendar"
+      "calendarsDesc": "Połącz Google Calendar i Outlook Calendar",
+      "administrationDesc": "Ustawienia zarezerwowane dla administratorów organizacji",
+      "administration": "Administracja"
     },
     "b2bSection": "Wiarygodność B2B",
     "slaCard": "SLA dla skrzynek współdzielonych",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Domyślna wideokonferencja",
     "preferredVideoDesc": "Wybierz domyślnego dostawcę wideokonferencji dla nowych spotkań. Meet wymaga połączonego kalendarza Google; Teams wymaga Outlooka. Jitsi działa bez konta.",
     "meetingRemindersDesc": "Inboria wysyła uprzejme przypomnienie do kontaktu 48 godzin po propozycji terminu, która pozostała bez odpowiedzi.",
-    "meetingRemindersTitle": "Automatyczne przypomnienia o terminach"
+    "meetingRemindersTitle": "Automatyczne przypomnienia o terminach",
+    "outlookAddinSection": "Inboria w Outlook",
+    "personalVideoUrlDesc": "Wklej link do swojego stałego pokoju Teams lub Meet (https://...). Inboria użyje go we wszystkich propozycjach spotkań.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud i większość webmaili. Dodaj asystenta Inboria bezpośrednio do swojej poczty, bez opuszczania emaili.",
+    "outlookAddinTitle": "Przycisk „Zapytaj Inboria” w Outlook",
+    "webmailDownload": "Pobierz rozszerzenie",
+    "webmailCopyUrl": "Skopiuj chrome://extensions",
+    "personalVideoUrlInvalid": "Nieprawidłowy link (wymagany https://)",
+    "webmailUrlCopied": "Adres skopiowany ✓",
+    "outlookOpenAddinsPage": "Otwórz dodatki Outlook",
+    "outlookDownloadManifest": "Pobierz plik",
+    "outlookStep2": "W Outlook otwórz „Pobierz dodatki” › „Moje dodatki” › „Dodaj niestandardowy dodatek” › „Z pliku”, a następnie wybierz pobrany plik.",
+    "outlookGuideIntro": "Trzy proste kroki. Nie trzeba szukać w menu: wszystko jest prowadzone.",
+    "webmailExtInstall": "Zainstaluj w mojej przeglądarce",
+    "webmailGuideIntro": "Działa z Gmail, OVH, Yahoo, iCloud i większością webmaili, w Chrome lub Edge. Trzy proste kroki, tylko raz.",
+    "webmailStep2": "W Chrome lub Edge otwórz stronę rozszerzeń: wpisz chrome://extensions w pasku adresu, a następnie włącz „Tryb dewelopera” (przełącznik w prawym górnym rogu).",
+    "webmailGuideTitle": "Zainstaluj Inboria w swoim webmailu",
+    "outlookStep3": "Otwórz e-mail: przycisk „Zapytaj Inboria” pojawi się na wstążce. Zaloguj się raz na swoje konto Inboria, gotowe.",
+    "personalVideoUrlLabel": "Osobisty link do wideokonferencji",
+    "webmailExtSection": "Inboria w Twoim webmailu",
+    "webmailExtTitle": "Przycisk „Zapytaj Inboria” w Twoim webmailu",
+    "webmailStep3": "Kliknij „Załaduj niepakowaną rozszerzenie” i wybierz rozpakowany folder „inboria-extension”. Następnie otwórz swój webmail: pojawi się przycisk „Zapytaj Inboria”. Zaloguj się raz, gotowe.",
+    "outlookAddinDesc": "Dodaj asystenta Inboria bezpośrednio do swojego Outlook, bez opuszczania e-maili.",
+    "outlookAddinInstall": "Zainstaluj w Outlook",
+    "outlookStep1": "Pobierz plik połączenia Inboria.",
+    "reconnect": "Połącz ponownie",
+    "webmailStep1": "Pobierz rozszerzenie Inboria, a następnie rozpakuj plik (prawy klik › „Wyodrębnij wszystko”). Otrzymasz folder „inboria-extension”.",
+    "outlookGuideTitle": "Zainstaluj Inboria w Outlook"
   },
   "subscription": {
     "title": "Zarządzaj swoim abonamentem",
@@ -1426,7 +1619,10 @@
     "start": "Rozpocznij",
     "numberOfCollaborators": "Liczba współpracowników",
     "total": "Całkowita kwota",
-    "seatsExample": "Przykład: 3 współpracowników = 50,97€/miesiąc — możliwe do zmiany w dowolnym momencie z Państwa konta."
+    "seatsExample": "Przykład: 3 współpracowników = 50,97€/miesiąc — możliwe do zmiany w dowolnym momencie z Państwa konta.",
+    "billingMonthly": "Miesięczny",
+    "perMonthBilledYearly": "/miesiąc (fakturowane rocznie)",
+    "billingYearly": "Rocznie"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Błąd podczas wysyłania",
     "changeRole": "Zmień rolę",
     "adminDesc": "Może zarządzać zespołem, subskrypcją i wszystkimi emailami",
-    "memberDesc": "Dostęp do swoich emaili i wspólnych zadań"
+    "memberDesc": "Dostęp do swoich emaili i wspólnych zadań",
+    "trialTeamHint": "Próba zespołowa: zaproś do 3 kolegów. Każdy otrzymuje własną próbę 4500 kredytów, a Ty odblokowujesz wspólne skrzynki, przypisanie i komentarze wewnętrzne.",
+    "trialTeamLabel": "Próba zespołu"
   },
   "sharedMailboxes": {
     "title": "Wspólne skrzynki",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} przypisał(a) tę wiadomość do {{target}}",
     "systemSelfAssigned": "{{actor}} przejął(-ęła) tę wiadomość",
     "systemReassigned": "{{actor}} przeniósł(-osła) przypisanie z {{previous}} na {{target}}",
-    "systemUnassigned": "{{actor}} usunął(-ęła) przypisanie {{previous}}"
+    "systemUnassigned": "{{actor}} usunął(-ęła) przypisanie {{previous}}",
+    "recipientsFilter": "Szukaj członka…",
+    "typingMany": "Kilka osób pisze…",
+    "recipientsClear": "Wyczyść",
+    "placeholderSimple": "Wpisz swoją wiadomość…",
+    "viewing": "Ogląda teraz",
+    "internalNote": "Notatka",
+    "recipients": "Odbiorcy",
+    "recipientsPick": "Odbiorcy notatki",
+    "typingOne": "{{name}} pisze…",
+    "recipientsEmpty": "Brak członków",
+    "emailMessage": "E-mail",
+    "recipientsSelected": "{{count}} wybrany(-ch)"
   },
   "attachments": {
     "title": "Załączniki",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Oczek.",
     "statusPendingShort": "Oczekujący",
     "syncFailed": "Synchronizacja nieudana",
-    "viewDetails": "Zobacz szczegóły"
+    "viewDetails": "Zobacz szczegóły",
+    "internalAppointment": "Wewnętrzne spotkanie",
+    "duplicateError": "Błąd duplikacji",
+    "duplicatedDesc": "Kopia utworzona 7 dni później.",
+    "noteSelectedCount": "{{count}} odbiorca(ów)",
+    "forwardWhere": "Miejsce",
+    "askInboriaNewSlotPrefill": "Kontrpropozycja {{contact}}{{slot}} mi nie odpowiada. Zaproponuj inne terminy zgodne z moim kalendarzem.",
+    "duplicated": "Spotkanie zduplikowane",
+    "ctxNoProject": "Brak projektu",
+    "noteError": "Błąd dodawania notatki",
+    "filterExternal": "Klient",
+    "autoConfirmed": {
+      "desc": "{{count}} spotkań zostało automatycznie potwierdzonych na podstawie otrzymanych emaili.",
+      "title": "Wykryte potwierdzenia"
+    },
+    "ctxDup7": "Za 7 dni",
+    "forwardIntro": "Dzień dobry,",
+    "statusPendingHint": "Inboria automatycznie wyśle propozycję email do klienta.",
+    "markConfirmed": "Oznacz jako potwierdzone",
+    "newInternalAppointment": "Wewnętrzne spotkanie",
+    "ctxEdit": "Edytuj",
+    "theContact": "kontakt",
+    "statusLabel": "Status",
+    "notesEmpty": "Brak notatek. Notatki pozostają wewnętrzne — nigdy nie są wysyłane do klienta.",
+    "expandSuggestions": "Pokaż sugestie",
+    "forwardTitle": "Tytuł",
+    "noteAllTeam": "Cały zespół",
+    "internalMembers": "Zaproszeni członkowie zespołu",
+    "noteRecipientsLabel": "Do",
+    "ctxMarkAs": "Oznacz jako",
+    "singleDay": "Powrót do jednego dnia",
+    "ctxDupNextDay": "Następnego dnia",
+    "counterDeclined": "Odmowa wysłana do kontaktu",
+    "ctxDup14": "Za 14 dni",
+    "collapseSuggestions": "Ukryj sugestie",
+    "formInternalNoteLabel": "Notatka wewnętrzna (opcjonalnie)",
+    "forwardBody": "Przesyłam szczegóły tego spotkania:",
+    "multiDay": "Kilka dni…",
+    "ctxForward": "Przekaż przez email",
+    "forwardVideo": "Link do wideokonferencji",
+    "internalMembersEmpty": "Brak zaproszonych członków. Kliknij „+ Dodaj”, aby wybrać kolegów.",
+    "forwardWhen": "Data",
+    "pickDate": "Wybierz datę",
+    "ctxDuplicate": "Duplikuj",
+    "coorgNoCandidate": "Brak dostępnych członków.",
+    "ctxDupCustomMenu": "Niestandardowy…",
+    "ctxDupCustom": "Duplikuj za ile dni?",
+    "ctxOpen": "Otwórz",
+    "notePlaceholder": "Notatka wewnętrzna (widoczna tylko dla zespołu, nigdy nie wysyłana do klienta)…",
+    "confirmError": "Błąd podczas potwierdzania",
+    "ctxDelete": "Usuń",
+    "duration": "Czas trwania",
+    "internalNotes": "Notatki wewnętrzne",
+    "confirmDelete": "Usunąć to spotkanie?",
+    "ctxDup30": "Za 1 miesiąc",
+    "forwardSubject": "FW: Spotkanie",
+    "ctxProject": "Projekt",
+    "filterInternal": "Wewnętrzne",
+    "ctxDup90": "Za 3 miesiące",
+    "formInternalNotePlaceholder": "Np.: Klient VIP, zwróć uwagę na ton. Nigdy nie wysyłane do klienta.",
+    "filterAll": "Wszystkie",
+    "confirmWithInboria": "Potwierdź z Inboria",
+    "askInboriaNewSlot": "Poproś Inboria o nowy termin",
+    "forwardOutro": "Z poważaniem,",
+    "coorgAdd": "+ Dodaj"
   },
   "supportChat": {
     "title": "Asystent Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Zadaj mi dowolne pytanie dotyczące Inboria: funkcje, ustawienia, subskrypcje i więcej.",
     "placeholder": "Wpisz swoje pytanie...",
     "poweredBy": "Napędzane przez Inboria",
-    "errorMessage": "Przykro mi, wystąpił błąd. Proszę spróbować ponownie lub skontaktować się z support@inboria.com."
+    "errorMessage": "Przykro mi, wystąpił błąd. Proszę spróbować ponownie lub skontaktować się z support@inboria.com.",
+    "send": "Wyślij",
+    "clear": "Wyczyść rozmowę"
   },
   "inboriaChat": {
     "openLabel": "Otwórz czat Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Oczekiwanie",
       "relance": "W trakcie",
       "termine": "Zakończona"
-    }
+    },
+    "bulkDismissedToast": "{{count}} zignorowane",
+    "bulkMarkedRepliedToast": "{{count}} oznaczone jako odpowiedziane"
   },
   "contacts": {
     "title": "Kontakt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Otwarte",
     "openedBadgeCount": "Otwarte {{count}} razy",
     "openedAtLabel": "Pierwsze otwarcie: {{date}}",
-    "notOpenedYet": "Jeszcze nie otwarte"
+    "notOpenedYet": "Jeszcze nie otwarte",
+    "scheduledCancelError": "Anulowanie nie powiodło się",
+    "scheduledCancelPartial": "{{failed}} anulacja(e) z {{total}} nie powiodła(y) się",
+    "scheduledNoRecipient": "Bez odbiorcy"
   },
   "templates": {
     "title": "Szablony",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "E-mail uczyniony widocznym",
     "privateOnDesc": "Ten e-mail jest teraz niewidoczny dla Państwa administratorów (widok folderu zespół + Inboria).",
     "privateOffDesc": "Ten e-mail staje się ponownie widoczny dla Państwa administratorów (widok folderu zespół + Inboria).",
-    "privateError": "Nie można zaktualizować ustawień prywatności."
+    "privateError": "Nie można zaktualizować ustawień prywatności.",
+    "details": "Szczegóły",
+    "actionsMenu": "Akcje"
   },
   "privacy": {
     "title": "Prywatność i dostęp zespołu",
@@ -3456,7 +3739,10 @@
       "followup": "Przypomnienie",
       "appointment": "Kalendarz",
       "team": "Aktywność zespołu"
-    }
+    },
+    "addDescription": "Utwórz kartę, aby śledzić kogoś, kto jeszcze nie pojawia się w Twojej skrzynce.",
+    "openContact": "Zobacz kartę kontaktu",
+    "deleteDescription": "Historia emaili związanych z tym adresem nie jest usuwana. Znika tylko ręczna karta."
   },
   "folders": {
     "title": "Moje foldery",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "System"
+  },
+  "signature": {
+    "imageTooLarge": "Obraz za duży (max 200 KB)",
+    "linkUrlPrompt": "URL linku (https://...)",
+    "size": "Rozmiar",
+    "italic": "Kursywa",
+    "clear": "Wyczyść formatowanie",
+    "imageInvalid": "Nieprawidłowy plik obrazu",
+    "highlight": "Podświetlenie",
+    "bold": "Pogrubienie",
+    "underline": "Podkreślenie",
+    "image": "Obraz / logo",
+    "color": "Kolor tekstu",
+    "imageHint": "Wskazówka: wstaw logo PNG/JPG (max 200 KB). Obraz jest bezpośrednio osadzony w podpisie.",
+    "font": "Czcionka",
+    "bulletList": "Lista punktowana",
+    "link": "Link",
+    "orderedList": "Lista numerowana",
+    "moreColors": "Więcej kolorów…"
+  },
+  "palette": {
+    "compose": "Nowy email",
+    "shortcuts": "Skróty klawiszowe",
+    "navigate": "Nawiguj",
+    "empty": "Brak wyników.",
+    "actions": "Akcje",
+    "placeholder": "Wpisz polecenie lub wyszukaj…"
+  },
+  "outlookBanner": {
+    "back": "Powrót do Outlook",
+    "openedFrom": "Otwarty z Outlook. Kliknij, aby wrócić, lub po prostu przełącz się na kartę Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Otwarty z Gmail. Kliknij, aby wrócić, lub po prostu przełącz się na kartę Gmail.",
+    "back": "Powrót do Gmaila"
+  },
+  "webmailBanner": {
+    "back": "Powrót do mojego webmaila",
+    "openedFromNamed": "Otwarty z {{name}}. Kliknij, aby wrócić, lub przełącz się na kartę {{name}}.",
+    "openedFrom": "Otwarty z Twojego webmaila. Kliknij, aby wrócić, lub przełącz się na kartę swojego webmaila.",
+    "backNamed": "Powrót do {{name}}"
   }
 }

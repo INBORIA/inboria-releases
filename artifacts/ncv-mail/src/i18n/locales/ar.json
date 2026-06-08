@@ -23,7 +23,16 @@
     "add": "إضافة",
     "edit": "تعديل",
     "reset": "إعادة تعيين",
-    "more": "المزيد"
+    "more": "المزيد",
+    "notAuthenticated": "غير مصدق",
+    "collapse": "إخفاء الفئات",
+    "send": "إرسال",
+    "dismiss": "إغلاق",
+    "create": "إنشاء",
+    "remove": "إزالة",
+    "select": "اختيار",
+    "copyFailed": "تعذر النسخ",
+    "expand": "عرض الفئات"
   },
   "nav": {
     "extensions": "الامتدادات",
@@ -37,7 +46,18 @@
     "login": "تسجيل الدخول",
     "signup": "التسجيل",
     "logout": "تسجيل الخروج",
-    "openMenu": "فتح القائمة"
+    "openMenu": "فتح القائمة",
+    "categories": "الفئات",
+    "archives": "الأرشيف",
+    "dailyBrief": "التقرير اليومي",
+    "folders": "مجلداتي",
+    "tasks": "المهام",
+    "followups": "متابعات",
+    "inbox": "الوارد",
+    "sent": "مرسلة",
+    "scheduled": "مجدول",
+    "snoozed": "مؤجل",
+    "contacts": "جهات الاتصال"
   },
   "sidebar": {
     "inbox": "البريد الوارد",
@@ -66,7 +86,10 @@
     "followups": "التذكيرات",
     "contacts": "جهات الاتصال",
     "assigned": "المعينون",
-    "myTasks": "مهامي"
+    "myTasks": "مهامي",
+    "expand": "توسيع القائمة",
+    "collapse": "تقليص القائمة",
+    "resize": "تغيير حجم القائمة"
   },
   "dashboard": {
     "expiredSubscription": "انتهت صلاحية اشتراككم",
@@ -529,10 +552,17 @@
       "important": "مهم"
     },
     "date": {
-      "all": "كل التواريخ"
+      "all": "كل التواريخ",
+      "yesterday": "أمس",
+      "thisMonth": "هذا الشهر",
+      "today": "اليوم",
+      "last7": "آخر 7 أيام",
+      "last30": "آخر 30 يوماً"
     },
     "read": {
-      "all": "الكل"
+      "all": "الكل",
+      "read": "مقروء",
+      "unread": "غير مقروء"
     },
     "sharedDraft": "مسودة مشتركة",
     "sharedDraftOn": "المسودة المشتركة مفعلة",
@@ -564,7 +594,113 @@
       "label": "عرض الألواح",
       "overlay": "تراكب",
       "split": "جنباً إلى جنب"
-    }
+    },
+    "unknownSender": "غير معروف",
+    "scSearch": "بحث",
+    "scNext": "البريد التالي",
+    "snoozedFor24h": "مؤجل إلى الغد",
+    "collisionViewingOne": "{{name}} يطلع أيضًا على هذا البريد",
+    "markedAsUnread": "تم تحديده كغير مقروء",
+    "theme": {
+      "switchLight": "الوضع الفاتح",
+      "switchDark": "الوضع الداكن"
+    },
+    "archived": "مؤرشف",
+    "loadingEmail": "جارٍ تحميل البريد الإلكتروني...",
+    "searchOpAttachment": "البريد مع مرفق",
+    "moreActions": "المزيد من الإجراءات",
+    "searchOpSubject": "تصفية حسب الموضوع",
+    "markAsRead": "تحديد كمقروء",
+    "collisionViewingMany": "{{count}} أشخاص آخرون يطلعون على هذا البريد",
+    "scGotoInbox": "الذهاب إلى البريد الوارد",
+    "scGotoSnoozed": "الذهاب إلى المؤجل",
+    "scSnooze": "تأجيل (24 ساعة)",
+    "close": "إغلاق",
+    "composeRestore": "استعادة المسودة",
+    "scDelete": "حذف",
+    "density": {
+      "normal": "عادي",
+      "label": "كثافة العرض",
+      "compact": "مضغوط",
+      "comfortable": "مريح"
+    },
+    "headerCollapse": "إخفاء علامات التبويب والفلاتر",
+    "composeUntitled": "مسودة بدون عنوان",
+    "backHint": "العودة (Esc) — J/K للتنقل، R للرد، E للأرشفة",
+    "loadingTitle": "جارٍ التحميل...",
+    "draftYou": "أنت",
+    "copySender": "نسخ العنوان",
+    "slaOverdue": "SLA متأخر",
+    "assigneeFilterMember": "هذا العضو",
+    "draftRelease": "تحرير",
+    "scArchive": "أرشفة",
+    "markAsReadUnread": "وضع علامة مقروء / غير مقروء",
+    "scForward": "إعادة توجيه",
+    "draftSomeoneSends": "{{name}} سيرسلها",
+    "searchOpSender": "تصفية حسب المرسل",
+    "readingPanePos": {
+      "off": "مخفي",
+      "right": "على اليمين",
+      "label": "جزء القراءة",
+      "bottom": "في الأسفل"
+    },
+    "scGotoContacts": "الذهاب إلى جهات الاتصال",
+    "markAsUnread": "وضع علامة كغير مقروء",
+    "composeDiscard": "إلغاء",
+    "snooze3h": "في 3 ساعات",
+    "importanceLabel": "عرض",
+    "copiedSenderEmail": "تم نسخ العنوان",
+    "scPalette": "لوحة الأوامر",
+    "copiedSubject": "تم نسخ الموضوع",
+    "myFoldersLabel": "مجلداتي",
+    "copySenderEmail": "نسخ عنوان المرسل",
+    "viewOptions": "خيارات العرض",
+    "shortcutsTitle": "اختصارات لوحة المفاتيح",
+    "assignedNoTeam": "هذه الرؤية تتطلب فريقاً (عضوين أو أكثر).",
+    "collisionReplyingMany": "{{count}} أشخاص يردون بالفعل على هذا البريد",
+    "assignToProject": "تعيين إلى مجلد الفريق",
+    "searchGroupOperators": "تحسين",
+    "composeAria": "كتابة بريد إلكتروني",
+    "downloadEml": "تحميل كـ .eml",
+    "headerExpand": "عرض علامات التبويب والفلاتر",
+    "scClose": "إغلاق البريد",
+    "composeDiscardConfirm": "إلغاء هذا المسودة؟",
+    "readingPaneOff": "تعطيل جزء القراءة",
+    "searchGroupSenders": "المرسلون",
+    "scGotoTasks": "الذهاب إلى المهام",
+    "printPopupBlocked": "تعذر فتح نافذة الطباعة",
+    "copied": "تم النسخ",
+    "snooze": "تأجيل",
+    "exportEml": "تحميل .eml",
+    "categorized": "مصنف",
+    "markedAsRead": "تم التعليم كمقروء",
+    "teamBadge": "فريق",
+    "priorityLabel": "أولوية",
+    "backToGmailHint": "افتح هذا البريد بالضبط في Gmail",
+    "snoozeTomorrow": "غداً صباحاً",
+    "composeMinimize": "تصغير المسودة",
+    "scGotoSent": "اذهب إلى المرسلة",
+    "readingPaneOn": "تفعيل جزء القراءة (3 أعمدة)",
+    "collisionReplyingOne": "{{name}} يرد بالفعل على هذا البريد",
+    "createAndAssignTask": "إنشاء وتعيين...",
+    "copyAddress": "نسخ العنوان",
+    "copySubject": "نسخ الموضوع",
+    "loadEmailError": "تعذر تحميل البريد الإلكتروني.",
+    "draftYouSend": "أنت من يرسل",
+    "scGotoArchives": "اذهب إلى الأرشيف",
+    "scReply": "الرد",
+    "backToGmail": "العودة إلى Gmail",
+    "moveToFolder": "نقل إلى",
+    "print": "طباعة",
+    "scPrev": "البريد السابق",
+    "draftClaimSend": "أنا من يرسل",
+    "draftLiveCoedit": "تحرير مشترك مباشر",
+    "draftTakeOverHint": "استئناف الإرسال إذا لم يكن هذا الزميل متاحًا",
+    "scHelp": "عرض هذه المساعدة",
+    "filtersReset": "إعادة تعيين الفلاتر",
+    "draftTakeOver": "استئناف",
+    "searchGroupEmails": "بريد",
+    "filterByCategory": "تصفية"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",
@@ -649,7 +785,16 @@
     "blockFailed": "تعذر الحظر",
     "blockNoEmail": "عنوان المرسل غير موجود",
     "blockNoConnection": "لا يوجد حساب بريد إلكتروني متصل",
-    "emptied": "تم تفريغ المجلد"
+    "emptied": "تم تفريغ المجلد",
+    "noBlocked": "لا يوجد مرسل محظور",
+    "openRestored": "فتح",
+    "fetchingFromProvider": "جارٍ استرداد المحتوى من مزودك...",
+    "retryFetch": "إعادة المحاولة",
+    "unblocked": "المرسل غير محظور",
+    "blockedList": "المرسلون المحظورون",
+    "unblock": "إلغاء الحظر",
+    "fetchFailed": "تعذر استرداد محتوى هذا البريد.",
+    "blockSenderSuccess": "تم حظر المرسل"
   },
   "trash": {
     "title": "سلة المهملات",
@@ -794,7 +939,18 @@
     "movedToDone": "تم الانتهاء من المهمة",
     "movedToTodo": "تم إعادة المهمة إلى قائمة المهام",
     "statusUpdated": "تم تحديث الحالة",
-    "taskCreated": "تم إنشاء المهمة"
+    "taskCreated": "تم إنشاء المهمة",
+    "titleCopied": "تم نسخ العنوان",
+    "reassign": "إعادة التعيين",
+    "openInInbox": "فتح في البريد الوارد",
+    "copyTitle": "نسخ العنوان",
+    "noLinkedEmail": "هذه المهمة غير مرتبطة بأي بريد إلكتروني.",
+    "unassign": "إلغاء التعيين",
+    "linkedEmailActions": "على البريد المرتبط",
+    "reassigned": "تم إعادة تعيين المهمة",
+    "markAsDone": "تعليم كمكتمل",
+    "loadingTitle": "تحميل المهام...",
+    "markAsTodo": "تعليم للقيام به"
   },
   "projects": {
     "title": "مجلدات الفريق",
@@ -851,7 +1007,14 @@
     "exportError": "خطأ أثناء التصدير",
     "searchProjects": "البحث عن مشروع...",
     "noProjectsAlt": "أنشئ مشروعك الأول لتجميع الرسائل الإلكترونية والمهام.",
-    "viewDetail": "عرض التفاصيل"
+    "viewDetail": "عرض التفاصيل",
+    "taskAssigned": "تم تعيين المهمة",
+    "taskUnassigned": "تم إلغاء تعيين المهمة",
+    "detachEmail": "إزالة من المشروع",
+    "assignTo": "تعيين إلى...",
+    "openEmail": "فتح البريد الإلكتروني",
+    "emailDetached": "تم إزالة البريد الإلكتروني من المشروع",
+    "unassigned": "غير معين"
   },
   "classification": {
     "title": "الفئات",
@@ -1135,7 +1298,8 @@
       "cannotRename": "لا يمكن إعادة تسمية هذه الفئة النظامية.",
       "cannotMerge": "لا يمكن دمج الفئة « غير مصنفة ».",
       "goToInbox": "ترتيب هذه الرسائل"
-    }
+    },
+    "adminOnlyNotice": "إدارة الفئات (إنشاء، تعديل، حذف، حزم مهنية) مخصصة لمسؤول الفريق لضمان تصنيف متسق. يمكنك الاطلاع على الفئات ورسائلها."
   },
   "settings": {
     "title": "الإعدادات",
@@ -1268,7 +1432,9 @@
       "privacy": "الخصوصية والوصول إلى الفريق",
       "privacyDesc": "رسائلك الخاصة وسجل استشارات المسؤول",
       "calendars": "التقاويم",
-      "calendarsDesc": "ربط تقويم Google وOutlook"
+      "calendarsDesc": "ربط تقويم Google وOutlook",
+      "administration": "الإدارة",
+      "administrationDesc": "إعدادات مخصصة لمسؤولي المنظمة"
     },
     "b2bSection": "المصداقية B2B",
     "slaCard": "SLA للصناديق المشتركة",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "اجتماع الفيديو الافتراضي",
     "preferredVideoDesc": "يرجى اختيار مزوّد اجتماعات الفيديو الافتراضي للمواعيد الجديدة. يتطلب Meet تقويم Google متصلاً؛ ويتطلب Teams حساب Outlook. أما Jitsi فيعمل دون الحاجة إلى حساب.",
     "meetingRemindersDesc": "يرسل Inboria تذكيرًا مهذبًا للاتصال بعد 48 ساعة من اقتراح موعد لم يتم الرد عليه.",
-    "meetingRemindersTitle": "تذكيرات المواعيد التلقائية"
+    "meetingRemindersTitle": "تذكيرات المواعيد التلقائية",
+    "outlookAddinSection": "Inboria في Outlook",
+    "personalVideoUrlDesc": "الصق رابط غرفتك الدائمة في Teams أو Meet (https://...). سيستخدم Inboria ذلك في جميع اقتراحات المواعيد.",
+    "webmailExtDesc": "Gmail، OVH، Yahoo، iCloud ومعظم خدمات البريد الإلكتروني. أضف مساعد Inboria مباشرة إلى بريدك الإلكتروني دون مغادرة رسائلك.",
+    "outlookAddinTitle": "زر «طلب من Inboria» في Outlook",
+    "webmailDownload": "تحميل الإضافة",
+    "webmailCopyUrl": "نسخ chrome://extensions",
+    "personalVideoUrlInvalid": "رابط غير صالح (https:// مطلوب)",
+    "webmailUrlCopied": "تم نسخ العنوان ✓",
+    "outlookOpenAddinsPage": "فتح إضافات Outlook",
+    "outlookDownloadManifest": "تحميل الملف",
+    "outlookStep2": "في Outlook، افتح «الحصول على الإضافات» › «إضافاتي» › «إضافة إضافة مخصصة» › «من ملف»، ثم اختر الملف الذي تم تنزيله.",
+    "outlookGuideIntro": "ثلاث خطوات بسيطة. لا حاجة للبحث في القوائم: كل شيء موجه.",
+    "webmailExtInstall": "تثبيت في متصفحي",
+    "webmailGuideIntro": "يعمل مع Gmail، OVH، Yahoo، iCloud ومعظم خدمات البريد الإلكتروني، في Chrome أو Edge. ثلاث خطوات بسيطة، مرة واحدة فقط.",
+    "webmailStep2": "في Chrome أو Edge، افتح صفحة الإضافات: اكتب chrome://extensions في شريط العنوان، ثم قم بتفعيل «وضع المطور» (المفتاح في الأعلى على اليمين).",
+    "webmailGuideTitle": "تثبيت Inboria في بريدك الإلكتروني",
+    "webmailExtTitle": "زر «اطلب من Inboria» في بريدكم الإلكتروني",
+    "webmailStep3": "انقر على «تحميل الإضافة غير المعبأة» واختر المجلد «inboria-extension» المفكوك. ثم افتح بريدك الإلكتروني: يظهر زر «اطلب من Inboria». سجل الدخول مرة واحدة، وهو جاهز.",
+    "outlookStep1": "قم بتنزيل ملف اتصال Inboria.",
+    "reconnect": "إعادة الاتصال",
+    "outlookAddinDesc": "أضف مساعد Inboria مباشرة في Outlook الخاص بك، دون مغادرة بريدك.",
+    "personalVideoUrlLabel": "رابط الفيديو الشخصي",
+    "outlookStep3": "افتح بريدًا: يظهر زر «اطلب من Inboria» في الشريط. سجل الدخول مرة واحدة بحساب Inboria الخاص بك، وهو جاهز.",
+    "outlookGuideTitle": "تثبيت Inboria في Outlook",
+    "webmailExtSection": "Inboria في بريدك الإلكتروني",
+    "outlookAddinInstall": "تثبيت في Outlook",
+    "webmailStep1": "قم بتنزيل إضافة Inboria، ثم فك ضغط الملف (انقر بزر الماوس الأيمن › «استخراج الكل»). ستحصل على مجلد «inboria-extension»."
   },
   "subscription": {
     "title": "إدارة اشتراككم",
@@ -1426,7 +1619,10 @@
     "start": "ابدأ",
     "numberOfCollaborators": "عدد المتعاونين",
     "total": "الإجمالي",
-    "seatsExample": "مثال: 3 متعاونين = 50,97€/شهر — قابل للتعديل في أي وقت من مساحتكم."
+    "seatsExample": "مثال: 3 متعاونين = 50,97€/شهر — قابل للتعديل في أي وقت من مساحتكم.",
+    "billingMonthly": "شهري",
+    "perMonthBilledYearly": "/شهر (يتم الفوترة سنوياً)",
+    "billingYearly": "سنوي"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "حدث خطأ أثناء الإرسال",
     "changeRole": "تغيير الدور",
     "adminDesc": "يمكنه إدارة الفريق والاشتراك وجميع الرسائل الإلكترونية",
-    "memberDesc": "الوصول إلى رسائله الإلكترونية والمهام المشتركة"
+    "memberDesc": "الوصول إلى رسائله الإلكترونية والمهام المشتركة",
+    "trialTeamHint": "تجربة الفريق: دعوة حتى 3 زملاء. يحصل كل منهم على تجربة خاصة بـ 4500 رصيد، وتفتح الصناديق المشتركة، التعيين والتعليقات الداخلية.",
+    "trialTeamLabel": "تجربة الفريق"
   },
   "sharedMailboxes": {
     "title": "صناديق البريد المشتركة",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "قام {{actor}} بإسناد هذا البريد الإلكتروني إلى {{target}}",
     "systemSelfAssigned": "تولى {{actor}} هذا البريد الإلكتروني",
     "systemReassigned": "قام {{actor}} بإعادة الإسناد من {{previous}} إلى {{target}}",
-    "systemUnassigned": "ألغى {{actor}} إسناد {{previous}}"
+    "systemUnassigned": "ألغى {{actor}} إسناد {{previous}}",
+    "recipientsFilter": "ابحث عن عضو...",
+    "typingMany": "عدة أشخاص يكتبون...",
+    "recipientsClear": "إفراغ",
+    "placeholderSimple": "أدخل رسالتك...",
+    "viewing": "يشاهد الآن",
+    "internalNote": "ملاحظة",
+    "recipients": "المستلمون",
+    "recipientsPick": "مستلمو الملاحظة",
+    "typingOne": "{{name}} يكتب...",
+    "recipientsEmpty": "لا يوجد أعضاء",
+    "recipientsSelected": "{{count}} مختار",
+    "emailMessage": "بريد إلكتروني"
   },
   "attachments": {
     "title": "المرفقات",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "قيد الانتظار",
     "statusPendingShort": "قيد الانتظار",
     "syncFailed": "فشل المزامنة",
-    "viewDetails": "عرض التفاصيل"
+    "viewDetails": "عرض التفاصيل",
+    "internalAppointment": "موعد داخلي",
+    "duplicateError": "خطأ في التكرار",
+    "duplicatedDesc": "تم إنشاء نسخة بعد 7 أيام.",
+    "noteSelectedCount": "{{count}} مستلم",
+    "forwardWhere": "المكان",
+    "askInboriaNewSlotPrefill": "الاقتراح المضاد من {{contact}}{{slot}} لا يناسبني. اقترح له مواعيد أخرى تتوافق مع جدولي.",
+    "duplicated": "موعد مكرر",
+    "ctxNoProject": "لا يوجد مشروع",
+    "noteError": "خطأ في إضافة الملاحظة",
+    "filterExternal": "العميل",
+    "autoConfirmed": {
+      "desc": "{{count}} مواعيد تم تأكيدها تلقائيًا من البريد الوارد.",
+      "title": "تم الكشف عن التأكيدات"
+    },
+    "ctxDup7": "بعد 7 أيام",
+    "forwardIntro": "مرحبًا،",
+    "statusPendingHint": "سيقوم Inboria بإرسال بريد الاقتراح تلقائيًا إلى العميل.",
+    "markConfirmed": "تحديد كمؤكد",
+    "newInternalAppointment": "موعد داخلي",
+    "ctxEdit": "تعديل",
+    "theContact": "الاتصال",
+    "statusLabel": "الحالة",
+    "notesEmpty": "لا توجد ملاحظات. تبقى الملاحظات داخلية — لا تُرسل أبدًا إلى العميل.",
+    "expandSuggestions": "عرض الاقتراحات",
+    "forwardTitle": "العنوان",
+    "noteAllTeam": "كل الفريق",
+    "internalMembers": "أعضاء الفريق المدعوون",
+    "noteRecipientsLabel": "إلى",
+    "ctxMarkAs": "وضع علامة كـ",
+    "singleDay": "العودة إلى مدة يوم واحد",
+    "ctxDupNextDay": "اليوم التالي",
+    "counterDeclined": "تم إرسال الرفض إلى جهة الاتصال",
+    "ctxDup14": "في 14 يوماً",
+    "collapseSuggestions": "إخفاء الاقتراحات",
+    "formInternalNoteLabel": "ملاحظة داخلية (اختياري)",
+    "forwardBody": "أرسل لك تفاصيل هذا الموعد:",
+    "multiDay": "عدة أيام...",
+    "ctxForward": "إعادة توجيه عبر البريد الإلكتروني",
+    "forwardVideo": "رابط الاجتماع",
+    "internalMembersEmpty": "لا يوجد أعضاء مدعوون. انقر «+ إضافة» لاختيار زملائك.",
+    "forwardWhen": "التاريخ",
+    "pickDate": "اختر تاريخاً",
+    "ctxDuplicate": "تكرار",
+    "coorgNoCandidate": "لا يوجد أعضاء متاحون.",
+    "ctxDupCustomMenu": "مخصص...",
+    "ctxDupCustom": "تكرار في كم يوماً؟",
+    "ctxOpen": "فتح",
+    "notePlaceholder": "ملاحظة داخلية (مرئية فقط للفريق، لا تُرسل أبداً للعميل)...",
+    "confirmError": "خطأ أثناء التأكيد",
+    "ctxDelete": "حذف",
+    "duration": "المدة",
+    "internalNotes": "ملاحظات داخلية",
+    "ctxDup30": "في غضون شهر",
+    "formInternalNotePlaceholder": "مثال: عميل VIP، انتبه للنبرة. لا ترسل أبداً للعميل.",
+    "askInboriaNewSlot": "اطلب من Inboria موعد جديد",
+    "filterAll": "الكل",
+    "confirmWithInboria": "تأكيد مع Inboria",
+    "ctxProject": "مشروع",
+    "coorgAdd": "+ إضافة",
+    "ctxDup90": "في غضون 3 أشهر",
+    "confirmDelete": "حذف هذا الموعد؟",
+    "forwardOutro": "مع أطيب التحيات،",
+    "forwardSubject": "إعادة: موعد",
+    "filterInternal": "داخلي"
   },
   "supportChat": {
     "title": "مساعد Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "اطرحوا علي أي سؤال حول Inboria: الميزات، الإعدادات، الاشتراك، وأكثر.",
     "placeholder": "اكتبوا سؤالكم...",
     "poweredBy": "مدعوم بواسطة Inboria",
-    "errorMessage": "عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بـ support@inboria.com."
+    "errorMessage": "عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بـ support@inboria.com.",
+    "send": "إرسال",
+    "clear": "مسح المحادثة"
   },
   "inboriaChat": {
     "openLabel": "فتح دردشة Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "قيد الانتظار",
       "relance": "قيد التنفيذ",
       "termine": "مكتمل"
-    }
+    },
+    "bulkDismissedToast": "{{count}} تم تجاهلها",
+    "bulkMarkedRepliedToast": "{{count}} تم تعليمها كمردود عليها"
   },
   "contacts": {
     "title": "جهة الاتصال 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "مفتوح",
     "openedBadgeCount": "مفتوح {{count}} مرات",
     "openedAtLabel": "الفتح الأول : {{date}}",
-    "notOpenedYet": "لم يتم فتحه بعد"
+    "notOpenedYet": "لم يتم فتحه بعد",
+    "scheduledCancelError": "فشل الإلغاء",
+    "scheduledCancelPartial": "{{failed}} إلغاء من أصل {{total}} فشل",
+    "scheduledNoRecipient": "بدون مستلم"
   },
   "templates": {
     "title": "القوالب",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "تم جعل البريد الإلكتروني مرئيًا",
     "privateOnDesc": "هذا البريد الإلكتروني أصبح غير مرئي لمديريكم (عرض مجلد الفريق + Inboria).",
     "privateOffDesc": "هذا البريد الإلكتروني أصبح مرئيًا مرة أخرى لمديريكم (عرض مجلد الفريق + Inboria).",
-    "privateError": "يتعذر تحديث الخصوصية."
+    "privateError": "يتعذر تحديث الخصوصية.",
+    "details": "تفاصيل",
+    "actionsMenu": "إجراءات"
   },
   "privacy": {
     "title": "الخصوصية والوصول إلى الفريق",
@@ -3456,7 +3739,10 @@
       "followup": "التذكير",
       "appointment": "الجدول الزمني",
       "team": "نشاط الفريق"
-    }
+    },
+    "addDescription": "انشئ بطاقة لمتابعة شخص غير موجود في صندوق بريدك بعد.",
+    "openContact": "عرض بطاقة الاتصال",
+    "deleteDescription": "لا يتم حذف تاريخ البريد الإلكتروني المرتبط بهذا العنوان. فقط البطاقة اليدوية تختفي."
   },
   "folders": {
     "title": "مجلداتي",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "الأجندة",
     "system": "النظام"
+  },
+  "signature": {
+    "imageTooLarge": "الصورة كبيرة جدًا (الحد الأقصى 200 كيلوبايت)",
+    "linkUrlPrompt": "رابط URL (https://...)",
+    "size": "الحجم",
+    "italic": "مائل",
+    "clear": "مسح التنسيق",
+    "imageInvalid": "ملف صورة غير صالح",
+    "highlight": "تمييز",
+    "bold": "غامق",
+    "underline": "مسطر",
+    "image": "صورة / شعار",
+    "color": "لون النص",
+    "imageHint": "نصيحة: أدخل شعار PNG/JPG (بحد أقصى 200 كيلوبايت). يتم تضمين الصورة مباشرة في التوقيع.",
+    "font": "الخط",
+    "link": "رابط",
+    "orderedList": "قائمة مرقمة",
+    "moreColors": "المزيد من الألوان...",
+    "bulletList": "قائمة نقطية"
+  },
+  "palette": {
+    "compose": "بريد إلكتروني جديد",
+    "shortcuts": "اختصارات لوحة المفاتيح",
+    "navigate": "التنقل",
+    "empty": "لا توجد نتائج.",
+    "actions": "إجراءات",
+    "placeholder": "اكتب أمرًا أو ابحث..."
+  },
+  "outlookBanner": {
+    "back": "العودة إلى Outlook",
+    "openedFrom": "مفتوح من Outlook. انقر للعودة، أو قم بالتبديل ببساطة إلى علامة تبويب Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "مفتوح من Gmail. انقر للعودة، أو قم بالتبديل ببساطة إلى علامة التبويب Gmail.",
+    "back": "العودة إلى Gmail"
+  },
+  "webmailBanner": {
+    "back": "العودة إلى بريدي الإلكتروني",
+    "openedFromNamed": "مفتوح من {{name}}. انقر للعودة، أو انتقل ببساطة إلى علامة التبويب {{name}}.",
+    "openedFrom": "مفتوح من بريدك الإلكتروني. انقر للعودة، أو انتقل ببساطة إلى علامة تبويب بريدك الإلكتروني.",
+    "backNamed": "العودة إلى {{name}}"
   }
 }

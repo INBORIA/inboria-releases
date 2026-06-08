@@ -23,7 +23,16 @@
     "add": "Hinzufügen",
     "edit": "Bearbeiten",
     "reset": "Zurücksetzen",
-    "more": "Mehr"
+    "more": "Mehr",
+    "notAuthenticated": "Nicht authentifiziert",
+    "collapse": "Kategorien ausblenden",
+    "send": "Senden",
+    "dismiss": "Schließen",
+    "create": "Erstellen",
+    "remove": "Entfernen",
+    "select": "Auswählen",
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "expand": "Kategorien anzeigen"
   },
   "nav": {
     "extensions": "Erweiterungen",
@@ -37,7 +46,18 @@
     "login": "Einloggen",
     "signup": "Registrieren",
     "logout": "Ausloggen",
-    "openMenu": "Menü öffnen"
+    "openMenu": "Menü öffnen",
+    "categories": "Kategorien",
+    "archives": "Archive",
+    "dailyBrief": "Tägliche Zusammenfassung",
+    "folders": "Meine Ordner",
+    "tasks": "Aufgaben",
+    "followups": "Nachfassaktionen",
+    "inbox": "Posteingang",
+    "sent": "Gesendet",
+    "scheduled": "Geplant",
+    "snoozed": "Verschoben",
+    "contacts": "Kontakte"
   },
   "sidebar": {
     "inbox": "Posteingang",
@@ -66,7 +86,10 @@
     "followups": "Erinnerungen",
     "contacts": "Kontakte",
     "assigned": "Zugewiesen",
-    "myTasks": "Meine Aufgaben"
+    "myTasks": "Meine Aufgaben",
+    "expand": "Menü erweitern",
+    "collapse": "Menü reduzieren",
+    "resize": "Menügröße ändern"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
@@ -529,10 +552,17 @@
       "important": "Wichtig"
     },
     "date": {
-      "all": "Alle Daten"
+      "all": "Alle Daten",
+      "yesterday": "Gestern",
+      "thisMonth": "Diesen Monat",
+      "today": "Heute",
+      "last7": "Letzte 7 Tage",
+      "last30": "Letzte 30 Tage"
     },
     "read": {
-      "all": "Alle"
+      "all": "Alle",
+      "read": "Gelesen",
+      "unread": "Ungelesen"
     },
     "sharedDraft": "Gemeinsamer Entwurf",
     "sharedDraftOn": "Gemeinsamer Entwurf aktiviert",
@@ -564,7 +594,113 @@
       "label": "Anzeigebereiche",
       "overlay": "Überlagern",
       "split": "Nebeneinander"
-    }
+    },
+    "unknownSender": "Unbekannt",
+    "scSearch": "Suchen",
+    "scNext": "Nächste E-Mail",
+    "snoozedFor24h": "Auf morgen verschoben",
+    "collisionViewingOne": "{{name}} sieht sich auch diese E-Mail an",
+    "markedAsUnread": "Als ungelesen markiert",
+    "theme": {
+      "switchLight": "Heller Modus",
+      "switchDark": "Dunkler Modus"
+    },
+    "archived": "Archiviert",
+    "loadingEmail": "E-Mail wird geladen...",
+    "searchOpAttachment": "E-Mails mit Anhang",
+    "moreActions": "Weitere Aktionen",
+    "searchOpSubject": "nach Betreff filtern",
+    "markAsRead": "Als gelesen markieren",
+    "collisionViewingMany": "{{count}} andere Personen sehen sich diese E-Mail an",
+    "scGotoInbox": "Zum Posteingang gehen",
+    "scGotoSnoozed": "Zu den Verschobenen gehen",
+    "scSnooze": "Verschieben (24 h)",
+    "close": "Schließen",
+    "composeRestore": "Entwurf fortsetzen",
+    "scDelete": "Löschen",
+    "density": {
+      "normal": "Normal",
+      "label": "Anzeigedichte",
+      "compact": "Kompakt",
+      "comfortable": "Komfortabel"
+    },
+    "headerCollapse": "Tabs und Filter ausblenden",
+    "composeUntitled": "Entwurf ohne Betreff",
+    "backHint": "Zurück (Esc) — J/K zum Navigieren, R antworten, E archivieren",
+    "loadingTitle": "Laden…",
+    "draftYou": "Sie",
+    "copySender": "Adresse kopieren",
+    "slaOverdue": "SLA überfällig",
+    "assigneeFilterMember": "dieses Mitglied",
+    "draftRelease": "Freigeben",
+    "scArchive": "Archivieren",
+    "markAsReadUnread": "Als gelesen / ungelesen markieren",
+    "scForward": "Weiterleiten",
+    "draftSomeoneSends": "{{name}} wird es senden",
+    "searchOpSender": "nach Absender filtern",
+    "readingPanePos": {
+      "off": "Ausgeblendet",
+      "right": "Rechts",
+      "label": "Lesebereich",
+      "bottom": "Unten"
+    },
+    "scGotoContacts": "Zu Kontakte gehen",
+    "markAsUnread": "Als ungelesen markieren",
+    "composeDiscard": "Verwerfen",
+    "snooze3h": "In 3 Stunden",
+    "importanceLabel": "Ansicht",
+    "copiedSenderEmail": "Adresse kopiert",
+    "scPalette": "Befehls-Palette",
+    "copiedSubject": "Betreff kopiert",
+    "myFoldersLabel": "Meine Ordner",
+    "copySenderEmail": "Absenderadresse kopieren",
+    "viewOptions": "Anzeigeoptionen",
+    "shortcutsTitle": "Tastenkombinationen",
+    "assignedNoTeam": "Diese Ansicht erfordert ein Team (2 Mitglieder oder mehr).",
+    "collisionReplyingMany": "{{count}} Personen antworten bereits auf diese E-Mail",
+    "assignToProject": "Zu einem Teamordner zuweisen",
+    "searchGroupOperators": "Verfeinern",
+    "composeAria": "E-Mail verfassen",
+    "downloadEml": "Als .eml herunterladen",
+    "headerExpand": "Tabs und Filter anzeigen",
+    "scClose": "E-Mail schließen",
+    "composeDiscardConfirm": "Diesen Entwurf verwerfen?",
+    "readingPaneOff": "Lesebereich deaktivieren",
+    "searchGroupSenders": "Absender",
+    "scGotoTasks": "Zu Aufgaben gehen",
+    "printPopupBlocked": "Druckfenster konnte nicht geöffnet werden",
+    "copied": "Kopiert",
+    "snooze": "Verschieben",
+    "exportEml": ".eml herunterladen",
+    "categorized": "Kategorisiert",
+    "markedAsRead": "Als gelesen markiert",
+    "teamBadge": "Team",
+    "priorityLabel": "Priorität",
+    "backToGmailHint": "Diese E-Mail direkt in Gmail öffnen",
+    "snoozeTomorrow": "Morgen früh",
+    "composeMinimize": "Entwurf minimieren",
+    "scGotoSent": "Zu Gesendet gehen",
+    "readingPaneOn": "Lesebereich aktivieren (3 Spalten)",
+    "collisionReplyingOne": "{{name}} antwortet bereits auf diese E-Mail",
+    "createAndAssignTask": "Erstellen und zuweisen…",
+    "copyAddress": "Adresse kopieren",
+    "copySubject": "Betreff kopieren",
+    "loadEmailError": "E-Mail konnte nicht geladen werden.",
+    "draftYouSend": "Sie senden",
+    "scGotoArchives": "Zu Archiv gehen",
+    "scReply": "Antworten",
+    "backToGmail": "Zurück zu Gmail",
+    "moveToFolder": "Verschieben nach",
+    "print": "Drucken",
+    "scPrev": "Vorherige E-Mail",
+    "draftClaimSend": "Ich sende",
+    "draftLiveCoedit": "Live-Koedition",
+    "draftTakeOverHint": "Übernehmen Sie den Versand, wenn dieser Kollege nicht mehr verfügbar ist",
+    "scHelp": "Diese Hilfe anzeigen",
+    "filtersReset": "Filter zurücksetzen",
+    "draftTakeOver": "Übernehmen",
+    "searchGroupEmails": "E-Mails",
+    "filterByCategory": "Filtern"
   },
   "sent": {
     "title": "Gesendete E-Mails",
@@ -649,7 +785,16 @@
     "blockFailed": "Blockieren fehlgeschlagen",
     "blockNoEmail": "Absenderadresse nicht gefunden",
     "blockNoConnection": "Kein E-Mail-Konto verbunden",
-    "emptied": "Ordner geleert"
+    "emptied": "Ordner geleert",
+    "noBlocked": "Keine blockierten Absender",
+    "openRestored": "Öffnen",
+    "fetchingFromProvider": "Inhalte werden von Ihrem Anbieter abgerufen…",
+    "retryFetch": "Erneut versuchen",
+    "unblocked": "Absender entsperrt",
+    "blockedList": "Blockierte Absender",
+    "unblock": "Entsperren",
+    "fetchFailed": "Inhalt dieser E-Mail konnte nicht abgerufen werden.",
+    "blockSenderSuccess": "Absender blockiert"
   },
   "trash": {
     "title": "Papierkorb",
@@ -804,7 +949,18 @@
     "movedToDone": "Aufgabe abgeschlossen",
     "movedToTodo": "Aufgabe zurück zu erledigen verschoben",
     "statusUpdated": "Status aktualisiert",
-    "taskCreated": "Aufgabe erstellt"
+    "taskCreated": "Aufgabe erstellt",
+    "titleCopied": "Titel kopiert",
+    "reassign": "Neu zuweisen",
+    "openInInbox": "In Posteingang öffnen",
+    "copyTitle": "Titel kopieren",
+    "noLinkedEmail": "Diese Aufgabe ist mit keiner E-Mail verknüpft.",
+    "unassign": "Zuweisung aufheben",
+    "linkedEmailActions": "Auf die verknüpfte E-Mail",
+    "reassigned": "Aufgabe neu zugewiesen",
+    "markAsDone": "Als erledigt markieren",
+    "loadingTitle": "Aufgaben werden geladen…",
+    "markAsTodo": "Als zu erledigen markieren"
   },
   "projects": {
     "title": "Team-Ordner",
@@ -861,7 +1017,14 @@
     "exportError": "Fehler beim Exportieren",
     "searchProjects": "Projekte suchen...",
     "noProjectsAlt": "Erstellen Sie Ihr erstes Projekt, um E-Mails und Aufgaben zu gruppieren.",
-    "viewDetail": "Detailansicht"
+    "viewDetail": "Detailansicht",
+    "taskAssigned": "Aufgabe zugewiesen",
+    "taskUnassigned": "Aufgabe nicht zugewiesen",
+    "detachEmail": "Aus dem Projekt entfernen",
+    "assignTo": "Zuweisen an…",
+    "openEmail": "E-Mail öffnen",
+    "emailDetached": "E-Mail vom Projekt entfernt",
+    "unassigned": "Nicht zugewiesen"
   },
   "classification": {
     "title": "Kategorien",
@@ -1145,7 +1308,8 @@
       "cannotRename": "Diese Systemkategorie kann nicht umbenannt werden.",
       "cannotMerge": "Die Kategorie „Nicht klassifiziert\" kann nicht zusammengeführt werden.",
       "goToInbox": "Diese E-Mails sortieren"
-    }
+    },
+    "adminOnlyNotice": "Die Verwaltung der Kategorien (Erstellung, Bearbeitung, Löschung, Branchenpakete) ist dem Team-Admin vorbehalten, um eine konsistente Klassifizierung zu gewährleisten. Sie können die Kategorien und ihre E-Mails einsehen."
   },
   "settings": {
     "title": "Einstellungen",
@@ -1278,7 +1442,9 @@
       "privacy": "Datenschutz und Teamzugriff",
       "privacyDesc": "Ihre privaten E-Mails und das Admin-Zugriffsprotokoll",
       "calendars": "Kalender",
-      "calendarsDesc": "Google Calendar und Outlook Calendar verbinden"
+      "calendarsDesc": "Google Calendar und Outlook Calendar verbinden",
+      "administration": "Verwaltung",
+      "administrationDesc": "Einstellungen nur für Organisationsadministratoren"
     },
     "b2bSection": "B2B-Glaubwürdigkeit",
     "slaCard": "SLAs für geteilte Postfächer",
@@ -1313,7 +1479,34 @@
     "preferredVideoTitle": "Standard-Videokonferenz",
     "preferredVideoDesc": "Wählen Sie den Standardanbieter für Videokonferenzen für neue Termine. Meet erfordert einen verbundenen Google-Kalender; Teams erfordert Outlook. Jitsi funktioniert ohne Konto.",
     "meetingRemindersDesc": "Inboria sendet eine höfliche Erinnerung an den Kontakt 48 Stunden nach einem unbeantworteten Terminvorschlag.",
-    "meetingRemindersTitle": "Automatische Terminerinnerungen"
+    "meetingRemindersTitle": "Automatische Terminerinnerungen",
+    "outlookAddinSection": "Inboria in Outlook",
+    "personalVideoUrlDesc": "Fügen Sie den Link zu Ihrem permanenten Teams- oder Meet-Raum ein (https://...). Inboria wird ihn in allen Terminvorschlägen verwenden.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud und die meisten Webmails. Fügen Sie den Inboria-Assistenten direkt zu Ihrem Postfach hinzu, ohne Ihre E-Mails zu verlassen.",
+    "outlookAddinTitle": "Schaltfläche „Inboria fragen“ in Outlook",
+    "webmailDownload": "Erweiterung herunterladen",
+    "webmailCopyUrl": "chrome://extensions kopieren",
+    "personalVideoUrlInvalid": "Ungültiger Link (https:// erforderlich)",
+    "webmailUrlCopied": "Adresse kopiert ✓",
+    "outlookOpenAddinsPage": "Outlook-Add-Ins öffnen",
+    "outlookDownloadManifest": "Datei herunterladen",
+    "outlookStep2": "Öffnen Sie in Outlook „Add-Ins abrufen“ › „Meine Add-Ins“ › „Benutzerdefiniertes Add-In hinzufügen“ › „Aus Datei“ und wählen Sie die heruntergeladene Datei aus.",
+    "outlookGuideIntro": "Drei einfache Schritte. Kein Suchen in Menüs: alles ist geführt.",
+    "webmailExtInstall": "In meinem Browser installieren",
+    "webmailGuideIntro": "Funktioniert mit Gmail, OVH, Yahoo, iCloud und den meisten Webmails in Chrome oder Edge. Drei einfache Schritte, nur einmal.",
+    "webmailStep2": "Öffnen Sie in Chrome oder Edge die Erweiterungsseite: Geben Sie chrome://extensions in die Adressleiste ein und aktivieren Sie den „Entwicklermodus“ (Schalter oben rechts).",
+    "webmailGuideTitle": "Inboria in Ihrem Webmail installieren",
+    "webmailExtTitle": "„Fragen Sie Inboria“-Button in Ihrem Webmail",
+    "webmailStep3": "Klicken Sie auf „Entpackte Erweiterung laden“ und wählen Sie den entpackten Ordner „inboria-extension“. Öffnen Sie dann Ihr Webmail: Der „Fragen Sie Inboria“-Button erscheint. Einmal anmelden, und es ist bereit.",
+    "outlookStep1": "Laden Sie die Inboria-Anmeldedatei herunter.",
+    "reconnect": "Erneut verbinden",
+    "outlookAddinDesc": "Fügen Sie den Inboria-Assistenten direkt zu Ihrem Outlook hinzu, ohne Ihre E-Mails zu verlassen.",
+    "personalVideoUrlLabel": "Persönlicher Video-Link",
+    "outlookStep3": "Öffnen Sie eine E-Mail: Der „Fragen Sie Inboria“-Button erscheint im Menüband. Melden Sie sich einmal mit Ihrem Inboria-Konto an, und es ist bereit.",
+    "outlookGuideTitle": "Inboria in Outlook installieren",
+    "webmailExtSection": "Inboria in Ihrem Webmail",
+    "outlookAddinInstall": "In Outlook installieren",
+    "webmailStep1": "Laden Sie die Inboria-Erweiterung herunter und entpacken Sie die Datei (Rechtsklick › „Alles extrahieren“). Sie erhalten einen Ordner „inboria-extension“."
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",
@@ -1436,7 +1629,10 @@
     "start": "Loslegen",
     "numberOfCollaborators": "Anzahl der Mitarbeiter",
     "total": "Gesamt",
-    "seatsExample": "Beispiel: 3 Mitarbeiter = 50,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar."
+    "seatsExample": "Beispiel: 3 Mitarbeiter = 50,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar.",
+    "billingMonthly": "Monatlich",
+    "perMonthBilledYearly": "/Monat (jährlich abgerechnet)",
+    "billingYearly": "Jährlich"
   },
   "marketing": {
     "extensions": {
@@ -2178,7 +2374,9 @@
     "inviteError": "Fehler beim Senden der Einladung",
     "changeRole": "Rolle ändern",
     "adminDesc": "Kann Team, Abonnement und alle E-Mails verwalten",
-    "memberDesc": "Zugriff auf eigene E-Mails und geteilte Aufgaben"
+    "memberDesc": "Zugriff auf eigene E-Mails und geteilte Aufgaben",
+    "trialTeamHint": "Team-Test: Laden Sie bis zu 3 Kollegen ein. Jeder erhält einen eigenen Test mit 4.500 Credits, und Sie schalten gemeinsame Postfächer, Zuweisungen und interne Kommentare frei.",
+    "trialTeamLabel": "Team-Test"
   },
   "sharedMailboxes": {
     "title": "Geteilte Postfächer",
@@ -2323,7 +2521,19 @@
     "systemAssigned": "{{actor}} hat diese E-Mail {{target}} zugewiesen",
     "systemSelfAssigned": "{{actor}} hat diese E-Mail übernommen",
     "systemReassigned": "{{actor}} hat von {{previous}} an {{target}} neu zugewiesen",
-    "systemUnassigned": "{{actor}} hat die Zuweisung von {{previous}} aufgehoben"
+    "systemUnassigned": "{{actor}} hat die Zuweisung von {{previous}} aufgehoben",
+    "recipientsFilter": "Mitglied suchen…",
+    "typingMany": "Mehrere Personen tippen…",
+    "recipientsClear": "Leeren",
+    "placeholderSimple": "Geben Sie Ihre Nachricht ein…",
+    "viewing": "Jetzt ansehen",
+    "internalNote": "Notiz",
+    "recipients": "Empfänger",
+    "recipientsPick": "Empfänger der Notiz",
+    "typingOne": "{{name}} schreibt…",
+    "recipientsEmpty": "Keine Mitglieder",
+    "recipientsSelected": "{{count}} ausgewählt",
+    "emailMessage": "E-Mail"
   },
   "attachments": {
     "title": "Anhänge",
@@ -2760,7 +2970,71 @@
     "statusPendingMonth": "Ausstehend",
     "statusPendingShort": "Ausstehend",
     "syncFailed": "Synchronisation fehlgeschlagen",
-    "viewDetails": "Details anzeigen"
+    "viewDetails": "Details anzeigen",
+    "internalAppointment": "Interner Termin",
+    "duplicateError": "Duplikatsfehler",
+    "duplicatedDesc": "Kopie 7 Tage später erstellt.",
+    "noteSelectedCount": "{{count}} Empfänger",
+    "forwardWhere": "Ort",
+    "askInboriaNewSlotPrefill": "Der Gegenvorschlag von {{contact}}{{slot}} passt mir nicht. Bitte schlagen Sie ihm andere Zeitfenster vor, die mit meinem Kalender kompatibel sind.",
+    "duplicated": "Termin dupliziert",
+    "ctxNoProject": "Kein Projekt",
+    "noteError": "Fehler beim Hinzufügen der Notiz",
+    "filterExternal": "Kunde",
+    "autoConfirmed": {
+      "desc": "{{count}} Termine wurden automatisch aus den empfangenen E-Mails bestätigt.",
+      "title": "Erkannte Bestätigungen"
+    },
+    "ctxDup7": "In 7 Tagen",
+    "forwardIntro": "Guten Tag,",
+    "statusPendingHint": "Inboria wird den Terminvorschlag automatisch an den Kunden senden.",
+    "markConfirmed": "Als bestätigt markieren",
+    "newInternalAppointment": "Interner Termin",
+    "ctxEdit": "Bearbeiten",
+    "theContact": "der Kontakt",
+    "statusLabel": "Status",
+    "notesEmpty": "Keine Notizen. Notizen bleiben intern — niemals an den Kunden gesendet.",
+    "expandSuggestions": "Vorschläge anzeigen",
+    "forwardTitle": "Titel",
+    "noteAllTeam": "Das ganze Team",
+    "internalMembers": "Eingeladene Teammitglieder",
+    "noteRecipientsLabel": "An",
+    "ctxMarkAs": "Markieren als",
+    "singleDay": "Zurück zu einem Tag",
+    "ctxDupNextDay": "Am nächsten Tag",
+    "counterDeclined": "Ablehnung an den Kontakt gesendet",
+    "ctxDup14": "In 14 Tagen",
+    "collapseSuggestions": "Vorschläge ausblenden",
+    "formInternalNoteLabel": "Interne Notiz (optional)",
+    "forwardBody": "Ich leite Ihnen die Details dieses Termins weiter:",
+    "multiDay": "Mehrere Tage…",
+    "ctxForward": "Per E-Mail weiterleiten",
+    "forwardVideo": "Video-Link",
+    "internalMembersEmpty": "Keine Mitglieder eingeladen. Klicken Sie auf „+ Hinzufügen“, um Ihre Kollegen auszuwählen.",
+    "forwardWhen": "Datum",
+    "pickDate": "Datum wählen",
+    "ctxDuplicate": "Duplizieren",
+    "coorgNoCandidate": "Kein Mitglied verfügbar.",
+    "ctxDupCustomMenu": "Benutzerdefiniert…",
+    "ctxDupCustom": "Duplizieren in wie vielen Tagen?",
+    "ctxOpen": "Öffnen",
+    "notePlaceholder": "Interne Notiz (nur für das Team sichtbar, niemals an den Kunden gesendet)…",
+    "confirmError": "Fehler bei der Bestätigung",
+    "ctxDelete": "Löschen",
+    "duration": "Dauer",
+    "internalNotes": "Interne Notizen",
+    "ctxDup30": "In 1 Monat",
+    "formInternalNotePlaceholder": "Z.B.: VIP-Kunde, auf Ton achten. Niemals an den Kunden gesendet.",
+    "askInboriaNewSlot": "Inboria um neuen Termin bitten",
+    "filterAll": "Alle",
+    "confirmWithInboria": "Mit Inboria bestätigen",
+    "ctxProject": "Projekt",
+    "coorgAdd": "+ Hinzufügen",
+    "ctxDup90": "In 3 Monaten",
+    "confirmDelete": "Diesen Termin löschen?",
+    "forwardOutro": "Mit freundlichen Grüßen,",
+    "forwardSubject": "FW: Termin",
+    "filterInternal": "Intern"
   },
   "supportChat": {
     "title": "Inboria Assistant",
@@ -2769,7 +3043,9 @@
     "welcomeMessage": "Fragen Sie mich alles über Inboria: Funktionen, Einstellungen, Abonnement und mehr.",
     "placeholder": "Geben Sie Ihre Frage ein...",
     "poweredBy": "Bereitgestellt von Inboria",
-    "errorMessage": "Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie support@inboria.com."
+    "errorMessage": "Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie support@inboria.com.",
+    "send": "Senden",
+    "clear": "Konversation löschen"
   },
   "inboriaChat": {
     "openLabel": "Inboria-Chat öffnen",
@@ -4555,7 +4831,9 @@
       "en_attente": "Ausstehend",
       "relance": "Läuft",
       "termine": "Erledigt"
-    }
+    },
+    "bulkDismissedToast": "{{count}} ignoriert",
+    "bulkMarkedRepliedToast": "{{count}} als beantwortet markiert"
   },
   "contacts": {
     "title": "Contact 360°",
@@ -4660,7 +4938,10 @@
     "notOpenedYet": "Noch nicht geöffnet",
     "snoozedSectionEmpty": "Keine verschobenen E-Mails",
     "snoozedSectionEmptyHint": "Die von Ihnen verschobenen E-Mails erscheinen hier bis zu ihrem Aufwecken.",
-    "snoozedSectionTitle": "Verschobene E-Mails"
+    "snoozedSectionTitle": "Verschobene E-Mails",
+    "scheduledCancelError": "Stornierung fehlgeschlagen",
+    "scheduledCancelPartial": "{{failed}} Stornierung(en) von {{total}} fehlgeschlagen",
+    "scheduledNoRecipient": "Ohne Empfänger"
   },
   "templates": {
     "title": "Vorlagen",
@@ -5041,7 +5322,9 @@
     "privateOffTitle": "E-Mail wieder sichtbar",
     "privateOnDesc": "Diese E-Mail ist jetzt für Ihre Admins ausgeblendet (Teamaktenansicht + Inboria).",
     "privateOffDesc": "Diese E-Mail ist für Ihre Admins wieder sichtbar (Teamaktenansicht + Inboria).",
-    "privateError": "Datenschutz konnte nicht aktualisiert werden."
+    "privateError": "Datenschutz konnte nicht aktualisiert werden.",
+    "details": "Details",
+    "actionsMenu": "Aktionen"
   },
   "privacy": {
     "title": "Datenschutz und Teamzugriff",
@@ -5117,7 +5400,10 @@
       "followup": "Nachfassen",
       "appointment": "Kalender",
       "team": "Teamaktivität"
-    }
+    },
+    "addDescription": "Erstellen Sie eine Karte, um jemanden zu verfolgen, der noch nicht in Ihrem Postfach erscheint.",
+    "openContact": "Kontaktkarte anzeigen",
+    "deleteDescription": "Der Verlauf der mit dieser Adresse verknüpften E-Mails wird nicht gelöscht. Nur die manuelle Karte verschwindet."
   },
   "folders": {
     "title": "Meine Ordner",
@@ -5198,5 +5484,46 @@
     },
     "sourceAgenda": "Agenda",
     "system": "System"
+  },
+  "signature": {
+    "imageTooLarge": "Bild zu groß (max. 200 KB)",
+    "linkUrlPrompt": "Link-URL (https://...)",
+    "size": "Größe",
+    "italic": "Kursiv",
+    "clear": "Formatierung löschen",
+    "imageInvalid": "Ungültige Bilddatei",
+    "highlight": "Hervorheben",
+    "bold": "Fett",
+    "underline": "Unterstrichen",
+    "image": "Bild / Logo",
+    "color": "Textfarbe",
+    "imageHint": "Tipp: Fügen Sie ein PNG/JPG-Logo ein (max. 200 KB). Das Bild wird direkt in die Signatur eingebettet.",
+    "font": "Schriftart",
+    "link": "Link",
+    "orderedList": "Nummerierte Liste",
+    "moreColors": "Mehr Farben…",
+    "bulletList": "Aufzählungsliste"
+  },
+  "palette": {
+    "compose": "Neue E-Mail",
+    "shortcuts": "Tastenkombinationen",
+    "navigate": "Navigieren",
+    "empty": "Keine Ergebnisse.",
+    "actions": "Aktionen",
+    "placeholder": "Befehl eingeben oder suchen…"
+  },
+  "outlookBanner": {
+    "back": "Zurück zu Outlook",
+    "openedFrom": "Von Outlook geöffnet. Klicken Sie, um zurückzukehren, oder wechseln Sie einfach zum Outlook-Tab."
+  },
+  "gmailBanner": {
+    "openedFrom": "Von Gmail geöffnet. Klicken Sie, um zurückzukehren, oder wechseln Sie einfach zum Gmail-Tab.",
+    "back": "Zurück zu Gmail"
+  },
+  "webmailBanner": {
+    "back": "Zurück zu meinem Webmail",
+    "openedFromNamed": "Geöffnet von {{name}}. Klicken Sie, um zurückzukehren, oder wechseln Sie einfach zum {{name}}-Tab.",
+    "openedFrom": "Geöffnet von Ihrem Webmail. Klicken Sie, um zurückzukehren, oder wechseln Sie einfach zum Webmail-Tab.",
+    "backNamed": "Zurück zu {{name}}"
   }
 }

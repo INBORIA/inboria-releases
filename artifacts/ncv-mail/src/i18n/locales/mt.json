@@ -23,7 +23,16 @@
     "add": "Żid",
     "edit": "Modifika",
     "reset": "Irrestawra",
-    "more": "Aktar"
+    "more": "Aktar",
+    "notAuthenticated": "Mhux awtentikat",
+    "collapse": "Aħbi l-kategoriji",
+    "send": "Ibgħat",
+    "dismiss": "Agħlaq",
+    "create": "Oħloq",
+    "remove": "Neħħi",
+    "select": "Agħżel",
+    "copyFailed": "Kopja impossibbli",
+    "expand": "Uri l-kategoriji"
   },
   "nav": {
     "extensions": "Estensjonijiet",
@@ -37,7 +46,18 @@
     "login": "Idħol",
     "signup": "Irriserva",
     "logout": "Oħroġ",
-    "openMenu": "Iftaħ il-menu"
+    "openMenu": "Iftaħ il-menu",
+    "categories": "Kategoriji",
+    "archives": "Arkivji",
+    "dailyBrief": "Sommarju ta' kuljum",
+    "folders": "Il-fowlders tiegħi",
+    "tasks": "Kompiti",
+    "followups": "Segwimenti",
+    "inbox": "Riċeviment",
+    "contacts": "Kuntatti",
+    "scheduled": "Skedati",
+    "snoozed": "Imdewma",
+    "sent": "Mibgħuta"
   },
   "sidebar": {
     "inbox": "Riċevuta",
@@ -66,7 +86,10 @@
     "followups": "Ħlasijiet",
     "contacts": "Kontatti",
     "assigned": "Assegnati",
-    "myTasks": "Kompiti Tiegħi"
+    "myTasks": "Kompiti Tiegħi",
+    "expand": "Espandi l-menu",
+    "collapse": "Iriduci l-menu",
+    "resize": "Ibdel id-daqs tal-menu"
   },
   "dashboard": {
     "expiredSubscription": "L-abbonament tagħkom skada",
@@ -529,10 +552,17 @@
       "important": "Importanti"
     },
     "date": {
-      "all": "Id-dati kollha"
+      "all": "Id-dati kollha",
+      "yesterday": "Ilbieraħ",
+      "thisMonth": "Dan ix-xahar",
+      "today": "Illum",
+      "last30": "L-aħħar 30 jum",
+      "last7": "L-aħħar 7 ijiem"
     },
     "read": {
-      "all": "Kollha"
+      "all": "Kollha",
+      "read": "Moqrija",
+      "unread": "Mhux moqrija"
     },
     "sharedDraft": "Draft ma' ħbieb",
     "sharedDraftOn": "Draft ma' ħbieb attivat",
@@ -564,7 +594,113 @@
       "label": "Uri tal-pannelli",
       "overlay": "Fuq xulxin",
       "split": "Maġenb xulxin"
-    }
+    },
+    "unknownSender": "Mhux magħruf",
+    "scSearch": "Fittex",
+    "scNext": "Email li jmiss",
+    "snoozedFor24h": "Imħassar għal għada",
+    "collisionViewingOne": "{{name}} qed jara wkoll din l-email",
+    "markedAsUnread": "Immarkat bħala mhux moqri",
+    "theme": {
+      "switchLight": "Modalità ċara",
+      "switchDark": "Modalità skura"
+    },
+    "archived": "Arkivjat",
+    "loadingEmail": "Tagħbija tal-email...",
+    "searchOpAttachment": "emails b'attachments",
+    "moreActions": "Aktar azzjonijiet",
+    "searchOpSubject": "iffiltra skont is-suġġett",
+    "markAsRead": "Immarka bħala moqri",
+    "collisionViewingMany": "{{count}} persuni oħra qed jaraw din l-email",
+    "scGotoInbox": "Mur fil-Inbox",
+    "scGotoSnoozed": "Mur fil-Postponuti",
+    "scSnooze": "Postponi (24 h)",
+    "close": "Agħlaq",
+    "composeRestore": "Ikompli l-abbozz",
+    "scDelete": "Ħassar",
+    "density": {
+      "normal": "Normali",
+      "label": "Densità tal-wiri",
+      "compact": "Kompatt",
+      "comfortable": "Komdu"
+    },
+    "headerCollapse": "Aħbi tabs u filtri",
+    "composeUntitled": "Abbozz mingħajr suġġett",
+    "backHint": "Lura (Escape) — J/K biex tinnaviga, R biex twieġeb, E biex tikkarkiva",
+    "loadingTitle": "Tagħbija…",
+    "draftYou": "Inti",
+    "copySender": "Kopja l-indirizz",
+    "slaOverdue": "SLA skadut",
+    "assigneeFilterMember": "dan il-membru",
+    "draftRelease": "Ħeles",
+    "scArchive": "Arkivja",
+    "markAsReadUnread": "Immarka bħala moqri / mhux moqri",
+    "scForward": "Ibgħat 'il quddiem",
+    "draftSomeoneSends": "{{name}} se jibgħatha",
+    "searchOpSender": "iffiltra skont il-mittent",
+    "readingPanePos": {
+      "off": "Moħbi",
+      "right": "Fuq il-lemin",
+      "label": "Pannell tal-qari",
+      "bottom": "Fuq isfel"
+    },
+    "scGotoContacts": "Mur għall-Kuntatti",
+    "markAsUnread": "Immarka bħala mhux moqri",
+    "composeDiscard": "Abbanduna",
+    "snooze3h": "Fi 3h",
+    "importanceLabel": "Wiri",
+    "copiedSenderEmail": "Indirizz ikkupjat",
+    "scPalette": "Paletta tal-kmandi",
+    "copiedSubject": "Suġġett ikkupjat",
+    "myFoldersLabel": "Il-fowlders tiegħi",
+    "copySenderEmail": "Ikkopja l-indirizz tal-mittent",
+    "viewOptions": "Għażliet tal-wiri",
+    "shortcutsTitle": "Shortcuts tal-keyboard",
+    "assignedNoTeam": "Din il-veduta teħtieġ tim (2 membri jew aktar).",
+    "collisionReplyingMany": "{{count}} persuni diġà qed iwieġbu lil din l-email",
+    "assignToProject": "Assenja lil fowlder tat-tim",
+    "searchGroupOperators": "Iffina",
+    "composeAria": "Ikteb email",
+    "downloadEml": "Niżżel bħala .eml",
+    "headerExpand": "Uri tabs u filtri",
+    "scClose": "Agħlaq l-email",
+    "composeDiscardConfirm": "Abbanduna dan l-abbozz?",
+    "readingPaneOff": "Itfi l-volet tal-qari",
+    "searchGroupSenders": "Mittenti",
+    "scGotoTasks": "Mur għall-Kompiti",
+    "printPopupBlocked": "Ma jistax jinfetaħ it-tieqa tal-istampar",
+    "copied": "Ikkupjat",
+    "snooze": "Irrimanda",
+    "teamBadge": "Tim",
+    "backToGmail": "Lura għal Gmail",
+    "print": "Ippprintja",
+    "snoozeTomorrow": "Għada filgħodu",
+    "scHelp": "Uri din l-għajnuna",
+    "moveToFolder": "Mexxi lejn",
+    "draftTakeOver": "Irkupra",
+    "composeMinimize": "Minimizza l-abbozz",
+    "searchGroupEmails": "Emails",
+    "backToGmailHint": "Iftaħ din l-email eżatta f'Gmail",
+    "draftLiveCoedit": "Ko-editjar dirett",
+    "categorized": "Kategorizzat",
+    "scGotoSent": "Mur lejn Ibgħat",
+    "collisionReplyingOne": "{{name}} diġà qed iwieġeb din l-email",
+    "exportEml": "Niżżel .eml",
+    "filterByCategory": "Iffiltra",
+    "scReply": "Iwieġeb",
+    "draftTakeOverHint": "Irkupra l-ibgħat jekk dan il-kollega ma jkunx disponibbli aktar",
+    "markedAsRead": "Immarkat bħala moqri",
+    "readingPaneOn": "Attiva l-pannell tal-qari (3 kolonni)",
+    "filtersReset": "Irrisettja l-filtri",
+    "createAndAssignTask": "Oħloq u assenja…",
+    "priorityLabel": "Prijorità",
+    "scPrev": "Email preċedenti",
+    "copyAddress": "Ikkopja l-indirizz",
+    "draftClaimSend": "Jien se nibgħat",
+    "copySubject": "Ikopja s-suġġett",
+    "scGotoArchives": "Mur fl-Arkivji",
+    "draftYouSend": "Int se tibgħat",
+    "loadEmailError": "Ma jistax jitgħabba l-email."
   },
   "sent": {
     "title": "Emails inviati",
@@ -649,7 +785,16 @@
     "blockFailed": "Impossibbli li blokkja",
     "blockNoEmail": "Indirizz tal-mittent ma nstabx",
     "blockNoConnection": "M'għandekx kont email konness",
-    "emptied": "Folder vojta"
+    "emptied": "Folder vojta",
+    "noBlocked": "L-ebda mittent imblukkat",
+    "openRestored": "Iftaħ",
+    "fetchingFromProvider": "Qiegħed jirkupra l-kontenut mill-fornitur tiegħek…",
+    "retryFetch": "Erġa' pprova",
+    "unblocked": "Mittent mhux imblukkat",
+    "blockedList": "Mittenti imblukkati",
+    "fetchFailed": "Impossibbli li tirkupra l-kontenut ta' din l-email.",
+    "blockSenderSuccess": "Mittent imblukkat",
+    "unblock": "Neħħi l-imblukkar"
   },
   "trash": {
     "title": "Korb",
@@ -794,7 +939,18 @@
     "movedToDone": "Attività tlestita",
     "movedToTodo": "Attività mibdula għall-ġdid",
     "statusUpdated": "Stat aġġornat",
-    "taskCreated": "Attività maħluqa"
+    "taskCreated": "Attività maħluqa",
+    "titleCopied": "Titlu kkupjat",
+    "reassign": "Assenja mill-ġdid",
+    "openInInbox": "Iftaħ fil-Inbox",
+    "copyTitle": "Kopja t-titlu",
+    "noLinkedEmail": "Din il-kompitu mhix marbuta ma' l-ebda email.",
+    "unassign": "Neħħi l-assenjazzjoni",
+    "linkedEmailActions": "Fuq l-email marbuta",
+    "reassigned": "Kompitu reassinjat",
+    "markAsTodo": "Immarka bħala li jsir",
+    "loadingTitle": "Tagħbija tal-kompiti…",
+    "markAsDone": "Immarka bħala mitmum"
   },
   "projects": {
     "title": "Fowlders tat-tim",
@@ -851,7 +1007,14 @@
     "exportError": "Żball waqt l-esportazzjoni",
     "searchProjects": "Fittex proġett...",
     "noProjectsAlt": "Oħloq il-proġett tiegħek l-ewwel biex tiġbor l-emails u l-attivitajiet.",
-    "viewDetail": "Ara d-dettalji"
+    "viewDetail": "Ara d-dettalji",
+    "taskAssigned": "Kompitu assenjat",
+    "taskUnassigned": "Kompitu mhux assenjat",
+    "detachEmail": "Neħħi mill-proġett",
+    "assignTo": "Assenja lil…",
+    "openEmail": "Iftaħ l-email",
+    "emailDetached": "Email imneħħi mill-proġett",
+    "unassigned": "Mhux assenjat"
   },
   "classification": {
     "title": "Kategoriji",
@@ -1135,7 +1298,8 @@
       "cannotRename": "Din il-kategorija sistema ma tistax tiġi rinomnata.",
       "cannotMerge": "Il-kategorija « Mhux klassifikat » ma tistax tiġi iffuzjonata.",
       "goToInbox": "Ordna dawn l-emails"
-    }
+    },
+    "adminOnlyNotice": "Il-ġestjoni tal-kategoriji (ħolqien, modifika, tħassir, pakketti ta' negozju) hija riservata għall-Amministratur tat-Tim biex tiżgura klassifikazzjoni koerenti. Tista' tikkonsulta l-kategoriji u l-emails tagħhom."
   },
   "settings": {
     "title": "Impostazzjonijiet",
@@ -1268,7 +1432,9 @@
       "privacy": "Privat u aċċess tat-tim",
       "privacyDesc": "L-email privati tiegħek u l-ġurnal tal-konsultazzjonijiet tal-amministratur",
       "calendars": "Kalendari",
-      "calendarsDesc": "Qabbad Google Calendar u Outlook Calendar"
+      "calendarsDesc": "Qabbad Google Calendar u Outlook Calendar",
+      "administrationDesc": "Settings riservati għall-amministraturi tal-organizzazzjoni",
+      "administration": "Amministrazzjoni"
     },
     "b2bSection": "Kredibilità B2B",
     "slaCard": "SLA kaxxi maqsuma",
@@ -1303,7 +1469,34 @@
     "preferredVideoTitle": "Laqgħa bil-video awtomatika",
     "preferredVideoDesc": "Jekk jogħġobkom agħżlu l-fornitur tal-laqgħat bil-video awtomatiku għall-appuntamenti l-ġodda. Meet jeħtieġ kalendarju Google konness; Teams jeħtieġ Outlook. Jitsi jaħdem mingħajr kont.",
     "meetingRemindersDesc": "Inboria tibgħat tfakkira edukata lill-kuntatt 48 siegħa wara proposta ta' appuntamenti li tibqa' bla risposta.",
-    "meetingRemindersTitle": "Tfakkiriet awtomatiċi ta' RDV"
+    "meetingRemindersTitle": "Tfakkiriet awtomatiċi ta' RDV",
+    "outlookAddinSection": "Inboria f'Outlook",
+    "personalVideoUrlDesc": "Ikkopja l-link tal-kamra permanenti tiegħek ta' Teams jew Meet (https://...). Inboria jużaha f'kull proposta ta' appuntament.",
+    "webmailExtDesc": "Gmail, OVH, Yahoo, iCloud u ħafna webmails oħra. Żid l-assistent Inboria direttament fil-posta tiegħek, mingħajr ma titlaq mill-emails tiegħek.",
+    "outlookAddinTitle": "Buttuna « Staqsi lil Inboria » f'Outlook",
+    "webmailDownload": "Niżżel l-estensjoni",
+    "webmailCopyUrl": "Kopja chrome://extensions",
+    "personalVideoUrlInvalid": "Link invalidu (https:// meħtieġ)",
+    "webmailUrlCopied": "Indirizz ikkupjat ✓",
+    "outlookOpenAddinsPage": "Iftaħ il-komplementi Outlook",
+    "outlookDownloadManifest": "Niżżel il-fajl",
+    "outlookStep2": "F'Outlook, iftaħ « Ikseb komplementi » › « Il-komplementi tiegħi » › « Żid komplement personalizzat » › « Minn fajl », imbagħad agħżel il-fajl imniżżel.",
+    "outlookGuideIntro": "Tliet passi sempliċi. M'hemmx bżonn tfittex fil-menus: kollox huwa gwidat.",
+    "webmailExtInstall": "Installa fil-browser tiegħi",
+    "webmailGuideIntro": "Jaħdem ma' Gmail, OVH, Yahoo, iCloud u l-biċċa l-kbira tal-webmails, f'Chrome jew Edge. Tliet passi sempliċi, darba biss.",
+    "webmailStep2": "F'Chrome jew Edge, iftaħ il-paġna tal-estensjonijiet: ikteb chrome://extensions fil-barra tal-indirizz, imbagħad attiva l-« Modalità tal-iżviluppatur » (interruttur fuq il-lemin ta' fuq).",
+    "webmailGuideTitle": "Installa Inboria fil-webmail tiegħek",
+    "outlookStep3": "Iftaħ email: il-buttuna « Staqsi lil Inboria » tidher fil-lasta. Idħol darba bil-kont Inboria tiegħek, lest.",
+    "personalVideoUrlLabel": "Link tal-vidjo personali",
+    "webmailExtSection": "Inboria fil-webmail tiegħek",
+    "webmailExtTitle": "Buttuna « Staqsi lil Inboria » fil-webmail tiegħek",
+    "webmailStep3": "Ikklikkja fuq « Ittella' l-estensjoni mhux ippakkjata » u agħżel il-folder « inboria-extension » mhux ikkompressat. Imbagħad iftaħ il-webmail tiegħek: il-buttuna « Staqsi lil Inboria » tidher. Idħol darba, lest.",
+    "outlookAddinDesc": "Żid l-assistent Inboria direttament f'Outlook tiegħek, mingħajr ma titlaq mill-emails tiegħek.",
+    "outlookAddinInstall": "Installa f'Outlook",
+    "outlookStep1": "Niżżel il-fajl ta' konnessjoni Inboria.",
+    "reconnect": "Erġa' qabbad",
+    "webmailStep1": "Niżżel l-estensjoni Inboria, imbagħad iddekompressa l-fajl (lemin ikklikkja › « Estratta kollox »). Ikollok folder « inboria-extension ».",
+    "outlookGuideTitle": "Installa Inboria f'Outlook"
   },
   "subscription": {
     "title": "Immaniġġa l-abbonament tagħkom",
@@ -1426,7 +1619,10 @@
     "start": "Ibda",
     "numberOfCollaborators": "Numru ta' kollegi",
     "total": "Totali",
-    "seatsExample": "Eżempju: 3 kollegi = 50,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju Tagħkom."
+    "seatsExample": "Eżempju: 3 kollegi = 50,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju Tagħkom.",
+    "billingMonthly": "Kull xahar",
+    "perMonthBilledYearly": "/xahar (fatturat annwalment)",
+    "billingYearly": "Annwali"
   },
   "marketing": {
     "extensions": {
@@ -2168,7 +2364,9 @@
     "inviteError": "Żball waqt l-infiq",
     "changeRole": "Ibdel ir-rol",
     "adminDesc": "Jista' jġestixxi t-tim, l-abbonament u l-email kollha",
-    "memberDesc": "Aċċess għall-email tiegħu u għall-attivitajiet ma' oħrajn"
+    "memberDesc": "Aċċess għall-email tiegħu u għall-attivitajiet ma' oħrajn",
+    "trialTeamHint": "Prova tat-tim: stieden sa 3 kollegi. Kull wieħed jirċievi prova ta' 4,500 kreditu, u int tiftaħ il-kaxxi kondiviżi, l-assenjazzjoni u n-noti interni.",
+    "trialTeamLabel": "Prova tat-tim"
   },
   "sharedMailboxes": {
     "title": "Bozzi ma' oħrajn",
@@ -2313,7 +2511,19 @@
     "systemAssigned": "{{actor}} assenja dan l-email lil {{target}}",
     "systemSelfAssigned": "{{actor}} ħa ħsieb dan l-email",
     "systemReassigned": "{{actor}} reassenja minn {{previous}} għal {{target}}",
-    "systemUnassigned": "{{actor}} neħħa l-assenjazzjoni ta' {{previous}}"
+    "systemUnassigned": "{{actor}} neħħa l-assenjazzjoni ta' {{previous}}",
+    "recipientsFilter": "Fittex membru…",
+    "typingMany": "Diversi nies qed jiktbu…",
+    "recipientsClear": "Iċċara",
+    "placeholderSimple": "Daħħal il-messaġġ tiegħek…",
+    "viewing": "Viewing now",
+    "internalNote": "Nota",
+    "recipients": "Destinatarji",
+    "recipientsPick": "Destinatarji tan-nota",
+    "typingOne": "{{name}} qed jikteb…",
+    "recipientsEmpty": "L-ebda membru",
+    "emailMessage": "Email",
+    "recipientsSelected": "{{count}} magħżul(i)"
   },
   "attachments": {
     "title": "Ħlasijiet",
@@ -2750,7 +2960,71 @@
     "statusPendingMonth": "Pendenti",
     "statusPendingShort": "Pendenti",
     "syncFailed": "Sinkronizzazzjoni falluta",
-    "viewDetails": "Ara d-dettalji"
+    "viewDetails": "Ara d-dettalji",
+    "internalAppointment": "Appuntament intern",
+    "duplicateError": "Żball ta' duplikazzjoni",
+    "duplicatedDesc": "Kopja maħluqa 7 ijiem wara.",
+    "noteSelectedCount": "{{count}} destinatarju/i",
+    "forwardWhere": "Post",
+    "askInboriaNewSlotPrefill": "Il-kontra-proposta ta' {{contact}}{{slot}} ma taqbilx miegħi. Proponi ħinijiet oħra kompatibbli mal-aġenda tiegħi.",
+    "duplicated": "Appuntament duplikat",
+    "ctxNoProject": "L-ebda proġett",
+    "noteError": "Żball fl-addizzjoni tan-nota",
+    "filterExternal": "Klijent",
+    "autoConfirmed": {
+      "desc": "{{count}} appuntament/i ġew ikkonfermati awtomatikament mill-emails riċevuti.",
+      "title": "Konfermi skoperti"
+    },
+    "ctxDup7": "Fi 7 ijiem",
+    "forwardIntro": "Bonġu,",
+    "statusPendingHint": "Inboria se tibgħat awtomatikament l-email tal-proposta lill-klijent.",
+    "markConfirmed": "Immarka kkonfermat",
+    "newInternalAppointment": "Appuntament intern",
+    "ctxEdit": "Editja",
+    "theContact": "il-kuntatt",
+    "statusLabel": "Status",
+    "notesEmpty": "L-ebda nota. In-noti jibqgħu interni — qatt ma jintbagħtu lill-klijent.",
+    "expandSuggestions": "Uri s-suġġerimenti",
+    "forwardTitle": "Titlu",
+    "noteAllTeam": "It-tim kollu",
+    "internalMembers": "Membri tat-tim mistiedna",
+    "noteRecipientsLabel": "Għal",
+    "ctxMarkAs": "Immarka bħala",
+    "singleDay": "Erġa' lura għal tul ta' żmien sempliċi",
+    "ctxDupNextDay": "L-għada",
+    "counterDeclined": "Rifjut mibgħut lill-kuntatt",
+    "ctxDup14": "Fi 14-il jum",
+    "collapseSuggestions": "Aħbi s-suġġerimenti",
+    "formInternalNoteLabel": "Nota interna (mhux obbligatorja)",
+    "forwardBody": "Qed nittrasferilek id-dettalji ta' dan l-appuntament:",
+    "multiDay": "Diversi jiem…",
+    "ctxForward": "Ibgħat 'il quddiem bl-email",
+    "forwardVideo": "Link visio",
+    "internalMembersEmpty": "L-ebda membru mistieden. Ikklikkja « + Żid » biex tagħżel il-kollegi tiegħek.",
+    "forwardWhen": "Data",
+    "pickDate": "Agħżel data",
+    "ctxDuplicate": "Duplika",
+    "coorgNoCandidate": "L-ebda membru disponibbli.",
+    "ctxDupCustomMenu": "Personalizzat…",
+    "ctxDupCustom": "Duplika fi kemm-il jum?",
+    "ctxOpen": "Iftaħ",
+    "notePlaceholder": "Nota interna (viżibbli biss mit-tim, qatt mibgħuta lill-klijent)…",
+    "confirmError": "Żball waqt il-konferma",
+    "ctxDelete": "Ħassar",
+    "duration": "Tul",
+    "internalNotes": "Noti interni",
+    "confirmDelete": "Ħassar din il-laqgħa?",
+    "ctxDup30": "Fi żmien xahar",
+    "forwardSubject": "TR : Laqgħa",
+    "ctxProject": "Proġett",
+    "filterInternal": "Intern",
+    "ctxDup90": "Fi żmien 3 xhur",
+    "formInternalNotePlaceholder": "Eż: Klijent VIP, attenzjoni għat-ton. Qatt mibgħuta lill-klijent.",
+    "filterAll": "Kollha",
+    "confirmWithInboria": "Ikkonferma ma' Inboria",
+    "askInboriaNewSlot": "Itlob lil Inboria għal appuntament ġdid",
+    "forwardOutro": "Tislijiet,",
+    "coorgAdd": "+ Żid"
   },
   "supportChat": {
     "title": "Assistenti Inboria",
@@ -2759,7 +3033,9 @@
     "welcomeMessage": "Staqsi lili kwalunkwe mistoqsija dwar Inboria: funzjonijiet, issettjar, abbonament, u aktar.",
     "placeholder": "Ikteb il-mistoqsija tiegħek...",
     "poweredBy": "Imħeġġeġ minn Inboria",
-    "errorMessage": "Skużani, seħħet żball. Jekk jogħġobkom, ipprova mill-ġdid jew ikkuntattja support@inboria.com."
+    "errorMessage": "Skużani, seħħet żball. Jekk jogħġobkom, ipprova mill-ġdid jew ikkuntattja support@inboria.com.",
+    "send": "Ibgħat",
+    "clear": "Iċċara l-konversazzjoni"
   },
   "inboriaChat": {
     "openLabel": "Iftaħ il-chat Inboria",
@@ -2911,7 +3187,9 @@
       "en_attente": "Fil għad irid jiġi kkonfermat",
       "relance": "Fil proċess",
       "termine": "It-tlestija"
-    }
+    },
+    "bulkDismissedToast": "{{count}} injorati",
+    "bulkMarkedRepliedToast": "{{count}} immarkati bħala mwieġba"
   },
   "contacts": {
     "title": "Kuntatt 360°",
@@ -3016,7 +3294,10 @@
     "openedBadge": "Miftuħ",
     "openedBadgeCount": "Miftuħ {{count}} darbiet",
     "openedAtLabel": "L-ewwel miftuħ: {{date}}",
-    "notOpenedYet": "Għadu m'għandux miftuħ"
+    "notOpenedYet": "Għadu m'għandux miftuħ",
+    "scheduledCancelError": "Żball fl-annullament",
+    "scheduledCancelPartial": "{{failed}} kanċellazzjoni/i minn {{total}} fallew",
+    "scheduledNoRecipient": "Bla destinatarju"
   },
   "templates": {
     "title": "Templates",
@@ -3380,7 +3661,9 @@
     "privateOffTitle": "Email magħmul viżibbli",
     "privateOnDesc": "Dan l-email issa huwa invisibbli għall-amministraturi tagħkom (veduta tal-folder tat-tim + Inboria).",
     "privateOffDesc": "Dan l-email jerġa' jsir viżibbli għall-amministraturi tagħkom (veduta tal-folder tat-tim + Inboria).",
-    "privateError": "Impossibbli li taġġorna l-privatezza."
+    "privateError": "Impossibbli li taġġorna l-privatezza.",
+    "details": "Dettalji",
+    "actionsMenu": "Azzjonijiet"
   },
   "privacy": {
     "title": "Privatezza u aċċess tat-tim",
@@ -3456,7 +3739,10 @@
       "followup": "Rimarka",
       "appointment": "Aġenda",
       "team": "Attività tat-tim"
-    }
+    },
+    "addDescription": "Oħloq karta biex issegwi lil xi ħadd li għadu ma jidhirx fil-kaxxa tiegħek.",
+    "openContact": "Ara l-karta tal-kuntatt",
+    "deleteDescription": "L-istorja tal-emails marbuta ma' dan l-indirizz mhix imħassra. Tgħib biss il-karta manwali."
   },
   "folders": {
     "title": "Il-folders tiegħi",
@@ -3537,5 +3823,46 @@
     },
     "sourceAgenda": "Aġenda",
     "system": "Sistema"
+  },
+  "signature": {
+    "imageTooLarge": "Immaġni kbira wisq (massimu 200 KB)",
+    "linkUrlPrompt": "URL tal-link (https://...)",
+    "size": "Daqs",
+    "italic": "Italiku",
+    "clear": "Ħassar il-formatting",
+    "imageInvalid": "Fajl tal-immaġni invalidu",
+    "highlight": "Evidenzja",
+    "bold": "Gras",
+    "underline": "Sottolinjat",
+    "image": "Immaġni / logo",
+    "color": "Kulur tat-test",
+    "imageHint": "Parir: daħħal logo PNG/JPG (massimu 200 Ko). L-immaġni hija integrata direttament fis-sinjal.",
+    "font": "Font",
+    "bulletList": "Lista bil-punti",
+    "link": "Ħolqa",
+    "orderedList": "Lista numru",
+    "moreColors": "Aktar kuluri…"
+  },
+  "palette": {
+    "compose": "Email ġdida",
+    "shortcuts": "Shortcuts tal-keyboard",
+    "navigate": "Innaviga",
+    "empty": "L-ebda riżultat.",
+    "actions": "Azzjonijiet",
+    "placeholder": "Ikteb kmand jew fittex…"
+  },
+  "outlookBanner": {
+    "back": "Erġa' lura għal Outlook",
+    "openedFrom": "Miftuħ minn Outlook. Ikklikkja biex terġa' lura, jew sempliċement ibdel fuq it-tab ta' Outlook."
+  },
+  "gmailBanner": {
+    "openedFrom": "Miftuħ minn Gmail. Ikklikkja biex terġa' lura, jew sempliċement ibdel lura għall-tab ta' Gmail.",
+    "back": "Erġa' lura għal Gmail"
+  },
+  "webmailBanner": {
+    "back": "Erġa' lura għall-webmail tiegħi",
+    "openedFromNamed": "Miftuħ minn {{name}}. Ikklikkja biex terġa' lura, jew sempliċement ibdel fuq it-tab {{name}}.",
+    "openedFrom": "Miftuħ mill-webmail tiegħek. Ikklikkja biex terġa' lura, jew sempliċement ibdel fuq it-tab tal-webmail tiegħek.",
+    "backNamed": "Lura għal {{name}}"
   }
 }
