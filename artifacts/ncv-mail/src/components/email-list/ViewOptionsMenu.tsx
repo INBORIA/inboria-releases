@@ -9,12 +9,18 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useMailDensity, type MailDensity } from "@/lib/use-mail-density";
-import { useReadingPanePosition, type ReadingPanePosition } from "@/lib/use-reading-pane";
+import {
+  useReadingPanePosition,
+  useReadingPaneLayout,
+  type ReadingPanePosition,
+  type ReadingPaneLayout,
+} from "@/lib/use-reading-pane";
 
 export function ViewOptionsMenu() {
   const { t } = useTranslation();
   const [density, setDensity] = useMailDensity();
   const [position, setPosition] = useReadingPanePosition();
+  const [layout, setLayout] = useReadingPaneLayout();
 
   const densityOptions: { value: MailDensity; label: string }[] = [
     { value: "compact", label: t("inbox.density.compact", "Compact") },
@@ -26,6 +32,11 @@ export function ViewOptionsMenu() {
     { value: "right", label: t("inbox.readingPanePos.right", "À droite") },
     { value: "bottom", label: t("inbox.readingPanePos.bottom", "En bas") },
     { value: "off", label: t("inbox.readingPanePos.off", "Masqué") },
+  ];
+
+  const layoutOptions: { value: ReadingPaneLayout; label: string }[] = [
+    { value: "overlay", label: t("inbox.readingPaneLayout.overlay", "Superposé") },
+    { value: "split", label: t("inbox.readingPaneLayout.split", "Côte à côte") },
   ];
 
   return (
@@ -71,6 +82,25 @@ export function ViewOptionsMenu() {
             {position === opt.value && <Check className="w-3.5 h-3.5 text-primary" />}
           </DropdownMenuItem>
         ))}
+        {position !== "off" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-[11px] text-[#8b95a7]">
+              {t("inbox.readingPaneLayout.label", "Volets d'affichage")}
+            </DropdownMenuLabel>
+            {layoutOptions.map((opt) => (
+              <DropdownMenuItem
+                key={opt.value}
+                onSelect={() => setLayout(opt.value)}
+                className="text-[13px] flex items-center justify-between"
+                data-testid={`pane-layout-${opt.value}`}
+              >
+                <span>{opt.label}</span>
+                {layout === opt.value && <Check className="w-3.5 h-3.5 text-primary" />}
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

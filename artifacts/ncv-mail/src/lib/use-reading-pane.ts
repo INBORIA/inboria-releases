@@ -87,6 +87,44 @@ export function useReadingPaneEnabled(): [boolean, (next?: boolean) => void] {
   return [enabled, toggle];
 }
 
+export type ReadingPaneLayout = "overlay" | "split";
+
+const LAYOUT_KEY = "inboria.readingPane.layout";
+
+function readLayout(): ReadingPaneLayout {
+  if (typeof window === "undefined") return "overlay";
+  try {
+    const v = window.localStorage.getItem(LAYOUT_KEY);
+    if (v === "overlay" || v === "split") return v;
+  } catch {
+    /* noop */
+  }
+  return "overlay";
+}
+
+export function useReadingPaneLayout(): [ReadingPaneLayout, (next: ReadingPaneLayout) => void] {
+  const [layout, setLayoutState] = useState<ReadingPaneLayout>(readLayout);
+  useEffect(() => {
+    const onChange = () => setLayoutState(readLayout());
+    window.addEventListener(EVT, onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener(EVT, onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, []);
+  const setLayout = useCallback((next: ReadingPaneLayout) => {
+    try {
+      window.localStorage.setItem(LAYOUT_KEY, next);
+    } catch {
+      /* noop */
+    }
+    setLayoutState(next);
+    window.dispatchEvent(new CustomEvent(EVT));
+  }, []);
+  return [layout, setLayout];
+}
+
 const PANE_OPEN_EVT = "inboria:reading-pane-open-changed";
 
 export function notifyReadingPaneOpen(open: boolean) {

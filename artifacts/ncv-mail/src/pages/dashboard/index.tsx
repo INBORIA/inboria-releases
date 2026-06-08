@@ -99,7 +99,7 @@ import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from 
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { ViewOptionsMenu } from "@/components/email-list/ViewOptionsMenu";
-import { useReadingPaneEnabled, useReadingPanePosition } from "@/lib/use-reading-pane";
+import { useReadingPaneEnabled, useReadingPanePosition, useReadingPaneLayout } from "@/lib/use-reading-pane";
 import { useMailDensity, mailRowHeight } from "@/lib/use-mail-density";
 import { useMailHeaderCollapsed } from "@/lib/use-mail-header-collapsed";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
@@ -3309,6 +3309,7 @@ export default function Dashboard() {
   }, [smartSort]);
   const [readingPaneEnabled] = useReadingPaneEnabled();
   const [readingPanePosition] = useReadingPanePosition();
+  const [readingPaneLayout] = useReadingPaneLayout();
   const [mailDensity] = useMailDensity();
   const rowHeightPx = mailRowHeight(mailDensity);
   const [mailHeaderCollapsed] = useMailHeaderCollapsed();
@@ -7301,6 +7302,7 @@ export default function Dashboard() {
       <MailReadingPane
         open={readingPaneEnabled && !!selectedEmail}
         position={readingPanePosition}
+        layout={readingPaneLayout}
         onClose={() => setSelectedEmailId(null)}
       >
         {selectedEmail ? (

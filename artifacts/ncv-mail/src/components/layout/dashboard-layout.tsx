@@ -670,7 +670,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           </div>
         </div>
 
-        <main className="flex-1">
+        <main className="flex-1 pr-[var(--rp-reserve,0px)] pb-[var(--rp-reserve-b,0px)] transition-[padding] duration-200 ease-out">
           <OutlookReturnBanner />
           <GmailReturnBanner />
           <WebmailReturnBanner />
