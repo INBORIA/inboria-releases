@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, AlertTriangle, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal, ChevronDown, ChevronUp, ChevronRight, ArrowLeft,
+  MoreHorizontal, MoreVertical, ChevronDown, ChevronUp, ChevronRight, ArrowLeft,
   FolderKanban, Folder, FolderPlus, ExternalLink, Users, Hand,
 } from "lucide-react";
 
@@ -53,6 +53,9 @@ import {
   getListAppointmentsQueryKey,
   useListFolders,
   useAssignEmailsToFolder,
+  useSnoozeEmail,
+  getListEmailsQueryKey,
+  getGetEmailQueryKey,
 } from "@workspace/api-client-react";
 
 interface EmailPrivateFields {
@@ -75,8 +78,21 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 // Menu "Exporter ▾" regroupant les deux exports possibles d'un mail :
 // - CSV : metadonnees pour Excel / analyse
@@ -397,6 +413,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const { toast } = useToast();
   const detectAppointments = useDetectAppointments();
   const updateAppointment = useUpdateAppointment();
+  const snoozeMut = useSnoozeEmail();
   const [appointmentRunning, setAppointmentRunning] = useState(false);
 
   // Task #294 — bouton "Déplacer vers dossier" depuis la vue détail mail.
@@ -559,6 +576,269 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     | null
     | undefined;
 
+  // --- Actions réutilisables (barre du bas + menu ⋮ haut + clic droit) ---
+  const snoozeTo = (date: Date) => {
+    if (date.getTime() <= Date.now()) {
+      toast({ variant: "destructive", title: t("wave1.scheduleErrorPast") });
+      return;
+    }
+    snoozeMut.mutate(
+      { id: email.id, data: { snoozeUntil: date.toISOString() } },
+      {
+        onSuccess: () => {
+          toast({ title: t("wave1.snoozeSuccess") });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetEmailQueryKey(email.id) });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Snooze failed" }),
+      },
+    );
+  };
+  const snoozePresets = [
+    { key: "1h", label: t("wave1.snooze1h"), make: () => new Date(Date.now() + 60 * 60 * 1000) },
+    { key: "3h", label: t("wave1.snooze3h"), make: () => new Date(Date.now() + 3 * 60 * 60 * 1000) },
+    { key: "tom", label: t("wave1.snoozeTomorrow"), make: () => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(8, 0, 0, 0); return d; } },
+    { key: "wk", label: t("wave1.snoozeNextWeek"), make: () => { const d = new Date(); const day = d.getDay(); const off = ((1 - day + 7) % 7) || 7; d.setDate(d.getDate() + off); d.setHours(8, 0, 0, 0); return d; } },
+  ];
+
+  const openReply = () => {
+    if (!replyOpen) {
+      setReplyTo(extractEmailAddress(email.senderEmail) || extractEmailAddress(email.sender) || "");
+      setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+      const defConn = resolveDefaultConnectionId();
+      setReplyConnectionId(defConn);
+      setReplyProjectId(email.project_id ? String(email.project_id) : "");
+      const sig = signatureForConnection(defConn);
+      setReplyText(sig ? plainTextToHtml(`\n\n-- \n${sig}`) : "");
+    }
+    setReplyOpen(!replyOpen);
+  };
+
+  const openAiReply = () => {
+    setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
+    setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+    const effectiveConnId = replyConnectionId || resolveDefaultConnectionId();
+    if (!replyConnectionId) setReplyConnectionId(effectiveConnId);
+    if (!replyProjectId && email.project_id) setReplyProjectId(String(email.project_id));
+    setReplyOpen(true);
+    onGenerateDraft(email.id, (draft) => { setReplyText(draft || ""); });
+  };
+
+  const openForward = () => {
+    if (!forwardOpen) {
+      const defConn = resolveDefaultConnectionId();
+      setForwardConnectionId(defConn);
+      setForwardTo("");
+      const subj = email.subject || "";
+      const prefix = t("inbox.forwardSubjectPrefix");
+      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
+      const sig = signatureForConnection(defConn);
+      const sigBlock = sig ? `\n\n-- \n${sig}` : "";
+      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
+      setForwardText(plainTextToHtml(sigBlock) + citationHtml);
+      setForwardAttachments([]);
+    }
+    setForwardOpen(!forwardOpen);
+  };
+
+  const runAiForward = async () => {
+    const defConn = forwardConnectionId || resolveDefaultConnectionId();
+    if (!forwardConnectionId) setForwardConnectionId(defConn);
+    if (!forwardSubject) {
+      const subj = email.subject || "";
+      const prefix = t("inbox.forwardSubjectPrefix");
+      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
+    }
+    setForwardOpen(true);
+    setForwardIntroLoading(true);
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token || "";
+      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+      const resp = await fetch(`${baseUrl}/api/ai/forward-intro`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ emailId: email.id, to: forwardTo }),
+      });
+      const json = resp.ok ? await resp.json() : null;
+      const intro = (json?.intro || "").trim();
+      const sig = signatureForConnection(defConn);
+      const sigBlock = sig && !intro.includes(sig) ? `\n\n-- \n${sig}` : "";
+      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
+      setForwardText(plainTextToHtml(`${intro}${sigBlock}`) + citationHtml);
+      if (resp.ok) {
+        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+      }
+    } catch {
+      // silent — keep panel open with whatever was there
+    } finally {
+      setForwardIntroLoading(false);
+    }
+  };
+
+  const doPrint = () => {
+    const w = window.open("", "_blank", "width=800,height=900");
+    if (!w) {
+      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
+      return;
+    }
+    const safeBody = (email.body || email.summary || "").toString();
+    const escape = (s: string) => String(s || "").replace(/[<>]/g, "");
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escape(email.subject || "")}</title>
+      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+      </head><body>
+      <h1>${escape(email.subject || "(sans sujet)")}</h1>
+      <div class="meta"><b>${escape(email.sender || "")}</b> &lt;${escape(email.senderEmail || "")}&gt;<br/>${new Date(email.createdAt).toLocaleString()}</div>
+      <div>${safeBody}</div>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+  };
+
+  const openCreateTask = () => {
+    if (!taskFormOpen) {
+      setTaskTitle(`${t("inbox.handlePrefix")} ${email.subject}`);
+      setTaskProjectId(email.projectId || "none");
+    }
+    setTaskFormOpen(!taskFormOpen);
+  };
+
+  const runDetectAppointment = () => {
+    if (appointmentRunning) return;
+    setAppointmentRunning(true);
+    detectAppointments.mutate(
+      { data: { emailId: email.id, lang: i18n.language } },
+      {
+        onSuccess: async (data) => {
+          const created = ((data as { appointments?: any[] })?.appointments) || [];
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+          if (created.length === 0) {
+            toast({ title: t("agenda.noDetectedForEmail", "Aucun rendez-vous detecte dans cet email."), variant: "default" });
+            setAppointmentRunning(false);
+            return;
+          }
+          await Promise.all(
+            created.map((apt: any) =>
+              new Promise<void>((resolve) => {
+                updateAppointment.mutate(
+                  { id: String(apt.id), data: { confirmed: true } },
+                  { onSettled: () => resolve() },
+                );
+              }),
+            ),
+          );
+          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+          const first = created[0];
+          let detail = "";
+          try {
+            if (first?.startAt) {
+              detail = format(new Date(first.startAt), "PPP p", { locale: dateFnsLocale });
+            }
+          } catch {
+            detail = "";
+          }
+          const titlePart = created.length === 1
+            ? `${first?.title || ""}${detail ? " — " + detail : ""}`
+            : t("agenda.detectedCount", { count: created.length });
+          toast({
+            title: t("agenda.createdFromEmail", "Rendez-vous ajoute a l'agenda"),
+            description: titlePart,
+            action: (
+              <Link
+                to="/dashboard/agenda"
+                className="text-emerald-400 hover:text-emerald-300 underline text-xs"
+              >
+                {t("agenda.viewInAgenda", "Voir l'agenda")}
+              </Link>
+            ),
+          });
+          setAppointmentRunning(false);
+        },
+        onError: (err: any) => {
+          const msg = err?.response?.data?.error || t("agenda.detectError", "Detection impossible. Reessayez.");
+          toast({ title: msg, variant: "destructive" });
+          setAppointmentRunning(false);
+        },
+      },
+    );
+  };
+
+  const renderEmailActions = (set: {
+    Item: React.ElementType;
+    Sub: React.ElementType;
+    SubTrigger: React.ElementType;
+    SubContent: React.ElementType;
+    Separator: React.ElementType;
+  }) => {
+    const { Item, Sub, SubTrigger, SubContent, Separator } = set;
+    const cls = "text-[12px] text-white cursor-pointer gap-2";
+    return (
+      <>
+        <Item className={cls} onClick={openReply}><Reply className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.reply")}</Item>
+        <Item className={cls} disabled={isDrafting} onClick={openAiReply}><Wand2 className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.aiReply")}</Item>
+        <Item className={cls} onClick={openForward}><Forward className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.forward")}</Item>
+        <Item className={cls} disabled={forwardIntroLoading} onClick={runAiForward}><Wand2 className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.aiForward")}</Item>
+        <Separator />
+        <Sub>
+          <SubTrigger className={cls}><Clock className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("wave1.snoozeButton")}</SubTrigger>
+          <SubContent className="bg-card border-border">
+            {snoozePresets.map((p) => (
+              <Item key={p.key} className={cls} onClick={() => snoozeTo(p.make())}>{p.label}</Item>
+            ))}
+          </SubContent>
+        </Sub>
+        {userFoldersList && userFoldersList.length > 0 && (
+          <Sub>
+            <SubTrigger className={cls}><FolderKanban className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.myFoldersLabel", { defaultValue: "Mes dossiers" })}</SubTrigger>
+            <SubContent className="bg-card border-border max-h-[300px] overflow-y-auto">
+              {userFoldersList.map((f: any) => (
+                <Item key={f.id} className={cls} onClick={() => handleMoveToFolderFromDetail(f.id, f.name)}>
+                  <Folder className="w-3.5 h-3.5 shrink-0 text-primary/70" /><span className="truncate">{f.name}</span>
+                </Item>
+              ))}
+            </SubContent>
+          </Sub>
+        )}
+        <Item className={cls} onClick={doPrint}><Printer className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.print", "Imprimer")}</Item>
+        <Item className={cls} onClick={() => onArchive(email.id)}><Archive className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.archive")}</Item>
+        <Separator />
+        <Item className={cls} disabled={handledLoading} onClick={() => { if (!handledLoading) toggleHandled(); }}>
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#b8c5d6]" />
+          {handledAt ? t("inbox.unmarkHandled", "Annuler « traité »") : t("inbox.markHandled", "Marquer traité")}
+        </Item>
+        <Item className={cls} disabled={privateLoading} onClick={() => { if (!privateLoading) togglePrivate(); }}>
+          {isPrivate ? <LockOpen className="w-3.5 h-3.5 text-[#b8c5d6]" /> : <Lock className="w-3.5 h-3.5 text-[#b8c5d6]" />}
+          {isPrivate ? t("emailDetail.unmarkPrivate", "Rendre visible") : t("emailDetail.markPrivate", "Marquer privé")}
+        </Item>
+        <Item className={cls} onClick={openCreateTask}><ListTodo className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("inbox.createTask")}</Item>
+        <Item className={cls} disabled={appointmentRunning || detectAppointments.isPending} onClick={runDetectAppointment}>
+          <CalendarDays className="w-3.5 h-3.5 text-[#b8c5d6]" />{t("agenda.createFromEmail")}
+        </Item>
+        <Separator />
+        <Item className="text-[12px] cursor-pointer gap-2 text-red-400 focus:text-red-400" onClick={() => onDelete(email.id)}>
+          <Trash2 className="w-3.5 h-3.5" />{t("inbox.deleteEmail")}
+        </Item>
+      </>
+    );
+  };
+
+  const dropdownMenuSet = {
+    Item: DropdownMenuItem,
+    Sub: DropdownMenuSub,
+    SubTrigger: DropdownMenuSubTrigger,
+    SubContent: DropdownMenuSubContent,
+    Separator: DropdownMenuSeparator,
+  };
+  const contextMenuSet = {
+    Item: ContextMenuItem,
+    Sub: ContextMenuSub,
+    SubTrigger: ContextMenuSubTrigger,
+    SubContent: ContextMenuSubContent,
+    Separator: ContextMenuSeparator,
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-background">
@@ -597,6 +877,21 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
             </a>
           );
         })()}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="flex items-center justify-center h-7 w-7 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] transition-colors"
+              title={t("emailDetail.actionsMenu", "Actions") as string}
+              aria-label={t("emailDetail.actionsMenu", "Actions") as string}
+              data-testid="button-email-actions-menu"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-card border-border w-60">
+            {renderEmailActions(dropdownMenuSet)}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {isSharedContext && replyPeers.length > 0 && (
@@ -648,6 +943,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="flex">
           <div className="flex-1 min-w-0">
+            <ContextMenu>
+              <ContextMenuTrigger asChild>
+                <div data-testid="email-readpane-rightclick">
             <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -775,24 +1073,19 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <AttachmentList attachments={email.attachments} />
               )}
             </div>
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="bg-card border-border w-60">
+                {renderEmailActions(contextMenuSet)}
+              </ContextMenuContent>
+            </ContextMenu>
 
             <div className="px-4 py-3 border-t border-border">
               <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
                 <Button
                   size="sm"
                   className="gap-1.5 h-7 text-[11px]"
-                  onClick={() => {
-                    if (!replyOpen) {
-                      setReplyTo(extractEmailAddress(email.senderEmail) || extractEmailAddress(email.sender) || "");
-                      setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-                      const defConn = resolveDefaultConnectionId();
-                      setReplyConnectionId(defConn);
-                      setReplyProjectId(email.project_id ? String(email.project_id) : "");
-                      const sig = signatureForConnection(defConn);
-                      setReplyText(sig ? plainTextToHtml(`\n\n-- \n${sig}`) : "");
-                    }
-                    setReplyOpen(!replyOpen);
-                  }}
+                  onClick={openReply}
                 >
                   <Reply className="w-3 h-3" />
                   {t("inbox.reply")}
@@ -802,17 +1095,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   variant="outline"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   disabled={isDrafting}
-                  onClick={() => {
-                    setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
-                    setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-                    const effectiveConnId = replyConnectionId || resolveDefaultConnectionId();
-                    if (!replyConnectionId) setReplyConnectionId(effectiveConnId);
-                    if (!replyProjectId && email.project_id) setReplyProjectId(String(email.project_id));
-                    setReplyOpen(true);
-                    onGenerateDraft(email.id, (draft) => {
-                      setReplyText(draft || "");
-                    });
-                  }}
+                  onClick={openAiReply}
                 >
                   {isDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {isDrafting ? t("inbox.generating") : t("inbox.aiReply")}
@@ -821,22 +1104,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   variant="outline"
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                  onClick={() => {
-                    if (!forwardOpen) {
-                      const defConn = resolveDefaultConnectionId();
-                      setForwardConnectionId(defConn);
-                      setForwardTo("");
-                      const subj = email.subject || "";
-                      const prefix = t("inbox.forwardSubjectPrefix");
-                      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
-                      const sig = signatureForConnection(defConn);
-                      const sigBlock = sig ? `\n\n-- \n${sig}` : "";
-                      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
-                      setForwardText(plainTextToHtml(sigBlock) + citationHtml);
-                      setForwardAttachments([]);
-                    }
-                    setForwardOpen(!forwardOpen);
-                  }}
+                  onClick={openForward}
                 >
                   <Forward className="w-3 h-3" />
                   {t("inbox.forward")}
@@ -846,41 +1114,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   disabled={forwardIntroLoading}
-                  onClick={async () => {
-                    const defConn = forwardConnectionId || resolveDefaultConnectionId();
-                    if (!forwardConnectionId) setForwardConnectionId(defConn);
-                    if (!forwardSubject) {
-                      const subj = email.subject || "";
-                      const prefix = t("inbox.forwardSubjectPrefix");
-                      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
-                    }
-                    setForwardOpen(true);
-                    setForwardIntroLoading(true);
-                    try {
-                      const { supabase } = await import("@/lib/supabase");
-                      const { data: sessionData } = await supabase.auth.getSession();
-                      const token = sessionData?.session?.access_token || "";
-                      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
-                      const resp = await fetch(`${baseUrl}/api/ai/forward-intro`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                        body: JSON.stringify({ emailId: email.id, to: forwardTo }),
-                      });
-                      const json = resp.ok ? await resp.json() : null;
-                      const intro = (json?.intro || "").trim();
-                      const sig = signatureForConnection(defConn);
-                      const sigBlock = sig && !intro.includes(sig) ? `\n\n-- \n${sig}` : "";
-                      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
-                      setForwardText(plainTextToHtml(`${intro}${sigBlock}`) + citationHtml);
-                      if (resp.ok) {
-                        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-                      }
-                    } catch {
-                      // silent — keep panel open with whatever was there
-                    } finally {
-                      setForwardIntroLoading(false);
-                    }
-                  }}
+                  onClick={runAiForward}
                 >
                   {forwardIntroLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {forwardIntroLoading ? t("inbox.generating") : t("inbox.aiForward")}
@@ -890,24 +1124,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   title={t("inbox.print", "Imprimer")}
-                  onClick={() => {
-                    const w = window.open("", "_blank", "width=800,height=900");
-                    if (!w) {
-                      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
-                      return;
-                    }
-                    const safeBody = (email.body || email.summary || "").toString();
-                    const escape = (s: string) => String(s || "").replace(/[<>]/g, "");
-                    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escape(email.subject || "")}</title>
-                      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
-                      </head><body>
-                      <h1>${escape(email.subject || "(sans sujet)")}</h1>
-                      <div class="meta"><b>${escape(email.sender || "")}</b> &lt;${escape(email.senderEmail || "")}&gt;<br/>${new Date(email.createdAt).toLocaleString()}</div>
-                      <div>${safeBody}</div>
-                      </body></html>`);
-                    w.document.close();
-                    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
-                  }}
+                  onClick={doPrint}
                 >
                   <Printer className="w-3 h-3" />
                   {t("inbox.print", "Imprimer")}
@@ -1026,13 +1243,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
-                      onClick={() => {
-                        if (!taskFormOpen) {
-                          setTaskTitle(`${t("inbox.handlePrefix")} ${email.subject}`);
-                          setTaskProjectId(email.projectId || "none");
-                        }
-                        setTaskFormOpen(!taskFormOpen);
-                      }}
+                      onClick={openCreateTask}
                       data-testid="menu-create-task"
                     >
                       <ListTodo className="w-3.5 h-3.5 text-[#b8c5d6]" />
@@ -1041,66 +1252,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <DropdownMenuItem
                       className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
                       disabled={appointmentRunning || detectAppointments.isPending}
-                      onClick={() => {
-                        if (appointmentRunning) return;
-                        setAppointmentRunning(true);
-                        detectAppointments.mutate(
-                          { data: { emailId: email.id, lang: i18n.language } },
-                          {
-                            onSuccess: async (data) => {
-                              const created = ((data as { appointments?: any[] })?.appointments) || [];
-                              queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-                              queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
-                              if (created.length === 0) {
-                                toast({ title: t("agenda.noDetectedForEmail", "Aucun rendez-vous detecte dans cet email."), variant: "default" });
-                                setAppointmentRunning(false);
-                                return;
-                              }
-                              await Promise.all(
-                                created.map((apt: any) =>
-                                  new Promise<void>((resolve) => {
-                                    updateAppointment.mutate(
-                                      { id: String(apt.id), data: { confirmed: true } },
-                                      { onSettled: () => resolve() },
-                                    );
-                                  }),
-                                ),
-                              );
-                              queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
-                              const first = created[0];
-                              let detail = "";
-                              try {
-                                if (first?.startAt) {
-                                  detail = format(new Date(first.startAt), "PPP p", { locale: dateFnsLocale });
-                                }
-                              } catch {
-                                detail = "";
-                              }
-                              const titlePart = created.length === 1
-                                ? `${first?.title || ""}${detail ? " — " + detail : ""}`
-                                : t("agenda.detectedCount", { count: created.length });
-                              toast({
-                                title: t("agenda.createdFromEmail", "Rendez-vous ajoute a l'agenda"),
-                                description: titlePart,
-                                action: (
-                                  <Link
-                                    to="/dashboard/agenda"
-                                    className="text-emerald-400 hover:text-emerald-300 underline text-xs"
-                                  >
-                                    {t("agenda.viewInAgenda", "Voir l'agenda")}
-                                  </Link>
-                                ),
-                              });
-                              setAppointmentRunning(false);
-                            },
-                            onError: (err: any) => {
-                              const msg = err?.response?.data?.error || t("agenda.detectError", "Detection impossible. Reessayez.");
-                              toast({ title: msg, variant: "destructive" });
-                              setAppointmentRunning(false);
-                            },
-                          },
-                        );
-                      }}
+                      onClick={runDetectAppointment}
                       data-testid="menu-create-appointment"
                     >
                       {appointmentRunning || detectAppointments.isPending
