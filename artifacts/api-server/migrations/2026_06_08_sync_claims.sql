@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION claim_email_connections(
 )
 RETURNS SETOF email_connections
 LANGUAGE sql
-AS $$
+AS $claim$
   UPDATE email_connections c
   SET sync_locked_by = p_instance,
       sync_locked_until = now() + make_interval(secs => p_ttl_seconds)
@@ -39,7 +39,7 @@ AS $$
     FOR UPDATE SKIP LOCKED
   )
   RETURNING c.*;
-$$;
+$claim$;
 
 -- Libération d'un lot après traitement. Une instance ne peut libérer que SES
 -- propres réservations (garde-fou sync_locked_by = p_instance). id::text rend la
@@ -50,11 +50,11 @@ CREATE OR REPLACE FUNCTION release_email_connections(
 )
 RETURNS void
 LANGUAGE sql
-AS $$
+AS $release$
   UPDATE email_connections
   SET sync_locked_by = NULL, sync_locked_until = NULL
   WHERE id::text = ANY(p_ids) AND sync_locked_by = p_instance;
-$$;
+$release$;
 
 GRANT EXECUTE ON FUNCTION claim_email_connections(text, int, int) TO service_role;
 GRANT EXECUTE ON FUNCTION release_email_connections(text, text[]) TO service_role;
