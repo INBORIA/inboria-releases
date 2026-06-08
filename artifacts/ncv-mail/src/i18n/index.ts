@@ -97,16 +97,16 @@ i18n
     },
   });
 
-// Langues à écriture droite-à-gauche (arabe, hébreu, ourdou). On applique
-// dynamiquement `dir="rtl"` sur <html> pour que toute l'UI (barre latérale,
-// listes, alignements, classes Tailwind `rtl:`) bascule correctement.
-const RTL_LNGS = new Set(["ar", "he", "ur"]);
-
+// Demande utilisateur : NE PAS faire basculer toute l'interface en mode
+// droite-à-gauche pour l'arabe/hébreu/ourdou. Le `dir="rtl"` global déplaçait la
+// barre latérale à droite et cassait l'ouverture des mails. On force donc la
+// disposition LTR (barre à gauche, mail à droite) dans TOUTES les langues ; le
+// texte arabe/hébreu reste correctement façonné en ligne par le navigateur
+// (algorithme bidi). On garde uniquement l'attribut `lang` pour l'accessibilité.
 function applyDocumentDirection(lng: string): void {
   if (typeof document === "undefined") return;
   const code = normalizeCode(lng);
-  const dir = RTL_LNGS.has(code) ? "rtl" : "ltr";
-  document.documentElement.setAttribute("dir", dir);
+  document.documentElement.setAttribute("dir", "ltr");
   document.documentElement.setAttribute("lang", code);
 }
 
