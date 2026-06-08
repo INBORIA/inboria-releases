@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
@@ -38,7 +39,6 @@ async function filterVisibleEmailIds(
   return (data || []).map((r: any) => r.id as number);
 }
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 const router: IRouter = Router();
 
 // Cache de présence de la table user_folders. Évite de planter le serveur si

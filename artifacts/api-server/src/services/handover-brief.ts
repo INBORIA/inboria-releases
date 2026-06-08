@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { getMemberMailboxIds } from "../lib/inbox-scope";
@@ -462,7 +463,6 @@ export async function generateHandoverBrief(
 
   // 3. RAG best-effort sur tout le corpus.
   let ragLines: string[] = [];
-  const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"]! });
   try {
     const query = `Brief de passation pour ${contactEmail} sur ${sinceDays} jours : projets, décisions, engagements, risques.`;
     const embedRes = await openai.embeddings.create({

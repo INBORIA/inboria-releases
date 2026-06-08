@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { randomUUID } from "node:crypto";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
@@ -18,7 +19,6 @@ import { INBORIA_TOOLS, runInboriaTool, type InboriaToolCtx } from "../services/
 
 const router: IRouter = Router();
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
 // Extracts up to N distinct email addresses from a free-form text. Used by the
 // chat handler to detect "rappelle-moi qui est marc@acme.com" and load a

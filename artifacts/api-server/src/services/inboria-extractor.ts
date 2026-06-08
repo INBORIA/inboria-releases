@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { z } from "zod";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
@@ -516,7 +517,6 @@ export async function runInboriaExtractorOnce(): Promise<{
       logger.warn("[inboria-extractor] OPENAI_API_KEY missing, skipping run");
       return { processed: 0, skipped: 0, retried: 0 };
     }
-    const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
     // Probe the inboria_signals table once per run. We probe a critical
     // column (source_email_id) so we catch BOTH cases: (a) table missing

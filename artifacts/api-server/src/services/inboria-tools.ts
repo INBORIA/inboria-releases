@@ -1,11 +1,11 @@
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import {
   extractAttachmentText,
   type AttachmentRow,
 } from "../lib/attachment-extract";
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
 const MAX_BODY_CHARS = 6000;
 const MAX_LIST_BODY_CHARS = 1500;

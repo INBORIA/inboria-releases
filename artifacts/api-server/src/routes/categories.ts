@@ -3,6 +3,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { CreateCategoryBody, UpdateCategoryBody, ApplyPackBody, GeneratePackBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
 import { findSimilarCategories, findDuplicateReport } from "../lib/similarity";
 import { ensureSystemCategory } from "../lib/system-categories";
@@ -18,9 +19,6 @@ function isForceCreate(req: { query: any; headers: any; body: any }): boolean {
   return false;
 }
 
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
 
 const router: IRouter = Router();
 

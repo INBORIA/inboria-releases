@@ -13,7 +13,7 @@ interactively (user wants feedback before each major step; no isolated task agen
 2. 🔴 Sequential mailbox sync (`for...of await`). **DONE** — parallelized.
 3. 🟠 AI/workers run in-process (same Node as the API). **DONE** — splittable by APP_ROLE.
 4. 🟠 ~3 realtime channels per opened mail. **DONE** — comments channel now gated by chatVisible.
-5. 🟡 No global OpenAI throttle.
+5. 🟡 No global OpenAI throttle. **DONE** — shared client + global concurrency gate.
 6. 🟡 Heavy DB queries (N+1, re-sorting ~1000 rows in memory).
 
 Order chosen: start with #2 (best risk/reward, helps even single-instance).
@@ -53,3 +53,25 @@ module already `return null` when !chatVisible — pre-existing, unrelated to th
 presence channels (`email-thread` + `email-reply`) into one `email-collaboration-<id>`,
 and sharing `draft-<id>` with the Yjs provider. Touches live team-collab code (delicate
 CRDT anti-echo) — left as a future opt-in, not worth the regression risk now.
+
+## Point #5 — throttle OpenAI global (implemented)
+Single shared OpenAI client lives in `services/ai-client.ts` (export `openai`). Before,
+~18 separate `new OpenAI(...)` (workers + HTTP routes), same key, zero coordination →
+pics could fire dozens of concurrent OpenAI calls (429 cascades + cost). Now `chat.
+completions.create` and `embeddings.create` are wrapped by a process-global semaphore
+(`OPENAI_MAX_CONCURRENCY`, default 8; `OPENAI_MAX_RETRIES`, default 4 = SDK backoff on
+429/5xx + Retry-After). All 18 sites import the shared `openai`; the ~50 `openai.x.create
+({...})` call lines are unchanged. `import OpenAI` kept everywhere (still a type in some
+files; `noUnusedLocals:false` so harmless when unused).
+**Hard invariant — the semaphore MUST be reservation-safe (transfer-of-permit):** on
+release, if a caller is queued, hand it the permit directly WITHOUT decrementing `active`;
+only decrement when the queue is empty. The naive "decrement then wake a waiter" is BUGGY
+— a fresh caller steals the freed slot before the woken waiter resumes, and the waiter
+then increments anyway → cap exceeded (MAX=1 → 2 in flight) + FIFO violation. Architect
+caught exactly this in the first pass; fixed via `acquire()`/`release()`. Verified with a
+throwaway 100-task test: maxObserved == MAX, queue drains to 0, queued tasks start FIFO.
+**Notes:** streaming releases the permit when `create()` resolves (stream handle obtained),
+not at stream end — acceptable today (no `stream:true` in api-server/src); revisit if
+streaming is adopted broadly. `openai.models.list()` (admin health-check) stays outside
+the gate on purpose (rare, admin-only). `aiLimiterStats()` exported for a future admin
+endpoint. Tunables ship generous so nothing slows down today — the cap only bites in pics.

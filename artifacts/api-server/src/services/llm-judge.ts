@@ -13,10 +13,10 @@
  */
 
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
 const JUDGE_MODEL = "gpt-4o-mini";
 const JUDGE_RATE = (() => {

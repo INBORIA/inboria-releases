@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { ImapFlow, type MailboxLockObject } from "imapflow";
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
@@ -238,10 +239,6 @@ export function extractGmailBody(payload: any): string {
   return "";
 }
 
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
-
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;
 const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
 const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
@@ -360,7 +357,6 @@ async function detectAppointmentFromEmail(
       .eq("id", userId)
       .maybeSingle();
     const userTz = tzProfile?.timezone || "Europe/Brussels";
-    const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
     const cleanBody = (body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800);
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",

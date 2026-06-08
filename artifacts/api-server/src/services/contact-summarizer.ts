@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { getMemberMailboxIds } from "../lib/inbox-scope";
@@ -282,7 +283,6 @@ export async function summarizeContact(
 
   // 3. Charge extraits RAG (best-effort, timeout 600ms pour ne pas bloquer
   // le Promise.race 800ms de la route /contacts/:email/timeline).
-  const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"]! });
   type RagHit = Awaited<ReturnType<typeof loadRagSnippets>>[number];
   const rag: RagHit[] = await Promise.race([
     loadRagSnippets(openai, userId, memberMailboxIds, contactEmail),

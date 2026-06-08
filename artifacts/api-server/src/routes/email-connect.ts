@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { google } from "googleapis";
 import { ImapFlow } from "imapflow";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
@@ -9,9 +10,6 @@ import { triggerSyncForConnection, isNoiseEmail, userHasOpenTaskWithTitle } from
 import { logTriageEvent } from "../services/credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
 
 function extractGmailBody(payload: any): string {
   if (!payload) return "";

@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
@@ -7,7 +8,6 @@ import { detectVariablesInBody } from "../services/automation-rules";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
 import { getMemberMailboxIds } from "../lib/inbox-scope";
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 const router: IRouter = Router();
 
 const SUGGEST_CACHE_MS = 60 * 60 * 1000;

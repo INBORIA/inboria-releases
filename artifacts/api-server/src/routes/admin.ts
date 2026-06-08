@@ -5,6 +5,7 @@ import { requireAdmin } from "../middlewares/requireAdmin";
 import { getPaddleClient } from "../lib/paddle";
 import { logger } from "../lib/logger";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import {
   processEmailEmbeddings,
   dailyEmbeddingBudgetRemainingUsd,
@@ -726,7 +727,6 @@ router.post(
 
       backfillRunning = true;
       void (async () => {
-        const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
         const startTs = Date.now();
         // Compteurs basés sur des IDs uniques pour éviter qu'un email
         // en échec transitoire (qu'on ne marque PAS indexé) soit re-fetché
@@ -1320,7 +1320,6 @@ router.get(
     let errorMessage: string | null = null;
     if (configured) {
       try {
-        const openai = new OpenAI({ apiKey });
         const list = await openai.models.list();
         modelsReachable = Array.isArray(list.data) && list.data.length > 0;
       } catch (err) {

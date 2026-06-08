@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { isNoiseEmail } from "./auto-sync";
@@ -322,7 +323,6 @@ export async function runEmailEmbedderOnce(): Promise<{
     const probe = await probeChunksTable();
     if (probe === "missing") return { indexed: 0, skipped: 0, retried: 0 };
 
-    const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
     const { data, error } = await supabaseAdmin
       .from("emails")

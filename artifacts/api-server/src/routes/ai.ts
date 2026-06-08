@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { GenerateDailySummaryBody, GenerateDraftBody } from "@workspace/api-zod";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
@@ -13,9 +14,6 @@ import { buildInboriaContextBlock } from "../lib/inboria-prompt";
 import { generateHandoverBrief, type Language as BriefLanguage } from "../services/handover-brief";
 import { getUserAiLang } from "../services/ai-lang";
 
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
 
 const router: IRouter = Router();
 

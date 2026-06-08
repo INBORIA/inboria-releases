@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
 import OpenAI from "openai";
+import { openai } from "./ai-client";
 import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
@@ -185,7 +186,6 @@ async function checkSlotAvailability(
   return null;
 }
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
 interface ProposeArgs {
   userId: string;

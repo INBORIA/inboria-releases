@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
@@ -13,7 +14,6 @@ import {
 } from "../services/automation-rules";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 const router: IRouter = Router();
 
 function rowToRule(row: any) {

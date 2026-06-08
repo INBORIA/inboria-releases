@@ -1,14 +1,12 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { isNoiseEmail, userHasOpenTaskWithTitle } from "../services/auto-sync";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "../services/pre-filter";
 import { logTriageEvent, checkEntitlement } from "../services/credits";
 import { getUserAiLang, summaryLangInstruction } from "../services/ai-lang";
 
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
 
 const router: IRouter = Router();
 

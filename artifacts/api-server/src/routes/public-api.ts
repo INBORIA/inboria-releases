@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
+import { openai } from "../services/ai-client";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireApiKey } from "../middlewares/api-key";
 import { emitWebhook } from "../services/webhooks";
@@ -780,7 +781,6 @@ router.get(
         res.status(503).json({ error: "Search unavailable: embeddings disabled" });
         return;
       }
-      const openai = new OpenAI({ apiKey });
       const embed = await openai.embeddings.create({
         model: "text-embedding-3-small",
         input: q,
