@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 const { updateMock, eqUpdateMock, selectMock, eqSelectMock, maybeSingleMock, rpcMock } = vi.hoisted(() => ({
   updateMock: vi.fn(),
@@ -32,6 +32,7 @@ import {
   withTimeout,
   safeRunForConnection,
   runSyncLoop,
+  resolveSyncConcurrency,
 } from "./connection-health";
 
 beforeEach(() => {
@@ -108,7 +109,7 @@ describe("runAutoSync (integration: end-to-end isolation)", () => {
       const { runAutoSync } = await import("./auto-sync");
 
       const dispatcher = vi.fn(async (conn: any) => {
-        if (conn.id === "broken") throw new Error("client.connect ECONNREFUSED");
+        if (conn.id === "broken") throw new Error("simulated provider crash");
         return 4;
       });
 
@@ -125,7 +126,7 @@ describe("runAutoSync (integration: end-to-end isolation)", () => {
       expect(dispatcher).toHaveBeenCalledTimes(3);
       expect(rpcMock).toHaveBeenCalledTimes(1);
       expect(rpcMock.mock.calls[0][1].p_id).toBe("broken");
-      expect(rpcMock.mock.calls[0][1].p_error_message).toContain("client.connect ECONNREFUSED");
+      expect(rpcMock.mock.calls[0][1].p_error_message).toContain("simulated provider crash");
     },
     30_000,
   );
@@ -143,7 +144,7 @@ describe("runSyncLoop (runAutoSync isolation behavior)", () => {
 
     const dispatcher = vi.fn(async (conn: any) => {
       if (conn.id === "c2") {
-        throw new Error("client.connect ECONNREFUSED");
+        throw new Error("simulated provider crash");
       }
       return conn.provider === "imap" ? 5 : 3;
     });
@@ -161,7 +162,65 @@ describe("runSyncLoop (runAutoSync isolation behavior)", () => {
 
     expect(rpcMock).toHaveBeenCalledTimes(1);
     expect(rpcMock.mock.calls[0][1].p_id).toBe("c2");
-    expect(rpcMock.mock.calls[0][1].p_error_message).toContain("client.connect ECONNREFUSED");
+    expect(rpcMock.mock.calls[0][1].p_error_message).toContain("simulated provider crash");
+  });
+
+  it("counts a transient network blip as a failure but does NOT record it (avoids false 'account disconnected' alerts)", async () => {
+    const connections = [
+      { id: "c1", email_address: "ok@test.com", provider: "imap" },
+      { id: "c2", email_address: "blip@test.com", provider: "imap" },
+    ];
+
+    const dispatcher = vi.fn(async (conn: any) => {
+      if (conn.id === "c2") {
+        throw new Error("client.connect ECONNREFUSED");
+      }
+      return 5;
+    });
+
+    const result = await runSyncLoop(connections as any, dispatcher);
+
+    expect(result.totalSynced).toBe(5);
+    expect(result.failureCount).toBe(1);
+    expect(result.perConnection).toEqual([
+      { id: "c1", email: "ok@test.com", synced: 5 },
+      { id: "c2", email: "blip@test.com", synced: -1 },
+    ]);
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it("processes connections concurrently (overlapping in-flight calls), bounded by SYNC_CONCURRENCY", async () => {
+    const prev = process.env.SYNC_CONCURRENCY;
+    process.env.SYNC_CONCURRENCY = "3";
+
+    try {
+      let inFlight = 0;
+      let maxInFlight = 0;
+      const connections = Array.from({ length: 9 }, (_, i) => ({
+        id: `c${i}`,
+        email_address: `u${i}@test.com`,
+        provider: "imap",
+      }));
+
+      const dispatcher = vi.fn(async () => {
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise((r) => setTimeout(r, 10));
+        inFlight--;
+        return 1;
+      });
+
+      const result = await runSyncLoop(connections as any, dispatcher);
+
+      expect(result.totalSynced).toBe(9);
+      expect(result.failureCount).toBe(0);
+      expect(dispatcher).toHaveBeenCalledTimes(9);
+      expect(maxInFlight).toBeGreaterThan(1);
+      expect(maxInFlight).toBeLessThanOrEqual(3);
+    } finally {
+      if (prev === undefined) delete process.env.SYNC_CONCURRENCY;
+      else process.env.SYNC_CONCURRENCY = prev;
+    }
   });
 
   it("returns zero failures when all connections succeed", async () => {
@@ -173,6 +232,50 @@ describe("runSyncLoop (runAutoSync isolation behavior)", () => {
     expect(result.totalSynced).toBe(4);
     expect(result.failureCount).toBe(0);
     expect(rpcMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("resolveSyncConcurrency (bounds)", () => {
+  const prev = process.env.SYNC_CONCURRENCY;
+  afterEach(() => {
+    if (prev === undefined) delete process.env.SYNC_CONCURRENCY;
+    else process.env.SYNC_CONCURRENCY = prev;
+  });
+
+  it("falls back to the default (8) when env is unset, clamped by total", () => {
+    delete process.env.SYNC_CONCURRENCY;
+    expect(resolveSyncConcurrency(100)).toBe(8);
+    expect(resolveSyncConcurrency(3)).toBe(3); // clamped down to number of connections
+  });
+
+  it("never exceeds the number of connections", () => {
+    process.env.SYNC_CONCURRENCY = "50";
+    expect(resolveSyncConcurrency(5)).toBe(5);
+  });
+
+  it("honours a valid configured value", () => {
+    process.env.SYNC_CONCURRENCY = "4";
+    expect(resolveSyncConcurrency(100)).toBe(4);
+  });
+
+  it("floors decimal values", () => {
+    process.env.SYNC_CONCURRENCY = "4.9";
+    expect(resolveSyncConcurrency(100)).toBe(4);
+  });
+
+  it("falls back to default on invalid / non-positive values", () => {
+    process.env.SYNC_CONCURRENCY = "abc";
+    expect(resolveSyncConcurrency(100)).toBe(8);
+    process.env.SYNC_CONCURRENCY = "0";
+    expect(resolveSyncConcurrency(100)).toBe(8);
+    process.env.SYNC_CONCURRENCY = "-5";
+    expect(resolveSyncConcurrency(100)).toBe(8);
+  });
+
+  it("returns at least 1 even with zero or negative totals", () => {
+    delete process.env.SYNC_CONCURRENCY;
+    expect(resolveSyncConcurrency(0)).toBe(1);
+    expect(resolveSyncConcurrency(-3)).toBe(1);
   });
 });
 

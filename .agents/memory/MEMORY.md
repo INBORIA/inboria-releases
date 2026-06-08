@@ -2,6 +2,7 @@
 - [Ripgrep masks numbers](ripgrep-number-masking.md) — `rg` output replaced price/number strings with "n"/"ln"; trust `grep`/`sed`/`read` for numeric ground truth.
 - [Shared-draft co-editing is real CRDT](inboria-shared-draft-coedit.md) — body is already Yjs/TipTap Google-Docs-style (not last-writer-wins); seed once via creator/presenceSynced gate or you get duplication/deadlock.
 - [Inboria competitive gaps](inboria-competitive-gaps.md) — vs Superhuman/Missive: what already exists + the 5 real missing features (Cmd+K palette, auto-advance, go-to seq, reply collision, shared drafts). Verify live code first.
+- [Inboria scale roadmap](inboria-scale-roadmap.md) — 6 load points for 5000 subs (done one-by-one); #2 relève now parallel (SYNC_CONCURRENCY); preserve perConnection order+isolation; full 5000 needs #1+#2+#3.
 - [ncv-mail PWA stale-cache trap](ncv-mail-pwa-stale-cache.md) — `vite build && preview` + PWA service worker precaches; edits need rebuild + usually 2 reloads. "Rien n'a changé" ≈ stale SW cache, not a code bug.
 - [ncv-mail emails cache persistence](ncv-mail-emails-cache-persistence.md) — login skeleton flash fixed by persisting ONLY /api/emails queries, restore-before-render w/ 700ms guard, buster scoped to userId (B2B isolation).
 - [Add-in stale email context](inboria-addin-stale-email-context.md) — Office taskpane is one long-lived page across mails; reconcile resolved emailId per-action + on ItemChanged or the AI replies to a prior mail.

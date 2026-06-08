@@ -144,11 +144,35 @@ export interface SyncLoopResult {
   perConnection: Array<{ id: string | null; email: string | null; synced: number }>;
 }
 
+/** Nombre de boîtes traitées EN MÊME TEMPS par cycle de relève. */
+const DEFAULT_SYNC_CONCURRENCY = 8;
+
+/**
+ * Concurrence effective pour un cycle : lit `SYNC_CONCURRENCY` (env), borne à
+ * [1 .. nombre de connexions]. Garde un défaut prudent pour ne pas saturer
+ * l'event-loop / l'API IA. Une valeur invalide ou absente retombe sur le défaut.
+ */
+export function resolveSyncConcurrency(total: number): number {
+  const raw = Number(process.env.SYNC_CONCURRENCY);
+  const configured =
+    Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : DEFAULT_SYNC_CONCURRENCY;
+  if (total <= 0) return 1;
+  return Math.max(1, Math.min(configured, total));
+}
+
 /**
  * Runs `dispatcher` for each connection, isolating per-connection failures.
  * Mirrors the loop used by `runAutoSync` so tests can assert that one
  * thrown connection does not stop the others and that markConnectionFailure
  * is invoked for the failing one.
+ *
+ * MONTÉE EN CHARGE (point n°2) : les boîtes sont traitées par un POOL de
+ * `SYNC_CONCURRENCY` workers en parallèle au lieu d'une par une. Le résultat
+ * `perConnection` reste dans l'ORDRE des connexions d'entrée (écriture indexée)
+ * pour rester compatible avec les tests et les logs. Chaque boîte garde son
+ * isolation d'erreur via `safeRunForConnection` : une connexion qui échoue
+ * n'impacte jamais les autres. L'accumulation `totalSynced`/`failureCount` est
+ * sûre car JavaScript est mono-thread (pas de course entre les `+=`).
  */
 export async function runSyncLoop(
   connections: Array<{ id: string; email_address: string; provider?: string } & Record<string, unknown>>,
@@ -156,14 +180,27 @@ export async function runSyncLoop(
 ): Promise<SyncLoopResult> {
   let totalSynced = 0;
   let failureCount = 0;
-  const perConnection: SyncLoopResult["perConnection"] = [];
+  const perConnection: SyncLoopResult["perConnection"] = new Array(connections.length);
 
-  for (const conn of connections) {
-    const synced = await safeRunForConnection(conn, "fetch", () => dispatcher(conn));
-    perConnection.push({ id: conn.id ?? null, email: conn.email_address ?? null, synced });
-    if (synced < 0) failureCount++;
-    else totalSynced += synced;
+  let nextIndex = 0;
+  async function worker(): Promise<void> {
+    for (;;) {
+      const i = nextIndex++;
+      if (i >= connections.length) return;
+      const conn = connections[i];
+      const synced = await safeRunForConnection(conn, "fetch", () => dispatcher(conn));
+      perConnection[i] = {
+        id: (conn.id as string) ?? null,
+        email: (conn.email_address as string) ?? null,
+        synced,
+      };
+      if (synced < 0) failureCount++;
+      else totalSynced += synced;
+    }
   }
+
+  const workerCount = resolveSyncConcurrency(connections.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
   return { totalSynced, failureCount, perConnection };
 }
