@@ -590,7 +590,7 @@ export default function Reportes() {
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <BellOff className="w-4 h-4 text-[#b8c5d6]" />
-              Emails reportés
+              {t("wave1.snoozedSectionTitle", "Emails reportés")}
               {(paged?.total || snoozedEmails.length) > 0 && (
                 <span className="text-[11px] font-normal text-[color:var(--mail-text-meta,#b8c5d6)]">
                   ({paged?.total || snoozedEmails.length})
@@ -608,8 +608,8 @@ export default function Reportes() {
         ) : snoozedEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
             <BellOff className="mx-auto h-8 w-8 text-[#b8c5d6]/20 mb-2" />
-            <h3 className="text-[13px] font-medium text-white mb-1">Aucun email reporté</h3>
-            <p className="text-[12px] text-[#b8c5d6]">Les emails que vous reportez réapparaîtront ici jusqu'à leur réveil.</p>
+            <h3 className="text-[13px] font-medium text-white mb-1">{t("wave1.snoozedSectionEmpty", "Aucun email reporté")}</h3>
+            <p className="text-[12px] text-[#b8c5d6]">{t("wave1.snoozedSectionEmptyHint", "Les emails que vous reportez réapparaîtront ici jusqu'à leur réveil.")}</p>
           </div>
         ) : (
           <>
