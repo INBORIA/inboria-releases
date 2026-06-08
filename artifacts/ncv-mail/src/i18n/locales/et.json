@@ -559,6 +559,11 @@
       "done": "Valmis",
       "navigate": "Navigeeri",
       "reply": "Vasta"
+    },
+    "readingPaneLayout": {
+      "label": "Kuvapaneelid",
+      "overlay": "Peale asetatud",
+      "split": "Kõrvuti"
     }
   },
   "sent": {

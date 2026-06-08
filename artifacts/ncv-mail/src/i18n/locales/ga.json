@@ -559,6 +559,11 @@
       "done": "Críochnaithe",
       "navigate": "Nascleanúint",
       "reply": "Freagair"
+    },
+    "readingPaneLayout": {
+      "label": "Painéil taispeána",
+      "overlay": "Forleagan",
+      "split": "Taobh le taobh"
     }
   },
   "sent": {

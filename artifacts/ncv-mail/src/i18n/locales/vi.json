@@ -559,6 +559,11 @@
       "done": "Hoàn thành",
       "navigate": "Điều hướng",
       "reply": "Trả lời"
+    },
+    "readingPaneLayout": {
+      "label": "Hiển thị ngăn",
+      "overlay": "Chồng lên",
+      "split": "Cạnh nhau"
     }
   },
   "sent": {

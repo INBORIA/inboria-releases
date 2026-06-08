@@ -559,6 +559,11 @@
       "done": "Tamamlandı",
       "navigate": "Gezin",
       "reply": "Yanıtla"
+    },
+    "readingPaneLayout": {
+      "label": "Okuma bölmelerini göster",
+      "overlay": "Üst üste",
+      "split": "Yan yana"
     }
   },
   "sent": {

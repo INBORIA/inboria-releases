@@ -559,6 +559,11 @@
       "done": "完成",
       "navigate": "导航",
       "reply": "回复"
+    },
+    "readingPaneLayout": {
+      "label": "显示窗格",
+      "overlay": "覆盖",
+      "split": "并排"
     }
   },
   "sent": {

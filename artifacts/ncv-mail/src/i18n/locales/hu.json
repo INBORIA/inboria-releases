@@ -559,6 +559,11 @@
       "done": "Kész",
       "navigate": "Navigálás",
       "reply": "Válasz"
+    },
+    "readingPaneLayout": {
+      "label": "Ablakok megjelenítése",
+      "overlay": "Átfedés",
+      "split": "Egymás mellett"
     }
   },
   "sent": {

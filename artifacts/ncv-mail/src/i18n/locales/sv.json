@@ -559,6 +559,11 @@
       "done": "Klart",
       "navigate": "Navigera",
       "reply": "Svara"
+    },
+    "readingPaneLayout": {
+      "label": "Visa paneler",
+      "overlay": "Överlagring",
+      "split": "Sida vid sida"
     }
   },
   "sent": {

@@ -559,6 +559,11 @@
       "done": "完了",
       "navigate": "ナビゲート",
       "reply": "返信"
+    },
+    "readingPaneLayout": {
+      "label": "表示ペイン",
+      "overlay": "オーバーレイ",
+      "split": "並列表示"
     }
   },
   "sent": {

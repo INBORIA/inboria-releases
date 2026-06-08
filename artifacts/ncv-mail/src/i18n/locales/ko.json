@@ -559,6 +559,11 @@
       "done": "완료",
       "navigate": "탐색",
       "reply": "답장"
+    },
+    "readingPaneLayout": {
+      "label": "창 표시",
+      "overlay": "오버레이",
+      "split": "나란히"
     }
   },
   "sent": {

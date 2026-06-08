@@ -559,6 +559,11 @@
       "done": "Terminat",
       "navigate": "Navigați",
       "reply": "Răspundeți"
+    },
+    "readingPaneLayout": {
+      "label": "Panouri de afișare",
+      "overlay": "Suprapus",
+      "split": "Alăturat"
     }
   },
   "sent": {

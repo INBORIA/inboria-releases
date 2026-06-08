@@ -559,6 +559,11 @@
       "done": "Selesai",
       "navigate": "Navigasi",
       "reply": "Balas"
+    },
+    "readingPaneLayout": {
+      "label": "Tampilkan panel",
+      "overlay": "Tumpang tindih",
+      "split": "Bersebelahan"
     }
   },
   "sent": {

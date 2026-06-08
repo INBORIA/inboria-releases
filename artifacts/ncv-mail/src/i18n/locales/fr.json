@@ -559,6 +559,11 @@
     "teamTasks": "Tâches équipe",
     "assignedFilter": {
       "all": "Toute l'équipe"
+    },
+    "readingPaneLayout": {
+      "label": "Volets d'affichage",
+      "overlay": "Superposé",
+      "split": "Côte à côte"
     }
   },
   "sent": {

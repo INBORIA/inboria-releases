@@ -559,6 +559,11 @@
       "done": "Končano",
       "navigate": "Navigirajte",
       "reply": "Odgovorite"
+    },
+    "readingPaneLayout": {
+      "label": "Prikaz oken",
+      "overlay": "Prekrivanje",
+      "split": "Drug ob drugem"
     }
   },
   "sent": {

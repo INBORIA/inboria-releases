@@ -559,6 +559,11 @@
       "done": "Lest",
       "navigate": "Innaviga",
       "reply": "Irrispondi"
+    },
+    "readingPaneLayout": {
+      "label": "Uri tal-pannelli",
+      "overlay": "Fuq xulxin",
+      "split": "Maġenb xulxin"
     }
   },
   "sent": {

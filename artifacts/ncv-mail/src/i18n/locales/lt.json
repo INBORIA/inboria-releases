@@ -559,6 +559,11 @@
       "done": "Atlikta",
       "navigate": "Naršyti",
       "reply": "Atsakyti"
+    },
+    "readingPaneLayout": {
+      "label": "Rodymo skydeliai",
+      "overlay": "Perdengimas",
+      "split": "Šalia vienas kito"
     }
   },
   "sent": {

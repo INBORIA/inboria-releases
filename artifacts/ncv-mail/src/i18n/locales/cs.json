@@ -559,6 +559,11 @@
       "done": "Hotovo",
       "navigate": "Navigovat",
       "reply": "Odpovědět"
+    },
+    "readingPaneLayout": {
+      "label": "Zobrazení panelů",
+      "overlay": "Překrytí",
+      "split": "Vedle sebe"
     }
   },
   "sent": {

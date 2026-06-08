@@ -559,6 +559,11 @@
       "done": "Erledigt",
       "navigate": "Navigieren",
       "reply": "Antworten"
+    },
+    "readingPaneLayout": {
+      "label": "Anzeigebereiche",
+      "overlay": "Überlagern",
+      "split": "Nebeneinander"
     }
   },
   "sent": {

@@ -559,6 +559,11 @@
       "done": "Ferdig",
       "navigate": "Naviger",
       "reply": "Svar"
+    },
+    "readingPaneLayout": {
+      "label": "Visningsruter",
+      "overlay": "Overlegg",
+      "split": "Side ved side"
     }
   },
   "sent": {

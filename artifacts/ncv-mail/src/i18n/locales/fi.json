@@ -559,6 +559,11 @@
       "done": "Valmis",
       "navigate": "Navigoi",
       "reply": "Vastaa"
+    },
+    "readingPaneLayout": {
+      "label": "Näyttöruudut",
+      "overlay": "Päällekkäin",
+      "split": "Rinnakkain"
     }
   },
   "sent": {

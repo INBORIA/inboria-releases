@@ -559,6 +559,11 @@
       "done": "تم",
       "navigate": "التنقل",
       "reply": "الرد"
+    },
+    "readingPaneLayout": {
+      "label": "عرض الألواح",
+      "overlay": "تراكب",
+      "split": "جنباً إلى جنب"
     }
   },
   "sent": {

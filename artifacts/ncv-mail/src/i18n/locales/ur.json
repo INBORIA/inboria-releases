@@ -559,6 +559,11 @@
       "done": "مکمل",
       "navigate": "نیویگیٹ کریں",
       "reply": "جواب دیں"
+    },
+    "readingPaneLayout": {
+      "label": "ڈسپلے پینز",
+      "overlay": "اوورلے",
+      "split": "ساتھ ساتھ"
     }
   },
   "sent": {

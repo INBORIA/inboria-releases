@@ -559,6 +559,11 @@
       "done": "Fet",
       "navigate": "Navegar",
       "reply": "Respondre"
+    },
+    "readingPaneLayout": {
+      "label": "Mostreu els panells",
+      "overlay": "Superposat",
+      "split": "Costat a costat"
     }
   },
   "sent": {

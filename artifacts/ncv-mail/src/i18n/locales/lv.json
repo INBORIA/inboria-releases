@@ -559,6 +559,11 @@
       "done": "Pabeigts",
       "navigate": "Pārvietoties",
       "reply": "Atbildēt"
+    },
+    "readingPaneLayout": {
+      "label": "Displeja rūtiņas",
+      "overlay": "Pārklājums",
+      "split": "Blakus"
     }
   },
   "sent": {

@@ -559,6 +559,11 @@
       "done": "Завершено",
       "navigate": "Навигация",
       "reply": "Ответить"
+    },
+    "readingPaneLayout": {
+      "label": "Отображение панелей",
+      "overlay": "Наложение",
+      "split": "Рядом"
     }
   },
   "sent": {

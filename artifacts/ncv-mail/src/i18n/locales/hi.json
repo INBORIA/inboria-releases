@@ -559,6 +559,11 @@
       "done": "समाप्त",
       "navigate": "नेविगेट करें",
       "reply": "उत्तर दें"
+    },
+    "readingPaneLayout": {
+      "label": "पैन प्रदर्शन",
+      "overlay": "ओवरले",
+      "split": "साइड बाय साइड"
     }
   },
   "sent": {

@@ -559,6 +559,11 @@
       "done": "Fatto",
       "navigate": "Navigare",
       "reply": "Rispondere"
+    },
+    "readingPaneLayout": {
+      "label": "Visualizzazione pannelli",
+      "overlay": "Sovrapposto",
+      "split": "Affiancato"
     }
   },
   "sent": {

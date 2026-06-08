@@ -559,6 +559,11 @@
       "done": "បានបញ្ចប់",
       "navigate": "រុករក",
       "reply": "ឆ្លើយតប"
+    },
+    "readingPaneLayout": {
+      "label": "បង្ហាញបន្ទះ",
+      "overlay": "លើបណ្តោះអាសន្ន",
+      "split": "ជាប់គ្នា"
     }
   },
   "sent": {

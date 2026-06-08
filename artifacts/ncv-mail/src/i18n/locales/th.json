@@ -559,6 +559,11 @@
       "done": "เสร็จสิ้น",
       "navigate": "นำทาง",
       "reply": "ตอบกลับ"
+    },
+    "readingPaneLayout": {
+      "label": "แสดงบานหน้าต่าง",
+      "overlay": "ซ้อนทับ",
+      "split": "เคียงข้างกัน"
     }
   },
   "sent": {

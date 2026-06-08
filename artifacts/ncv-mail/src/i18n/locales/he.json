@@ -559,6 +559,11 @@
       "done": "בוצע",
       "navigate": "ניווט",
       "reply": "השב"
+    },
+    "readingPaneLayout": {
+      "label": "תצוגת חלוניות",
+      "overlay": "חופף",
+      "split": "זה לצד זה"
     }
   },
   "sent": {

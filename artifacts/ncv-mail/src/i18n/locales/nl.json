@@ -559,6 +559,11 @@
       "done": "Voltooid",
       "navigate": "Navigeren",
       "reply": "Antwoorden"
+    },
+    "readingPaneLayout": {
+      "label": "Weergavepanelen",
+      "overlay": "Overlay",
+      "split": "Naast elkaar"
     }
   },
   "sent": {
