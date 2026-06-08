@@ -54,6 +54,23 @@ on any page is instant (mitigates the "first drag silently aborts" feel). True
 LRU = `touch()` (delete+re-set) on every get/has; `rememberBlob` revokes the old
 ObjectURL when a key is rewritten and evicts+revokes the oldest past the cap.
 
+## Bundling trap: drag worked ONLY on Réception (route-chunk ownership)
+**Symptom:** drag-out worked on Réception (`index.tsx`) but was a silent no-op on
+every page using `DragOutAvatar` (envoyes/reportes/relances/archives/dossiers/
+corbeille/indesirables).
+**Why:** `index.tsx` (a lazy *route* chunk) imports `use-row-drag-out` inline, so
+Rollup bundled the hook (with the `DownloadURL`/`rfc822` setData logic) INTO the
+Réception route chunk. The shared `DragOutAvatar` chunk then statically imported
+the hook FROM that route chunk → on other routes that chunk isn't loaded/init'd →
+drag does nothing, no error. Réception worked only because it owns the code.
+**How to apply:** a SHARED chunk must never depend on a ROUTE chunk. Fix is a
+`build.rollupOptions.output.manualChunks` rule in `vite.config.ts` forcing
+`use-row-drag-out` + `DragOutAvatar` into a dedicated `drag-out` chunk. Verify on
+the PROD build (not dev — Vite dev is unbundled so the bug can't reproduce): the
+`drag-out-*.js` chunk must contain `DownloadURL`/`rfc822` and have NO static
+`from "./index-*"` route import. Only fixed in prod AFTER republish (the live
+bundle keeps the old chunk graph until then).
+
 ## Environment gotcha (why "it doesn't work in DEV")
 **Why:** drag-to-desktop is blocked from the Replit workspace preview because the
 app runs in an embedded (sandboxed/cross-origin) iframe; the drag never reaches
