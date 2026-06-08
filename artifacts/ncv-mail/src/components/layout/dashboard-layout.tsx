@@ -235,6 +235,14 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     if (typeof document === "undefined") return;
     document.documentElement.style.setProperty("--app-top", "64px");
   }, []);
+  // Expose la largeur courante de la sidebar sur la racine du document pour que
+  // les éléments rendus HORS du conteneur du layout (ex. le volet de lecture en
+  // position « En bas », monté en frère via createPortal-like fixed) puissent
+  // s'aligner sur la zone des emails et ne PAS recouvrir le menu de gauche.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.style.setProperty("--sb-w", `${effectiveSidebarW}px`);
+  }, [effectiveSidebarW]);
   const dragStateRef = useRef<{ startX: number; startW: number } | null>(null);
   const handleSidebarDragStart = (e: React.MouseEvent) => {
     if (sidebarCollapsed) return;
