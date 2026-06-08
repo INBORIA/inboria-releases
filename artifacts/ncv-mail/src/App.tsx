@@ -2,7 +2,8 @@ import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wo
 import { useEffect, useLayoutEffect, lazy, Suspense } from "react";
 import { getStoredNcvTheme } from "@/lib/inbox-theme";
 import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { get as idbGet, set as idbSet, del as idbDel, createStore as createIdbStore } from "idb-keyval";
 import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
@@ -200,11 +201,16 @@ const ONE_MINUTE = 1000 * 60;
 const ONE_HOUR = ONE_MINUTE * 60;
 const ONE_DAY = ONE_HOUR * 24;
 
-const PERSIST_CACHE_KEY = "inboria-cache-v1";
-// v2 (et non v1) : invalide d'office TOUT cache `v1:*` écrit par l'ancienne logique
-// buggée — dont les blobs `v1:anon` qui pouvaient contenir les mails d'un compte sur
-// un poste partagé. Ils ne correspondront plus à aucun buster `v2:<id>` → ignorés.
-const CACHE_BUSTER = "v2";
+// Ancienne clé localStorage (≤ v2). On la purge une fois au démarrage pour ne pas
+// laisser traîner un blob de plusieurs Mo désormais inutile (on est passé à IndexedDB).
+const LEGACY_LOCALSTORAGE_KEY = "inboria-cache-v1";
+// Clé de l'entrée stockée dans la base locale IndexedDB.
+const PERSIST_CACHE_KEY = "inboria-cache";
+// v3 (et non v2) : on a (a) changé de moteur de stockage (localStorage → IndexedDB)
+// et (b) élargi le périmètre persisté (la liste `/api/emails` ET le détail d'un mail
+// `email-detail`). Bumper le buster invalide d'office tout cache écrit par l'ancienne
+// logique → 1 seul MISS au prochain chargement, puis HIT instantané.
+const CACHE_BUSTER = "v3";
 
 const queryClient = new QueryClient({
   mutationCache,
@@ -250,19 +256,64 @@ const queryClient = new QueryClient({
 // l'auth ne sont JAMAIS persistés → aucun risque de réhydrater une donnée au
 // mauvais format dans un composant critique. `buster` (CACHE_BUSTER) purge tout
 // le cache stocké quand on le change (ex. après un changement de format).
-const emailsPersister =
-  typeof window !== "undefined"
-    ? createSyncStoragePersister({
-        storage: window.localStorage,
-        key: PERSIST_CACHE_KEY,
-        throttleTime: 1000,
-      })
+// Base locale IndexedDB dédiée (asynchrone, capacité quasi illimitée — vs
+// localStorage qui était synchrone et plafonné à ~5 Mo). On y range tout le
+// cache des mails pour une LECTURE LOCALE instantanée au rechargement.
+const idbStore =
+  typeof window !== "undefined" && typeof indexedDB !== "undefined"
+    ? createIdbStore("inboria-cache", "tanstack-query")
     : null;
 
+// Adaptateur "AsyncStorage" attendu par createAsyncStoragePersister, branché sur
+// IndexedDB via idb-keyval (get/set/del). Les écritures se font hors du thread
+// principal → plus de à-coups quand on enregistre une grosse boîte (localStorage
+// bloquait l'interface le temps de sérialiser plusieurs Mo).
+const idbStorage = idbStore
+  ? {
+      getItem: (key: string) =>
+        idbGet<string>(key, idbStore).then((v) => v ?? null),
+      setItem: (key: string, value: string) => idbSet(key, value, idbStore),
+      removeItem: (key: string) => idbDel(key, idbStore),
+    }
+  : null;
+
+// Purge unique de l'ancien blob localStorage (≤ v2) : on est passé à IndexedDB,
+// inutile de garder plusieurs Mo orphelins côté localStorage.
+if (typeof window !== "undefined") {
+  try { window.localStorage.removeItem(LEGACY_LOCALSTORAGE_KEY); } catch { /* noop */ }
+}
+
+const emailsPersister = idbStorage
+  ? createAsyncStoragePersister({
+      storage: idbStorage,
+      key: PERSIST_CACHE_KEY,
+      throttleTime: 1000,
+    })
+  : null;
+
+// Efface l'entrée de cache dans la base locale IndexedDB (changement de compte,
+// déconnexion). Renvoie une promesse pour pouvoir SÉRIALISER les opérations IDB :
+// IndexedDB étant asynchrone (contrairement à localStorage), l'appelant doit
+// attendre la fin de la suppression avant d'écrire à nouveau la même clé (sinon
+// course = le del finit après le save et efface le cache du nouveau compte) et
+// avant de quitter sur une déconnexion (sinon les mails resteraient sur disque).
+function purgePersistedCacheStorage(): Promise<void> {
+  if (!idbStore) return Promise.resolve();
+  return idbDel(PERSIST_CACHE_KEY, idbStore).catch(() => { /* noop */ });
+}
+
+// Périmètre persisté = LECTURE LOCALE de la boîte ET de l'ouverture d'un mail :
+//  - `/api/emails`  → les listes de mails (Réception, etc.).
+//  - `email-detail` → le contenu d'un mail ouvert (clé utilisée par le dashboard)
+//    → rouvrir un mail après rechargement est instantané, sans aller-retour réseau.
+// On ne persiste QUE les requêtes réussies. Profil/orga/auth ne sont JAMAIS
+// persistés (cf. ancien bug d'écran blanc à la réhydratation).
 const shouldDehydrateEmailsQuery = (query: {
   queryKey: readonly unknown[];
   state: { status: string };
-}) => query.state.status === "success" && query.queryKey?.[0] === "/api/emails";
+}) =>
+  query.state.status === "success" &&
+  (query.queryKey?.[0] === "/api/emails" || query.queryKey?.[0] === "email-detail");
 
 /**
  * Lit l'id de l'utilisateur connecté DIRECTEMENT depuis localStorage, sans
@@ -363,7 +414,7 @@ export async function restorePersistedQueryCache(): Promise<void> {
  *    restaurée par erreur) : on purge cache mémoire + persisté avant de réabonner
  *    → aucun mail d'un autre compte n'est conservé.
  */
-export function syncPersistedCacheOwner(userId: string): void {
+export async function syncPersistedCacheOwner(userId: string): Promise<void> {
   if (!emailsPersister || !userId || userId === _persistOwnerId) return;
   if (_persistUnsub) {
     try { _persistUnsub(); } catch { /* noop */ }
@@ -378,11 +429,14 @@ export function syncPersistedCacheOwner(userId: string): void {
   const sameAccountReconnect = userId === _lastOwnerId;
   if (!sameAccountReconnect) {
     queryClient.clear();
-    try { window.localStorage.removeItem(PERSIST_CACHE_KEY); } catch { /* noop */ }
+    // On ATTEND la fin de la suppression IDB AVANT de réécrire la même clé plus
+    // bas (sinon le del asynchrone pourrait finir après le save et effacer le
+    // cache fraîchement écrit pour le nouveau compte).
+    await purgePersistedCacheStorage();
   }
   const persistOptions = buildPersistOptions(userId);
   // Sauvegarde immédiate sous le nouveau buster, puis réabonnement continu.
-  try { void persistQueryClientSave(persistOptions as any); } catch { /* noop */ }
+  try { await persistQueryClientSave(persistOptions as any); } catch { /* noop */ }
   try {
     _persistUnsub = persistQueryClientSubscribe(persistOptions as any);
     _persistOwnerId = userId;
@@ -406,19 +460,17 @@ function teardownPersistedCache(): void {
  */
 function CacheCleanup() {
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_OUT") {
         // On retient le compte qui se déconnecte (mémoire de l'onglet) pour
         // reconnaître une reconnexion du MÊME compte → réaffichage instantané.
         if (_persistOwnerId) _lastOwnerId = _persistOwnerId;
-        // On coupe l'écriture sur disque ET on efface le blob disque (rien des
+        // On coupe l'écriture sur disque ET on efface le cache local (rien des
         // mails ne reste sur le disque après déconnexion — confidentialité).
+        // On ATTEND la fin de la suppression IDB (asynchrone) pour garantir, autant
+        // que possible, que plus rien ne subsiste sur disque avant de poursuivre.
         teardownPersistedCache();
-        try {
-          window.localStorage.removeItem(PERSIST_CACHE_KEY);
-        } catch {
-          // Storage may be unavailable in private mode — non fatal.
-        }
+        await purgePersistedCacheStorage();
         // On NE vide PAS la mémoire vive (queryClient) : si le même compte se
         // reconnecte dans cette fenêtre, ses mails sont réaffichés sans squelette.
         // Un AUTRE compte qui se connecte purgera la mémoire (cf. syncPersistedCacheOwner).

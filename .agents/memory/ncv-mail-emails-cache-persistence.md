@@ -88,6 +88,22 @@ exige de distinguer « même compte » (garder RAM) de « autre compte » (purge
 onglet) ; ne JAMAIS étendre au disque. Tout nouveau cache user-scopé doit purger sur
 changement d'identité, pas sur la simple déconnexion.
 
+**Moteur de stockage = IndexedDB (local-first étape 1)** : le cache des mails est
+passé de localStorage (synchrone, plafonné ~5 Mo) à IndexedDB via `idb-keyval` +
+`createAsyncStoragePersister` (store `inboria-cache`/`tanstack-query`). Périmètre
+persisté élargi : `queryKey[0]==='/api/emails'` (listes) ET `queryKey[0]==='email-detail'`
+(détail d'un mail ouvert — le dashboard ouvre les mails sous CETTE clé custom, PAS la
+clé Orval `/api/emails/:id`). Buster bumpé `v2`→`v3` (changement moteur + périmètre).
+**PIÈGE async (régression rattrapée en revue)** : IndexedDB est asynchrone, donc les
+purges (`idbDel`) ne sont plus ordonnées comme `localStorage.removeItem` synchrone.
+DEUX endroits doivent SÉRIALISER (await) : (1) `syncPersistedCacheOwner` au changement
+de compte = `await purge` AVANT `persistQueryClientSave` sinon le del finit après le
+save et efface le cache du nouveau compte ; (2) handler `SIGNED_OUT` = `await purge`
+avant de sortir sinon les mails peuvent rester sur disque (confidentialité). Helper
+`purgePersistedCacheStorage()` renvoie une `Promise`. **How to apply** : toute purge/
+écriture IDB sur la MÊME clé doit être attendue/queueée ; ne jamais supposer l'ordre
+fire-and-forget comme on le faisait avec localStorage.
+
 **Complément anti-flash — squelette RETARDÉ** : le cache seul réduit le flash mais
 n'élimine pas les cas où `isLoading` est vrai une fraction de seconde (cache absent
 après déconnexion, restore qui rate la 1ʳᵉ frame, gros chunk dashboard). Un squelette
