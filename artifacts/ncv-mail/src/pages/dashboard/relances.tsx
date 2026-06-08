@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { DragOutAvatar } from "@/components/email-list/DragOutAvatar";
 import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
@@ -714,9 +715,13 @@ export default function Relances() {
                     </div>
 
                     {/* Avatar */}
-                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                      <span className="text-primary text-[11px] font-semibold">{initial}</span>
-                    </div>
+                    {hasEmail ? (
+                      <DragOutAvatar emailId={Number(email.id)} subject={email.subject} letter={initial} />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                        <span className="text-primary text-[11px] font-semibold">{initial}</span>
+                      </div>
+                    )}
 
                     {/* Destinataire + sujet — résumé */}
                     <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">

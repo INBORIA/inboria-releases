@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { DragOutAvatar } from "@/components/email-list/DragOutAvatar";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { removeEmailOptimistic } from "@/lib/optimistic-email";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
@@ -508,11 +509,11 @@ export default function Corbeille() {
                     ) : (
                       <div className="w-4 shrink-0" />
                     )}
-                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                      <span className="text-primary text-[11px] font-semibold">
-                        {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
-                      </span>
-                    </div>
+                    <DragOutAvatar
+                      emailId={email.id}
+                      subject={email.subject}
+                      letter={(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
+                    />
                     <div className="w-[140px] shrink-0 min-w-0">
                       <span className="text-[13px] truncate text-[#c2c8d4] block">{email.sender}</span>
                     </div>

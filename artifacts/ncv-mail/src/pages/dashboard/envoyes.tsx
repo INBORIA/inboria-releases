@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { MailPageHeader } from "@/components/email-list/MailPageHeader";
+import { DragOutAvatar } from "@/components/email-list/DragOutAvatar";
 import { MailReadingPane } from "@/components/email-list/MailReadingPane";
 import { useReadingPaneEnabled } from "@/lib/use-reading-pane";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
@@ -661,11 +662,11 @@ export default function Envoyes() {
                     </div>
 
                     {/* Avatar — bleu, première lettre du destinataire */}
-                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                      <span className="text-primary text-[11px] font-semibold">
-                        {(email.recipient || "?").trim()[0]?.toUpperCase() || "?"}
-                      </span>
-                    </div>
+                    <DragOutAvatar
+                      emailId={email.id}
+                      subject={email.subject}
+                      letter={(email.recipient || "?").trim()[0]?.toUpperCase() || "?"}
+                    />
 
                     {/* Destinataire (largeur fixe) */}
                     <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">

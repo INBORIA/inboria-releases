@@ -31,8 +31,28 @@ AVATAR element, NOT the whole row — the list rows already use mousedown-drag f
 rubber-band multi-select (`onDragSelectStart`), so a full-row HTML5 `draggable`
 collides with it. The avatar handle gets `onMouseDown`/`onClick` stopPropagation
 so it neither starts the lasso nor opens the mail; its `onDragStart` also
-stopPropagations. Reference wiring: Réception (`pages/dashboard/index.tsx`
-EmailRowImpl). Roll out to other list pages (envoyes, programmes, …) the same way.
+stopPropagations.
+
+Most list pages render rows with an inline `.map`, so you **cannot** call the
+hook per-row (hooks-in-loops). Use the shared wrapper
+`src/components/email-list/DragOutAvatar.tsx` (calls the hook internally, renders
+the standard `bg-primary/15` avatar circle) and just pass `emailId/subject/letter`.
+Réception (`index.tsx`) keeps its own inline avatar; every other page uses
+`DragOutAvatar`.
+
+**Which pages can be drag-out'd:** only pages whose rows are REAL emails
+(`emails` table id, generic `api/emails/:id/export.eml`): inbox, envoyes,
+reportes, relances, archives, dossiers, corbeille, indesirables. **Exclude**
+`programmes` (rows are *scheduled* emails — `getListScheduledEmails`, ids ≠
+emails.id → 404) and `taches` (rows are tasks, not mails). Relances rows wrap the
+mail in `f.emails`, gate on `hasEmail` before mounting the drag avatar.
+
+**Shared blob cache:** the hook keeps a module-level LRU(60) `Map` of blob URLs
+keyed by emailId + an in-flight `Set` to dedup concurrent fetches across
+views/pages. Effect: once a mail's `.eml` is prefetched anywhere, the first drag
+on any page is instant (mitigates the "first drag silently aborts" feel). True
+LRU = `touch()` (delete+re-set) on every get/has; `rememberBlob` revokes the old
+ObjectURL when a key is rewritten and evicts+revokes the oldest past the cap.
 
 ## Environment gotcha (why "it doesn't work in DEV")
 **Why:** drag-to-desktop is blocked from the Replit workspace preview because the
