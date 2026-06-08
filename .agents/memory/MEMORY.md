@@ -35,3 +35,4 @@
 - [IMAP UID dedup collision](imap-uid-dedup-collision.md) — never dedup IMAP by bare UID suffix (`%:${uid}`); UID is unique only per-mailbox → cross-box inbound mail silently dropped. Sync reads INBOX+junk only.
 - [Single-recipient send](ncv-mail-single-recipient-send.md) — compose/reply/forward send accepts ONE address (regex on to.trim()); recipient autocomplete must replace field with one email (no trailing comma); no multi-recipient UX without backend work.
 - [Distributed sync lock](inboria-distributed-sync-lock.md) — multi-instance auto-sync lease (point n°1): MUST renew lease mid-batch (heartbeat) or long syncs double-process; transient RPC error must NOT disable distributed mode; override path bypasses claim.
+- [Worker/web role split](inboria-worker-role-split.md) — APP_ROLE (all/web/worker) gates the ~15 background workers in index.ts boot; default all = unchanged; new workers MUST go inside the RUN_WORKERS block or they duplicate on every web instance.

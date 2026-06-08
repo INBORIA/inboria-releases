@@ -11,7 +11,7 @@ interactively (user wants feedback before each major step; no isolated task agen
 ## The 6 load points (from a scalability audit)
 1. 🔴 No distributed lock / dedup across server instances → double-processing the day we run >1 instance. (Only matters with multiple instances.) **DONE** — per-connection lease.
 2. 🔴 Sequential mailbox sync (`for...of await`). **DONE** — parallelized.
-3. 🟠 AI/workers run in-process (same Node as the API).
+3. 🟠 AI/workers run in-process (same Node as the API). **DONE** — splittable by APP_ROLE.
 4. 🟠 ~3 realtime channels per opened mail.
 5. 🟡 No global OpenAI throttle.
 6. 🟡 Heavy DB queries (N+1, re-sorting ~1000 rows in memory).

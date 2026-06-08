@@ -675,6 +675,24 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
+// Point n°3 (montée en charge) : rôle de ce processus.
+// "all" (défaut) = ce processus fait TOUT (serveur web + ouvriers de fond) →
+//   comportement historique, rien ne change sur un déploiement à un seul serveur.
+// "web" = sert UNIQUEMENT les requêtes HTTP, aucun ouvrier de fond → instances
+//   web autoscalables qui ne sont jamais ralenties par l'IA / la relève.
+// "worker" = exécute UNIQUEMENT les ouvriers de fond (relève, IA, embeddings,
+//   relances, SLA, webhooks, CRM…), déploiement dédié scalable séparément.
+// Combiné au point n°1 (verrou distribué), on peut lancer plusieurs "worker"
+// sans jamais traiter deux fois le même mail.
+const APP_ROLE = (process.env["APP_ROLE"] || "all").toLowerCase();
+if (!["all", "web", "worker"].includes(APP_ROLE)) {
+  throw new Error(
+    `Invalid APP_ROLE value: "${APP_ROLE}". Expected one of "all", "web", "worker". ` +
+      `Refusing to boot to avoid silently disabling background workers.`,
+  );
+}
+const RUN_WORKERS = APP_ROLE === "all" || APP_ROLE === "worker";
+
 process.on("uncaughtException", (err) => {
   logger.error({ err }, "uncaughtException — keeping server alive");
 });
@@ -706,21 +724,33 @@ app.listen(port, (err) => {
   ensureAdminTeamAccessSchema();
   ensureTemplatesAndAutomationRules();
   ensureManualContacts();
-  cleanupDuplicateTasks();
-  purgeNoiseTasks();
   ensureB2bTables();
-  startAutoSync();
-  startInboriaExtractor();
-  startScheduledSendWorker();
-  startSnoozeWakeWorker();
-  startSlaWorker();
-  startWebhookDispatcher();
-  startCrmSyncScheduler();
-  startMeetingFollowupWorker();
-  startAppointmentReminderWorker();
-  startTaskDueWorker();
-  startAutomationRuleDigestWorker();
-  startHarnessCron();
+
+  if (RUN_WORKERS) {
+    cleanupDuplicateTasks();
+    purgeNoiseTasks();
+    startAutoSync();
+    startInboriaExtractor();
+    startScheduledSendWorker();
+    startSnoozeWakeWorker();
+    startSlaWorker();
+    startWebhookDispatcher();
+    startCrmSyncScheduler();
+    startMeetingFollowupWorker();
+    startAppointmentReminderWorker();
+    startTaskDueWorker();
+    startAutomationRuleDigestWorker();
+    startHarnessCron();
+    logger.info(
+      { role: APP_ROLE },
+      "Ouvriers de fond démarrés (relève, IA, embeddings, relances, SLA, webhooks, CRM…)",
+    );
+  } else {
+    logger.info(
+      { role: APP_ROLE },
+      "Ouvriers de fond DÉSACTIVÉS sur ce processus (rôle web) — sert uniquement les requêtes HTTP",
+    );
+  }
 });
 
 async function ensureManualContacts() {
