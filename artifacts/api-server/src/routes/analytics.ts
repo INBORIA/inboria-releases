@@ -111,9 +111,17 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const list = await fetchAllRows<any>(buildEmailsQuery);
 
     const profileMap = new Map<string, string>();
-    for (const uid of memberIds) {
-      const { data: p } = await supabaseAdmin.from("profiles").select("full_name").eq("id", uid).single();
-      profileMap.set(uid, p?.full_name || "");
+    if (memberIds.length > 0) {
+      // Une seule requête groupée au lieu d'un SELECT par membre (anti N+1) :
+      // sur une organisation à dizaines de membres ça remplace des dizaines
+      // d'aller-retours Supabase par un unique `.in()`.
+      const { data: profileRows } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", memberIds);
+      for (const p of profileRows || []) {
+        profileMap.set(p.id as string, (p.full_name as string) || "");
+      }
     }
 
     const catIds = [...new Set(list.map((e: any) => e.category_id).filter(Boolean))];
@@ -541,9 +549,17 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     const memberIds = (members || []).map((m: any) => m.user_id);
 
     const profileMap = new Map<string, string>();
-    for (const uid of memberIds) {
-      const { data: p } = await supabaseAdmin.from("profiles").select("full_name").eq("id", uid).single();
-      profileMap.set(uid, p?.full_name || "");
+    if (memberIds.length > 0) {
+      // Une seule requête groupée au lieu d'un SELECT par membre (anti N+1) :
+      // sur une organisation à dizaines de membres ça remplace des dizaines
+      // d'aller-retours Supabase par un unique `.in()`.
+      const { data: profileRows } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", memberIds);
+      for (const p of profileRows || []) {
+        profileMap.set(p.id as string, (p.full_name as string) || "");
+      }
     }
 
     const { data: csvOrgMailboxes } = await supabaseAdmin
@@ -622,9 +638,17 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const memberIds = (members || []).map((m: any) => m.user_id);
 
     const profileMap = new Map<string, string>();
-    for (const uid of memberIds) {
-      const { data: p } = await supabaseAdmin.from("profiles").select("full_name").eq("id", uid).single();
-      profileMap.set(uid, p?.full_name || "");
+    if (memberIds.length > 0) {
+      // Une seule requête groupée au lieu d'un SELECT par membre (anti N+1) :
+      // sur une organisation à dizaines de membres ça remplace des dizaines
+      // d'aller-retours Supabase par un unique `.in()`.
+      const { data: profileRows } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", memberIds);
+      for (const p of profileRows || []) {
+        profileMap.set(p.id as string, (p.full_name as string) || "");
+      }
     }
 
     const { data: pdfOrgMailboxes } = await supabaseAdmin

@@ -14,7 +14,7 @@ interactively (user wants feedback before each major step; no isolated task agen
 3. 🟠 AI/workers run in-process (same Node as the API). **DONE** — splittable by APP_ROLE.
 4. 🟠 ~3 realtime channels per opened mail. **DONE** — comments channel now gated by chatVisible.
 5. 🟡 No global OpenAI throttle. **DONE** — shared client + global concurrency gate.
-6. 🟡 Heavy DB queries (N+1, re-sorting ~1000 rows in memory).
+6. 🟡 Heavy DB queries (N+1, re-sorting ~1000 rows in memory). **DONE (safe slice)** — analytics N+1 batched + smart-sort tasks/PJ scoped to the returned page.
 
 Order chosen: start with #2 (best risk/reward, helps even single-instance).
 
@@ -75,3 +75,40 @@ not at stream end — acceptable today (no `stream:true` in api-server/src); rev
 streaming is adopted broadly. `openai.models.list()` (admin health-check) stays outside
 the gate on purpose (rare, admin-only). `aiLimiterStats()` exported for a future admin
 endpoint. Tunables ship generous so nothing slows down today — the cap only bites in pics.
+
+## Point #6 — requêtes DB lourdes (implemented, scope volontairement étroit)
+Deliberately shipped only the strictly behavior-preserving wins; left the bigger
+risky refactors as documented future work (see below).
+**(A) analytics.ts N+1 profils → 1 batch.** 3 boucles identiques (`/analytics/team`,
+export CSV, export PDF) faisaient un SELECT `profiles` PAR membre d'orga → remplacées
+par un unique `.in('id', memberIds)`. Équivalence vérifiée : tous les usages aval sont
+`profileMap.get(uid) || ""` ou `|| uid.slice(0,8)`, donc membre sans ligne profil →
+clé absente → `undefined` → même fallback qu'avant (`""`). Architect PASS.
+**(B) emails.ts GET /emails — compteurs tasks/PJ après le slice.** Le tri intelligent
+(`sort=smart`) est OPT-IN (toggle frontend `inbox.smartSort`, défaut OFF) → le chemin
+boîte de réception PAR DÉFAUT fait déjà `.range(from,to)` (une seule page), il est déjà
+efficace. En smart on chargeait tasks + email_attachments via deux `.in()` sur les ~1000
+ids candidats AVANT tri/slice ; déplacé APRÈS sort+slice → ne porte plus que sur les
+≤limit ids de la page renvoyée. **Invariant : tasks/PJ ne participent JAMAIS au tri**
+(seuls inboriaScore via `inboria_signals` + created_at trient) → déplacement sûr. Le
+fetch `inboria_signals` reste sur TOUT l'ensemble candidat (nécessaire au score global).
+En tri classique `mapped` == la page → `pageEmailIds` == ancien `emailIds`, comportement
+strictement identique. Objets `mapped` initialisés `taskCount:0/attachmentCount:0` puis
+patchés in-place. Architect PASS.
+**Laissé de côté (gros refactor risqué, PAS fait — à rouvrir si besoin) :**
+- emails.ts smart : on fetch encore jusqu'à 1000 lignes FULL (+ joins categories/projects)
+  alors qu'on n'en renvoie que `limit`. Le vrai gain = fetch LÉGER (id, created_at) des
+  1000 candidats + signals, trier/slicer, PUIS fetch FULL+joins uniquement sur les ids de
+  page (réordonner en JS car `.in()` ne garde pas l'ordre). Bloquant : il faut appliquer
+  TOUS les filtres (priority/category/status/snoozed/projectId/q-opérateurs/crmFilter) à
+  l'identique sur 2 requêtes → factoriser l'application des filtres dans un helper unique
+  (gros diff sur endpoint flagship). Opt-in + borné à 1000 → priorité basse pour l'instant.
+- analytics.ts `fetchAllRows` (hardCap 50000 lignes, stats calculées en JS) = pattern
+  "DB en JS", risque OOM à grande échelle. Vrai fix = agrégation SQL (RPC), mais les
+  gotchas du projet déconseillent d'ajouter des fonctions SQL → laissé tel quel (analytics
+  = basse fréquence, pas par requête).
+- contacts.ts `/contacts/search` (5000 lignes agrégées en JS) et `/contacts/:email/timeline`
+  (6+ requêtes parallèles) : déclenchés à l'action utilisateur (recherche debounced / clic),
+  fréquence modérée → laissés.
+- folders.ts GET /folders compte les assignations en JS (1 requête, N lignes) ; alternative
+  = N+1 count par dossier ou RPC → l'existant est le moindre mal sans nouveau SQL.

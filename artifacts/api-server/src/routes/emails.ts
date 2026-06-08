@@ -430,27 +430,6 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     }
 
     const emailIds = (emails || []).map((e: any) => e.id);
-    let taskCountMap: Record<number, number> = {};
-    let attachmentCountMap: Record<number, number> = {};
-    if (emailIds.length > 0) {
-      const [{ data: taskRows }, { data: attachRows }] = await Promise.all([
-        supabaseAdmin
-          .from("tasks")
-          .select("email_id")
-          .in("email_id", emailIds)
-          .eq("user_id", req.userId!),
-        supabaseAdmin
-          .from("email_attachments")
-          .select("email_id")
-          .in("email_id", emailIds),
-      ]);
-      (taskRows || []).forEach((t: any) => {
-        taskCountMap[t.email_id] = (taskCountMap[t.email_id] || 0) + 1;
-      });
-      (attachRows || []).forEach((a: any) => {
-        attachmentCountMap[a.email_id] = (attachmentCountMap[a.email_id] || 0) + 1;
-      });
-    }
 
     // Inboria Phase 3 — smart sort. Load signals for the candidate set, compute
     // a score per email, attach reasons. Tolerant if inboria_signals table is
@@ -541,8 +520,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         sentAt: e.sent_at || null,
         openedAt: e.opened_at || null,
         openedCount: e.opened_count || 0,
-        taskCount: taskCountMap[e.id] || 0,
-        attachmentCount: attachmentCountMap[e.id] || 0,
+        taskCount: 0,
+        attachmentCount: 0,
         createdAt: e.created_at,
         inboriaScore,
         inboriaReasons,
@@ -560,6 +539,40 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       // up to SMART_CANDIDATE_CAP rows, so pagination beyond that is bounded
       // by the candidate window — fine for typical inboxes (200/page × 5).
       mapped = mapped.slice(from, from + limit);
+    }
+
+    // Compteurs tâches & pièces jointes : on ne les charge QUE pour la page
+    // réellement renvoyée. En tri intelligent la fenêtre de candidats peut
+    // monter à SMART_CANDIDATE_CAP (1000) lignes alors qu'on n'en renvoie que
+    // `limit` — inutile de compter tâches/PJ pour des lignes que le client ne
+    // verra jamais (deux `.in()` sur ≤limit ids au lieu de 1000). En tri
+    // classique `mapped` correspond déjà exactement à la page demandée, donc
+    // le comportement est strictement identique.
+    const pageEmailIds = mapped.map((m) => m.id);
+    if (pageEmailIds.length > 0) {
+      const [{ data: taskRows }, { data: attachRows }] = await Promise.all([
+        supabaseAdmin
+          .from("tasks")
+          .select("email_id")
+          .in("email_id", pageEmailIds)
+          .eq("user_id", req.userId!),
+        supabaseAdmin
+          .from("email_attachments")
+          .select("email_id")
+          .in("email_id", pageEmailIds),
+      ]);
+      const taskCountMap: Record<number, number> = {};
+      const attachmentCountMap: Record<number, number> = {};
+      (taskRows || []).forEach((t: any) => {
+        taskCountMap[t.email_id] = (taskCountMap[t.email_id] || 0) + 1;
+      });
+      (attachRows || []).forEach((a: any) => {
+        attachmentCountMap[a.email_id] = (attachmentCountMap[a.email_id] || 0) + 1;
+      });
+      for (const m of mapped) {
+        m.taskCount = taskCountMap[m.id] || 0;
+        m.attachmentCount = attachmentCountMap[m.id] || 0;
+      }
     }
 
     res.json({
