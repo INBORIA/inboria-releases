@@ -123,6 +123,15 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
     [html, content],
   );
 
+  const hasDarkTextColors = /color\s*:\s*#[0-4][0-9a-f]{2}[0-9a-f]{3}\b/i.test(content) ||
+    /color\s*:\s*#[0-4][0-9a-f]{2}\b/i.test(content) ||
+    /color\s*:\s*(?:black|#000|rgb\s*\(\s*0)/i.test(content) ||
+    /color\s*:\s*#[0-4][0-9a-f]{5}\b/i.test(content);
+
+  const isFullHtmlDoc = /<!DOCTYPE/i.test(content) || /<html[\s>]/i.test(content) || /<body[\s>]/i.test(content);
+
+  const useWhiteBg = hasDarkTextColors || isFullHtmlDoc;
+
   useEffect(() => {
     setRenderFailed(false);
     const cached = readCachedHeight(emailId);
@@ -152,7 +161,7 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
           doc.body.getBoundingClientRect().height,
         );
         if (h > 0) {
-          const newH = Math.ceil(h) + 16;
+          const newH = Math.ceil(h) + 6;
           const oldH = heightRef.current;
           if (newH === oldH) {
             if (h >= 30) measuredOk = true;
@@ -255,6 +264,7 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
             }
             img { max-width: 100% !important; height: auto !important; }
             table { max-width: 100% !important; }
+            ${useWhiteBg ? ":where(html, body) { background-color: #ffffff; }" : ""}
           `;
           (doc.head || doc.documentElement).appendChild(overrideTag);
         } catch {}
@@ -306,7 +316,7 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
       }
       for (const t of timers) clearTimeout(t);
     };
-  }, [html, content, renderFailed, body, emailId, sender]);
+  }, [html, content, renderFailed, body, emailId, sender, useWhiteBg]);
 
   if (!content) {
     return (
@@ -334,15 +344,6 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
       </div>
     );
   }
-
-  const hasDarkTextColors = /color\s*:\s*#[0-4][0-9a-f]{2}[0-9a-f]{3}\b/i.test(content) ||
-    /color\s*:\s*#[0-4][0-9a-f]{2}\b/i.test(content) ||
-    /color\s*:\s*(?:black|#000|rgb\s*\(\s*0)/i.test(content) ||
-    /color\s*:\s*#[0-4][0-9a-f]{5}\b/i.test(content);
-
-  const isFullHtmlDoc = /<!DOCTYPE/i.test(content) || /<html[\s>]/i.test(content) || /<body[\s>]/i.test(content);
-
-  const useWhiteBg = hasDarkTextColors || isFullHtmlDoc;
 
   // <base target="_blank"> force tous les liens de l'email à s'ouvrir dans
   // un nouvel onglet du navigateur — sans cela, le sandbox empêche l'iframe
@@ -409,9 +410,9 @@ function EmailBodyRendererImpl({ body, emailId, sender }: EmailBodyRendererProps
       style={{
         width: "100%",
         height: iframeHeight,
-        border: useWhiteBg ? "1px solid rgba(255,255,255,0.1)" : "none",
-        borderRadius: useWhiteBg ? "6px" : "0",
-        background: useWhiteBg ? "#ffffff" : "transparent",
+        border: "none",
+        borderRadius: "0",
+        background: "transparent",
         display: "block",
       }}
       title="Contenu de l'email"
