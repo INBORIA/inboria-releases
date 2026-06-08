@@ -1627,7 +1627,23 @@ export const CancelPendingSendResponse = zod.object({
  * @summary Send an email
  */
 export const SendEmailBody = zod.object({
-  to: zod.string(),
+  to: zod
+    .string()
+    .describe(
+      "Primary recipient(s). Comma or semicolon separated for multiple addresses.",
+    ),
+  cc: zod
+    .string()
+    .nullish()
+    .describe(
+      "Carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.",
+    ),
+  bcc: zod
+    .string()
+    .nullish()
+    .describe(
+      "Blind carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.",
+    ),
   subject: zod.string(),
   body: zod.string(),
   replyToEmailId: zod.number().nullish(),

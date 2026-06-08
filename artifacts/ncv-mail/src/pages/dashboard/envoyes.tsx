@@ -996,13 +996,15 @@ function SentEmailDetailView({
       toast({ variant: "destructive", title: t("common.error"), description: t("inbox.taskCreateError") });
     }
   };
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, _onSent?: () => void, extra?: { cc?: string; bcc?: string }) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
       to, subject, body,
       replyToEmailId: replyToEmailId ?? null,
       attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined,
     };
+    if (extra?.cc && extra.cc.trim()) data.cc = extra.cc.trim();
+    if (extra?.bcc && extra.bcc.trim()) data.bcc = extra.bcc.trim();
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
     if (markHandledOfEmailId) data.markHandledOfEmailId = markHandledOfEmailId;

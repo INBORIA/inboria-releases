@@ -1304,7 +1304,7 @@ function detectAppointmentInBody(body: string): { startAt: Date; endAt: Date; ti
 router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
   const uploadIds: string[] = [];
   try {
-    const { to, subject, body, replyToEmailId, attachments: rawUploadIds, connectionId, projectId, markHandledOfEmailId } = req.body;
+    const { to, cc: rawCc, bcc: rawBcc, subject, body, replyToEmailId, attachments: rawUploadIds, connectionId, projectId, markHandledOfEmailId } = req.body;
 
     const ids: string[] = Array.isArray(rawUploadIds) ? rawUploadIds.filter((x: any) => typeof x === "string") : [];
     uploadIds.push(...ids);
@@ -1313,6 +1313,36 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       res.status(400).json({ error: "Destinataire, sujet et corps requis" });
       return;
     }
+
+    // Multi-destinataires : « À », Cc et Cci acceptent plusieurs adresses
+    // séparées par virgule ou point-virgule (string OU string[]). On parse,
+    // on nettoie, et on déduplique sans tenir compte de la casse.
+    const parseAddressList = (input: unknown): string[] => {
+      let parts: string[] = [];
+      if (Array.isArray(input)) {
+        parts = input.flatMap((x) => (typeof x === "string" ? x.split(/[,;]/) : []));
+      } else if (typeof input === "string") {
+        parts = input.split(/[,;]/);
+      }
+      const seen = new Set<string>();
+      const out: string[] = [];
+      for (const p of parts) {
+        const a = p.trim();
+        if (!a) continue;
+        const key = a.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push(a);
+      }
+      return out;
+    };
+
+    const toList = parseAddressList(to);
+    const ccList = parseAddressList(rawCc);
+    const bccList = parseAddressList(rawBcc);
+    const toHeader = toList.join(", ");
+    const ccHeader = ccList.join(", ");
+    const bccHeader = bccList.join(", ");
 
     const trackingProfileSupported = await hasTrackingProfileColumn();
     const wave1Supported = await hasWaveOneColumns();
@@ -1357,8 +1387,23 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(to.trim())) {
+    if (toList.length === 0) {
       res.status(400).json({ error: "Adresse email destinataire invalide. Vérifiez le format (ex: nom@domaine.com)" });
+      return;
+    }
+    const invalidTo = toList.find((a) => !emailRegex.test(a));
+    if (invalidTo) {
+      res.status(400).json({ error: `Adresse email destinataire invalide : « ${invalidTo} ». Vérifiez le format (ex: nom@domaine.com)` });
+      return;
+    }
+    const invalidCc = ccList.find((a) => !emailRegex.test(a));
+    if (invalidCc) {
+      res.status(400).json({ error: `Adresse Cc invalide : « ${invalidCc} ». Vérifiez le format (ex: nom@domaine.com)` });
+      return;
+    }
+    const invalidBcc = bccList.find((a) => !emailRegex.test(a));
+    if (invalidBcc) {
+      res.status(400).json({ error: `Adresse Cci invalide : « ${invalidBcc} ». Vérifiez le format (ex: nom@domaine.com)` });
       return;
     }
 
@@ -1446,9 +1491,13 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         }
       }
 
+      if (ccHeader) extraHeaders.push(`Cc: ${ccHeader}`);
+      // Bcc dans le RAW : Gmail livre aux destinataires Cci puis retire l'en-tête.
+      if (bccHeader) extraHeaders.push(`Bcc: ${bccHeader}`);
+
       let raw: string;
       if (attachments.length > 0) {
-        const mimeMessage = buildMimeWithAttachments(to, fromAddress, subject, useHtml ? bodyForSend : body, attachments, extraHeaders, useHtml);
+        const mimeMessage = buildMimeWithAttachments(toHeader, fromAddress, subject, useHtml ? bodyForSend : body, attachments, extraHeaders, useHtml);
         raw = Buffer.from(mimeMessage)
           .toString("base64")
           .replace(/\+/g, "-")
@@ -1456,7 +1505,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
           .replace(/=+$/, "");
       } else {
         const messageParts = [
-          `To: ${to}`,
+          `To: ${toHeader}`,
           `From: ${fromAddress}`,
           `Subject: ${subject}`,
           ...extraHeaders,
@@ -1504,7 +1553,9 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         message: {
           subject,
           body: { contentType: useHtml ? "HTML" : "Text", content: useHtml ? bodyForSend : body },
-          toRecipients: [{ emailAddress: { address: to } }],
+          toRecipients: toList.map((addr) => ({ emailAddress: { address: addr } })),
+          ...(ccList.length > 0 ? { ccRecipients: ccList.map((addr) => ({ emailAddress: { address: addr } })) } : {}),
+          ...(bccList.length > 0 ? { bccRecipients: bccList.map((addr) => ({ emailAddress: { address: addr } })) } : {}),
           attachments: attachments.map((att) => ({
             "@odata.type": "#microsoft.graph.fileAttachment",
             name: att.filename,
@@ -1547,7 +1598,9 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
 
       await transporter.sendMail({
         from: conn.email_address,
-        to,
+        to: toHeader,
+        ...(ccHeader ? { cc: ccHeader } : {}),
+        ...(bccHeader ? { bcc: bccHeader } : {}),
         subject,
         ...(useHtml ? { html: bodyForSend } : { text: body }),
         attachments: attachments.map((att: ResolvedAttachment) => ({
@@ -1561,7 +1614,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     const insertPayload: Record<string, any> = {
       user_id: req.userId!,
       sender: fromAddress,
-      recipient: to,
+      recipient: toHeader,
       subject,
       body,
       status: "sent",
@@ -1634,7 +1687,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
               email_id: sentEmail.id,
               project_id: validatedProjectId,
               reminder_minutes: 30,
-              participants: typeof to === "string" ? to : null,
+              participants: toHeader || null,
               confirmed: false,
             })
             .select("id")
@@ -1676,14 +1729,16 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
 
     if (sentEmail?.id) {
       // Log outbound email to connected CRMs (HubSpot/Pipedrive).
-      logEmailToHubspot(req.userId!, sentEmail.id, to, subject, body, "outbound").catch(() => {});
-      logEmailToPipedrive(req.userId!, sentEmail.id, to, subject, body).catch(() => {});
+      logEmailToHubspot(req.userId!, sentEmail.id, toList[0] || toHeader, subject, body, "outbound").catch(() => {});
+      logEmailToPipedrive(req.userId!, sentEmail.id, toList[0] || toHeader, subject, body).catch(() => {});
       emitWebhook({
         userId: req.userId!,
         event: "email.sent",
         payload: {
           id: sentEmail.id,
-          to,
+          to: toHeader,
+          cc: ccHeader || undefined,
+          bcc: bccHeader || undefined,
           subject,
           replyToEmailId: replyToEmailId || null,
           projectId: validatedProjectId,

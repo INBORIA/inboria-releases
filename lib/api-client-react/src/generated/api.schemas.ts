@@ -296,7 +296,18 @@ export interface PaginatedEmails {
 }
 
 export interface SendEmailBody {
+  /** Primary recipient(s). Comma or semicolon separated for multiple addresses. */
   to: string;
+  /**
+   * Carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.
+   * @nullable
+   */
+  cc?: string | null;
+  /**
+   * Blind carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.
+   * @nullable
+   */
+  bcc?: string | null;
   subject: string;
   body: string;
   /** @nullable */

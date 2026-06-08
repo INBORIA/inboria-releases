@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { X as XIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type Suggestion = {
@@ -23,6 +24,12 @@ type Props = {
   id?: string;
   /** Optional org members shown first (typing a name or address). */
   orgMembers?: OrgMember[];
+  /**
+   * Active le mode multi-destinataires : plusieurs adresses sous forme de
+   * « chips », séparées par virgule. La valeur émise reste une string
+   * « a@x.com, b@y.com » (compat ascendante avec le backend qui parse la liste).
+   */
+  multi?: boolean;
   "data-testid"?: string;
 };
 
@@ -38,6 +45,7 @@ export function RecipientInput({
   autoFocus,
   id,
   orgMembers,
+  multi,
   "data-testid": dataTestId,
 }: Props) {
   const { t } = useTranslation();
@@ -46,10 +54,52 @@ export function RecipientInput({
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // Garde anti-réponse périmée : seul le dernier fetch peut écrire le state.
   const reqIdRef = useRef(0);
 
-  const query = value.trim();
+  // En mode multi : la valeur contient les adresses validées + le segment en
+  // cours de saisie (dernier morceau après la dernière virgule). Les adresses
+  // validées sont rendues en chips ; le segment courant reste éditable.
+  const segments = value.split(",");
+  const committed = multi
+    ? segments.slice(0, -1).map((s) => s.trim()).filter(Boolean)
+    : [];
+  const activeRaw = multi ? (segments[segments.length - 1] ?? "") : value;
+  const activeDisplay = multi ? activeRaw.replace(/^\s+/, "") : value;
+
+  const query = (multi ? activeDisplay : value).trim();
+
+  const rebuildWithActive = useCallback(
+    (newActive: string) => {
+      const base = committed.length > 0 ? committed.join(", ") + ", " : "";
+      onChange(base + newActive);
+    },
+    [committed, onChange],
+  );
+
+  const commitAddress = useCallback(
+    (addr: string) => {
+      const clean = addr.trim();
+      if (!clean) return;
+      const exists = committed.some((c) => normalize(c) === normalize(clean));
+      const next = exists ? committed : [...committed, clean];
+      onChange(next.join(", ") + ", ");
+      setSuggestions([]);
+      setOpen(false);
+      reqIdRef.current++;
+    },
+    [committed, onChange],
+  );
+
+  const removeChip = useCallback(
+    (idx: number) => {
+      const next = committed.filter((_, i) => i !== idx);
+      const base = next.length > 0 ? next.join(", ") + ", " : "";
+      onChange(base + activeDisplay);
+    },
+    [committed, activeDisplay, onChange],
+  );
 
   const buildTeamMatches = useCallback(
     (q: string): Suggestion[] => {
@@ -122,32 +172,154 @@ export function RecipientInput({
   }, [query, buildTeamMatches]);
 
   const applySuggestion = (s: Suggestion) => {
-    // Backend = un seul destinataire : on remplace le champ par l'adresse.
-    onChange(s.email);
-    setSuggestions([]);
-    setOpen(false);
-    // Empêche le useEffect de rouvrir une liste pour cette même valeur.
-    reqIdRef.current++;
+    if (multi) {
+      commitAddress(s.email);
+      // Garde le focus sur l'input pour enchaîner les saisies.
+      requestAnimationFrame(() => inputRef.current?.focus());
+    } else {
+      // Backend = un seul destinataire : on remplace le champ par l'adresse.
+      onChange(s.email);
+      setSuggestions([]);
+      setOpen(false);
+      reqIdRef.current++;
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!open || suggestions.length === 0) return;
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex((i) => (i + 1) % suggestions.length);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex((i) => (i - 1 + suggestions.length) % suggestions.length);
-    } else if (e.key === "Enter" || e.key === "Tab") {
-      const sel = suggestions[activeIndex];
-      if (sel) {
+    if (open && suggestions.length > 0) {
+      if (e.key === "ArrowDown") {
         e.preventDefault();
-        applySuggestion(sel);
+        setActiveIndex((i) => (i + 1) % suggestions.length);
+        return;
       }
-    } else if (e.key === "Escape") {
-      setOpen(false);
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((i) => (i - 1 + suggestions.length) % suggestions.length);
+        return;
+      }
+      if (e.key === "Enter" || e.key === "Tab") {
+        const sel = suggestions[activeIndex];
+        if (sel) {
+          e.preventDefault();
+          applySuggestion(sel);
+          return;
+        }
+      }
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+    }
+    if (!multi) return;
+    // Mode multi sans suggestion ouverte : virgule / Entrée / Tab valident
+    // l'adresse en cours en chip si elle ressemble à une adresse email.
+    if (e.key === "," || e.key === "Enter" || e.key === "Tab") {
+      const candidate = activeDisplay.trim();
+      if (candidate && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate)) {
+        e.preventDefault();
+        commitAddress(candidate);
+        return;
+      }
+      if (e.key === ",") {
+        // Empêche d'insérer une virgule nue dans le segment courant.
+        e.preventDefault();
+      }
+    } else if (e.key === "Backspace" && activeDisplay.length === 0 && committed.length > 0) {
+      e.preventDefault();
+      removeChip(committed.length - 1);
     }
   };
+
+  if (multi) {
+    return (
+      <div className="relative">
+        <div
+          className="flex flex-wrap items-center gap-1 rounded-md bg-background border border-border px-2 py-1 min-h-8 cursor-text focus-within:border-primary/50"
+          onClick={() => inputRef.current?.focus()}
+        >
+          {committed.map((addr, i) => (
+            <span
+              key={`${addr}-${i}`}
+              className="inline-flex items-center gap-1 max-w-full rounded bg-primary/15 border border-primary/30 pl-2 pr-1 py-0.5 text-[11px] text-white"
+            >
+              <span className="truncate">{addr}</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeChip(i);
+                }}
+                className="shrink-0 text-[#b8c5d6] hover:text-white"
+                aria-label={t("common.remove", "Retirer")}
+              >
+                <XIcon className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+          <input
+            ref={inputRef}
+            id={id}
+            value={activeDisplay}
+            onChange={(e) => rebuildWithActive(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (suggestions.length > 0) setOpen(true);
+            }}
+            onBlur={() => {
+              blurTimerRef.current = setTimeout(() => setOpen(false), 150);
+            }}
+            placeholder={committed.length === 0 ? placeholder : ""}
+            className="flex-1 min-w-[120px] bg-transparent outline-none text-white text-[12px] h-6 placeholder:text-[#6b7280]"
+            autoFocus={autoFocus}
+            autoComplete="off"
+            aria-autocomplete="list"
+            aria-expanded={open}
+            data-testid={dataTestId}
+          />
+        </div>
+        {open && suggestions.length > 0 && (
+          <div
+            className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-[color:var(--color-popover-border)] bg-popover py-1 shadow-lg"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+            }}
+          >
+            {suggestions.map((s, i) => (
+              <button
+                key={`${s.email}-${i}`}
+                type="button"
+                onClick={() => applySuggestion(s)}
+                onMouseEnter={() => setActiveIndex(i)}
+                className={`flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-[12px] ${
+                  i === activeIndex
+                    ? "bg-accent text-accent-foreground"
+                    : "text-popover-foreground hover:bg-accent/60"
+                }`}
+              >
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate font-medium">{s.displayName}</span>
+                  {s.displayName !== s.email && (
+                    <span className="truncate text-[11px] opacity-60">{s.email}</span>
+                  )}
+                </span>
+                {s.isTeam && (
+                  <span className="shrink-0 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] text-primary">
+                    {t("inbox.teamBadge", "Équipe")}
+                  </span>
+                )}
+              </button>
+            ))}
+            {loading && (
+              <div className="px-3 py-1 text-[11px] opacity-50">
+                {t("common.loading", "Chargement…")}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="relative">

@@ -288,7 +288,9 @@ export function EmailDetailContainer({
     attachments?: UploadedFile[],
     connectionId?: string,
     projectId?: string,
-    markHandledOfEmailId?: number
+    markHandledOfEmailId?: number,
+    _onSent?: () => void,
+    extra?: { cc?: string; bcc?: string }
   ) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
@@ -298,6 +300,8 @@ export function EmailDetailContainer({
       replyToEmailId: replyToEmailId ?? null,
       attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined,
     };
+    if (extra?.cc && extra.cc.trim()) data.cc = extra.cc.trim();
+    if (extra?.bcc && extra.bcc.trim()) data.bcc = extra.bcc.trim();
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
     // Task #205 — transfert : marquer l'email d'origine "traité" côté serveur,

@@ -4341,6 +4341,13 @@ components:
       properties:
         to:
           type: string
+          description: Primary recipient(s). Comma or semicolon separated for multiple addresses.
+        cc:
+          type: ["string", "null"]
+          description: Carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.
+        bcc:
+          type: ["string", "null"]
+          description: Blind carbon-copy recipient(s). Comma or semicolon separated for multiple addresses.
         subject:
           type: string
         body:

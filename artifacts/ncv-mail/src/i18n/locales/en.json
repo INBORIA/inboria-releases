@@ -374,6 +374,8 @@
     "contentRequired": "Content required",
     "composeTitle": "New message",
     "to": "To",
+    "cc": "Cc",
+    "bcc": "Bcc",
     "attachments": "Attachments",
     "emailSent": "Email sent successfully",
     "syncComplete": "Sync complete",

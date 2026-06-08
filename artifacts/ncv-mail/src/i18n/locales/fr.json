@@ -355,6 +355,8 @@
     "contentRequired": "Contenu requis",
     "composeTitle": "Nouveau message",
     "to": "À",
+    "cc": "Cc",
+    "bcc": "Cci",
     "attachments": "Pièces jointes",
     "emailSent": "Email envoyé avec succès",
     "syncComplete": "Synchronisation terminée",

@@ -238,6 +238,8 @@ function MailPageHeaderImpl({
         replyToEmailId: null,
         attachments:
           p.attachments.length > 0 ? p.attachments.map((a) => a.uploadId) : undefined,
+        ...(p.cc && p.cc.trim() ? { cc: p.cc.trim() } : {}),
+        ...(p.bcc && p.bcc.trim() ? { bcc: p.bcc.trim() } : {}),
         ...(p.connectionId ? { connectionId: p.connectionId } : {}),
         ...(p.projectId ? { projectId: p.projectId } : {}),
       };

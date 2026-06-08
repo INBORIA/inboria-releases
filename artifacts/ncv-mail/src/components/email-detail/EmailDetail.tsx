@@ -248,7 +248,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
   );
 }
 
-export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes, stickyTopClass = "top-12" }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[]; stickyTopClass?: string }) {
+export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes, stickyTopClass = "top-12" }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void, extra?: { cc?: string; bcc?: string }) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[]; stickyTopClass?: string }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -272,6 +272,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
   const [replyTo, setReplyTo] = useState("");
+  const [replyCc, setReplyCc] = useState("");
+  const [replyBcc, setReplyBcc] = useState("");
+  const [showReplyCc, setShowReplyCc] = useState(false);
+  const [showReplyBcc, setShowReplyBcc] = useState(false);
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
   const [replyConnectionId, setReplyConnectionId] = useState<string>("");
@@ -279,6 +283,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const [forwardOpen, setForwardOpen] = useState(false);
   const [forwardAttachments, setForwardAttachments] = useState<UploadedFile[]>([]);
   const [forwardTo, setForwardTo] = useState("");
+  const [forwardCc, setForwardCc] = useState("");
+  const [forwardBcc, setForwardBcc] = useState("");
+  const [showForwardCc, setShowForwardCc] = useState(false);
+  const [showForwardBcc, setShowForwardBcc] = useState(false);
   const [forwardSubject, setForwardSubject] = useState("");
   const [forwardText, setForwardText] = useState("");
   const [forwardConnectionId, setForwardConnectionId] = useState<string>("");
@@ -1624,15 +1632,37 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
                 <div>
-                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider block">{t("inbox.replyTo")}</label>
+                    <div className="flex items-center gap-2">
+                      {!showReplyCc && (
+                        <button type="button" onClick={() => setShowReplyCc(true)} className="text-[10px] text-[#b8c5d6] hover:text-white uppercase tracking-wider">{t("inbox.cc", "Cc")}</button>
+                      )}
+                      {!showReplyBcc && (
+                        <button type="button" onClick={() => setShowReplyBcc(true)} className="text-[10px] text-[#b8c5d6] hover:text-white uppercase tracking-wider">{t("inbox.bcc", "Cci")}</button>
+                      )}
+                    </div>
+                  </div>
                   <RecipientInput
+                    multi
                     value={replyTo}
                     onChange={setReplyTo}
                     orgMembers={orgMembers}
                     placeholder="email@exemple.com"
-                    className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
+                {showReplyCc && (
+                  <div>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.cc", "Cc")}</label>
+                    <RecipientInput multi value={replyCc} onChange={setReplyCc} orgMembers={orgMembers} placeholder="email@exemple.com" />
+                  </div>
+                )}
+                {showReplyBcc && (
+                  <div>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.bcc", "Cci")}</label>
+                    <RecipientInput multi value={replyBcc} onChange={setReplyBcc} orgMembers={orgMembers} placeholder="email@exemple.com" />
+                  </div>
+                )}
                 {projects && projects.length > 0 && (
                   <div>
                     <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.project")}</label>
@@ -1703,7 +1733,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => { sharedDraft.deactivate(); setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
+                      onClick={() => { sharedDraft.deactivate(); setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplyCc(""); setReplyBcc(""); setShowReplyCc(false); setShowReplyBcc(false); setReplySubject(""); setReplyAttachments([]); }}
                       className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                     >
                       {t("common.cancel")}
@@ -1732,6 +1762,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                         const resetComposer = () => {
                           setReplyText("");
                           setReplyTo("");
+                          setReplyCc("");
+                          setReplyBcc("");
+                          setShowReplyCc(false);
+                          setShowReplyBcc(false);
                           setReplySubject("");
                           setReplyAttachments([]);
                           setReplyConnectionId("");
@@ -1755,6 +1789,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                                 resetComposer();
                               }
                             : undefined,
+                          { cc: replyCc.trim() || undefined, bcc: replyBcc.trim() || undefined },
                         );
                         // Brouillon partagé : on NE vide PAS les champs au clic, sinon
                         // l'effet de sync pousserait des valeurs vides vers les autres
@@ -1784,6 +1819,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     if (sharedDraft.active) sharedDraft.remove();
                     setReplyText("");
                     setReplyTo("");
+                    setReplyCc("");
+                    setReplyBcc("");
+                    setShowReplyCc(false);
+                    setShowReplyBcc(false);
                     setReplySubject("");
                     setReplyAttachments([]);
                     setReplyConnectionId("");
@@ -1837,15 +1876,37 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
                 <div>
-                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider block">{t("inbox.replyTo")}</label>
+                    <div className="flex items-center gap-2">
+                      {!showForwardCc && (
+                        <button type="button" onClick={() => setShowForwardCc(true)} className="text-[10px] text-[#b8c5d6] hover:text-white uppercase tracking-wider">{t("inbox.cc", "Cc")}</button>
+                      )}
+                      {!showForwardBcc && (
+                        <button type="button" onClick={() => setShowForwardBcc(true)} className="text-[10px] text-[#b8c5d6] hover:text-white uppercase tracking-wider">{t("inbox.bcc", "Cci")}</button>
+                      )}
+                    </div>
+                  </div>
                   <RecipientInput
+                    multi
                     value={forwardTo}
                     onChange={setForwardTo}
                     orgMembers={orgMembers}
                     placeholder="email@exemple.com"
-                    className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
+                {showForwardCc && (
+                  <div>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.cc", "Cc")}</label>
+                    <RecipientInput multi value={forwardCc} onChange={setForwardCc} orgMembers={orgMembers} placeholder="email@exemple.com" />
+                  </div>
+                )}
+                {showForwardBcc && (
+                  <div>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.bcc", "Cci")}</label>
+                    <RecipientInput multi value={forwardBcc} onChange={setForwardBcc} orgMembers={orgMembers} placeholder="email@exemple.com" />
+                  </div>
+                )}
                 <div>
                   <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                   <Input
@@ -1878,7 +1939,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => { setForwardOpen(false); setForwardText(""); setForwardTo(""); setForwardSubject(""); setForwardAttachments([]); }}
+                      onClick={() => { setForwardOpen(false); setForwardText(""); setForwardTo(""); setForwardCc(""); setForwardBcc(""); setShowForwardCc(false); setShowForwardBcc(false); setForwardSubject(""); setForwardAttachments([]); }}
                       className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                     >
                       {t("common.cancel")}
@@ -1906,9 +1967,13 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                         // on passe markHandledOfEmailId : le serveur marque
                         // l'email d'origine comme "traité" UNIQUEMENT si le
                         // POST /emails/send réussit (pas de fire-and-forget).
-                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined, handledAt ? undefined : email.id);
+                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined, handledAt ? undefined : email.id, undefined, { cc: forwardCc.trim() || undefined, bcc: forwardBcc.trim() || undefined });
                         setForwardText("");
                         setForwardTo("");
+                        setForwardCc("");
+                        setForwardBcc("");
+                        setShowForwardCc(false);
+                        setShowForwardBcc(false);
                         setForwardSubject("");
                         setForwardAttachments([]);
                         setForwardConnectionId("");
@@ -1933,6 +1998,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   onScheduled={() => {
                     setForwardText("");
                     setForwardTo("");
+                    setForwardCc("");
+                    setForwardBcc("");
+                    setShowForwardCc(false);
+                    setShowForwardBcc(false);
                     setForwardSubject("");
                     setForwardAttachments([]);
                     setForwardConnectionId("");

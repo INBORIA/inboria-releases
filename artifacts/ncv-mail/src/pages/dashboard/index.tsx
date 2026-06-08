@@ -470,6 +470,8 @@ type InboxMode = "personal" | "shared" | "assigned";
 export type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
 export type ComposeSendPayload = {
   to: string;
+  cc?: string;
+  bcc?: string;
   subject: string;
   body: string;
   attachments: UploadedFile[];
@@ -504,6 +506,10 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
 }) {
   const { t } = useTranslation();
   const [to, setTo] = useState(initialTo);
+  const [cc, setCc] = useState("");
+  const [bcc, setBcc] = useState("");
+  const [showCc, setShowCc] = useState(false);
+  const [showBcc, setShowBcc] = useState(false);
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
   const [attachments, setAttachments] = useState<UploadedFile[]>([]);
@@ -600,9 +606,43 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
           </div>
         )}
         <div>
-          <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.to")}</label>
-          <RecipientInput value={to} onChange={setTo} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[11px] text-[#b8c5d6] block">{t("inbox.to")}</label>
+            <div className="flex items-center gap-2">
+              {!showCc && (
+                <button
+                  type="button"
+                  onClick={() => setShowCc(true)}
+                  className="text-[11px] text-[#b8c5d6] hover:text-white"
+                >
+                  {t("inbox.cc", "Cc")}
+                </button>
+              )}
+              {!showBcc && (
+                <button
+                  type="button"
+                  onClick={() => setShowBcc(true)}
+                  className="text-[11px] text-[#b8c5d6] hover:text-white"
+                >
+                  {t("inbox.bcc", "Cci")}
+                </button>
+              )}
+            </div>
+          </div>
+          <RecipientInput multi value={to} onChange={setTo} placeholder="email@exemple.com" />
         </div>
+        {showCc && (
+          <div>
+            <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.cc", "Cc")}</label>
+            <RecipientInput multi value={cc} onChange={setCc} placeholder="email@exemple.com" />
+          </div>
+        )}
+        {showBcc && (
+          <div>
+            <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.bcc", "Cci")}</label>
+            <RecipientInput multi value={bcc} onChange={setBcc} placeholder="email@exemple.com" />
+          </div>
+        )}
         <div>
           <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.subject")}</label>
           <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" />
@@ -649,7 +689,7 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
         <Button
           className="flex-1 gap-2 h-9 text-[12px]"
           disabled={isPending || !to.trim() || !subject.trim() || !body.trim()}
-          onClick={() => onSend({ to, subject, body, attachments, connectionId: fromId, projectId })}
+          onClick={() => onSend({ to, cc: cc.trim() || undefined, bcc: bcc.trim() || undefined, subject, body, attachments, connectionId: fromId, projectId })}
         >
           <Send className="w-3.5 h-3.5" />
           {isPending ? t("inbox.sending") : t("inbox.send")}
@@ -5321,7 +5361,7 @@ export default function Dashboard() {
     return;
   };
 
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number, onSent?: () => void, extra?: { cc?: string; bcc?: string }) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
       to,
@@ -5330,6 +5370,8 @@ export default function Dashboard() {
       replyToEmailId: replyToEmailId ?? null,
       attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined,
     };
+    if (extra?.cc && extra.cc.trim()) data.cc = extra.cc.trim();
+    if (extra?.bcc && extra.bcc.trim()) data.bcc = extra.bcc.trim();
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
     if (markHandledOfEmailId) data.markHandledOfEmailId = markHandledOfEmailId;
@@ -5395,6 +5437,8 @@ export default function Dashboard() {
       replyToEmailId: null,
       attachments: p.attachments.length > 0 ? p.attachments.map((a) => a.uploadId) : undefined,
     };
+    if (p.cc && p.cc.trim()) payload.cc = p.cc.trim();
+    if (p.bcc && p.bcc.trim()) payload.bcc = p.bcc.trim();
     if (p.connectionId) payload.connectionId = p.connectionId;
     if (p.projectId) payload.projectId = p.projectId;
     sendEmailMut.mutate(
