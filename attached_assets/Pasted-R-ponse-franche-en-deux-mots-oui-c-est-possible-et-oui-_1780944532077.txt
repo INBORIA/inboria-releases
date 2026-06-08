@@ -1,0 +1,24 @@
+Réponse franche, en deux mots : oui c'est possible, et oui j'en suis capable — mais à des conditions que je veux poser clairement, parce que je vous ai promis de ne plus enjoliver.
+
+Ce que « local-first » change, simplement
+Aujourd'hui : quand vous cliquez, Inboria demande au serveur → micro-attente.
+En local-first : tous vos mails sont copiés dans votre navigateur (une mini-base locale). L'écran lit dans votre machine → réponse instantanée, zéro attente. Le serveur est synchronisé en arrière-plan, sans que vous le sentiez. C'est exactement le secret de Superhuman.
+
+Comment je le ferais SANS risquer vos données
+Pas en une fois (ce serait dangereux). Par étapes, du moins risqué au plus risqué :
+
+Lecture locale d'abord — la boîte et l'ouverture des mails lisent dans la base locale. C'est là que la vitesse se ressent le plus, et c'est sans danger (les modifications passent encore par le serveur). Vous avez déjà une partie de la brique (cache persistant) → on la transforme en vraie base locale.
+Synchro intelligente en arrière-plan — on ne recharge plus 5 000–10 000 mails d'un coup, on récupère seulement les nouveautés. Ça règle aussi le risque d'échelle qu'on avait repéré.
+Actions instantanées + file d'attente fiable — archiver/répondre/reporter s'affichent immédiatement et partent au serveur en arrière-plan, même si la connexion saute.
+Ouverture pré-chargée — viser le « moins de 100 ms » à l'ouverture d'un mail.
+Mesure + mode hors-ligne + finitions.
+À chaque étape, vous voyez et validez avant qu'on continue. On peut s'arrêter après l'étape 1 ou 2 si le ressenti vous suffit déjà.
+
+La difficulté honnête, propre À VOUS
+Superhuman est mono-utilisateur. Vous, vous avez les boîtes partagées : plusieurs personnes sur la même boîte en même temps. Le local-first y est plus délicat (il faut réconcilier qui a fait quoi en temps réel). Bonne nouvelle : vous avez déjà la technologie pour ça (Supabase temps réel + co-rédaction Yjs). Mais ça demande du soin → je traiterais les boîtes perso en premier (gain rapide), les partagées ensuite.
+
+Ce que je peux / ne peux pas promettre
+✅ Je peux vous faire gagner un palier énorme et mesurable, jusqu'à un ressenti « vraiment proche de Superhuman » sur la boîte perso.
+✅ Je peux le faire proprement, par étapes, sans casser vos données (on teste sur de vrais volumes à chaque palier).
+⚠️ Je ne vous promets pas un copier-coller pixel pour pixel dès la 1ʳᵉ étape — ça se construit. Mais contrairement aux fois précédentes, là on attaque la racine, pas la surface. C'est ça qui change tout.
+⚠️ C'est un chantier de plusieurs séances, pas une après-midi
