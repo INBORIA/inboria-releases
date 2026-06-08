@@ -12,7 +12,7 @@ interactively (user wants feedback before each major step; no isolated task agen
 1. 🔴 No distributed lock / dedup across server instances → double-processing the day we run >1 instance. (Only matters with multiple instances.) **DONE** — per-connection lease.
 2. 🔴 Sequential mailbox sync (`for...of await`). **DONE** — parallelized.
 3. 🟠 AI/workers run in-process (same Node as the API). **DONE** — splittable by APP_ROLE.
-4. 🟠 ~3 realtime channels per opened mail.
+4. 🟠 ~3 realtime channels per opened mail. **DONE** — comments channel now gated by chatVisible.
 5. 🟡 No global OpenAI throttle.
 6. 🟡 Heavy DB queries (N+1, re-sorting ~1000 rows in memory).
 
@@ -36,3 +36,20 @@ the sync interval.
   don't remove it; parallelism is *within* a cycle only.
 - Parallel sync also parallelizes the AI triage it triggers → keep concurrency
   modest until point #5 (global OpenAI throttle) lands.
+
+## Point #4 — canaux Realtime par mail (implemented)
+Per opened mail (shared context) up to 4 Supabase channels: `email-thread-<id>`
+(comments presence/typing/broadcast, email-comments.tsx), `email-reply-<id>`
+(collision presence, use-email-presence.ts — already gated `enabled:isSharedContext`),
+`draft-<id>` + `yjs:draft-<id>` (shared-draft + Yjs CRDT, only while composing).
+Fix: the `email-thread-<id>` effect was the ONLY one not gated — it subscribed for
+EVERY opened mail, even a solo user's personal mail (where the team chat is never
+shown). Now it early-returns (setPresence([]) ) unless `chatVisible` (isShared ||
+isCollabAssignment), with `chatVisible` in the effect deps so it closes/reopens on flip.
+**Why:** most of 5000 users open personal mail → was 1 wasted presence channel each +
+fed the gotrue auth-lock thrash. Pure perf change, ZERO behavior change (the comments
+module already `return null` when !chatVisible — pre-existing, unrelated to this edit).
+**Not done (optional, riskier, needs 2-account e2e):** merging the two shared-context
+presence channels (`email-thread` + `email-reply`) into one `email-collaboration-<id>`,
+and sharing `draft-<id>` with the Yjs provider. Touches live team-collab code (delicate
+CRDT anti-echo) — left as a future opt-in, not worth the regression risk now.

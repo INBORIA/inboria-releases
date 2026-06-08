@@ -282,7 +282,15 @@ export function EmailComments({
   const lastTypingSentRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!currentUserId || !emailId) return;
+    // Point n°4 (montée en charge) : n'ouvrir le canal temps réel QUE si le chat
+    // d'équipe est réellement visible (boîte partagée ou mail assigné en
+    // collaboration). Pour un mail perso d'un utilisateur seul, il n'y a aucun
+    // second interlocuteur : inutile de maintenir un canal présence/typing/comment
+    // (économie majeure à grande échelle + réduit le thrash du verrou auth gotrue).
+    if (!currentUserId || !emailId || !chatVisible) {
+      setPresence([]);
+      return;
+    }
     const me = orgMembers.find((m) => m.userId === currentUserId);
     const myName =
       me?.fullName || me?.email || (currentUserId ? currentUserId.slice(0, 6) : "user");
@@ -334,7 +342,7 @@ export function EmailComments({
       channel.untrack().catch(() => {});
       supabase.removeChannel(channel);
     };
-  }, [emailId, currentUserId, orgMembers]);
+  }, [emailId, currentUserId, orgMembers, chatVisible]);
 
   // GC stale typing entries
   useEffect(() => {
