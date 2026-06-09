@@ -15,27 +15,24 @@ function formatDate(iso: string): string {
     d.getMonth() === now.getMonth() &&
     d.getFullYear() === now.getFullYear();
   if (sameDay) {
-    return d.toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   }
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
-function priorityColor(
+// Barre de priorité à gauche — mêmes couleurs que la version web
+// (urgent → rouge, moyen → ambre, faible → discret/transparent).
+function priorityBarColor(
   priority: string | null,
   colors: ReturnType<typeof useColors>,
-): string | null {
+): string {
   switch ((priority || "").toLowerCase()) {
-    case "urgente":
+    case "urgent":
       return colors.destructive;
-    case "haute":
+    case "moyen":
       return colors.warning;
-    case "moyenne":
-      return colors.accent;
     default:
-      return null;
+      return "transparent";
   }
 }
 
@@ -48,7 +45,12 @@ export function EmailRow({
 }) {
   const colors = useColors();
   const isUnread = (email.status || "").toLowerCase() !== "read";
-  const pColor = priorityColor(email.priority, colors);
+  const barColor = priorityBarColor(email.priority, colors);
+
+  const senderColor = isUnread ? colors.foreground : colors.mailRead;
+  const senderFont = isUnread ? "Inter_600SemiBold" : "Inter_400Regular";
+  const subjectColor = isUnread ? colors.foreground : colors.mailRead;
+  const subjectFont = isUnread ? "Inter_500Medium" : "Inter_400Regular";
 
   return (
     <Pressable
@@ -56,66 +58,42 @@ export function EmailRow({
       style={({ pressed }) => [
         styles.row,
         {
-          borderBottomColor: colors.border,
+          borderBottomColor: colors.mailBorder,
           backgroundColor: pressed ? colors.surfaceHover : "transparent",
         },
       ]}
     >
-      <View
-        style={[
-          styles.priorityBar,
-          { backgroundColor: pColor ?? "transparent" },
-        ]}
-      />
-      <Avatar name={email.sender} email={email.senderEmail} size={42} />
+      <View style={[styles.bar, { backgroundColor: barColor }]} />
+      <Avatar name={email.sender} email={email.senderEmail} size={36} />
 
       <View style={styles.body}>
-        <View style={styles.topLine}>
-          <Text
-            numberOfLines={1}
-            style={[
-              styles.sender,
-              {
-                color: isUnread ? colors.foreground : colors.mutedForeground,
-                fontFamily: isUnread ? "Inter_600SemiBold" : "Inter_400Regular",
-              },
-            ]}
-          >
+        <View style={styles.line}>
+          <Text numberOfLines={1} style={[styles.sender, { color: senderColor, fontFamily: senderFont }]}>
             {email.sender || email.senderEmail || "Inconnu"}
           </Text>
-          <Text style={[styles.date, { color: colors.faint }]}>
+          <Text style={[styles.date, { color: colors.mailMuted }]}>
             {formatDate(email.createdAt)}
           </Text>
         </View>
 
-        <View style={styles.subjectLine}>
-          {isUnread ? (
-            <View style={[styles.dot, { backgroundColor: colors.unread }]} />
-          ) : null}
-          <Text
-            numberOfLines={1}
-            style={[
-              styles.subject,
-              {
-                color: isUnread ? colors.foreground : colors.mutedForeground,
-                fontFamily: isUnread ? "Inter_500Medium" : "Inter_400Regular",
-              },
-            ]}
-          >
+        <View style={styles.line}>
+          <Text numberOfLines={1} style={[styles.subject, { color: subjectColor, fontFamily: subjectFont }]}>
             {email.subject || "(sans objet)"}
           </Text>
+          {email.attachmentCount > 0 ? (
+            <Feather name="paperclip" size={12} color={colors.mailMuted} style={styles.clip} />
+          ) : null}
+          {email.categoryName ? (
+            <Text numberOfLines={1} style={[styles.category, { color: colors.mailMeta }]}>
+              {email.categoryName.toLowerCase()}
+            </Text>
+          ) : null}
         </View>
 
         {email.summary ? (
-          <View style={styles.summaryLine}>
-            <Feather name="zap" size={11} color={colors.accent} />
-            <Text
-              numberOfLines={1}
-              style={[styles.summary, { color: colors.mutedForeground }]}
-            >
-              {email.summary}
-            </Text>
-          </View>
+          <Text numberOfLines={1} style={[styles.summary, { color: colors.mailSummary }]}>
+            {email.summary}
+          </Text>
         ) : null}
       </View>
     </Pressable>
@@ -126,29 +104,19 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 12,
+    gap: 11,
+    paddingVertical: 10,
     paddingLeft: 8,
-    paddingRight: 16,
+    paddingRight: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  priorityBar: {
-    width: 3,
-    alignSelf: "stretch",
-    borderRadius: 2,
-  },
-  body: { flex: 1, gap: 3 },
-  topLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  sender: { flex: 1, fontSize: 15 },
-  date: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  subjectLine: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dot: { width: 7, height: 7, borderRadius: 4 },
-  subject: { flex: 1, fontSize: 14 },
-  summaryLine: { flexDirection: "row", alignItems: "center", gap: 5 },
-  summary: { flex: 1, fontSize: 12.5, fontFamily: "Inter_400Regular" },
+  bar: { width: 3, alignSelf: "stretch", borderRadius: 2 },
+  body: { flex: 1, gap: 2 },
+  line: { flexDirection: "row", alignItems: "center", gap: 8 },
+  sender: { flex: 1, fontSize: 14 },
+  date: { fontSize: 11.5, fontFamily: "Inter_400Regular" },
+  subject: { flex: 1, fontSize: 13.5 },
+  clip: { marginLeft: 2 },
+  category: { fontSize: 11, fontFamily: "Inter_400Regular", maxWidth: 110 },
+  summary: { fontSize: 12.5, fontFamily: "Inter_400Regular" },
 });

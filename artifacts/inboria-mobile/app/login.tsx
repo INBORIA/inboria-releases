@@ -1,9 +1,9 @@
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -58,17 +58,11 @@ export default function LoginScreen() {
       >
         <View style={[styles.container, { paddingTop: topPad }]}>
           <View style={styles.brand}>
-            <LinearGradient
-              colors={[colors.gradientStart, colors.gradientEnd]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+            <Image
+              source={require("../assets/images/inboria-logo.png")}
               style={styles.logo}
-            >
-              <Feather name="send" size={26} color="#FFFFFF" />
-            </LinearGradient>
-            <Text style={[styles.title, { color: colors.foreground }]}>
-              Inboria
-            </Text>
+              resizeMode="contain"
+            />
             <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
               Votre boîte mail, en pilote automatique.
             </Text>
@@ -173,16 +167,12 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   flex: { flex: 1 },
   container: { flex: 1, paddingHorizontal: 24, justifyContent: "flex-start" },
-  brand: { alignItems: "center", marginTop: 40, marginBottom: 44, gap: 10 },
+  brand: { alignItems: "center", marginTop: 40, marginBottom: 44, gap: 12 },
   logo: {
-    width: 64,
-    height: 64,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
+    width: 210,
+    height: 80,
+    marginBottom: 4,
   },
-  title: { fontSize: 30, fontFamily: "Inter_700Bold", letterSpacing: -0.5 },
   subtitle: {
     fontSize: 15,
     fontFamily: "Inter_400Regular",

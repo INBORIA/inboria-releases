@@ -28,8 +28,8 @@ export function Avatar({
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: "rgba(139,92,246,0.15)",
-          borderColor: "rgba(139,92,246,0.35)",
+          backgroundColor: colors.avatarBg,
+          borderColor: colors.avatarBorder,
         },
       ]}
     >

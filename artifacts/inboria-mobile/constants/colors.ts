@@ -1,41 +1,45 @@
 /**
- * Inboria mobile design tokens — dark-only brand (violet → turquoise),
- * matching the web app's "Linear/Superhuman" aesthetic.
+ * Inboria mobile design tokens — dark-only brand, mirrored 1:1 from the web
+ * app (artifacts/ncv-mail/src/index.css). The app always renders dark
+ * (Inboria is a dark-only product), so `light` and `dark` share one palette.
  *
- * The palette is intentionally duplicated under both `light` and `dark`
- * keys so the app always renders in dark mode regardless of the device's
- * appearance setting (Inboria is a dark-only product).
+ * Core tokens are converted from the web HSL custom properties:
+ *   --background 220 40% 7%   --foreground 0 0% 100%
+ *   --card 225 25% 12%        --primary 210 65% 50%  (#2D80D2)
+ *   --border 217 25% 18%      --muted-foreground 216 18% 62%
+ *   --sidebar 220 33% 11%
+ * Mail-specific tokens reproduce the --mail-* CSS variables exactly.
  */
 
 const palette = {
-  // Legacy aliases
-  text: "#F4F6FB",
-  tint: "#8B5CF6",
+  // Legacy aliases (kept for components already referencing them)
+  text: "#FFFFFF",
+  tint: "#2D80D2",
 
   // Core surfaces
-  background: "#0B0B0F",
-  foreground: "#F4F6FB",
+  background: "#0B0E15",
+  foreground: "#FFFFFF",
 
   // Cards / elevated surfaces
-  card: "#15151D",
-  cardForeground: "#F4F6FB",
+  card: "#171C26",
+  cardForeground: "#FFFFFF",
 
-  // Primary action color (violet)
-  primary: "#8B5CF6",
+  // Primary action color (Inboria blue — web --primary 210 65% 50%)
+  primary: "#2D80D2",
   primaryForeground: "#FFFFFF",
 
   // Secondary surfaces
-  secondary: "#1C1C26",
+  secondary: "#1A2130",
   secondaryForeground: "#E5E9F0",
 
-  // Muted / subdued (timestamps, placeholders, read text)
-  muted: "#1C1C26",
+  // Muted / subdued
+  muted: "#1A2130",
   mutedForeground: "#8B95A7",
   faint: "#5A6270",
 
-  // Accent (turquoise) — AI highlights, selected states
-  accent: "#2DD4BF",
-  accentForeground: "#04201C",
+  // Accent — AI / summary highlight (web --mail-summary-text)
+  accent: "#B8C5D6",
+  accentForeground: "#0B0E15",
 
   // Status
   destructive: "#EF4444",
@@ -44,16 +48,32 @@ const palette = {
   warning: "#F59E0B",
 
   // Borders / inputs
-  border: "#23232E",
-  input: "#1C1C26",
+  border: "#222B39",
+  input: "#161B24",
 
-  // Brand gradient
-  gradientStart: "#7C3AED",
-  gradientEnd: "#2DD4BF",
+  // Brand gradient (used as a subtle fallback only)
+  gradientStart: "#2D80D2",
+  gradientEnd: "#22C1C3",
 
   // Interaction
-  surfaceHover: "#1F1F2A",
-  unread: "#8B5CF6",
+  surfaceHover: "#1A2130",
+  unread: "#2D80D2",
+
+  // Mail-specific (mirror web CSS vars, dark)
+  mailRead: "#7A8290",
+  mailMuted: "#8B95A7",
+  mailFaint: "#5A6270",
+  mailMeta: "#6B7280",
+  mailMetaHover: "#B8C5D6",
+  mailBorder: "#2F3845",
+  mailSummary: "#B8C5D6",
+
+  // Avatar / chips
+  avatarBg: "rgba(45,128,210,0.15)",
+  avatarBorder: "rgba(45,128,210,0.32)",
+  chipBg: "rgba(255,255,255,0.04)",
+  chipActiveBg: "rgba(45,128,210,0.15)",
+  chipActiveBorder: "rgba(45,128,210,0.40)",
 };
 
 const colors = {

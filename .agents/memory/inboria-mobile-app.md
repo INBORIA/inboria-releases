@@ -35,8 +35,27 @@ brand). `constants/colors.ts` duplicates the palette under both `light` and
 typecheck once a `dark` key exists alongside the numeric `radius`.
 
 ## MVP scope (built)
-login → inbox (`GET /api/emails?sort=smart|recent&status=inbox`, AI summary +
+login → inbox (`GET /api/emails?sort=recent|smart`, AI summary +
 priority bar) → detail (`GET /api/emails/:id`, HTML stripped via `lib/html.ts`,
 auto `PATCH status:read`) → reply (`POST /api/emails/send`, connectionId omitted
 so the server picks the default connection). Enrichment (AI draft, attachments
 view, folders, sent/scheduled, MFA) intentionally deferred.
+
+## Email priority filter values (gotcha)
+The backend stores/filters `emails.priority` as ONLY `urgent | moyen | faible`
+(NOT urgente/haute/normale/basse). `/api/emails?priority=` does `.eq("priority",…)`,
+so any other label silently returns an empty list. The mobile UI maps
+Urgents→`urgent`, Importants→`moyen`. The inbox row priority bar keys on the same
+3 values. Same trap for the web filter (`urgent | moyen | faible`).
+
+## Web-fidelity (look = Inboria web)
+Palette in `constants/colors.ts` is converted 1:1 from the web `index.css` HSL
+tokens (primary `210 65% 50%` ≈ `#2D80D2`, bg `220 40% 7%`, card `225 25% 12%`)
+plus the `--mail-*` vars (mailRead/mailMuted/mailBorder/mailSummary…). Real logo
+(`assets/images/inboria-logo.png`, copied from attached_assets transparent fix v1)
+on login + inbox header; app icon = `inboria_icon_512`. Inbox header mirrors web:
+search (debounced 350ms → `q`), sort tabs (Récents default = `recent`, Tri IA =
+`smart`), filter chips for priority + categories (`GET /api/categories`, only
+chips with emailCount>0; sends `categoryId`). EmailRow mirrors the web flat row
+(avatar initial, sender/date, subject + paperclip + lowercase category chip,
+summary). priority+category are mutually exclusive by design.
