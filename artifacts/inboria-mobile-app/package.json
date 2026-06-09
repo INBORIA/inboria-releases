@@ -1,0 +1,22 @@
+{
+  "name": "inboria-mobile-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Inboria — application mobile (iOS / Android) via Capacitor.",
+  "author": "Inboria",
+  "scripts": {
+    "sync": "cap sync",
+    "add:android": "cap add android",
+    "add:ios": "cap add ios",
+    "open:android": "cap open android",
+    "open:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "6.2.0",
+    "@capacitor/core": "6.2.0",
+    "@capacitor/ios": "6.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "appId": "io.inboria.app",
+  "appName": "Inboria",
+  "webDir": "www",
+  "server": {
+    "url": "https://REMPLACER-PAR-LE-DOMAINE-INBORIA-PUBLIE",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "always"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

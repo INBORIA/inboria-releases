@@ -1,0 +1,10 @@
+# Dépendances
+node_modules/
+
+# Projets natifs générés par Capacitor (recréés en CI via `cap add`)
+/android/
+/ios/
+
+# Divers
+.DS_Store
+*.log

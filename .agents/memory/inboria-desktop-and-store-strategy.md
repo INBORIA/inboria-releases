@@ -12,9 +12,14 @@ platform is a thin shell around that same hosted web app — one codebase to mai
   It loads the hosted Inboria URL (`INBORIA_URL`, defaults to a constant in `main.cjs`
   — must be switched to the published domain before release). Installers are built by
   `.github/workflows/desktop-build.yml` on a `v*` tag.
-- **App Store / Play Store:** planned via **Capacitor** (not yet built).
+- **App Store / Play Store:** **Capacitor** app in `artifacts/inboria-mobile-app`
+  (standalone, excluded from the pnpm workspace). `capacitor.config.json` loads the
+  hosted Inboria URL via `server.url` (placeholder string to replace with the published
+  domain, or injected in CI from the `INBORIA_URL` secret). Native `android/`+`ios/`
+  projects are NOT committed — CI runs `cap add` then `cap sync` to generate them.
 - **PWA install:** already works (browser "Install"); the simplest desktop/mobile install.
-- **Expo app (`artifacts/inboria-mobile`):** to be **retired** — redundant once Capacitor wraps the web.
+- **Expo app (`artifacts/inboria-mobile`):** **REMOVED** (June 2026) — directory + its
+  artifact-managed workflow deleted, replaced by the Capacitor wrapper above.
 
 **Why:** user rejected the Expo path (bad Expo Go dev experience, double codebase). PWA
 already works well; Superhuman/Slack/Notion all ship a web app wrapped in Electron +

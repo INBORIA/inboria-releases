@@ -1,6 +1,7 @@
 packages:
   - artifacts/*
   - "!artifacts/inboria-desktop"
+  - "!artifacts/inboria-mobile-app"
   - lib/*
   - lib/integrations/*
   - scripts
