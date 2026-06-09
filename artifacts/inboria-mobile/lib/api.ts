@@ -93,7 +93,13 @@ export function listEmails(
   const qs = new URLSearchParams();
   qs.set("page", String(params.page ?? 1));
   qs.set("limit", String(params.limit ?? 30));
-  qs.set("status", params.status ?? "inbox");
+  // The inbox is the server's DEFAULT view (no status filter → it excludes
+  // archived/trashed/spam/sent/scheduled). Sending status=inbox would do an
+  // exact match `.eq("status","inbox")`, which matches no email → empty list.
+  // So only forward a real status (read/unread/archived…), never "inbox".
+  if (params.status && params.status !== "inbox") {
+    qs.set("status", params.status);
+  }
   qs.set("sort", params.sort ?? "smart");
   if (params.q) qs.set("q", params.q);
   return authJson<EmailListResponse>(`/api/emails?${qs.toString()}`);
