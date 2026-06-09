@@ -40,3 +40,4 @@
 - [Test authed endpoints offline](api-test-auth-token.md) — mint a real user JWT via admin.generateLink(magiclink)→email_otp→anon.verifyOtp, then Bearer to localhost:80; service key isn't accepted by requireAuth.
 - [Team analytics DB-side RPC](team-analytics-rpc.md) — /analytics/team aggregates in inboria_team_analytics (engine=auto falls back to memory); RPC↔memory parity needs tie-breaks BOTH sides (SQL collate "C"/uuid ↔ JS Buffer.compare UTF-8, not `<`).
 - [Inboria mobile app](inboria-mobile-app.md) — Expo MVP on existing api-server; native needs ABSOLUTE https://${EXPO_PUBLIC_DOMAIN}/api (outside proxy); useColors always returns dark.
+- [Inboria packaging strategy](inboria-desktop-and-store-strategy.md) — one web app wrapped per platform (Electron desktop / Capacitor stores / PWA); Expo being retired; real installers only via GitHub Actions (Replit can't cross-build signed .exe/.dmg).

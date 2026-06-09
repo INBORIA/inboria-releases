@@ -1,5 +1,6 @@
 packages:
   - artifacts/*
+  - "!artifacts/inboria-desktop"
   - lib/*
   - lib/integrations/*
   - scripts

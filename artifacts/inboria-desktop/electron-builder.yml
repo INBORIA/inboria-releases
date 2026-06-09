@@ -1,0 +1,41 @@
+appId: io.inboria.desktop
+productName: Inboria
+copyright: Copyright © Inboria
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - src/**/*
+  - package.json
+
+# Windows : installateur classique (.exe) modifiable par l'utilisateur.
+win:
+  target:
+    - nsis
+  icon: build/icon.png
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Inboria
+
+# macOS : .dmg (glisser-déposer) + .zip (pour la mise à jour auto future).
+mac:
+  category: public.app-category.productivity
+  target:
+    - dmg
+    - zip
+  icon: build/icon.png
+
+# Linux : AppImage (portable) + .deb (Debian/Ubuntu).
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Office
+  icon: build/icon.png
