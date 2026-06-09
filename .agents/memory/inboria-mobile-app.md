@@ -59,3 +59,27 @@ search (debounced 350ms → `q`), sort tabs (Récents default = `recent`, Tri IA
 chips with emailCount>0; sends `categoryId`). EmailRow mirrors the web flat row
 (avatar initial, sender/date, subject + paperclip + lowercase category chip,
 summary). priority+category are mutually exclusive by design.
+
+## Full sidebar parity (15 screens)
+`AppMenu.tsx` reproduces the web sidebar 1:1 (same order/Feather icons):
+Réception(/), Envoyés(/sent), Programmés(/scheduled), Reportés(/reportes),
+Relances(/relances), Archives(/archive), Mes tâches(/taches), Contacts(/contacts),
+Agenda(/agenda), Mes dossiers(/folders), Bilan quotidien(/bilan),
+Catégories(/classement), Templates(/templates), Règles auto(/regles), Admin(/admin).
+Every new screen MUST be registered as a `<Stack.Screen>` in `app/_layout.tsx` or
+expo-router silently 404s the route.
+
+## Read-only secondary screens pattern
+reportes/relances/taches/agenda/bilan/classement/templates/regles/admin are
+list/scroll views over existing backend routes (followups, tasks, appointments,
+templates, automation-rules, categories, dashboard/summary, team/dashboard),
+built with ScreenHeader + StateViews (SkeletonList/CenterState/FullLoader) +
+FlatList/RefreshControl (ScrollView for sectioned Admin/Bilan). Only `taches` has
+a write path (PATCH /:id done toggle). API list helpers live in `lib/api.ts`
+after getProfile; FR date formatting in `lib/format.ts` (manual month names).
+
+## showRecipient must reach EmailRow (gotcha)
+`EmailListScreen` accepts `showRecipient` but you MUST forward it to `<EmailRow>`
+in renderItem AND set it on `app/sent.tsx` — otherwise Envoyés shows the sender
+instead of the recipient. Easy to add the prop to the wrapper and forget the
+inner pass-through.

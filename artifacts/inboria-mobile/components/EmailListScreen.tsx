@@ -66,7 +66,11 @@ export function EmailListScreen({
           data={emails}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
-            <EmailRow email={item} onPress={() => open(item)} />
+            <EmailRow
+              email={item}
+              showRecipient={showRecipient}
+              onPress={() => open(item)}
+            />
           )}
           contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
           refreshControl={

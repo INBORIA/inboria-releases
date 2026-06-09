@@ -323,3 +323,179 @@ export interface Profile {
 export function getProfile(): Promise<Profile> {
   return authJson<Profile>(`/api/profile`);
 }
+
+// --- Reportés (emails snoozés) ---
+export function listSnoozedEmails(): Promise<EmailListResponse> {
+  return authJson<EmailListResponse>(`/api/emails?snoozed=true&sort=recent&limit=50`);
+}
+
+// --- Relances (followups) ---
+export interface FollowUp {
+  id: string;
+  status: string | null;
+  createdAt: string | null;
+  emailSubject: string | null;
+  emailSender: string | null;
+  aiSuggestion: boolean;
+}
+export async function listFollowups(): Promise<FollowUp[]> {
+  const data = await authJson<any[]>(`/api/followups`);
+  return (data ?? []).map((f) => {
+    const s = parseSender(f.emails?.sender || "");
+    return {
+      id: String(f.id),
+      status: f.status ?? null,
+      createdAt: f.created_at ?? null,
+      emailSubject: f.emails?.subject ?? null,
+      emailSender: s.name || s.email || null,
+      aiSuggestion: !!f.ai_suggestion,
+    };
+  });
+}
+
+// --- Mes tâches (tasks) ---
+export interface Task {
+  id: string;
+  title: string;
+  done: boolean;
+  dueDate: string | null;
+  emailSubject: string | null;
+  source: string | null;
+}
+export async function listTasks(): Promise<Task[]> {
+  const data = await authJson<any[]>(`/api/tasks`);
+  return (data ?? []).map((t) => ({
+    id: String(t.id),
+    title: t.title ?? "(sans titre)",
+    done: !!t.done,
+    dueDate: t.dueDate ?? null,
+    emailSubject: t.emailSubject ?? null,
+    source: t.source ?? null,
+  }));
+}
+export function toggleTask(id: string, done: boolean): Promise<unknown> {
+  return authJson(`/api/tasks/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ done }),
+  });
+}
+
+// --- Agenda (appointments) ---
+export interface Appointment {
+  id: string;
+  title: string | null;
+  description: string | null;
+  location: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  allDay: boolean;
+  status: string | null;
+}
+export async function listAppointments(): Promise<Appointment[]> {
+  const data = await authJson<any[]>(`/api/appointments`);
+  return (data ?? []).map((a) => ({
+    id: String(a.id),
+    title: a.title ?? null,
+    description: a.description ?? null,
+    location: a.location ?? null,
+    startAt: a.startAt ?? null,
+    endAt: a.endAt ?? null,
+    allDay: !!a.allDay,
+    status: a.status ?? null,
+  }));
+}
+
+// --- Templates ---
+export interface Template {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  usageCount: number;
+}
+export async function listTemplates(): Promise<Template[]> {
+  const data = await authJson<any[]>(`/api/templates`);
+  return (data ?? []).map((t) => ({
+    id: String(t.id),
+    name: t.name ?? "(sans nom)",
+    subject: t.subject ?? "",
+    body: t.body ?? "",
+    usageCount: t.usageCount ?? 0,
+  }));
+}
+
+// --- Règles automatiques ---
+export interface AutomationRule {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string | null;
+  runsCount: number;
+}
+export async function listAutomationRules(): Promise<AutomationRule[]> {
+  const data = await authJson<any[]>(`/api/automation-rules`);
+  return (data ?? []).map((r) => ({
+    id: String(r.id),
+    name: r.name ?? "(sans nom)",
+    enabled: r.enabled !== false,
+    description: r.naturalLanguageInput ?? null,
+    runsCount: r.runsCount ?? 0,
+  }));
+}
+
+// --- Bilan quotidien (dashboard summary) ---
+export interface DashboardSummary {
+  totalEmails: number;
+  urgentCount: number;
+  moyenCount: number;
+  faibleCount: number;
+  uncategorizedCount: number;
+  pendingTasks: number;
+  emailsUsed: number;
+  emailsQuota: number;
+  plan: string;
+}
+export function getDashboardSummary(): Promise<DashboardSummary> {
+  return authJson<DashboardSummary>(`/api/dashboard/summary`);
+}
+
+// --- Admin / équipe (team dashboard) ---
+export interface TeamMemberStat {
+  userId: string;
+  fullName: string;
+  role: string | null;
+  assignedEmails: number;
+  archivedEmails: number;
+  commentsCount: number;
+}
+export interface TeamActivity {
+  id: string;
+  userName: string;
+  action: string | null;
+  entityType: string | null;
+  createdAt: string | null;
+}
+export interface TeamDashboard {
+  members: TeamMemberStat[];
+  recentActivity: TeamActivity[];
+}
+export async function getTeamDashboard(): Promise<TeamDashboard> {
+  const data = await authJson<any>(`/api/team/dashboard`);
+  return {
+    members: (data?.members ?? []).map((m: any) => ({
+      userId: String(m.userId),
+      fullName: m.fullName || "—",
+      role: m.role ?? null,
+      assignedEmails: m.assignedEmails ?? 0,
+      archivedEmails: m.archivedEmails ?? 0,
+      commentsCount: m.commentsCount ?? 0,
+    })),
+    recentActivity: (data?.recentActivity ?? []).map((a: any) => ({
+      id: String(a.id),
+      userName: a.userName || "—",
+      action: a.action ?? null,
+      entityType: a.entityType ?? null,
+      createdAt: a.createdAt ?? null,
+    })),
+  };
+}

@@ -18,15 +18,24 @@ import { useAuth } from "@/lib/auth";
 
 type Item = { icon: keyof typeof Feather.glyphMap; label: string; route: string };
 
+// Réplique EXACTE de la sidebar web (dashboard-layout.tsx) — même ordre,
+// mêmes libellés, équivalents Feather des icônes lucide.
 const ITEMS: Item[] = [
   { icon: "inbox", label: "Réception", route: "/" },
   { icon: "send", label: "Envoyés", route: "/sent" },
   { icon: "clock", label: "Programmés", route: "/scheduled" },
-  { icon: "folder", label: "Mes dossiers", route: "/folders" },
+  { icon: "bell-off", label: "Reportés", route: "/reportes" },
+  { icon: "bell", label: "Relances", route: "/relances" },
   { icon: "archive", label: "Archives", route: "/archive" },
-  { icon: "trash-2", label: "Corbeille", route: "/trash" },
+  { icon: "check-square", label: "Mes tâches", route: "/taches" },
   { icon: "users", label: "Contacts", route: "/contacts" },
-  { icon: "settings", label: "Paramètres", route: "/settings" },
+  { icon: "calendar", label: "Agenda", route: "/agenda" },
+  { icon: "folder", label: "Mes dossiers", route: "/folders" },
+  { icon: "bar-chart-2", label: "Bilan quotidien", route: "/bilan" },
+  { icon: "tag", label: "Catégories", route: "/classement" },
+  { icon: "file-text", label: "Templates", route: "/templates" },
+  { icon: "zap", label: "Règles automatiques", route: "/regles" },
+  { icon: "shield", label: "Admin", route: "/admin" },
 ];
 
 export function AppMenu({
@@ -120,7 +129,7 @@ export function AppMenu({
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", flexDirection: "row" },
   panel: { width: 290, maxWidth: "85%", paddingHorizontal: 14, flex: 1 },
-  logo: { width: 130, height: 32, marginLeft: 8, marginBottom: 18 },
+  logo: { width: 162, height: 44, marginLeft: 6, marginBottom: 18 },
   item: {
     flexDirection: "row",
     alignItems: "center",

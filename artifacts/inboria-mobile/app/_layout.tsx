@@ -57,6 +57,15 @@ function RootLayoutNav() {
       <Stack.Screen name="trash" />
       <Stack.Screen name="contacts" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="reportes" />
+      <Stack.Screen name="relances" />
+      <Stack.Screen name="taches" />
+      <Stack.Screen name="agenda" />
+      <Stack.Screen name="bilan" />
+      <Stack.Screen name="classement" />
+      <Stack.Screen name="templates" />
+      <Stack.Screen name="regles" />
+      <Stack.Screen name="admin" />
     </Stack>
   );
 }
