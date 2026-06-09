@@ -179,7 +179,7 @@ begin
       'handled', handled,
       'notHandled', greatest(0, cnt - handled),
       'avgFirstResponseMinutes', case when respn > 0 then round(respsum / respn)::int else null end
-    ) order by cnt desc), '[]'::jsonb) as data
+    ) order by cnt desc, mid), '[]'::jsonb) as data
     from (
       select
         shared_mailbox_id as mid,
@@ -200,7 +200,7 @@ begin
       'handled', handled,
       'notHandled', greatest(0, cnt - handled),
       'avgFirstResponseMinutes', case when respn > 0 then round(respsum / respn)::int else null end
-    ) order by cnt desc), '[]'::jsonb) as data
+    ) order by cnt desc, uid), '[]'::jsonb) as data
     from (
       select
         user_id as uid,
@@ -222,7 +222,7 @@ begin
       'handled', handled,
       'notHandled', greatest(0, cnt - handled),
       'avgFirstResponseMinutes', case when respn > 0 then round(respsum / respn)::int else null end
-    ) order by cnt desc), '[]'::jsonb) as data
+    ) order by cnt desc, pid), '[]'::jsonb) as data
     from (
       select
         project_id as pid,
@@ -237,7 +237,7 @@ begin
 
   -- ===================== TOP SENDERS =====================
   top_senders as (
-    select coalesce(jsonb_agg(jsonb_build_object('email', email, 'count', c) order by c desc), '[]'::jsonb) as data
+    select coalesce(jsonb_agg(jsonb_build_object('email', email, 'count', c) order by c desc, email collate "C"), '[]'::jsonb) as data
     from (
       select email, count(*)::int as c
       from (
@@ -246,20 +246,20 @@ begin
       ) s
       where email is not null and email <> ''
       group by email
-      order by c desc, email
+      order by c desc, email collate "C"
       limit 10
     ) z
   ),
 
   -- ===================== TOP CATEGORIES (par nom, fallback 'Autre') =====================
   top_categories as (
-    select coalesce(jsonb_agg(jsonb_build_object('name', name, 'count', c) order by c desc), '[]'::jsonb) as data
+    select coalesce(jsonb_agg(jsonb_build_object('name', name, 'count', c) order by c desc, name collate "C"), '[]'::jsonb) as data
     from (
       select coalesce(cat.name, 'Autre') as name, count(*)::int as c
       from e left join categories cat on cat.id = e.category_id
       where e.category_id is not null
       group by coalesce(cat.name, 'Autre')
-      order by c desc, name
+      order by c desc, name collate "C"
       limit 10
     ) z
   ),
@@ -335,7 +335,7 @@ begin
       'done', done,
       'overdue', overdue,
       'isOutOfProject', pid is null
-    ) order by (pid is null), open desc), '[]'::jsonb) as data
+    ) order by (pid is null), open desc, pid), '[]'::jsonb) as data
     from tpp
   )
 

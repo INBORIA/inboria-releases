@@ -18,14 +18,26 @@ and **must be applied manually in the Supabase SQL Editor** (this DB has no exec
 supabase-no-exec-sql.md). Until applied, engine=auto silently uses the memory path, so the
 app keeps working.
 
-## Parity gotcha — topSenders / topCategories ties
-Validated rpc-vs-memory byte-identical across 3 real orgs × 7d/30d/90d × member/mailbox
-filters EXCEPT the **top-10 cutoff ties**: the legacy memory path tie-breaks equal-count
-senders by arbitrary DB return order (itself nondeterministic), the RPC tie-breaks
-deterministically (`count desc, email`). Counts/distribution are identical; only *which*
-equal-count entries land in the bottom of the top-10 can differ. This is acceptable (RPC is
-strictly more deterministic). Don't chase a "0 diff" on tie membership — compare the count
-distribution + the above-cutoff set instead.
+## Parity gotcha — ties must be tie-broken on BOTH sides
+The JS memory path is a **stable sort over PostgREST row order** (non-deterministic); the
+SQL aggregate tie order is unspecified unless given a secondary key. Counts/totals were
+always identical, but equal-count ordering diverged (and at a top-N cutoff can even change
+*which* equal entries land in the top-10). Fix = a deterministic secondary key on **both**
+engines:
+- SQL: `order by <metric> desc, <text> collate "C"` (email/name) and `, <uuid col>` for the
+  per-* lists / tasks_per_project (`mid`/`uid`/`pid`).
+- JS: `cmp = (x,y) => Buffer.compare(Buffer.from(x,"utf8"), Buffer.from(y,"utf8"))` — UTF-8
+  bytewise, which **exactly** mirrors `collate "C"` (incl. non-BMP/emoji). Do **not** use
+  `<` (UTF-16 code units, diverges on supplementary chars). uuid/ASCII are identical either
+  way.
+
+Validated rpc-vs-memory byte-identical across 3 real orgs × 7d/30d/90d × member/mailbox/
+project filters. perMember/tasksPerMember already match without an explicit text tie-break
+because both engines consume the **same member-id array order** (SQL orders by the array
+ordinal); leave them — forcing a cross-call order would change current output. NOTE: after
+editing the SQL, the updated function must be re-applied in Supabase (no programmatic DDL —
+see supabase-no-exec-sql.md) before a fresh run shows full byte-parity; the JS fix alone
+clears it for any already-deterministic SQL columns.
 
 **Why:** future edits to either path must keep the floor/clamp + `<43200` (30-day) response
 bound, the modern (handled_by+handled_at) vs legacy (assigned/claimed proxy) split, openLoad

@@ -38,4 +38,4 @@
 - [Worker/web role split](inboria-worker-role-split.md) — APP_ROLE (all/web/worker) gates the ~15 background workers in index.ts boot; default all = unchanged; new workers MUST go inside the RUN_WORKERS block or they duplicate on every web instance.
 - [Supabase has no exec_sql](supabase-no-exec-sql.md) — runtime CANNOT run DDL/migrations on this DB (index.ts exec_sql calls no-op); new SQL must be pasted by the user in Supabase SQL Editor.
 - [Test authed endpoints offline](api-test-auth-token.md) — mint a real user JWT via admin.generateLink(magiclink)→email_otp→anon.verifyOtp, then Bearer to localhost:80; service key isn't accepted by requireAuth.
-- [Team analytics DB-side RPC](team-analytics-rpc.md) — /analytics/team aggregates in inboria_team_analytics (engine=auto falls back to memory); topSenders/topCategories cutoff-tie membership is nondeterministic, don't chase 0-diff.
+- [Team analytics DB-side RPC](team-analytics-rpc.md) — /analytics/team aggregates in inboria_team_analytics (engine=auto falls back to memory); RPC↔memory parity needs tie-breaks BOTH sides (SQL collate "C"/uuid ↔ JS Buffer.compare UTF-8, not `<`).

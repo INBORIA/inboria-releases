@@ -397,13 +397,21 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         avgFirstResponseMinutes: s.firstResponseCount > 0 ? Math.round(s.firstResponseSumMin / s.firstResponseCount) : null,
       }));
 
+    // Tie-break déterministe pour matcher l'ORDER BY ... collate "C" de la RPC
+    // SQL. Sans ça, JS (sort stable sur l'ordre d'insertion = ordre des lignes
+    // PostgREST) et SQL divergent sur les ex æquo → la sélection du top 10 peut
+    // même retenir des expéditeurs différents à la frontière. On compare octet
+    // par octet en UTF-8 (= exactement collate "C", y compris hors BMP/emoji),
+    // pas en UTF-16 code units (`<`) qui divergerait sur les caractères
+    // supplémentaires. Pour les uuid (ASCII) le résultat est identique.
+    const cmp = (x: string, y: string) => Buffer.compare(Buffer.from(x, "utf8"), Buffer.from(y, "utf8"));
     const topSenders = Array.from(senderCounts.entries())
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1] || cmp(a[0], b[0]))
       .slice(0, 10)
       .map(([email, count]) => ({ email, count }));
 
     const topCategories = Array.from(categoryCounts.entries())
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1] || cmp(a[0], b[0]))
       .slice(0, 10)
       .map(([name, count]) => ({ name, count }));
 
@@ -477,7 +485,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         notHandled: Math.max(0, s.count - s.handled),
         avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
       };
-    }).sort((a, b) => b.received - a.received);
+    }).sort((a, b) => b.received - a.received || cmp(a.mailboxId, b.mailboxId));
 
     // ===== Par boîte personnelle (emails sans shared_mailbox_id, par membre) =====
     const perPersonalMap = new Map<string, { count: number; handled: number; respSum: number; respN: number }>();
@@ -504,7 +512,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       handled: s.handled,
       notHandled: Math.max(0, s.count - s.handled),
       avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
-    })).sort((a, b) => b.received - a.received);
+    })).sort((a, b) => b.received - a.received || cmp(a.userId, b.userId));
 
     const projIds = [...new Set(list.map((e: any) => e.project_id).filter(Boolean))] as string[];
     const projMap = new Map<string, { name: string; reference: string }>();
@@ -548,7 +556,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       handled: s.handled,
       notHandled: Math.max(0, s.count - s.handled),
       avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
-    })).sort((a, b) => b.received - a.received);
+    })).sort((a, b) => b.received - a.received || cmp(a.projectId, b.projectId));
 
     // ===== Bloc Tâches =====
     const todayIso = new Date().toISOString().slice(0, 10);
@@ -633,7 +641,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       .sort((a, b) => {
         if (a.isOutOfProject) return 1;
         if (b.isOutOfProject) return -1;
-        return (b.open + b.done) - (a.open + a.done);
+        return (b.open + b.done) - (a.open + a.done) || cmp(a.projectId as string, b.projectId as string);
       });
 
     const totalHandledNum = totalHandled ?? 0;
