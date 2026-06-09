@@ -64,6 +64,10 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const mailboxFilter = req.query.mailbox ? String(req.query.mailbox) : null;
     const projectFilter = req.query.project ? String(req.query.project) : null;
     const handledEnabled = await hasHandledColumns();
+    // Moteur d'agrégation : "auto" (défaut) = tente la RPC côté base puis retombe
+    // sur le calcul en mémoire ; "rpc" force la RPC (diagnostic, erreur si KO) ;
+    // "memory" force l'ancien calcul en mémoire.
+    const engine = String(req.query.engine || "auto");
 
     const { data: members } = await supabaseAdmin
       .from("organisation_members")
@@ -82,6 +86,149 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       .select("id, name, email_address")
       .eq("organisation_id", orgId);
     const orgMailboxIds = (orgMailboxes || []).map((m: any) => m.id);
+
+    // ===================== Chemin RPC (agrégation côté base) =====================
+    // Évite de charger jusqu'à 50 000 emails en mémoire : la fonction SQL
+    // inboria_team_analytics renvoie directement les agrégats. Filet de sécurité :
+    // toute erreur (fonction absente, etc.) en mode "auto" retombe sur le calcul
+    // en mémoire ci-dessous. La résolution des noms + le bloc SLA restent ici.
+    if (engine !== "memory") {
+      try {
+        const { data: agg, error: rpcErr } = await supabaseAdmin.rpc("inboria_team_analytics" as any, {
+          p_member_ids: memberIds,
+          p_mailbox_ids: orgMailboxIds,
+          p_since: sinceIso,
+          p_member: memberFilter,
+          p_mailbox: mailboxFilter,
+          p_project: projectFilter,
+          p_handled_enabled: handledEnabled,
+          p_days: days,
+        });
+        if (rpcErr) throw new Error(rpcErr.message);
+        if (agg) {
+          const a: any = agg;
+
+          // Résolution des noms (profils, mailboxes, projets) côté Node.
+          const profileMap = new Map<string, string>();
+          {
+            const { data: profileRows } = await supabaseAdmin
+              .from("profiles").select("id, full_name").in("id", memberIds);
+            for (const p of profileRows || []) profileMap.set(p.id as string, (p.full_name as string) || "");
+          }
+          const mbMeta = new Map<string, { name: string; email: string }>(
+            (orgMailboxes || []).map((m: any) => [m.id, { name: m.name || "", email: m.email_address || "" }]),
+          );
+          const projIdSet = new Set<string>();
+          for (const r of (a.perProject || [])) if (r.projectId) projIdSet.add(r.projectId);
+          for (const r of (a.tasksPerProject || [])) if (r.projectId) projIdSet.add(r.projectId);
+          const projMeta = new Map<string, { name: string; reference: string }>();
+          if (projIdSet.size > 0) {
+            const { data: prows } = await supabaseAdmin
+              .from("projects").select("id, name, reference").in("id", [...projIdSet]);
+            for (const p of prows || []) projMeta.set(p.id, { name: p.name || "", reference: p.reference || "" });
+          }
+
+          // SLA (inchangé, requêtes count).
+          let totalBreaches = 0, openBreaches = 0;
+          if (orgMailboxIds.length > 0) {
+            const { count: totalC } = await supabaseAdmin
+              .from("sla_breaches").select("id", { count: "exact", head: true })
+              .in("shared_mailbox_id", orgMailboxIds).gte("detected_at", sinceIso);
+            const { count: openC } = await supabaseAdmin
+              .from("sla_breaches").select("id", { count: "exact", head: true })
+              .in("shared_mailbox_id", orgMailboxIds).is("resolved_at", null);
+            totalBreaches = totalC || 0;
+            openBreaches = openC || 0;
+          }
+
+          const t = a.totals || {};
+          const emailsTotal = t.emails || 0;
+          const handledTotal = t.handled || 0;
+          const hdcount = t.hdcount || 0;
+          const hdsum = Number(t.hdsum || 0);
+
+          res.json({
+            totals: {
+              emails: emailsTotal,
+              assigned: t.assigned || 0,
+              notHandled: Math.max(0, emailsTotal - handledTotal),
+              handled: handledTotal,
+              avgHandlingMinutes: hdcount >= 5 ? Math.round(hdsum / hdcount) : null,
+              avgHandlingSampleSize: hdcount,
+              period,
+            },
+            filters: { period, member: memberFilter, mailbox: mailboxFilter, project: projectFilter },
+            handledMetricsEnabled: handledEnabled,
+            perMember: (a.perMember || []).map((r: any) => ({
+              userId: r.userId,
+              userName: profileMap.get(r.userId) || "",
+              handled: r.handled,
+              assigned: r.assigned,
+              openLoad: r.openLoad,
+              avgFirstResponseMinutes: r.avgFirstResponseMinutes ?? null,
+            })),
+            perMailbox: (a.perMailbox || []).map((r: any) => {
+              const meta = mbMeta.get(r.mailboxId);
+              return {
+                mailboxId: r.mailboxId,
+                mailboxName: meta?.name || meta?.email || "—",
+                mailboxEmail: meta?.email || "",
+                count: r.count,
+                received: r.received,
+                handled: r.handled,
+                notHandled: r.notHandled,
+                avgFirstResponseMinutes: r.avgFirstResponseMinutes ?? null,
+              };
+            }),
+            perPersonalMailbox: (a.perPersonal || []).map((r: any) => ({
+              userId: r.userId,
+              userName: profileMap.get(r.userId) || "",
+              received: r.received,
+              handled: r.handled,
+              notHandled: r.notHandled,
+              avgFirstResponseMinutes: r.avgFirstResponseMinutes ?? null,
+            })),
+            perProject: (a.perProject || []).map((r: any) => ({
+              projectId: r.projectId,
+              projectName: projMeta.get(r.projectId)?.name || "",
+              projectReference: projMeta.get(r.projectId)?.reference || "",
+              count: r.count,
+              received: r.received,
+              handled: r.handled,
+              notHandled: r.notHandled,
+              avgFirstResponseMinutes: r.avgFirstResponseMinutes ?? null,
+            })),
+            tasksPerMember: (a.tasksPerMember || []).map((r: any) => ({
+              userId: r.userId,
+              userName: profileMap.get(r.userId) || "",
+              open: r.open,
+              done: r.done,
+              overdue: r.overdue,
+            })),
+            tasksPerProject: (a.tasksPerProject || []).map((r: any) => ({
+              projectId: r.projectId,
+              projectName: r.isOutOfProject ? "Hors projet" : (projMeta.get(r.projectId)?.name || "—"),
+              projectReference: r.isOutOfProject ? "" : (projMeta.get(r.projectId)?.reference || ""),
+              isOutOfProject: !!r.isOutOfProject,
+              open: r.open,
+              done: r.done,
+              overdue: r.overdue,
+            })),
+            topSenders: a.topSenders || [],
+            topCategories: a.topCategories || [],
+            evolution: a.evolution || [],
+            slaSummary: { totalBreaches, openBreaches },
+          });
+          return;
+        }
+      } catch (rpcCatch: any) {
+        if (engine === "rpc") {
+          res.status(500).json({ error: "rpc_failed: " + (rpcCatch?.message || "unknown") });
+          return;
+        }
+        // engine=auto -> fallback silencieux vers le calcul en mémoire ci-dessous.
+      }
+    }
 
     // Sélection : on ajoute handled_at / handled_by si la colonne existe.
     const baseCols = "id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, inboria_processed_at, claimed_at, assigned_at, user_id";
