@@ -56,9 +56,26 @@ plus the `--mail-*` vars (mailRead/mailMuted/mailBorder/mailSummary…). Real lo
 on login + inbox header; app icon = `inboria_icon_512`. Inbox header mirrors web:
 search (debounced 350ms → `q`), sort tabs (Récents default = `recent`, Tri IA =
 `smart`), filter chips for priority + categories (`GET /api/categories`, only
-chips with emailCount>0; sends `categoryId`). EmailRow mirrors the web flat row
-(avatar initial, sender/date, subject + paperclip + lowercase category chip,
-summary). priority+category are mutually exclusive by design.
+chips with emailCount>0; sends `categoryId`). priority+category mutually exclusive.
+
+EmailRow MUST be the web/mockup FLAT row, NOT an invented multi-line card. Ref =
+canvas mockup `mockup-sandbox/.../inbox-redesign/SuperhumanDark.tsx` + real web
+`ncv-mail/.../dashboard/index.tsx` L291 (h-[52px] flat row, avatar = first letter
+L342). Mobile adaptation (2 lines for width): unread DOT (primary) on the left,
+avatar 28, line1 = sender + time(right), line2 = subject(bold if unread) + "— extrait"
+(summary, muted) INLINE + paperclip + lowercase category. NO left priority bar, NO
+separate 3rd summary line — that 3-line card was the "tu as inventé une app" mistake.
+The real web inbox has NO Important/Autres section grouping (mockup only) — it's a
+filter dropdown (filterImportance all|important), already covered by the Urgents/
+Importants chips; do NOT add sections or you re-invent.
+
+**Why:** user was furious ("je ne vois que de la merde, tu as inventé une app au lieu
+de copier Inboria"). Always match the real web/mockup row exactly; never invent layout.
+
+**Blind-screenshot trap:** app_preview/headless browser is NEVER authenticated (401)
+→ it only ever shows the LOGIN screen, never the inbox the user sees on the canvas.
+Don't claim the inbox "works" from a login screenshot. To verify the authed look,
+read the web/mockup source, or render the row in mockup-sandbox, or ask the user.
 
 ## Full sidebar parity (15 screens)
 `AppMenu.tsx` reproduces the web sidebar 1:1 (same order/Feather icons):

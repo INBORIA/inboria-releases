@@ -20,22 +20,10 @@ function formatDate(iso: string): string {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
-// Barre de priorité à gauche — mêmes couleurs que la version web
-// (urgent → rouge, moyen → ambre, faible → discret/transparent).
-function priorityBarColor(
-  priority: string | null,
-  colors: ReturnType<typeof useColors>,
-): string {
-  switch ((priority || "").toLowerCase()) {
-    case "urgent":
-      return colors.destructive;
-    case "moyen":
-      return colors.warning;
-    default:
-      return "transparent";
-  }
-}
-
+// Ligne mail FIDÈLE à la maquette web « Réception sombre » (SuperhumanDark) :
+// pastille non-lu, avatar initiales, expéditeur + heure, puis sujet + « — extrait »
+// sur la MÊME ligne (sujet en gras si non-lu, extrait en gris), catégorie en
+// minuscule + trombone. Aucune barre de priorité, aucune 3e ligne de résumé.
 export function EmailRow({
   email,
   onPress,
@@ -47,7 +35,6 @@ export function EmailRow({
 }) {
   const colors = useColors();
   const isUnread = (email.status || "").toLowerCase() !== "read";
-  const barColor = priorityBarColor(email.priority, colors);
 
   // En boîte « Envoyés », on affiche le DESTINATAIRE (pas l'expéditeur, qui est
   // le compte de l'utilisateur). Le backend renvoie recipient pour ces e-mails.
@@ -57,10 +44,10 @@ export function EmailRow({
   const avatarName = showRecipient ? email.recipient || "" : email.sender;
   const avatarEmail = showRecipient ? email.recipient || "" : email.senderEmail;
 
-  const senderColor = isUnread ? colors.foreground : colors.mailRead;
-  const senderFont = isUnread ? "Inter_600SemiBold" : "Inter_400Regular";
+  const nameColor = isUnread ? colors.foreground : colors.mailRead;
+  const nameFont = isUnread ? "Inter_600SemiBold" : "Inter_400Regular";
   const subjectColor = isUnread ? colors.foreground : colors.mailRead;
-  const subjectFont = isUnread ? "Inter_500Medium" : "Inter_400Regular";
+  const subjectFont = isUnread ? "Inter_600SemiBold" : "Inter_400Regular";
 
   return (
     <Pressable
@@ -73,12 +60,21 @@ export function EmailRow({
         },
       ]}
     >
-      <View style={[styles.bar, { backgroundColor: barColor }]} />
-      <Avatar name={avatarName} email={avatarEmail} size={36} />
+      {/* Pastille non-lu (comme la maquette) */}
+      <View style={styles.dotCol}>
+        {isUnread ? (
+          <View style={[styles.dot, { backgroundColor: colors.primary }]} />
+        ) : null}
+      </View>
+
+      <Avatar name={avatarName} email={avatarEmail} size={28} />
 
       <View style={styles.body}>
-        <View style={styles.line}>
-          <Text numberOfLines={1} style={[styles.sender, { color: senderColor, fontFamily: senderFont }]}>
+        <View style={styles.topLine}>
+          <Text
+            numberOfLines={1}
+            style={[styles.sender, { color: nameColor, fontFamily: nameFont }]}
+          >
             {displayName}
           </Text>
           <Text style={[styles.date, { color: colors.mailMuted }]}>
@@ -86,25 +82,35 @@ export function EmailRow({
           </Text>
         </View>
 
-        <View style={styles.line}>
-          <Text numberOfLines={1} style={[styles.subject, { color: subjectColor, fontFamily: subjectFont }]}>
-            {email.subject || "(sans objet)"}
+        <View style={styles.bottomLine}>
+          <Text numberOfLines={1} style={styles.subjectWrap}>
+            <Text style={{ color: subjectColor, fontFamily: subjectFont }}>
+              {email.subject || "(sans objet)"}
+            </Text>
+            {email.summary ? (
+              <Text style={{ color: colors.mailSummary, fontFamily: "Inter_400Regular" }}>
+                {"  — "}
+                {email.summary}
+              </Text>
+            ) : null}
           </Text>
           {email.attachmentCount > 0 ? (
-            <Feather name="paperclip" size={12} color={colors.mailMuted} style={styles.clip} />
+            <Feather
+              name="paperclip"
+              size={12}
+              color={colors.mailMuted}
+              style={styles.clip}
+            />
           ) : null}
           {email.categoryName ? (
-            <Text numberOfLines={1} style={[styles.category, { color: colors.mailMeta }]}>
+            <Text
+              numberOfLines={1}
+              style={[styles.category, { color: colors.mailMeta }]}
+            >
               {email.categoryName.toLowerCase()}
             </Text>
           ) : null}
         </View>
-
-        {email.summary ? (
-          <Text numberOfLines={1} style={[styles.summary, { color: colors.mailSummary }]}>
-            {email.summary}
-          </Text>
-        ) : null}
       </View>
     </Pressable>
   );
@@ -114,19 +120,20 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 11,
-    paddingVertical: 10,
-    paddingLeft: 8,
+    gap: 10,
+    paddingVertical: 9,
+    paddingLeft: 6,
     paddingRight: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  bar: { width: 3, alignSelf: "stretch", borderRadius: 2 },
+  dotCol: { width: 8, alignItems: "center", justifyContent: "center" },
+  dot: { width: 6, height: 6, borderRadius: 3 },
   body: { flex: 1, gap: 2 },
-  line: { flexDirection: "row", alignItems: "center", gap: 8 },
-  sender: { flex: 1, fontSize: 14 },
-  date: { fontSize: 11.5, fontFamily: "Inter_400Regular" },
-  subject: { flex: 1, fontSize: 13.5 },
+  topLine: { flexDirection: "row", alignItems: "center", gap: 8 },
+  sender: { flex: 1, fontSize: 13.5 },
+  date: { fontSize: 11.5, fontFamily: "Inter_400Regular", fontVariant: ["tabular-nums"] },
+  bottomLine: { flexDirection: "row", alignItems: "center", gap: 8 },
+  subjectWrap: { flex: 1, fontSize: 13 },
   clip: { marginLeft: 2 },
-  category: { fontSize: 11, fontFamily: "Inter_400Regular", maxWidth: 110 },
-  summary: { fontSize: 12.5, fontFamily: "Inter_400Regular" },
+  category: { fontSize: 11, fontFamily: "Inter_400Regular", maxWidth: 100 },
 });
