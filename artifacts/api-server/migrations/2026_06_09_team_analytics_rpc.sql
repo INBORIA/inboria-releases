@@ -259,7 +259,7 @@ begin
       from e left join categories cat on cat.id = e.category_id
       where e.category_id is not null
       group by coalesce(cat.name, 'Autre')
-      order by c desc, name collate "C"
+      order by c desc, coalesce(cat.name, 'Autre') collate "C"
       limit 10
     ) z
   ),
