@@ -39,13 +39,23 @@ function priorityBarColor(
 export function EmailRow({
   email,
   onPress,
+  showRecipient = false,
 }: {
   email: EmailListItem;
   onPress: () => void;
+  showRecipient?: boolean;
 }) {
   const colors = useColors();
   const isUnread = (email.status || "").toLowerCase() !== "read";
   const barColor = priorityBarColor(email.priority, colors);
+
+  // En boîte « Envoyés », on affiche le DESTINATAIRE (pas l'expéditeur, qui est
+  // le compte de l'utilisateur). Le backend renvoie recipient pour ces e-mails.
+  const displayName = showRecipient
+    ? email.recipient || "Inconnu"
+    : email.sender || email.senderEmail || "Inconnu";
+  const avatarName = showRecipient ? email.recipient || "" : email.sender;
+  const avatarEmail = showRecipient ? email.recipient || "" : email.senderEmail;
 
   const senderColor = isUnread ? colors.foreground : colors.mailRead;
   const senderFont = isUnread ? "Inter_600SemiBold" : "Inter_400Regular";
@@ -64,12 +74,12 @@ export function EmailRow({
       ]}
     >
       <View style={[styles.bar, { backgroundColor: barColor }]} />
-      <Avatar name={email.sender} email={email.senderEmail} size={36} />
+      <Avatar name={avatarName} email={avatarEmail} size={36} />
 
       <View style={styles.body}>
         <View style={styles.line}>
           <Text numberOfLines={1} style={[styles.sender, { color: senderColor, fontFamily: senderFont }]}>
-            {email.sender || email.senderEmail || "Inconnu"}
+            {displayName}
           </Text>
           <Text style={[styles.date, { color: colors.mailMuted }]}>
             {formatDate(email.createdAt)}

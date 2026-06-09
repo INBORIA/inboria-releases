@@ -48,6 +48,15 @@ function RootLayoutNav() {
       <Stack.Screen name="index" />
       <Stack.Screen name="login" />
       <Stack.Screen name="email/[id]" />
+      <Stack.Screen name="compose" options={{ presentation: "modal" }} />
+      <Stack.Screen name="sent" />
+      <Stack.Screen name="scheduled" />
+      <Stack.Screen name="folders" />
+      <Stack.Screen name="folder/[id]" />
+      <Stack.Screen name="archive" />
+      <Stack.Screen name="trash" />
+      <Stack.Screen name="contacts" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }

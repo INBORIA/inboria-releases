@@ -64,6 +64,20 @@ export interface EmailListItem {
   attachmentCount: number;
   createdAt: string;
   inboriaScore: number | null;
+  recipient: string | null;
+}
+
+// Découpe une chaîne expéditeur brute « Nom <email@x.com> » en { name, email }.
+// Certains endpoints (dossiers) renvoient le champ sender non parsé.
+export function parseSender(raw: string): { name: string; email: string } {
+  const s = (raw || "").trim();
+  const m = s.match(/^(.*)<([^>]+)>$/);
+  if (m) {
+    const email = m[2].trim();
+    const name = m[1].trim().replace(/^"|"$/g, "");
+    return { name: name || email, email };
+  }
+  return { name: s, email: s };
 }
 
 export interface EmailListResponse {
@@ -150,4 +164,162 @@ export function sendReply(input: SendReplyInput): Promise<unknown> {
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+// --- Composer un nouvel e-mail ---
+// Le backend accepte plusieurs destinataires séparés par , ou ; (string).
+export interface SendEmailInput {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+export function sendEmail(input: SendEmailInput): Promise<unknown> {
+  return authJson(`/api/emails/send`, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+// --- Listes par statut (Envoyés / Archives / Corbeille) ---
+export function listSent(page = 1): Promise<EmailListResponse> {
+  return listEmails({ status: "sent", sort: "recent", limit: 40, page });
+}
+
+export function listArchived(page = 1): Promise<EmailListResponse> {
+  return listEmails({ status: "archived", sort: "recent", limit: 40, page });
+}
+
+export function listTrashed(page = 1): Promise<EmailListResponse> {
+  return listEmails({ status: "trashed", sort: "recent", limit: 40, page });
+}
+
+// --- Actions sur un e-mail ---
+export function archiveEmail(id: number | string): Promise<unknown> {
+  return authJson(`/api/emails/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status: "archived" }),
+  });
+}
+
+export function trashEmail(id: number | string): Promise<unknown> {
+  return authJson(`/api/emails/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status: "trashed" }),
+  });
+}
+
+export function restoreEmail(id: number | string): Promise<unknown> {
+  return authJson(`/api/emails/${id}/restore`, { method: "POST" });
+}
+
+// --- Envois programmés ---
+export interface ScheduledEmail {
+  id: number;
+  subject: string | null;
+  to: string | null;
+  scheduledSendAt: string | null;
+}
+
+export async function listScheduled(): Promise<ScheduledEmail[]> {
+  const data = await authJson<any>(`/api/emails/scheduled`);
+  const rows = Array.isArray(data) ? data : (data?.emails ?? []);
+  return rows.map((e: any) => ({
+    id: e.id,
+    subject: e.subject ?? null,
+    to: e.to ?? e.recipient ?? e.recipientEmail ?? null,
+    scheduledSendAt: e.scheduledSendAt ?? e.scheduled_send_at ?? null,
+  }));
+}
+
+export function cancelScheduled(id: number | string): Promise<unknown> {
+  return authJson(`/api/emails/scheduled/${id}`, { method: "DELETE" });
+}
+
+// --- Dossiers (Mes dossiers) ---
+export interface Folder {
+  id: string;
+  name: string;
+  color: string | null;
+  icon: string | null;
+  emailCount: number;
+}
+
+export async function listFolders(): Promise<Folder[]> {
+  const data = await authJson<any[]>(`/api/folders`);
+  return (data ?? []).map((f) => ({
+    id: String(f.id),
+    name: f.name,
+    color: f.color ?? null,
+    icon: f.icon ?? null,
+    emailCount: f.emailCount ?? 0,
+  }));
+}
+
+export async function listFolderEmails(
+  folderId: string,
+  page = 1,
+): Promise<EmailListResponse> {
+  const qs = new URLSearchParams({ page: String(page), limit: "40" });
+  const data = await authJson<any>(
+    `/api/folders/${folderId}/emails?${qs.toString()}`,
+  );
+  // L'endpoint dossiers renvoie `sender` brut (non parsé) et omet senderEmail
+  // et attachmentCount → on normalise vers EmailListItem comme les autres listes.
+  const emails: EmailListItem[] = (data?.emails ?? []).map((e: any) => {
+    const s = parseSender(e.sender || "");
+    return {
+      id: e.id,
+      sender: s.name,
+      senderEmail: s.email,
+      subject: e.subject,
+      summary: e.summary ?? null,
+      priority: e.priority ?? null,
+      status: e.status ?? null,
+      categoryId: e.categoryId ?? null,
+      categoryName: e.categoryName ?? null,
+      attachmentCount: e.attachmentCount ?? 0,
+      createdAt: e.createdAt,
+      inboriaScore: e.inboriaScore ?? null,
+      recipient: e.recipient ?? null,
+    };
+  });
+  return {
+    emails,
+    total: data?.total ?? emails.length,
+    page: data?.page ?? page,
+    totalPages: data?.totalPages ?? 1,
+  };
+}
+
+// --- Contacts ---
+export interface Contact {
+  email: string;
+  displayName: string;
+  lastInteractionAt: string | null;
+}
+
+export async function searchContacts(q: string): Promise<Contact[]> {
+  const qs = new URLSearchParams({ q, limit: "50" });
+  const data = await authJson<any>(`/api/contacts/search?${qs.toString()}`);
+  const rows = Array.isArray(data) ? data : (data?.contacts ?? []);
+  return rows.map((c: any) => ({
+    email: c.email,
+    displayName: c.displayName ?? c.display_name ?? c.email,
+    lastInteractionAt: c.lastInteractionAt ?? c.last_interaction_at ?? null,
+  }));
+}
+
+// --- Profil ---
+export interface Profile {
+  id: string;
+  email: string;
+  fullName: string;
+  plan: string;
+  aiLanguage: string;
+  timezone: string;
+}
+
+export function getProfile(): Promise<Profile> {
+  return authJson<Profile>(`/api/profile`);
 }

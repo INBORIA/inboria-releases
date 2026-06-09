@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppMenu } from "@/components/AppMenu";
 import { EmailRow } from "@/components/EmailRow";
 import { CenterState, SkeletonList } from "@/components/StateViews";
 import { useColors } from "@/hooks/useColors";
@@ -25,7 +26,6 @@ import {
   listEmails,
   type EmailListItem,
 } from "@/lib/api";
-import { useAuth } from "@/lib/auth";
 
 type Sort = "smart" | "recent";
 type Priority = "urgent" | "moyen" | null;
@@ -34,7 +34,7 @@ export default function InboxScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { signOut } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const [sort, setSort] = useState<Sort>("recent");
   const [priority, setPriority] = useState<Priority>(null);
@@ -98,14 +98,15 @@ export default function InboxScreen() {
             resizeMode="contain"
           />
           <Pressable
-            onPress={() => signOut()}
+            onPress={() => setMenuOpen(true)}
             hitSlop={10}
+            accessibilityLabel="Menu"
             style={({ pressed }) => [
               styles.iconBtn,
               { backgroundColor: pressed ? colors.surfaceHover : "transparent" },
             ]}
           >
-            <Feather name="log-out" size={19} color={colors.mutedForeground} />
+            <Feather name="menu" size={22} color={colors.foreground} />
           </Pressable>
         </View>
 
@@ -250,6 +251,23 @@ export default function InboxScreen() {
           }
         />
       )}
+
+      <Pressable
+        onPress={() => router.push("/compose")}
+        accessibilityLabel="Nouvel e-mail"
+        style={({ pressed }) => [
+          styles.fab,
+          {
+            backgroundColor: colors.primary,
+            opacity: pressed ? 0.9 : 1,
+            bottom: insets.bottom + 20,
+          },
+        ]}
+      >
+        <Feather name="edit-3" size={22} color={colors.primaryForeground} />
+      </Pressable>
+
+      <AppMenu visible={menuOpen} onClose={() => setMenuOpen(false)} />
     </View>
   );
 }
@@ -390,4 +408,18 @@ const styles = StyleSheet.create({
   },
   chipText: { fontSize: 12.5, maxWidth: 150 },
   divider: { width: 1, height: 20, marginHorizontal: 3, alignSelf: "center" },
+  fab: {
+    position: "absolute",
+    right: 18,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
 });
