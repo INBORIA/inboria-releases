@@ -39,3 +39,8 @@ linux:
     - deb
   category: Office
   icon: build/icon.png
+  # electron-builder exige le maintainer pour fabriquer le paquet .deb
+  # (sinon : "required to set Linux .deb package maintainer").
+  # Le homepage requis par le .deb est lu depuis package.json ("homepage"),
+  # ce n'est PAS une propriété valide sous linux: ici.
+  maintainer: Inboria <support@inboria.com>
