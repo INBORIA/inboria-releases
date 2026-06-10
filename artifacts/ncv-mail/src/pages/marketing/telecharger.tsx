@@ -2,9 +2,9 @@ import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { Monitor, Apple, Download, Smartphone, Globe, Check } from "lucide-react";
 
 // URL de la page « dernière version » des installateurs (Release GitHub).
-// >>> À CONFIGURER : remplacer par l'URL réelle de vos Releases une fois le
-//     premier build lancé (voir .github/workflows/desktop-build.yml).
-const RELEASES_URL = "https://github.com/VOTRE-COMPTE/inboria/releases/latest";
+// Dépôt : INBORIA/inboria-app — la Release est créée automatiquement par le
+// pipeline .github/workflows/desktop-build.yml au push d'un tag (ex: v1.0.0).
+const RELEASES_URL = "https://github.com/INBORIA/inboria-app/releases/latest";
 
 const desktopApps = [
   {
