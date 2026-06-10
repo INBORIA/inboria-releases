@@ -2,9 +2,9 @@ import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { Monitor, Apple, Download, Smartphone, Globe, Check } from "lucide-react";
 
 // URL de la page « dernière version » des installateurs (Release GitHub).
-// Dépôt : INBORIA/inboria-app — la Release est créée automatiquement par le
+// Dépôt : INBORIA/inboria-releases — la Release est créée automatiquement par le
 // pipeline .github/workflows/desktop-build.yml au push d'un tag (ex: v1.0.0).
-const RELEASES_URL = "https://github.com/INBORIA/inboria-app/releases/latest";
+const RELEASES_URL = "https://github.com/INBORIA/inboria-releases/releases/latest";
 
 const desktopApps = [
   {
