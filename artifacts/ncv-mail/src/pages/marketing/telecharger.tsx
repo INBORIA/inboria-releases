@@ -55,8 +55,8 @@ export default function Telecharger() {
               Application de bureau
             </h2>
             <p className="mt-2 text-[14px] text-[#b8c5d6]">
-              Une vraie application, ouverte dans sa propre fenêtre, sans la
-              barre du navigateur.
+              Application native pour Windows, macOS et Linux — rapide,
+              intégrée à votre système et accessible en un clic.
             </p>
           </div>
 
