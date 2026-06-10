@@ -27,8 +27,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-40">
-            <Link href="/" className="flex items-center -ml-1 sm:-ml-2">
-              <img src={appLogo} alt="Inboria" className="h-24 sm:h-28 lg:h-32 w-auto object-contain" />
+            <Link href="/" className="flex items-center shrink-0 -ml-1 sm:-ml-2">
+              <img src={appLogo} alt="Inboria" className="h-24 sm:h-28 lg:h-32 w-auto max-w-none object-contain" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-5 ml-4 lg:ml-8">
