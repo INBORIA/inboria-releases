@@ -2,6 +2,16 @@ appId: io.inboria.desktop
 productName: Inboria
 copyright: Copyright © Inboria
 
+# Publication GitHub (dépôt PUBLIC) — c'est ce qui alimente la mise à jour
+# automatique (electron-updater). Avec ce bloc, electron-builder génère les
+# fichiers de métadonnées « latest.yml » (Windows) / « latest-linux.yml »
+# (Linux) ET embarque « app-update.yml » dans l'app pour qu'elle sache où
+# vérifier les nouvelles versions.
+publish:
+  provider: github
+  owner: INBORIA
+  repo: inboria-releases
+
 directories:
   output: release
   buildResources: build
@@ -15,6 +25,8 @@ win:
   target:
     - nsis
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version) → URL de téléchargement direct fixe.
+  artifactName: ${productName}-Setup-Windows.${ext}
 
 nsis:
   oneClick: false
@@ -31,6 +43,8 @@ mac:
     - dmg
     - zip
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version).
+  artifactName: ${productName}-macOS.${ext}
 
 # Linux : AppImage (portable) + .deb (Debian/Ubuntu).
 linux:
@@ -39,3 +53,10 @@ linux:
     - deb
   category: Office
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version).
+  artifactName: ${productName}-Linux.${ext}
+  # electron-builder exige le maintainer pour fabriquer le paquet .deb
+  # (sinon : "required to set Linux .deb package maintainer").
+  # Le homepage requis par le .deb est lu depuis package.json ("homepage"),
+  # ce n'est PAS une propriété valide sous linux: ici.
+  maintainer: Inboria <support@inboria.com>

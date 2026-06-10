@@ -1,6 +1,7 @@
 "use strict";
 
-const { app, BrowserWindow, shell, Menu } = require("electron");
+const { app, BrowserWindow, shell, Menu, dialog } = require("electron");
+const { autoUpdater } = require("electron-updater");
 const path = require("path");
 
 // ---------------------------------------------------------------------------
@@ -103,6 +104,61 @@ function createWindow() {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Mise à jour automatique (electron-updater).
+// - Windows & Linux : actif. L'app vérifie au démarrage s'il existe une version
+//   plus récente sur GitHub, la télécharge en arrière-plan, puis propose de
+//   redémarrer pour l'installer.
+// - macOS : DÉSACTIVÉ. Apple exige une app signée/notarisée (compte Apple
+//   Developer 99 $/an) pour autoriser l'auto-update ; sans ça l'utilisateur
+//   doit retélécharger le .dmg à la main.
+// ---------------------------------------------------------------------------
+function setupAutoUpdates() {
+  // Pas de mise à jour en développement (app non empaquetée).
+  if (!app.isPackaged) return;
+  // macOS : impossible sans signature Apple.
+  if (process.platform === "darwin") return;
+
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on("update-downloaded", () => {
+    if (!mainWindow) return;
+    dialog
+      .showMessageBox(mainWindow, {
+        type: "info",
+        buttons: ["Redémarrer maintenant", "Plus tard"],
+        defaultId: 0,
+        cancelId: 1,
+        title: "Mise à jour d'Inboria",
+        message: "Une nouvelle version d'Inboria est prête.",
+        detail:
+          "Vous pouvez redémarrer maintenant pour l'installer, ou plus tard : " +
+          "elle s'installera automatiquement à la prochaine fermeture de l'app.",
+      })
+      .then(({ response }) => {
+        if (response === 0) autoUpdater.quitAndInstall();
+      })
+      .catch(() => {});
+  });
+
+  // En cas d'échec (réseau, métadonnées absentes, .deb géré par apt…), on
+  // n'affiche AUCUN pop-up gênant : on journalise seulement.
+  autoUpdater.on("error", (err) => {
+    console.error(
+      "[auto-update]",
+      err && err.message ? err.message : String(err),
+    );
+  });
+
+  autoUpdater.checkForUpdates().catch((err) => {
+    console.error(
+      "[auto-update] vérification impossible :",
+      err && err.message ? err.message : String(err),
+    );
+  });
+}
+
 // Empêche plusieurs instances de l'app.
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
@@ -144,6 +200,7 @@ if (!gotLock) {
     );
 
     createWindow();
+    setupAutoUpdates();
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow();
