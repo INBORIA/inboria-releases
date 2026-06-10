@@ -15,6 +15,8 @@ win:
   target:
     - nsis
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version) → URL de téléchargement direct fixe.
+  artifactName: ${productName}-Setup-Windows.${ext}
 
 nsis:
   oneClick: false
@@ -31,6 +33,8 @@ mac:
     - dmg
     - zip
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version).
+  artifactName: ${productName}-macOS.${ext}
 
 # Linux : AppImage (portable) + .deb (Debian/Ubuntu).
 linux:
@@ -39,3 +43,10 @@ linux:
     - deb
   category: Office
   icon: build/icon.png
+  # Nom de fichier STABLE (sans numéro de version).
+  artifactName: ${productName}-Linux.${ext}
+  # electron-builder exige le maintainer pour fabriquer le paquet .deb
+  # (sinon : "required to set Linux .deb package maintainer").
+  # Le homepage requis par le .deb est lu depuis package.json ("homepage"),
+  # ce n'est PAS une propriété valide sous linux: ici.
+  maintainer: Inboria <support@inboria.com>
