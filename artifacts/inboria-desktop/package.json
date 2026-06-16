@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "Inboria — application de bureau (Windows / macOS / Linux).",
-  "author": "Inboria",
+  "author": {
+    "name": "Inboria",
+    "email": "support@inboria.com"
+  },
   "main": "src/main.cjs",
   "scripts": {
     "start": "electron .",
@@ -15,5 +18,6 @@
   "devDependencies": {
     "electron": "33.2.1",
     "electron-builder": "25.1.8"
-  }
+  },
+  "homepage": "https://inboria.com"
 }
