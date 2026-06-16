@@ -12,9 +12,7 @@ const path = require("path");
 //     le domaine PUBLIÉ d'Inboria (ex: "https://app.inboria.io"), ou définir
 //     la variable d'environnement INBORIA_URL au moment du build.
 // ---------------------------------------------------------------------------
-const APP_URL =
-  process.env.INBORIA_URL ||
-  "https://2f7c7417-8ab2-41fb-9fcc-9eddd617f0df-00-5fb1cmje57my.picard.replit.dev";
+const APP_URL = process.env.INBORIA_URL || "https://inboria.com";
 
 // Page d'entrée de l'app (la web app redirige vers la connexion si besoin).
 const START_PATH = "/dashboard";
