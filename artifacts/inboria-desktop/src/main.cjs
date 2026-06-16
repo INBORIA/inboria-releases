@@ -15,7 +15,7 @@ const path = require("path");
 // ---------------------------------------------------------------------------
 const APP_URL =
   process.env.INBORIA_URL ||
-  "https://2f7c7417-8ab2-41fb-9fcc-9eddd617f0df-00-5fb1cmje57my.picard.replit.dev";
+  "https://inboria.com";
 
 // Page d'entrée de l'app (la web app redirige vers la connexion si besoin).
 const START_PATH = "/dashboard";
