@@ -34,6 +34,7 @@ mac:
 
 # Linux : AppImage (portable) + .deb (Debian/Ubuntu).
 linux:
+  maintainer: Inboria <support@inboria.com>
   target:
     - AppImage
     - deb
