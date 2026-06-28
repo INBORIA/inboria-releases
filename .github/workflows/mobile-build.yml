@@ -66,11 +66,43 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync android
 
-      - name: Construire l'APK et l'AAB (release, non signés)
+      - name: Construire l'APK et l'AAB (release)
         run: |
           cd android
           chmod +x ./gradlew
           ./gradlew assembleRelease bundleRelease --no-daemon
+
+      - name: Décoder la clé de signature (upload key Play App Signing)
+        id: keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "Keystore décodé."
+          else
+            echo "::warning::Secret ANDROID_KEYSTORE_BASE64 absent — l'AAB restera NON signé et ne pourra PAS être publié sur le Play Store. Ajoute la clé en secret repo puis relance."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Signer l'AAB (et l'APK) avec la clé d'upload
+        if: steps.keystore.outputs.present == 'true'
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          if [ ! -f "$AAB" ]; then
+            echo "::error::AAB introuvable à $AAB"; exit 1
+          fi
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore "$RUNNER_TEMP/upload-keystore.jks" \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+            -keypass "$ANDROID_KEY_PASSWORD" \
+            "$AAB" "$ANDROID_KEY_ALIAS"
+          jarsigner -verify "$AAB" && echo "✅ AAB signé et vérifié — prêt pour le Play Store."
 
       - name: Publier les binaires Android
         uses: actions/upload-artifact@v4
