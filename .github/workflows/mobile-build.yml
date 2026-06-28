@@ -66,13 +66,16 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync android
 
-      - name: Cibler le niveau d'API 35 (exigence Play Store)
+      - name: Cibler API 35 + incrémenter le versionCode (exigences Play Store)
         run: |
           cd android
           sed -i -E 's/compileSdkVersion = [0-9]+/compileSdkVersion = 35/' variables.gradle
           sed -i -E 's/targetSdkVersion = [0-9]+/targetSdkVersion = 35/' variables.gradle
           grep -q "suppressUnsupportedCompileSdk" gradle.properties 2>/dev/null || echo "android.suppressUnsupportedCompileSdk=35" >> gradle.properties
+          # versionCode unique et toujours croissant = numéro de build GitHub (jamais réutilisé par Play)
+          sed -i -E "s/versionCode [0-9]+/versionCode ${GITHUB_RUN_NUMBER}/" app/build.gradle
           echo "--- variables.gradle ---"; cat variables.gradle
+          echo "--- app/build.gradle versions ---"; grep -E "versionCode|versionName" app/build.gradle
 
       - name: Construire l'APK et l'AAB (release)
         run: |
