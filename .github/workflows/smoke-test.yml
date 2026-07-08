@@ -1,0 +1,64 @@
+name: Test de lancement Inboria (Mac + Linux)
+
+# Télécharge les installateurs d'une release, lance réellement l'app sur une
+# vraie machine macOS et une vraie machine Linux, puis prend une capture
+# d'écran. Preuve visuelle que l'app s'installe et démarre.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de la release à tester (ex: v1.1.7)"
+        required: true
+        default: "v1.1.7"
+
+jobs:
+  linux:
+    name: Test Linux (AppImage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Télécharger l'AppImage
+        run: curl -fL -o Inboria.AppImage "https://github.com/${{ github.repository }}/releases/download/${{ inputs.tag }}/Inboria-Linux.AppImage"
+
+      - name: Installer l'écran virtuel
+        run: sudo apt-get update && sudo apt-get install -y xvfb imagemagick libfuse2
+
+      - name: Lancer l'app et capturer l'écran
+        run: |
+          chmod +x Inboria.AppImage
+          ./Inboria.AppImage --appimage-extract > /dev/null
+          Xvfb :99 -screen 0 1280x800x24 &
+          sleep 3
+          export DISPLAY=:99
+          ./squashfs-root/AppRun --no-sandbox &
+          # Laisser le temps à l'app de démarrer et de charger inboria.com
+          sleep 60
+          import -window root capture-linux.png
+
+      - name: Publier la capture
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-linux
+          path: capture-linux.png
+
+  macos:
+    name: Test macOS
+    runs-on: macos-latest
+    steps:
+      - name: Télécharger l'app Mac (zip)
+        run: curl -fL -o Inboria-macOS.zip "https://github.com/${{ github.repository }}/releases/download/${{ inputs.tag }}/Inboria-macOS.zip"
+
+      - name: Lancer l'app et capturer l'écran
+        run: |
+          unzip -q Inboria-macOS.zip
+          # Retirer la quarantaine (app non signée : pas encore de certificat Apple)
+          xattr -cr *.app || true
+          open *.app
+          # Laisser le temps à l'app de démarrer et de charger inboria.com
+          sleep 60
+          screencapture -x capture-mac.png
+
+      - name: Publier la capture
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-mac
+          path: capture-mac.png
