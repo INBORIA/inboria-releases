@@ -33,6 +33,16 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
+      # La version de l'app DOIT correspondre au tag (ex: tag v1.2.0 → 1.2.0).
+      # C'est cette version que la mise à jour automatique compare pour savoir
+      # si une release est plus récente que l'app installée.
+      - name: Aligner la version sur le tag
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+
       - name: Fabriquer les installateurs
         # INBORIA_URL : domaine publié de l'app web (à définir en secret repo).
         # --publish never : la publication est gérée par le job "release" dédié
@@ -51,6 +61,8 @@ jobs:
             artifacts/inboria-desktop/release/*.zip
             artifacts/inboria-desktop/release/*.AppImage
             artifacts/inboria-desktop/release/*.deb
+            artifacts/inboria-desktop/release/*.yml
+            artifacts/inboria-desktop/release/*.blockmap
           if-no-files-found: ignore
 
   release:
@@ -66,6 +78,11 @@ jobs:
         with:
           path: installers
 
+      # IMPORTANT (auto-update) : pas de "repository:" ici → la release est créée
+      # dans le repo COURANT du workflow. Ce repo DOIT être INBORIA/inboria-releases,
+      # c.-à-d. le même que la config "publish" d'electron-builder.yml, sinon
+      # l'app chercherait les métadonnées de mise à jour (latest.yml / latest-linux.yml)
+      # à un endroit où les installateurs n'ont pas été publiés → auto-update cassé.
       - name: Publier la Release
         uses: softprops/action-gh-release@v2
         with:
