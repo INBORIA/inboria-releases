@@ -2,12 +2,16 @@ name: Build apps mobiles Inboria
 
 # Fabrique les apps mobiles Inboria (Capacitor) :
 #  - Android  : APK + AAB (l'AAB est le format requis par le Play Store).
-#  - iOS      : vérification de compilation (build simulateur, sans signature).
+#  - iOS      : vérification de compilation par défaut ; build signé + envoi
+#               App Store Connect (TestFlight) dès que les secrets Apple sont présents.
 #
 # IMPORTANT — limites honnêtes :
 #  - Un .ipa installable / publiable sur l'App Store NE PEUT être produit que sur
-#    macOS AVEC un compte Apple Developer (~99 $/an) et les certificats/profils de
-#    signature du compte. Ce workflow vérifie seulement que le projet iOS compile.
+#    macOS AVEC un compte Apple Developer (~99 $/an) et une clé API App Store Connect.
+#  - Tant que ces secrets sont absents (compte Apple pas encore validé), le job iOS
+#    se limite à vérifier que le projet compile — comportement inchangé.
+#  - Secrets à ajouter côté repo pour activer la signature (voir le job iOS) :
+#      APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_API_KEY_BASE64.
 #  - L'AAB doit être signé avec votre keystore Android avant publication sur le
 #    Play Store (compte Google Play, 25 $ une fois). Ici on produit un AAB non signé.
 #  - INBORIA_URL (secret repo) = domaine publié de l'app web Inboria que les apps
@@ -65,6 +69,14 @@ jobs:
 
       - name: Synchroniser Capacitor
         run: npx cap sync android
+
+      - name: Générer les icônes et splash screens (icône Inboria officielle)
+        # Corrige le rejet Google Play « App store listing mismatch » : sans cette
+        # étape, l'app embarquait l'icône Capacitor par défaut, différente de
+        # l'icône de la fiche Play Store. Les sources sont dans assets/
+        # (icon-only / icon-foreground / icon-background / splash), générées
+        # depuis docs/play-store-assets/icon-512-fullbleed.png.
+        run: npx capacitor-assets generate --android
 
       - name: Cibler API 35 + incrémenter le versionCode (exigences Play Store)
         run: |
@@ -158,7 +170,31 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync ios
 
+      - name: Générer les icônes et splash screens (icône Inboria officielle)
+        run: npx capacitor-assets generate --ios
+
+      # Détecte si les secrets de signature Apple sont configurés. Tant que le compte
+      # Apple Developer n'est pas validé, ils seront absents → on retombe sur la simple
+      # vérification de compilation (sans signature), exactement comme avant.
+      - name: Détecter les secrets de signature Apple
+        id: applesign
+        env:
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ -n "$ASC_API_KEY_BASE64" ] && [ -n "$ASC_KEY_ID" ] && [ -n "$ASC_ISSUER_ID" ] && [ -n "$APPLE_TEAM_ID" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Secrets Apple présents — build signé + envoi App Store Connect."
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Secrets de signature Apple absents — build de vérification uniquement (pas de .ipa publiable). À ajouter dès qu'Apple aura validé le compte : APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_API_KEY_BASE64."
+          fi
+
+      # ---- Cas 1 : pas encore de secrets → simple vérification de compilation ----
       - name: Vérifier que le projet iOS compile (simulateur, sans signature)
+        if: steps.applesign.outputs.present == 'false'
         run: |
           cd ios/App
           xcodebuild \
@@ -168,3 +204,110 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      # ---- Cas 2 : secrets présents → archive signée + export .ipa + envoi ASC ----
+      # Signature « automatique » pilotée par la clé API App Store Connect :
+      # Xcode crée/télécharge tout seul le certificat de distribution et le profil
+      # (option -allowProvisioningUpdates). Aucun certificat/profil à gérer à la main.
+      - name: Préparer la clé API App Store Connect
+        if: steps.applesign.outputs.present == 'true'
+        env:
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          mkdir -p "$HOME/private_keys" "$HOME/.appstoreconnect/private_keys"
+          KEY_DEST="$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # macOS = base64 BSD (-D), Linux = GNU (--decode/-d). On tente les variantes.
+          echo "$ASC_API_KEY_BASE64" | base64 -D > "$KEY_DEST" 2>/dev/null \
+            || echo "$ASC_API_KEY_BASE64" | base64 --decode > "$KEY_DEST" 2>/dev/null \
+            || echo "$ASC_API_KEY_BASE64" | base64 -d > "$KEY_DEST"
+          if [ ! -s "$KEY_DEST" ]; then
+            echo "::error::Décodage de ASC_API_KEY_BASE64 échoué ou clé vide. Vérifie que le secret contient bien le .p8 encodé en base64 (base64 -w0 AuthKey_XXXX.p8)."
+            exit 1
+          fi
+          cp "$KEY_DEST" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          echo "KEY_PATH=$KEY_DEST" >> "$GITHUB_ENV"
+
+      - name: Archiver l'app (signature automatique via clé API)
+        if: steps.applesign.outputs.present == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Inboria.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
+            archive
+
+      - name: Générer ExportOptions.plist
+        if: steps.applesign.outputs.present == 'true'
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>destination</key>
+            <string>export</string>
+            <key>teamID</key>
+            <string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Exporter le .ipa signé
+        if: steps.applesign.outputs.present == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          cd ios/App
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$RUNNER_TEMP/Inboria.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Envoyer sur App Store Connect (TestFlight)
+        if: steps.applesign.outputs.present == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          IPA=$(ls "$RUNNER_TEMP/export"/*.ipa 2>/dev/null | head -n1)
+          if [ -z "$IPA" ]; then echo "::error::.ipa introuvable après export"; exit 1; fi
+          echo "Envoi de $IPA vers App Store Connect…"
+          xcrun altool --upload-app -t ios -f "$IPA" \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Publier le .ipa comme artefact
+        if: steps.applesign.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: inboria-ios
+          path: ${{ runner.temp }}/export/*.ipa
+          if-no-files-found: warn
