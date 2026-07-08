@@ -20,7 +20,12 @@ jobs:
         run: curl -fL -o Inboria.AppImage "https://github.com/${{ github.repository }}/releases/download/${{ inputs.tag }}/Inboria-Linux.AppImage"
 
       - name: Installer l'écran virtuel
-        run: sudo apt-get update && sudo apt-get install -y xvfb imagemagick libfuse2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb imagemagick libfuse2 x11-utils \
+            libasound2t64 libgtk-3-0 libnss3 libxss1 libgbm1 || \
+          sudo apt-get install -y xvfb imagemagick libfuse2 x11-utils \
+            libasound2 libgtk-3-0 libnss3 libxss1 libgbm1
 
       - name: Lancer l'app et capturer l'écran
         run: |
@@ -29,16 +34,20 @@ jobs:
           Xvfb :99 -screen 0 1280x800x24 &
           sleep 3
           export DISPLAY=:99
-          ./squashfs-root/AppRun --no-sandbox &
+          ./squashfs-root/AppRun --no-sandbox --disable-gpu --disable-dev-shm-usage > app.log 2>&1 &
           # Laisser le temps à l'app de démarrer et de charger inboria.com
-          sleep 60
+          sleep 75
+          xwininfo -root -tree || true
           import -window root capture-linux.png
 
       - name: Publier la capture
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: capture-linux
-          path: capture-linux.png
+          path: |
+            capture-linux.png
+            app.log
 
   macos:
     name: Test macOS
