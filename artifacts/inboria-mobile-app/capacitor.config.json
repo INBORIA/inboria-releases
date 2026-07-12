@@ -3,7 +3,7 @@
   "appName": "Inboria",
   "webDir": "www",
   "server": {
-    "url": "https://REMPLACER-PAR-LE-DOMAINE-INBORIA-PUBLIE",
+    "url": "https://inboria.com",
     "cleartext": false
   },
   "ios": {
