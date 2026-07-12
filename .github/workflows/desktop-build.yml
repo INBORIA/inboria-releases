@@ -63,6 +63,7 @@ jobs:
             artifacts/inboria-desktop/release/*.deb
             artifacts/inboria-desktop/release/*.yml
             artifacts/inboria-desktop/release/*.blockmap
+            !artifacts/inboria-desktop/release/builder-debug.yml
           if-no-files-found: ignore
 
   release:
@@ -83,6 +84,10 @@ jobs:
       # c.-à-d. le même que la config "publish" d'electron-builder.yml, sinon
       # l'app chercherait les métadonnées de mise à jour (latest.yml / latest-linux.yml)
       # à un endroit où les installateurs n'ont pas été publiés → auto-update cassé.
+      # NB : builder-debug.yml est exclu de l'upload-artifact ci-dessus.
+      # Les 3 OS produisaient chacun un builder-debug.yml homonyme -> collision
+      # a l'upload des assets ("Not Found" sur update-a-release-asset) -> le job
+      # release passait en echec et la release restait en brouillon (vu v1.1.9).
       - name: Publier la Release
         uses: softprops/action-gh-release@v2
         with:
