@@ -16,6 +16,17 @@ directories:
   output: release
   buildResources: build
 
+# Association de fichiers : l'app s'enregistre auprès de l'OS comme lecteur
+# de fichiers .eml (mails exportés par glisser-déposer depuis Inboria).
+# Windows/Linux : proposée dans « Ouvrir avec » (l'utilisateur peut la mettre
+# par défaut) ; macOS : idem via « Lire les informations ».
+fileAssociations:
+  - ext: eml
+    name: E-mail (RFC 822)
+    description: Message e-mail exporté
+    mimeType: message/rfc822
+    role: Viewer
+
 files:
   - src/**/*
   - package.json
