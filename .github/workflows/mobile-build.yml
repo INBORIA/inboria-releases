@@ -70,6 +70,61 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync android
 
+      - name: Déclarer « Partager vers Inboria » (menu de partage Android)
+        # Le projet android/ est régénéré à chaque build (cap add android), donc
+        # on injecte ici l'activité du plugin send-intent + ses filtres d'intent
+        # dans AndroidManifest.xml : c'est ce qui fait apparaître Inboria dans le
+        # menu « Partager » du téléphone (photos, fichiers, texte). Côté web,
+        # inboria.com lit l'intent via window.Capacitor.Plugins.SendIntent et
+        # ouvre le composeur avec la pièce jointe.
+        run: |
+          node -e "
+          const fs = require('fs');
+          const p = 'android/app/src/main/AndroidManifest.xml';
+          let xml = fs.readFileSync(p, 'utf8');
+          if (xml.includes('de.mindlib.sendIntent.SendIntentActivity')) {
+            console.log('SendIntentActivity déjà présent — rien à faire.');
+            process.exit(0);
+          }
+          const activity = [
+            '        <activity',
+            '            android:name=\"de.mindlib.sendIntent.SendIntentActivity\"',
+            '            android:label=\"@string/app_name\"',
+            '            android:exported=\"true\"',
+            '            android:theme=\"@style/AppTheme.NoActionBarLaunch\">',
+            '            <intent-filter>',
+            '                <action android:name=\"android.intent.action.SEND\" />',
+            '                <category android:name=\"android.intent.category.DEFAULT\" />',
+            '                <data android:mimeType=\"text/plain\" />',
+            '            </intent-filter>',
+            '            <intent-filter>',
+            '                <action android:name=\"android.intent.action.SEND\" />',
+            '                <category android:name=\"android.intent.category.DEFAULT\" />',
+            '                <data android:mimeType=\"image/*\" />',
+            '                <data android:mimeType=\"video/*\" />',
+            '                <data android:mimeType=\"audio/*\" />',
+            '                <data android:mimeType=\"application/*\" />',
+            '                <data android:mimeType=\"text/*\" />',
+            '            </intent-filter>',
+            '            <intent-filter>',
+            '                <action android:name=\"android.intent.action.SEND_MULTIPLE\" />',
+            '                <category android:name=\"android.intent.category.DEFAULT\" />',
+            '                <data android:mimeType=\"image/*\" />',
+            '                <data android:mimeType=\"application/*\" />',
+            '            </intent-filter>',
+            '        </activity>',
+            ''
+          ].join('\n');
+          if (!xml.includes('</application>')) {
+            console.error('Balise </application> introuvable dans le manifest.');
+            process.exit(1);
+          }
+          xml = xml.replace('</application>', activity + '    </application>');
+          fs.writeFileSync(p, xml);
+          console.log('SendIntentActivity injectée dans AndroidManifest.xml ✅');
+          "
+          grep -q 'SendIntentActivity' android/app/src/main/AndroidManifest.xml && echo 'Vérification OK'
+
       - name: Générer les icônes et splash screens (icône Inboria officielle)
         # Corrige le rejet Google Play « App store listing mismatch » : sans cette
         # étape, l'app embarquait l'icône Capacitor par défaut, différente de
