@@ -85,9 +85,9 @@ jobs:
       # l'app chercherait les métadonnées de mise à jour (latest.yml / latest-linux.yml)
       # à un endroit où les installateurs n'ont pas été publiés → auto-update cassé.
       # NB : builder-debug.yml est exclu de l'upload-artifact ci-dessus.
-      # Les 3 OS produisaient chacun un builder-debug.yml homonyme -> collision
-      # a l'upload des assets ("Not Found" sur update-a-release-asset) -> le job
-      # release passait en echec et la release restait en brouillon (vu v1.1.9).
+      # Les 3 OS produisaient chacun un builder-debug.yml homonyme → collision
+      # à l'upload des assets (« Not Found » sur update-a-release-asset) → le job
+      # release passait en échec et la release restait en brouillon (vu v1.1.9).
       - name: Publier la Release
         uses: softprops/action-gh-release@v2
         with:

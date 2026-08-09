@@ -27,11 +27,34 @@ function settingsPath() {
   return path.join(app.getPath("userData"), "vault.json");
 }
 
+// Dossier général : tout ce que range Inboria vit dans un sous-dossier
+// « Inboria Vault » de l'emplacement choisi (jamais en vrac sur le Bureau).
+const VAULT_DIR_NAME = "Inboria Vault";
+
+function ensureVaultRoot(folder) {
+  const root =
+    path.basename(folder) === VAULT_DIR_NAME ? folder : path.join(folder, VAULT_DIR_NAME);
+  try {
+    fs.mkdirSync(root, { recursive: true });
+  } catch (e) {
+    console.error("[vault] impossible de créer le dossier Inboria Vault :", e.message);
+  }
+  return root;
+}
+
 function loadSettings() {
   try {
     settings = JSON.parse(fs.readFileSync(settingsPath(), "utf8"));
   } catch (_e) {
     settings = null;
+  }
+  // Migration douce des installations existantes : on englobe l'emplacement
+  // déjà choisi dans « Inboria Vault » (les fichiers déjà déposés restent où
+  // ils sont ; les prochains dépôts arrivent dans le dossier général).
+  if (settings && settings.rootFolder && path.basename(settings.rootFolder) !== VAULT_DIR_NAME) {
+    saveSettings(
+      Object.assign({}, settings, { rootFolder: ensureVaultRoot(settings.rootFolder) }),
+    );
   }
 }
 
@@ -259,7 +282,8 @@ async function handleClaim(rawCode) {
     if (!folder) {
       return { ok: false, message: "Choisissez le dossier où rangera Inboria." };
     }
-    saveSettings({ apiBase: apiBase(), deviceToken: body.deviceToken, rootFolder: folder });
+    const vaultRoot = ensureVaultRoot(folder);
+    saveSettings({ apiBase: apiBase(), deviceToken: body.deviceToken, rootFolder: vaultRoot });
     startPolling();
     if (pairWindow) pairWindow.close();
     const parent = getParentWindow();
@@ -292,7 +316,7 @@ async function changeRootFolder() {
   }
   const folder = await chooseRootFolder();
   if (folder) {
-    saveSettings(Object.assign({}, settings, { rootFolder: folder }));
+    saveSettings(Object.assign({}, settings, { rootFolder: ensureVaultRoot(folder) }));
     startPolling();
   }
 }
