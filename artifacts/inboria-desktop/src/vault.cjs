@@ -112,7 +112,17 @@ function uniquePath(dir, filename) {
 
 function writeItemLocally(item, buffer) {
   const root = settings && settings.rootFolder;
-  if (!root || !fs.existsSync(root)) throw new Error("root_folder_missing");
+  if (!root) throw new Error("root_folder_missing");
+  // Dossier supprimé/renommé depuis le jumelage : on le recrée au même
+  // endroit au lieu d'échouer. Si la création échoue vraiment (disque
+  // absent, droits insuffisants), raison distincte pour un message clair.
+  if (!fs.existsSync(root)) {
+    try {
+      fs.mkdirSync(root, { recursive: true });
+    } catch (_e) {
+      throw new Error("root_folder_unavailable");
+    }
+  }
   const segments = String(item.folder_path || "")
     .split("/")
     .map(sanitizeLocalSegment)
@@ -299,7 +309,7 @@ async function handleClaim(rawCode) {
         buttons: ["OK"],
         title: "Inboria Vault",
         message: "Vault connecté.",
-        detail: "Les documents rangés depuis Inboria arriveront dans :\n" + folder,
+        detail: "Les documents classés depuis Inboria arriveront dans :\n" + folder,
       });
     }
     return { ok: true };
