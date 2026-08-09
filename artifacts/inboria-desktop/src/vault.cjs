@@ -260,6 +260,17 @@ async function chooseRootFolder() {
 
 async function handleClaim(rawCode) {
   try {
+    // Le dossier d'abord : le claim côté serveur consomme le code ET révoque
+    // l'appareil précédent. Si l'abonné annule le choix du dossier, rien ne
+    // doit avoir changé (ni code consommé, ni appareil révoqué).
+    const folder = await chooseRootFolder();
+    if (!folder) {
+      return { ok: false, message: "Choisissez le dossier où classera Inboria." };
+    }
+    const vaultRoot = ensureVaultRoot(folder);
+    if (!fs.existsSync(vaultRoot)) {
+      return { ok: false, message: "Impossible de créer le dossier Inboria Vault ici. Choisissez un autre dossier." };
+    }
     const r = await fetch(apiBase() + "/api/vault/desktop/claim", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -278,11 +289,6 @@ async function handleClaim(rawCode) {
             : "Connexion impossible. Vérifiez votre connexion internet.",
       };
     }
-    const folder = await chooseRootFolder();
-    if (!folder) {
-      return { ok: false, message: "Choisissez le dossier où rangera Inboria." };
-    }
-    const vaultRoot = ensureVaultRoot(folder);
     saveSettings({ apiBase: apiBase(), deviceToken: body.deviceToken, rootFolder: vaultRoot });
     startPolling();
     if (pairWindow) pairWindow.close();
@@ -302,10 +308,33 @@ async function handleClaim(rawCode) {
   }
 }
 
+// La fenêtre principale peut charger des pages d'auth tierces (Google,
+// Microsoft, Supabase) qui héritent du preload : le jumelage, lui, n'est
+// autorisé QUE depuis l'app Inboria elle-même (la petite fenêtre locale de
+// jumelage passe par data: et nodeIntegration, pas par ce pont).
+function senderIsAppOrigin(event) {
+  try {
+    const url = (event.senderFrame && event.senderFrame.url) || "";
+    if (url.startsWith("data:")) return false;
+    return new URL(url).origin === new URL(apiBase()).origin;
+  } catch (_e) {
+    return false;
+  }
+}
+
 function initVault(getWindow) {
   getParentWindow = getWindow;
   loadSettings();
-  ipcMain.handle("vault-claim", (_event, code) => handleClaim(code));
+  ipcMain.handle("vault-claim", (event, code) => {
+    // Fenêtre locale de jumelage (data: + nodeIntegration) ou page Inboria :
+    // les deux sont légitimes ; tout autre origine est refusée.
+    const fromPairWindow =
+      pairWindow && event.sender === pairWindow.webContents;
+    if (!fromPairWindow && !senderIsAppOrigin(event)) {
+      return { ok: false, message: "Non autorisé." };
+    }
+    return handleClaim(code);
+  });
   startPolling();
 }
 
