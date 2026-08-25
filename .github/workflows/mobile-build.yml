@@ -11,7 +11,9 @@ name: Build apps mobiles Inboria
 #  - Tant que ces secrets sont absents (compte Apple pas encore validé), le job iOS
 #    se limite à vérifier que le projet compile — comportement inchangé.
 #  - Secrets à ajouter côté repo pour activer la signature (voir le job iOS) :
-#      APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_API_KEY_BASE64.
+#      APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_API_KEY_BASE64,
+#      IOS_DISTRIBUTION_P12_BASE64, IOS_DISTRIBUTION_P12_PASSWORD,
+#      IOS_PROVISIONING_PROFILE_BASE64, IOS_PROVISIONING_PROFILE_NAME.
 #  - L'AAB doit être signé avec votre keystore Android avant publication sur le
 #    Play Store (compte Google Play, 25 $ une fois). Ici on produit un AAB non signé.
 #  - INBORIA_URL (secret repo) = domaine publié de l'app web Inboria que les apps
@@ -238,13 +240,24 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_PROVISIONING_PROFILE_NAME: ${{ secrets.IOS_PROVISIONING_PROFILE_NAME }}
         run: |
-          if [ -n "$ASC_API_KEY_BASE64" ] && [ -n "$ASC_KEY_ID" ] && [ -n "$ASC_ISSUER_ID" ] && [ -n "$APPLE_TEAM_ID" ]; then
+          if [ -n "$ASC_API_KEY_BASE64" ] \
+            && [ -n "$ASC_KEY_ID" ] \
+            && [ -n "$ASC_ISSUER_ID" ] \
+            && [ -n "$APPLE_TEAM_ID" ] \
+            && [ -n "$IOS_DISTRIBUTION_P12_BASE64" ] \
+            && [ -n "$IOS_DISTRIBUTION_P12_PASSWORD" ] \
+            && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ] \
+            && [ -n "$IOS_PROVISIONING_PROFILE_NAME" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "✅ Secrets Apple présents — build signé + envoi App Store Connect."
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Secrets de signature Apple absents — build de vérification uniquement (pas de .ipa publiable). À ajouter dès qu'Apple aura validé le compte : APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID, ASC_API_KEY_BASE64."
+            echo "::warning::Secrets de signature Apple incomplets — build de vérification uniquement (pas de .ipa publiable)."
           fi
 
       # ---- Cas 1 : pas encore de secrets → simple vérification de compilation ----
@@ -283,11 +296,48 @@ jobs:
           cp "$KEY_DEST" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
           echo "KEY_PATH=$KEY_DEST" >> "$GITHUB_ENV"
 
-      - name: Archiver l'app (signature ad hoc, sans appareil enregistré)
+      - name: Installer le certificat et le profil App Store
         if: steps.applesign.outputs.present == 'true'
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_PROVISIONING_PROFILE_NAME: ${{ secrets.IOS_PROVISIONING_PROFILE_NAME }}
+        run: |
+          P12_PATH="$RUNNER_TEMP/InboriaDistribution.p12"
+          PROFILE_PATH="$RUNNER_TEMP/Inboria.mobileprovision"
+          PROFILE_PLIST="$RUNNER_TEMP/InboriaProfile.plist"
+          KEYCHAIN_PATH="$RUNNER_TEMP/inboria-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
+
+          echo "$IOS_DISTRIBUTION_P12_BASE64" | base64 -D > "$P12_PATH" 2>/dev/null \
+            || echo "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > "$P12_PATH"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 -D > "$PROFILE_PATH" 2>/dev/null \
+            || echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$P12_PATH" \
+            -P "$IOS_DISTRIBUTION_P12_PASSWORD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+
+          security cms -D -i "$PROFILE_PATH" > "$PROFILE_PLIST"
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$PROFILE_PLIST")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          cp "$PROFILE_PATH" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+
+          echo "IOS_PROFILE_NAME=$IOS_PROVISIONING_PROFILE_NAME" >> "$GITHUB_ENV"
+
+      - name: Archiver l'app avec la signature App Store
+        if: steps.applesign.outputs.present == 'true'
+        env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           cd ios/App
@@ -297,13 +347,10 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Inboria.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_IDENTITY=- \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$IOS_PROFILE_NAME" \
             CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
             archive
 
@@ -324,7 +371,14 @@ jobs:
             <key>teamID</key>
             <string>${APPLE_TEAM_ID}</string>
             <key>signingStyle</key>
-            <string>automatic</string>
+            <string>manual</string>
+            <key>signingCertificate</key>
+            <string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>io.inboria.app</key>
+              <string>${IOS_PROFILE_NAME}</string>
+            </dict>
             <key>uploadSymbols</key>
             <true/>
           </dict>
@@ -333,20 +387,13 @@ jobs:
 
       - name: Exporter le .ipa signé
         if: steps.applesign.outputs.present == 'true'
-        env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
           cd ios/App
           xcodebuild \
             -exportArchive \
             -archivePath "$RUNNER_TEMP/Inboria.xcarchive" \
             -exportPath "$RUNNER_TEMP/export" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
 
       - name: Envoyer sur App Store Connect (TestFlight)
         if: steps.applesign.outputs.present == 'true'
