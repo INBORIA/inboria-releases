@@ -283,7 +283,7 @@ jobs:
           cp "$KEY_DEST" "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
           echo "KEY_PATH=$KEY_DEST" >> "$GITHUB_ENV"
 
-      - name: Archiver l'app (signature automatique via clé API)
+      - name: Archiver l'app (signature ad hoc, sans appareil enregistré)
         if: steps.applesign.outputs.present == 'true'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -302,7 +302,8 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY=- \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
             CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
             archive
 
@@ -317,7 +318,7 @@ jobs:
           <plist version="1.0">
           <dict>
             <key>method</key>
-            <string>app-store</string>
+            <string>app-store-connect</string>
             <key>destination</key>
             <string>export</string>
             <key>teamID</key>
