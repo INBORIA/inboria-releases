@@ -50,6 +50,11 @@ nsis:
 # macOS : .dmg (glisser-déposer) + .zip (pour la mise à jour auto future).
 mac:
   category: public.app-category.productivity
+  # Gatekeeper exige une signature Developer ID avec runtime renforcé.
+  # electron-builder notarise ensuite l'app automatiquement quand les variables
+  # APPLE_API_KEY / APPLE_API_KEY_ID / APPLE_API_ISSUER sont présentes.
+  hardenedRuntime: true
+  gatekeeperAssess: false
   target:
     - dmg
     - zip
