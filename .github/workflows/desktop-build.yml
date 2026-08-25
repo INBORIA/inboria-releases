@@ -6,7 +6,12 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version bureau à publier (ex. 1.1.21)"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -33,15 +38,76 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
-      # La version de l'app DOIT correspondre au tag (ex: tag v1.2.0 → 1.2.0).
+      # La version de l'app DOIT correspondre au tag ou à la version demandée.
       # C'est cette version que la mise à jour automatique compare pour savoir
       # si une release est plus récente que l'app installée.
-      - name: Aligner la version sur le tag
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Aligner la version de l'application
         shell: bash
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="${{ inputs.version }}"
+          fi
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version invalide : $VERSION (format attendu : 1.2.3)"
+            exit 1
+          fi
           npm version "$VERSION" --no-git-tag-version --allow-same-version
+
+      - name: Préparer la signature et la notarisation macOS
+        if: matrix.os == 'macos-latest'
+        env:
+          MACOS_DEVELOPER_ID_P12_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_P12_BASE64 }}
+          MACOS_DEVELOPER_ID_P12_PASSWORD: ${{ secrets.MACOS_DEVELOPER_ID_P12_PASSWORD }}
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        shell: bash
+        run: |
+          for name in \
+            MACOS_DEVELOPER_ID_P12_BASE64 \
+            MACOS_DEVELOPER_ID_P12_PASSWORD \
+            ASC_API_KEY_BASE64 \
+            ASC_KEY_ID \
+            ASC_ISSUER_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret GitHub manquant pour macOS : $name"
+              exit 1
+            fi
+          done
+
+          P12_PATH="$RUNNER_TEMP/InboriaDeveloperID.p12"
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          KEYCHAIN_PATH="$RUNNER_TEMP/inboria-developer-id.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
+
+          echo "$MACOS_DEVELOPER_ID_P12_BASE64" | base64 -D > "$P12_PATH"
+          echo "$ASC_API_KEY_BASE64" | base64 -D > "$KEY_PATH"
+          test -s "$P12_PATH" && test -s "$KEY_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$P12_PATH" \
+            -P "$MACOS_DEVELOPER_ID_P12_PASSWORD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+
+          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" \
+            | grep -q "Developer ID Application"; then
+            echo "::error::Le certificat importé n'est pas un Developer ID Application."
+            exit 1
+          fi
+
+          echo "CSC_LINK=$P12_PATH" >> "$GITHUB_ENV"
+          echo "CSC_KEY_PASSWORD=$MACOS_DEVELOPER_ID_P12_PASSWORD" >> "$GITHUB_ENV"
+          echo "APPLE_API_KEY=$KEY_PATH" >> "$GITHUB_ENV"
+          echo "APPLE_API_KEY_ID=$ASC_KEY_ID" >> "$GITHUB_ENV"
+          echo "APPLE_API_ISSUER=$ASC_ISSUER_ID" >> "$GITHUB_ENV"
 
       - name: Fabriquer les installateurs
         # INBORIA_URL : domaine publié de l'app web (à définir en secret repo).
@@ -50,6 +116,37 @@ jobs:
         env:
           INBORIA_URL: ${{ secrets.INBORIA_URL }}
         run: npm run dist -- --publish never
+
+      - name: Notariser et agrafer le DMG macOS
+        if: matrix.os == 'macos-latest'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        shell: bash
+        run: |
+          DMG=$(find release -maxdepth 1 -name 'Inboria-macOS.dmg' -print -quit)
+          if [ -z "$DMG" ]; then
+            echo "::error::DMG macOS introuvable après le build."
+            exit 1
+          fi
+
+          xcrun notarytool submit "$DMG" \
+            --key "$APPLE_API_KEY" \
+            --key-id "$ASC_KEY_ID" \
+            --issuer "$ASC_ISSUER_ID" \
+            --wait
+          xcrun stapler staple "$DMG"
+          xcrun stapler validate "$DMG"
+
+          MOUNT_POINT="$RUNNER_TEMP/inboria-dmg"
+          mkdir -p "$MOUNT_POINT"
+          hdiutil attach "$DMG" -nobrowse -readonly -mountpoint "$MOUNT_POINT"
+          trap 'hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1 || true' EXIT
+          APP_PATH="$MOUNT_POINT/Inboria.app"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          spctl --assess --type execute --verbose=2 "$APP_PATH"
+          hdiutil detach "$MOUNT_POINT"
+          trap - EXIT
 
       - name: Publier les installateurs
         uses: actions/upload-artifact@v4
@@ -70,7 +167,7 @@ jobs:
     name: Créer la Release GitHub
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     steps:
@@ -91,5 +188,7 @@ jobs:
       - name: Publier la Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', inputs.version) }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', inputs.version) }}
           files: installers/**/*
           generate_release_notes: true
