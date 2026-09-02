@@ -5,6 +5,7 @@ import "./index.css";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { registerSW } from "virtual:pwa-register";
+import { initNativeIosSecurity } from "@/lib/native-ios";
 
 // Capture du deep-link « Ouvrir dans Inboria » (add-on Gmail → /dashboard?emailId=123)
 // AU TOUT PREMIER INSTANT du chargement de page, avant que React, l'auth Supabase
@@ -161,6 +162,7 @@ if (typeof document !== "undefined") {
   else document.addEventListener("DOMContentLoaded", start, { once: true });
 }
 
+initNativeIosSecurity();
 if (typeof window !== "undefined") {
   const isReplitDevPreview =
     typeof window.location !== "undefined" &&

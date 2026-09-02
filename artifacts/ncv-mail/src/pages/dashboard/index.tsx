@@ -9,6 +9,7 @@ import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
+import { NativeDocumentScanner } from "@/components/native/NativeDocumentScanner";
 import { TemplateSuggestionBar } from "@/components/templates/template-suggestion-bar";
 import { SignatureEditor } from "@/components/signature/signature-editor";
 import { SaveAsTemplateButton } from "@/components/templates/save-as-template-button";
@@ -673,7 +674,10 @@ export const ComposeDialogBody = memo(function ComposeDialogBody({
             minHeight={isFullscreen ? 300 : 260}
           />
         </div>
-        <FileAttachInput files={attachments} onChange={setAttachments} />
+        <div className="flex items-center gap-2">
+          <FileAttachInput files={attachments} onChange={setAttachments} />
+          <NativeDocumentScanner files={attachments} onChange={setAttachments} />
+        </div>
       </div>
       <div className="border-t border-border p-4 flex items-center gap-2">
         <Button

@@ -227,6 +227,9 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync ios
 
+      - name: Installer les fonctions iOS natives Inboria
+        run: ruby scripts/install-ios-native.rb
+
       - name: Générer les icônes et splash screens (icône Inboria officielle)
         run: npx capacitor-assets generate --ios
 
