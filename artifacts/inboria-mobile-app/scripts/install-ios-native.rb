@@ -2,10 +2,12 @@ require "fileutils"
 require "xcodeproj"
 
 project_path = "ios/App/App.xcodeproj"
+info_plist_path = "ios/App/App/Info.plist"
 source_paths = Dir["native/ios/*.swift"].sort
 destination_dir = "ios/App/App"
 
 abort "Projet iOS généré introuvable" unless File.exist?(project_path)
+abort "Info.plist iOS généré introuvable" unless File.exist?(info_plist_path)
 abort "Sources natives Inboria introuvables" if source_paths.empty?
 
 FileUtils.mkdir_p(destination_dir)
@@ -25,14 +27,26 @@ source_paths.each do |source_path|
   end
 end
 
-target.build_configurations.each do |config|
-  config.build_settings["INFOPLIST_KEY_NSCameraUsageDescription"] =
-    "Inboria utilise l’appareil photo uniquement lorsque vous choisissez de scanner un document à joindre à un e-mail."
-  config.build_settings["INFOPLIST_KEY_NSFaceIDUsageDescription"] =
-    "Face ID protège l’accès à vos e-mails dans Inboria."
-end
-
 project.save
+
+privacy_descriptions = {
+  "NSCameraUsageDescription" =>
+    "Inboria utilise l’appareil photo uniquement lorsque vous choisissez de scanner un document à joindre à un e-mail.",
+  "NSFaceIDUsageDescription" =>
+    "Face ID protège l’accès à vos e-mails dans Inboria."
+}
+
+info_plist = Xcodeproj::Plist.read_from_path(info_plist_path)
+privacy_descriptions.each do |key, value|
+  info_plist[key] = value
+end
+Xcodeproj::Plist.write_to_path(info_plist, info_plist_path)
+
+verified_info_plist = Xcodeproj::Plist.read_from_path(info_plist_path)
+privacy_descriptions.each do |key, expected_value|
+  actual_value = verified_info_plist[key]
+  abort "#{key} absent ou incorrect dans l’Info.plist iOS" unless actual_value == expected_value
+end
 
 storyboard_path = "ios/App/App/Base.lproj/Main.storyboard"
 abort "Storyboard Capacitor introuvable" unless File.exist?(storyboard_path)
@@ -44,4 +58,4 @@ storyboard.sub!(
 abort "Contrôleur Capacitor introuvable dans le storyboard" unless storyboard.include?('customClass="InboriaBridgeViewController"')
 File.write(storyboard_path, storyboard)
 
-puts "Fonctions iOS natives Inboria installées dans la cible App."
+puts "Fonctions iOS natives et descriptions de confidentialité installées dans la cible App."

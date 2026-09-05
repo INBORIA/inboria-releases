@@ -373,6 +373,29 @@ jobs:
             CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" \
             archive
 
+      - name: Vérifier les autorisations dans l'archive iOS
+        if: steps.applesign.outputs.present == 'true'
+        run: |
+          INFO_PLIST="$RUNNER_TEMP/Inboria.xcarchive/Products/Applications/App.app/Info.plist"
+          if [ ! -f "$INFO_PLIST" ]; then
+            echo "::error::Info.plist introuvable dans l'archive iOS."
+            exit 1
+          fi
+
+          FACE_ID_DESCRIPTION=$(/usr/libexec/PlistBuddy -c "Print :NSFaceIDUsageDescription" "$INFO_PLIST" 2>/dev/null || true)
+          CAMERA_DESCRIPTION=$(/usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$INFO_PLIST" 2>/dev/null || true)
+
+          if [ -z "$FACE_ID_DESCRIPTION" ]; then
+            echo "::error::NSFaceIDUsageDescription manque dans l'application archivée."
+            exit 1
+          fi
+          if [ -z "$CAMERA_DESCRIPTION" ]; then
+            echo "::error::NSCameraUsageDescription manque dans l'application archivée."
+            exit 1
+          fi
+
+          echo "✅ Descriptions Face ID et caméra présentes dans l'application archivée."
+
       - name: Générer ExportOptions.plist
         if: steps.applesign.outputs.present == 'true'
         env:
